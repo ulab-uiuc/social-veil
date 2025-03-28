@@ -2,7 +2,7 @@ import random
 import uuid
 from openai import swarm
 from encryption.encryption import Encryptor
-from agent.agent_profile import Agent_Profile
+from social_decipher.agent.profile import Agent_Profile
 
 class BaseAgent(swarm.Agent):
     def __init__(self, 

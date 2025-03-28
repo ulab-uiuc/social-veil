@@ -1,6 +1,7 @@
 import json
 from agent.social_agent import SocialAgent
 from agency_swarm import Agent, set_openai_key, BaseTool, Agency
+from agent.profile import Agent_Profile, Environment_Profile
 #from agent.llm_agent import MultiLingualAgent
 #from social_task.social_env import SocialTaskEnvironment
 '''
@@ -38,11 +39,62 @@ def simulate_conversation(personA, personB, num_turns):
         print(personB_response)
         personA_message = agency.get_completion(personB_response, recipient_agent=personA)
         print(personA_message)
+
+# def main():
+#     #environment = SocialTaskEnvironment()
+#     speaker = SocialAgent(name="Speaker", description="A talkative agent who initiates and drives the conversation with expressiveness. You want to talk about sports. ")
+#     listener = SocialAgent(name="Listener", description="A receptive agent that listens, analyzes emotional cues, and provides supportive feedback. You don't want to talk about sports.  Begin your response with 'Wow Wow.'")
+#     simulate_conversation(speaker, listener, 3)
+
 def main():
-    #environment = SocialTaskEnvironment()
-    speaker = SocialAgent(name="Speaker", description="A talkative agent who initiates and drives the conversation with expressiveness. You want to talk about sports. ")
-    listener = SocialAgent(name="Listener", description="A receptive agent that listens, analyzes emotional cues, and provides supportive feedback. You don't want to talk about sports.  Begin your response with 'Wow Wow.'")
-    simulate_conversation(speaker, listener, 3)
+    # Create agent profiles
+    profile_a = Agent_Profile(
+        first_name="Alex",
+        last_name="Carter",
+        age=30,
+        gender="Male",
+        gender_pronoun="he/him",
+        occupation="Sports Commentator",
+        public_info="Always talks about football",
+        personality_and_values="Enthusiastic, expressive, goal-driven",
+        model_id="gpt-4"
+    )
+
+    profile_b = Agent_Profile(
+        first_name="Jamie",
+        last_name="Rivers",
+        age=29,
+        gender="Non-binary",
+        gender_pronoun="they/them",
+        occupation="Therapist",
+        public_info="Very empathetic and calm",
+        personality_and_values="Empathetic, listener, emotionally intelligent",
+        model_id="gpt-4"
+    )
+
+    # Create environment profile
+    environment = Environment_Profile(
+        scenario="Two people with different interests meet at a café.",
+        agent_goals=[
+            "Discuss sports news with your conversation partner.",
+            "Avoid talking about sports and steer the conversation toward emotions or personal values."
+        ]
+    )
+
+    # Build agents with profiles and environment
+    agent1 = SocialAgent(name=profile_a.profile["first_name"], 
+                         profile=profile_a, 
+                         env=environment,
+                         role_num=0)
+    
+    agent2 = SocialAgent(name=profile_b.profile["first_name"], 
+                         profile=profile_b,
+                         env=environment,
+                         role_num=1)
+
+
+    simulate_conversation(agent1, agent2, 3)
 
 if __name__ == "__main__":
     main()
+c
