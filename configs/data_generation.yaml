@@ -1,0 +1,30 @@
+Profile: |
+  You are generating a character profile for a social simulation. The profile must describe a realistic individual who may engage in meaningful interactions in a public or semi-private setting.
+
+  Each attribute must be socially and contextually coherent with the others (e.g., occupation should match age and education level; personality traits should fit the public_info). Ensure all fields reflect natural combinations that are plausible in real life.
+
+  The `public_info` should be exactly one concise sentence describing how others perceive the person.
+
+  Please respond in strict JSON format with the following fields:
+  - first_name
+  - last_name
+  - age (between 18–65)
+  - gender (e.g., Male, Female, Non-binary, etc.)
+  - gender_pronoun (he/him, she/her, they/them, etc.)
+  - occupation (professionally or socially relevant)
+  - public_info (one-sentence third-person summary of how others describe them)
+  - personality_and_values (comma-separated 3~4 keywords that are consistent with occupation, age, and public_info)
+  - model_id: "gpt-4"
+
+Environment: |
+  Generate a social scenario for a two-agent communication task. The agents will each bring their own personal background and goals. Your task is to define a setting that is socially plausible and encourages realistic interaction.
+
+  The `scenario` should objectively describe a shared social context (e.g., "Two people meet in a coffee shop" or "Two neighbors discuss a community issue") without referencing agent-specific attributes.
+
+  The `agent_goals` field must include two distinct yet socially compatible communication goals. These should differ in perspective or intent, but not contradict in a way that makes conversation impossible.
+
+  Please respond in JSON with the following fields:
+  - scenario (short, objective description of the setting)
+  - agent_goals (a list of two unique, socially motivated goals for the participants)
+
+  Ensure the task encourages multi-turn dialogue and perspective-taking.
