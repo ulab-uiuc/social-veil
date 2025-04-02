@@ -2,6 +2,7 @@ import json
 from agent.social_agent import SocialAgent
 from agency_swarm import Agent, set_openai_key, BaseTool, Agency
 from agent.profile import Agent_Profile, Environment_Profile
+from encryption import MappingEncryption
 #from agent.llm_agent import MultiLingualAgent
 #from social_task.social_env import SocialTaskEnvironment
 '''
@@ -32,13 +33,18 @@ def simulate_conversation(personA, personB, num_turns):
                     temperature=0.3,
                     max_prompt_tokens=3000,
     )
-    personA_message = agency.get_completion("Hello.",recipient_agent=personA)
-    print(personA_message)
+    personA.set_agency(agency)
+    personB.set_agency(agency)
+    encryption = MappingEncryption(key=42)
+    personA.set_encryption(encryption)
+    personB.set_encryption(encryption)
+    personA_message = personA.act(encryption("Hello"))
+    #print(personA_message)
     for _ in range(num_turns):
-        personB_response = agency.get_completion(personA_message, recipient_agent=personB)
-        print(personB_response)
-        personA_message = agency.get_completion(personB_response, recipient_agent=personA)
-        print(personA_message)
+        personB_response = personB.act(personA_message)
+        #print(personB_response)
+        personA_message = personA.act(personB_response)
+        #print(personA_message)
 
 # def main():
 #     #environment = SocialTaskEnvironment()

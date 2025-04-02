@@ -1,21 +1,23 @@
 import random
 from typing import Dict, MutableMapping, KT, VT
 
-
 class BaseEncryption:
     def __init__(self, key):
         self.key = key
 
-    def run(self, message: str) -> str:
-        raise NotImplementedError
+    def __call_(self, message: str) -> str:
+        pass
 
     def encrypt(self, message: str) -> str:
-        raise NotImplementedError
+        pass
+
+    def decrypt(self, message: str) -> str:
+        pass
     
     # should randomly generate a word mapping set
     def random_word_mapping(self) -> Dict:
-        raise NotImplementedError
+        pass
     
 
-    def rag(self) -> str:
-        raise NotImplementedError  
+    def rag(self, message: str) -> str:
+        pass 
