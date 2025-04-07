@@ -10,7 +10,6 @@ def LLM_inference(prompt: str) -> str:
         model="gpt-4o",
         input=prompt
     )
-    print(response.output_text)
     return response.output_text
 
 class MappingEncryption(BaseEncryption):

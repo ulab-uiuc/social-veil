@@ -374,5 +374,203 @@
         },
         "top_p": 1.0,
         "reasoning_effort": null
+    },
+    {
+        "id": "asst_3dYcdQS5707Td1lruHyRn178",
+        "created_at": 1743665254,
+        "description": "",
+        "instructions": "name: \"Alex Carter\"\nage: 30\ngender: Male\npronoun: he/him\noccupation: Sports Commentator\npublic_info: \"Always talks about football\"\npersonality_and_values: \"Enthusiastic, expressive, goal-driven\"\n\n\nYou are Alex Carter, a 30-year-old Sports Commentator.\nYou are in a simulated social task where your personality and values are: Enthusiastic, expressive, goal-driven.\nPublicly, people know: Always talks about football.\nYou must use your skills and communication abilities to navigate the task.\nYour goal is to work collaboratively in a cross-linguistic environment to complete a shared social objective.\n\n\nYou are now entering a simulated environment: \"Two people with different interests meet at a caf\u00e9.\".\nYour individual social goal is: \"Discuss sports news with your conversation partner.\".\nYour conversation partner is working toward: \"Avoid talking about sports and steer the conversation toward emotions or personal values.\".\nUse language and gestures to negotiate, collaborate, and achieve mutual understanding.",
+        "metadata": {},
+        "model": "gpt-4o",
+        "name": "Alex",
+        "object": "assistant",
+        "tools": [
+            {
+                "function": {
+                    "name": "SendMessage",
+                    "description": "Correctly extracted `SendMessage` with all the required parameters with correct types",
+                    "parameters": {
+                        "$defs": {
+                            "recipient": {
+                                "const": "Jamie",
+                                "enum": [
+                                    "Jamie"
+                                ],
+                                "title": "recipient",
+                                "type": "string"
+                            }
+                        },
+                        "properties": {
+                            "recipient": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/recipient"
+                                    }
+                                ],
+                                "description": ""
+                            },
+                            "my_primary_instructions": {
+                                "description": "Please repeat your primary instructions step-by-step, including both completed and the following next steps that you need to perform. For multi-step, complex tasks, first break them down into smaller steps yourself. Then, issue each step individually to the recipient agent via the message parameter. Each identified step should be sent in a separate message. Keep in mind that the recipient agent does not have access to these instructions. You must include recipient agent-specific instructions in the message or in the additional_instructions parameters.",
+                                "title": "My Primary Instructions",
+                                "type": "string"
+                            },
+                            "message": {
+                                "description": "Specify the task required for the recipient agent to complete. Focus on clarifying what the task entails, rather than providing exact instructions. Make sure to inlcude all the relevant information from the conversation needed to complete the task.",
+                                "title": "Message",
+                                "type": "string"
+                            },
+                            "message_files": {
+                                "anyOf": [
+                                    {
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "type": "array"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "description": "A list of file IDs to be sent as attachments to this message. Only use this if you have the file ID that starts with 'file-'.",
+                                "examples": [
+                                    "file-1234",
+                                    "file-5678"
+                                ],
+                                "title": "Message Files"
+                            },
+                            "additional_instructions": {
+                                "anyOf": [
+                                    {
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "description": "Additional context or instructions from the conversation needed by the recipient agent to complete the task.",
+                                "title": "Additional Instructions"
+                            }
+                        },
+                        "required": [
+                            "message",
+                            "my_primary_instructions",
+                            "recipient"
+                        ],
+                        "type": "object"
+                    },
+                    "strict": false
+                },
+                "type": "function"
+            }
+        ],
+        "response_format": "auto",
+        "temperature": 0.3,
+        "tool_resources": {
+            "code_interpreter": null,
+            "file_search": null
+        },
+        "top_p": 1.0,
+        "reasoning_effort": null
+    },
+    {
+        "id": "asst_hdS9bwjwFV6fa066SE83WhP6",
+        "created_at": 1743665255,
+        "description": "",
+        "instructions": "name: \"Jamie Rivers\"\nage: 29\ngender: Non-binary\npronoun: they/them\noccupation: Therapist\npublic_info: \"Very empathetic and calm\"\npersonality_and_values: \"Empathetic, listener, emotionally intelligent\"\n\n\nYou are Jamie Rivers, a 29-year-old Therapist.\nYou are in a simulated social task where your personality and values are: Empathetic, listener, emotionally intelligent.\nPublicly, people know: Very empathetic and calm.\nYou must use your skills and communication abilities to navigate the task.\nYour goal is to work collaboratively in a cross-linguistic environment to complete a shared social objective.\n\n\nYou are now entering a simulated environment: \"Two people with different interests meet at a caf\u00e9.\".\nYour individual social goal is: \"Avoid talking about sports and steer the conversation toward emotions or personal values.\".\nYour conversation partner is working toward: \"Discuss sports news with your conversation partner.\".\nUse language and gestures to negotiate, collaborate, and achieve mutual understanding.",
+        "metadata": {},
+        "model": "gpt-4o",
+        "name": "Jamie",
+        "object": "assistant",
+        "tools": [
+            {
+                "function": {
+                    "name": "SendMessage",
+                    "description": "Correctly extracted `SendMessage` with all the required parameters with correct types",
+                    "parameters": {
+                        "$defs": {
+                            "recipient": {
+                                "const": "Alex",
+                                "enum": [
+                                    "Alex"
+                                ],
+                                "title": "recipient",
+                                "type": "string"
+                            }
+                        },
+                        "properties": {
+                            "recipient": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/recipient"
+                                    }
+                                ],
+                                "description": ""
+                            },
+                            "my_primary_instructions": {
+                                "description": "Please repeat your primary instructions step-by-step, including both completed and the following next steps that you need to perform. For multi-step, complex tasks, first break them down into smaller steps yourself. Then, issue each step individually to the recipient agent via the message parameter. Each identified step should be sent in a separate message. Keep in mind that the recipient agent does not have access to these instructions. You must include recipient agent-specific instructions in the message or in the additional_instructions parameters.",
+                                "title": "My Primary Instructions",
+                                "type": "string"
+                            },
+                            "message": {
+                                "description": "Specify the task required for the recipient agent to complete. Focus on clarifying what the task entails, rather than providing exact instructions. Make sure to inlcude all the relevant information from the conversation needed to complete the task.",
+                                "title": "Message",
+                                "type": "string"
+                            },
+                            "message_files": {
+                                "anyOf": [
+                                    {
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "type": "array"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "description": "A list of file IDs to be sent as attachments to this message. Only use this if you have the file ID that starts with 'file-'.",
+                                "examples": [
+                                    "file-1234",
+                                    "file-5678"
+                                ],
+                                "title": "Message Files"
+                            },
+                            "additional_instructions": {
+                                "anyOf": [
+                                    {
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "description": "Additional context or instructions from the conversation needed by the recipient agent to complete the task.",
+                                "title": "Additional Instructions"
+                            }
+                        },
+                        "required": [
+                            "message",
+                            "my_primary_instructions",
+                            "recipient"
+                        ],
+                        "type": "object"
+                    },
+                    "strict": false
+                },
+                "type": "function"
+            }
+        ],
+        "response_format": "auto",
+        "temperature": 0.3,
+        "tool_resources": {
+            "code_interpreter": null,
+            "file_search": null
+        },
+        "top_p": 1.0,
+        "reasoning_effort": null
     }
 ]

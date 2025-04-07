@@ -1,0 +1,42 @@
+SocialDecipher_Eval: |
+  You are evaluating a conversation between two agents participating in a simulated social scenario.
+
+  Agent 1 Goal: {goal1}
+  Agent 2 Goal: {goal2}
+
+  Here is the conversation transcript so far:
+  {transcript}
+
+  For each of the following aspects, rate from 0 (very poor) to 10 (excellent):
+
+  - Goal Achievement: To what extent did both agents achieve their individual goals?
+  - Communication Clarity: Was the conversation coherent and understandable despite any language barriers?
+  - Cooperation: Did the agents collaborate, adapt, or respond helpfully to each other’s messages?
+  - Social Norms: Did the agents exhibit respectful, polite, and contextually appropriate behavior?
+  - Language Acquisition: Did the agent(s) demonstrate adaptation or increasing understanding of unfamiliar language or encrypted messages?
+
+  Please respond in valid JSON format as:
+  {{
+    "goal_achievement": float,
+    "communication_clarity": float,
+    "cooperation": float,
+    "social_norms": float,
+    "language_acquisition": float
+  }}
+
+Stop_Criteria: |
+  You are monitoring a conversation between two agents engaged in a social task.
+
+  Their goals are:
+  - Agent 1: {goal1}
+  - Agent 2: {goal2}
+
+  Here is the conversation transcript so far:
+  {transcript}
+
+  Decide if the conversation should end now. Indicators for stopping include:
+  - One or both agents express a desire to leave or end the conversation (e.g., “I have to go”, “Thanks for chatting”, “Goodbye”).
+  - Both goals appear to have been clearly accomplished.
+  - No new relevant content is being introduced.
+
+  Respond with only "Yes" if the conversation should stop, or "No" if it should continue.

@@ -14,6 +14,7 @@ class SocialAgent(Agent):
         instruction = self.set_instruction(env, profile, role_num)
         self.agency = None
         self.encryption = None
+        self.log = []
         super().__init__(
             name=name,
             description=description,
@@ -73,19 +74,44 @@ class SocialAgent(Agent):
         response = self.agency.get_completion(message, recipient_agent=self)
         return response
 
-    def act(self, message):
+    def act(self, message=None, initial: bool = False):
         assert self.agency is not None, "Agent must be assigned to an agency before acting."
+
+        if initial:
+            # Use the system instruction to generate an opening message
+            response = self.agency.get_completion("Now, generate your initial message to start the conversation, try to be concise", recipient_agent=self)
+            print(f"**{self.name} INITIAL RESPONSE: {response}")
+
+            encrypted_response = self.encryption(response) if self.encryption else response
+            print(f"**{self.name} ENCRYPTED RESPONSE: {encrypted_response}")
+            self.log.append({
+                "initial": True,
+                "response_raw": response,
+                "response_encrypted": encrypted_response
+            })
+            return encrypted_response
+
+        received = message
+        print(f"**{self.name} RECEIVED MESSAGE: {received}")
         if self.encryption is not None:
             message = self.encryption.decrypt(message)
-            print(f"**{self.name} decrypted message: {message}")
+            print(f"**{self.name} DECRYPTED MESSAGE: {message}\n")
+
         response = self.agency.get_completion(message, recipient_agent=self)
-        print(f"**{self.name} original response: {response}")
-        if self.encryption is not None:
-            simple_encryption = self.encryption._simple_mapping(response)
-            print(f"**{self.name} simple encrypted response: {simple_encryption}")
-            response = self.encryption(response)
-            print(f"**{self.name} encrypted response: {response}")
-        return response
+        print(f"**{self.name} ORIGINAL RESPONSE: {response}")
+
+        encrypted_response = self.encryption(response) if self.encryption else response
+        print(f"**{self.name} ENCRYPTED RESPONSE: {encrypted_response}")
+
+        self.log.append({
+            "received_raw": received,
+            "received_decrypted": message if self.encryption else received,
+            "response_raw": response,
+            "response_encrypted": encrypted_response
+        })
+
+
+        return encrypted_response
         
     def response_validator(self, message):
         return message

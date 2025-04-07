@@ -1,59 +1,64 @@
 import json
+from typing import List, Dict, Any
+from openai import OpenAI
 from agent.social_agent import SocialAgent
 from agency_swarm import Agent, set_openai_key, BaseTool, Agency
 from agent.profile import Agent_Profile, Environment_Profile
 from encryption import MappingEncryption
-#from agent.llm_agent import MultiLingualAgent
+from evaluate import ConversationEvaluator
 #from social_task.social_env import SocialTaskEnvironment
-'''
-def main():
-    environment = SocialTaskEnvironment()
-    agent1 = MultiLingualAgent("AgentA", "English", "ConlangA")
-    agent2 = MultiLingualAgent("AgentB", "French", "ConlangB")
 
-    swarm.run([agent1, agent2], environment)
-
-    for _ in range(environment.turns):
-        print(f"Environment state: {environment.state}")
-        msg1 = agent1.act()
-        msg2 = agent2.act()
-        
-        if msg1:
-            print(f"{agent1.name} communicates: {json.dumps(msg1)}")
-        if msg2:
-            print(f"{agent2.name} communicates: {json.dumps(msg2)}")
-        
-        if environment.check_completion():
-            print("Task Completed!")
-            break
-'''
-
-def simulate_conversation(personA, personB, num_turns):
+def simulate_conversation(personA: Agent, 
+                          personB: Agent, 
+                          num_turns: int, 
+                          agent_goals: List[str],
+                          evaluator: ConversationEvaluator) -> None:
+    
     agency = Agency([personA, [personA,personB], [personB, personA], [personA,personB], [personB, personA]],  # Define the conversation participants.
                     temperature=0.3,
                     max_prompt_tokens=3000,
     )
+
+    conversation_log = []
+
     personA.set_agency(agency)
     personB.set_agency(agency)
+
     encryption = MappingEncryption(key=42)
+
     personA.set_encryption(encryption)
     personB.set_encryption(encryption)
-    personA_message = personA.act(encryption("Hello"))
-    #print(personA_message)
-    for _ in range(num_turns):
+
+    personA_message = personA.act(message=None, initial=True)
+    conversation_log.append(f"{personA.name}: {personA.log[-1]['response_raw']}")
+
+
+    for num in range(num_turns):
+        print('\n')
+        print(f"################# ROUND{num+1} #################")
+
         personB_response = personB.act(personA_message)
-        #print(personB_response)
+        conversation_log.append(f"{personB.name}: {personB.log[-1]['response_raw']}")
+
         personA_message = personA.act(personB_response)
-        #print(personA_message)
+        conversation_log.append(f"{personA.name}: {personA.log[-1]['response_raw']}")
 
-# def main():
-#     #environment = SocialTaskEnvironment()
-#     speaker = SocialAgent(name="Speaker", description="A talkative agent who initiates and drives the conversation with expressiveness. You want to talk about sports. ")
-#     listener = SocialAgent(name="Listener", description="A receptive agent that listens, analyzes emotional cues, and provides supportive feedback. You don't want to talk about sports.  Begin your response with 'Wow Wow.'")
-#     simulate_conversation(speaker, listener, 3)
+        if evaluator.should_stop_conversation(agent_goals, conversation_log):
+            print(f"✅ Agents signaled task completion at round {num+1}. Stopping early.")
+        break
 
+    eval_result = evaluator.evaluate_conversation(conversation_log, agent_goals)
+    print("Conversation Evaluation Results:")
+    print(f"Number of turns: {eval_result['num_turns']}")
+    print(f"Agent 1 Similarity: {eval_result['agent_1_similarity']}")
+    print(f"Agent 2 Similarity: {eval_result['agent_2_similarity']}")
+    print(f"LLM Success: {eval_result['llm_success']}")
+    
 def main():
     # Create agent profiles
+    client = OpenAI()
+    model = "gpt-4"
+
     profile_a = Agent_Profile(
         first_name="Alex",
         last_name="Carter",
@@ -87,6 +92,8 @@ def main():
         ]
     )
 
+    agent_goals = environment.env['agent_goals']
+
     # Build agents with profiles and environment
     agent1 = SocialAgent(name=profile_a.profile["first_name"], 
                          profile=profile_a, 
@@ -97,9 +104,11 @@ def main():
                          profile=profile_b,
                          env=environment,
                          role_num=1)
+    
+    evaluator = ConversationEvaluator(client, model)
 
 
-    simulate_conversation(agent1, agent2, 3)
+    simulate_conversation(agent1, agent2, 10, agent_goals, evaluator)
 
 if __name__ == "__main__":
     main()
