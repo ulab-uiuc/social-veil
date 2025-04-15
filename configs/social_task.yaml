@@ -16,6 +16,7 @@ profile_description: |
 
 social_task_instructions: |
   You are now entering a simulated environment: "{{ scenario }}".
-  Your individual social goal is: "{{ agent_goal_1 }}".
-  Your conversation partner is working toward: "{{ agent_goal_2 }}".
-  Use language and gestures to negotiate, collaborate, and achieve mutual understanding.
+  Your individual social goal is: "{{ agent_goal }}".
+  The reason you are pursuing this goal is: "{{ agent_reason }}".
+  Your partner has their own goal and motivation, which you do not know.
+  Your task is to engage in conversation and gradually understand what they are trying to achieve and why.

@@ -40,3 +40,25 @@ Stop_Criteria: |
   - No new relevant content is being introduced.
 
   Respond with only "Yes" if the conversation should stop, or "No" if it should continue.
+
+Partner_Reason_Query: |
+  You are engaged in a social conversation simulation. Your partner just said the following:
+
+  "{partner_message}"
+
+  Based on your goal and the ongoing conversation, why do you think your partner said this?
+  Respond with your best guess about their underlying motivation or reason. Answer in 1–2 sentences.
+
+Partner_Reason_Eval: |
+  Compare the following two statements:
+
+  1. The agent's predicted reason for their partner's action:
+     "{predicted_reason}"
+
+  2. The true underlying reason for the partner's goal:
+     "{true_reason}"
+
+  On a scale from 0 to 10, how accurate is the predicted reason in capturing the intent or motivation behind the partner's behavior?
+  Focus on whether the predicted reason aligns conceptually with the actual one, not just on surface words.
+
+  Respond with a number only between 0 and 10.
