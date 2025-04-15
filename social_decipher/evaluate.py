@@ -3,6 +3,12 @@ import yaml
 from openai import OpenAI
 from typing import List, Dict, Any
 from sentence_transformers import SentenceTransformer, util
+from utils.metrics import (
+    compute_bleu,
+    compute_rouge_l,
+    compute_bertscore,
+    compute_gpt_metric
+)
 
 class ConversationEvaluator:
     def __init__(self, client: Any, model: str):
@@ -33,7 +39,43 @@ class ConversationEvaluator:
         except Exception as e:
             print("LLM evaluation failed:", e)
             return False
+        
+    def predict_partner_reason(self, 
+                               partner_message: str, 
+                               transcript: List[str]) -> str:
 
+        prompt = self.evaluation_template["Partner_Reason_Query"].format(
+            partner_message=partner_message,
+            transcript="\n".join(transcript)
+        )
+
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.7
+            )
+            prediction = response.choices[0].message.content.strip()
+            return prediction
+        except Exception as e:
+            print("Failed to generate predicted reason:", e)
+            return ""
+        
+    def evaluate_reason_understanding(self,
+                                    predicted_reason: str,
+                                    true_reason: str,
+                                    metric: str = "bert") -> float:
+        try:
+            bleu = round(compute_bleu(true_reason, predicted_reason), 3)
+            rouge = round(compute_rouge_l(true_reason, predicted_reason), 3)
+            bertscore = round(compute_bertscore(true_reason, predicted_reason), 3)
+
+            return {'bleu': bleu, 'rouge': rouge, 'bertscore': bertscore}
+
+        except Exception as e:
+            print(f"Reason understanding evaluation failed ({metric}):", e)
+            return 0.0
+        
     def count_turns(self, conversation: List[str]) -> int:
         return len(conversation)
 

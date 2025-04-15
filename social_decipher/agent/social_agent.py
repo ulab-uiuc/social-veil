@@ -27,7 +27,6 @@ class SocialAgent(Agent):
             max_prompt_tokens=25000,
         )
 
-    
     def set_instruction(self, 
                         env: Environment_Profile, 
                         profile: Agent_Profile,
@@ -41,22 +40,23 @@ class SocialAgent(Agent):
         env_dict = env.env
 
         if agent_role == 0:
-            agent_role_1 = env_dict["agent_goals"][0]
-            agent_role_2 = env_dict["agent_goals"][1]
+            agent_goal = env_dict["agent_goals"][0]
+            partner_goal = env_dict["agent_goals"][1]
+            agent_reason = env_dict["agent_reasons"][0]
         else:
-            agent_role_1 = env_dict["agent_goals"][1]
-            agent_role_2 = env_dict["agent_goals"][0]
+            agent_goal = env_dict["agent_goals"][1]
+            partner_goal = env_dict["agent_goals"][0]
+            agent_reason = env_dict["agent_reasons"][1]
 
         merged = {
             **profile_dict,
             "scenario": env_dict["scenario"],
-            "agent_goal_1": agent_role_1,
-            "agent_goal_2": agent_role_2,
-            "agent_goal": env_dict["agent_goals"][agent_role],
+            "agent_goal": agent_goal,
+            "partner_goal": partner_goal,
+            "agent_reason": agent_reason
         }
 
-        instruction = template_sections["agent_profile"] + "\n\n" \
-                    + template_sections["profile_description"] + "\n\n" \
+        instruction = template_sections["profile_description"] + "\n\n" \
                     + template_sections["social_task_instructions"]
 
         for key, value in merged.items():

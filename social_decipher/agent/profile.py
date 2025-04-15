@@ -31,10 +31,12 @@ class Environment_Profile():
     def __init__(self,
                  scenario: str,
                  agent_goals: List[str],
+                 agent_reasons: List[str],
             
                 ):
         
         self.env = {
             'scenario': scenario,
-            'agent_goals': agent_goals
+            'agent_goals': agent_goals,
+            'agent_reasons': agent_reasons
         }
