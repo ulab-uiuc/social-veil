@@ -1,6 +1,7 @@
 import json
 import os
 import random
+import argparse
 
 from utils.plot import plot_reasoning_scores
 
@@ -20,7 +21,8 @@ def simulate_conversation(personA: Agent,
                           num_turns: int, 
                           agent_goals: List[str],
                           agent_reasons: List[str],
-                          evaluator: ConversationEvaluator) -> None:
+                          evaluator: ConversationEvaluator,
+                          encryption_enabled: bool = True) -> None:
     
     agency = Agency([personA, 
                     [personA,personB], 
@@ -31,18 +33,21 @@ def simulate_conversation(personA: Agent,
                     max_prompt_tokens=3000,
     )
 
+
     conversation_log = []
     tom_scores = []
 
     personA.set_agency(agency)
     personB.set_agency(agency)
 
-    encryption = MappingEncryption(key=random.randint(1, 100))
-    personA.set_encryption(encryption)
-    personB.set_encryption(encryption)
+    if encryption_enabled:
+        encryption = MappingEncryption(key=random.randint(1, 100))
+        personA.set_encryption(encryption)
+        personB.set_encryption(encryption)
 
     personA_message = personA.act(message=None, initial=True)
     conversation_log.append(f"{personA.name}: {personA.log[-1]['response_raw']}")
+
 
     for num in range(num_turns):
         print('\n')
@@ -54,24 +59,17 @@ def simulate_conversation(personA: Agent,
         personA_message = personA.act(personB_response)
         conversation_log.append(f"{personA.name}: {personA.log[-1]['response_raw']}")
 
-        #### EVALUATE WHETHER AGENTS UNDERSTAND PARTNER'S REASONS ####
-        predicted_by_A = evaluator.predict_partner_reason(
-            partner_message=personB.log[-1]['response_raw'],
-            transcript=conversation_log
-        )
-        score_by_A = evaluator.evaluate_reason_understanding(
-            predicted_reason=predicted_by_A,
-            true_reason=agent_reasons[1]
-        )
+        predicted_by_A, score_by_A = evaluator.evaluate_reason_prediction(
+                                                partner_message=personB.log[-1]['response_raw'],
+                                                transcript=conversation_log,
+                                                true_reason=agent_reasons[1]
+                                            )
 
-        predicted_by_B = evaluator.predict_partner_reason(
-            partner_message=personA.log[-1]['response_raw'],
-            transcript=conversation_log
-        )
-        score_by_B = evaluator.evaluate_reason_understanding(
-            predicted_reason=predicted_by_B,
-            true_reason=agent_reasons[0]
-        )
+        predicted_by_B, score_by_B = evaluator.evaluate_reason_prediction(
+                                                partner_message=personA.log[-1]['response_raw'],
+                                                transcript=conversation_log,
+                                                true_reason=agent_reasons[0]
+                                            )
 
         tom_scores.append({
             "round": num + 1,
@@ -92,6 +90,11 @@ def simulate_conversation(personA: Agent,
         #     print(f"✅ Agents signaled task completion at round {num+1}. Stopping early.")
         # break
 
+    # save conversation log
+    with open("conversation_log.txt", "w") as f:
+        for line in conversation_log:
+            f.write(line + "\n")
+            
     plot_reasoning_scores(
         tom_scores=tom_scores,
         agent_names=[personA.name, personB.name],
@@ -100,15 +103,31 @@ def simulate_conversation(personA: Agent,
 
     eval_result = evaluator.evaluate_conversation(conversation_log, agent_goals)
     print("Conversation Evaluation Results:")
-    print(f"Number of turns: {eval_result['num_turns']}")
     print(f"Agent 1 Similarity: {eval_result['agent_1_similarity']}")
     print(f"Agent 2 Similarity: {eval_result['agent_2_similarity']}")
     print(f"LLM Success: {eval_result['llm_success']}")
-    
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Run social agent simulation")
+    parser.add_argument(
+        "--encryption",
+        action="store_true",
+        help="Enable encryption between agents"
+    )
+    parser.add_argument(
+        "--model",
+        type=str,
+        default= "gpt-4o",
+        help="Enable encryption between agents"
+    )
+    return parser.parse_args()
+
 def main():
-    # Create agent profiles
+    args = parse_args()
+
     client = OpenAI()
-    model = "gpt-4"
+    model = args.model
 
     profile_a = Agent_Profile(
         first_name="Alex",
@@ -129,8 +148,8 @@ def main():
         gender="Non-binary",
         gender_pronoun="they/them",
         occupation="Therapist",
-        public_info="Very empathetic and calm",
-        personality_and_values="Empathetic, listener, emotionally intelligent",
+        public_info="Calm",
+        personality_and_values="Thoughtful, assertive, values balanced conversations",
         model_id="gpt-4"
     )
 
@@ -163,7 +182,14 @@ def main():
     
     evaluator = ConversationEvaluator(client, model)
 
-    simulate_conversation(agent1, agent2, 10, agent_goals, agent_reasons, evaluator)
+    simulate_conversation(agent1, 
+                          agent2, 
+                          10, 
+                          agent_goals, 
+                          agent_reasons, 
+                          evaluator,
+                          args.encryption
+                        )
 
 if __name__ == "__main__":
     main()

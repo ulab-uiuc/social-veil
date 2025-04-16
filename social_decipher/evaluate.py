@@ -40,9 +40,10 @@ class ConversationEvaluator:
             print("LLM evaluation failed:", e)
             return False
         
-    def predict_partner_reason(self, 
-                               partner_message: str, 
-                               transcript: List[str]) -> str:
+    def evaluate_reason_prediction(self,
+                                partner_message: str,
+                                transcript: List[str],
+                                true_reason: str) -> Dict[str, Any]:
 
         prompt = self.evaluation_template["Partner_Reason_Query"].format(
             partner_message=partner_message,
@@ -55,30 +56,26 @@ class ConversationEvaluator:
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.7
             )
-            prediction = response.choices[0].message.content.strip()
-            return prediction
-        except Exception as e:
-            print("Failed to generate predicted reason:", e)
-            return ""
-        
-    def evaluate_reason_understanding(self,
-                                    predicted_reason: str,
-                                    true_reason: str,
-                                    metric: str = "bert") -> float:
-        try:
+            predicted_reason = response.choices[0].message.content.strip()
+
             bleu = round(compute_bleu(true_reason, predicted_reason), 3)
             rouge = round(compute_rouge_l(true_reason, predicted_reason), 3)
             bertscore = round(compute_bertscore(true_reason, predicted_reason), 3)
 
-            return {'bleu': bleu, 'rouge': rouge, 'bertscore': bertscore}
+            return predicted_reason, {
+                "bleu": bleu,
+                "rouge": rouge,
+                "bertscore": bertscore
+            }
 
         except Exception as e:
-            print(f"Reason understanding evaluation failed ({metric}):", e)
-            return 0.0
+            print("Failed to evaluate reason prediction:", e)
+            return "", {
+                "bleu": 0.0,
+                "rouge": 0.0,
+                "bertscore": 0.0
+            }
         
-    def count_turns(self, conversation: List[str]) -> int:
-        return len(conversation)
-
     def compute_goal_similarity(self, conversation: List[str], agent_goals: List[str]) -> Dict[str, float]:
         sim_scores = {}
         if len(conversation) < 2:
@@ -120,12 +117,10 @@ class ConversationEvaluator:
             print("LLM task success evaluation failed:", e)
 
     def evaluate_conversation(self, conversation: List[str], agent_goals: List[str]) -> Dict:
-        turn_count = self.count_turns(conversation)
         similarity = self.compute_goal_similarity(conversation, agent_goals)
         llm_success = self.check_llm_task_success(conversation, agent_goals)
 
         return {
-            "num_turns": turn_count,
             "agent_1_similarity": similarity["agent_1_sim"],
             "agent_2_similarity": similarity["agent_2_sim"],
             "llm_success": llm_success

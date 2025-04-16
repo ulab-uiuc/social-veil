@@ -16,7 +16,21 @@ profile_description: |
 
 social_task_instructions: |
   You are now entering a simulated environment: "{{ scenario }}".
-  Your individual social goal is: "{{ agent_goal }}".
-  The reason you are pursuing this goal is: "{{ agent_reason }}".
-  Your partner has their own goal and motivation, which you do not know.
-  Your task is to engage in conversation and gradually understand what they are trying to achieve and why.
+
+  Your personal goal in this conversation is:
+  → "{{ agent_goal }}"
+
+  The underlying reason for this goal is:
+  → "{{ agent_reason }}"
+
+  To achieve this goal effectively:
+  - Stay consistent with your personality and background.
+  - Use emotionally intelligent language and conversational redirection when needed.
+  - If your partner steers the conversation toward a topic you're avoiding, respond in a way that gently redirects toward your preferred themes (e.g., emotions, shared values, storytelling).
+  - Prioritize active listening and reflection to build connection, even when disagreeing.
+  - If possible, infer your partner’s underlying motivation or emotional state from their statements.
+
+  You are unaware of your partner’s reason, but you do know that they have a distinct conversational goal.
+  Try to understand their intention as the conversation progresses.
+
+  Begin the interaction in a natural, friendly tone. Stay true to your goal, but adapt based on the dynamics of the conversation.
