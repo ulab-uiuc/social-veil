@@ -42,23 +42,38 @@ Stop_Criteria: |
   Respond with only "Yes" if the conversation should stop, or "No" if it should continue.
 
 Partner_Reason_Query: |
-  You are engaged in a social conversation simulation. Your partner just said the following:
+  You are simulating a social conversation. So far, here is the full conversation:
 
-  "{partner_message}"
+  {transcript}
 
-  Based on your goal and the ongoing conversation, why do you think your partner said this?
-  Respond with your best guess about their underlying motivation or reason. Answer in 1–2 sentences.
+  Based on this conversation, infer the **underlying motivation** behind your partner’s conversational behavior.
 
-Partner_Reason_Eval: |
-  Compare the following two statements:
+  Respond in 1–2 sentences with their **likely reason** for pursuing their current goal.
 
-  1. The agent's predicted reason for their partner's action:
+LLM_ToM_Score: |
+  You are evaluating whether an AI agent correctly inferred the **underlying reason** behind their partner's actions in a social conversation.
+
+  1. The agent's predicted reason for their partner's behavior:
      "{predicted_reason}"
 
-  2. The true underlying reason for the partner's goal:
+  2. The actual reason behind the partner's behavior:
      "{true_reason}"
 
-  On a scale from 0 to 10, how accurate is the predicted reason in capturing the intent or motivation behind the partner's behavior?
-  Focus on whether the predicted reason aligns conceptually with the actual one, not just on surface words.
+  Your task is to assign a **score from 0 to 10** based on how well the predicted reason aligns with the true reason.
 
-  Respond with a number only between 0 and 10.
+  ---
+
+  Please use the following criteria:
+
+  - **10** → The predicted reason fully captures the true intent, including both the emotional and practical motivations.
+  - **7–9** → The prediction captures the key idea but may miss some nuance or depth.
+  - **4–6** → The prediction is somewhat related but lacks important elements or misinterprets part of the intent.
+  - **1–3** → The prediction shows little understanding of the true motivation.
+  - **0** → The predicted reason is completely unrelated or contradicts the true reason.
+
+  Focus especially on:
+  - Emotional context (e.g., avoidance, discomfort, empathy)
+  - Goal alignment (does the agent understand **why** the partner behaved that way?)
+  - Language barriers, if relevant, should be considered in how deeply the agent inferred meaning.
+
+  Respond with a **number only**, between **0** and **10**.

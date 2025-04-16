@@ -35,6 +35,7 @@ def simulate_conversation(personA: Agent,
 
 
     conversation_log = []
+    predict_reason_log = []
     tom_scores = []
 
     personA.set_agency(agency)
@@ -70,18 +71,25 @@ def simulate_conversation(personA: Agent,
                                                 transcript=conversation_log,
                                                 true_reason=agent_reasons[0]
                                             )
+        
+        predict_reason_log.append({
+            personA.name: predicted_by_A,
+            personB.name: predicted_by_B,
+        })
 
         tom_scores.append({
             "round": num + 1,
             personA.name: {
                 "bleu": score_by_A['bleu'],
                 "rouge": score_by_A['rouge'],
-                "bertscore": score_by_A['bertscore']
+                "bertscore": score_by_A['bertscore'],
+                "llmscore": score_by_A['llmscore']
             },
             personB.name: {
                 "bleu": score_by_B['bleu'],
                 "rouge": score_by_B['rouge'],
-                "bertscore": score_by_B['bertscore']
+                "bertscore": score_by_B['bertscore'],
+                "llmscore": score_by_B['llmscore']
             }
         })
 
@@ -94,7 +102,11 @@ def simulate_conversation(personA: Agent,
     with open("conversation_log.txt", "w") as f:
         for line in conversation_log:
             f.write(line + "\n")
-            
+
+    # save reason prediction log
+    with open("reason_prediction_log.json", "w") as f:
+        json.dump(predict_reason_log, f, indent=2)
+
     plot_reasoning_scores(
         tom_scores=tom_scores,
         agent_names=[personA.name, personB.name],

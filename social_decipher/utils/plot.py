@@ -2,10 +2,18 @@ import matplotlib.pyplot as plt
 from typing import List, Dict
 
 def plot_reasoning_scores(tom_scores: List[Dict], agent_names: List[str], save_path: str = None):
-    metrics = ['bleu', 'rouge', 'bertscore']
-    rounds = [score["round"] for score in tom_scores]
+    metrics = ['bleu', 'rouge', 'bertscore', 'llmscore']
+    metric_titles = {
+        'bleu': "BLEU",
+        'rouge': "ROUGE-L",
+        'bertscore': "BERTScore",
+        'llmscore': "LLM-Based ToM Score"
+    }
 
-    fig, axes = plt.subplots(1, 3, figsize=(18, 5), sharex=True)
+    rounds = [score["round"] for score in tom_scores]
+    fig, axes = plt.subplots(2, 2, figsize=(14, 8), sharex=True)
+
+    axes = axes.flatten()
 
     for i, metric in enumerate(metrics):
         ax = axes[i]
@@ -18,7 +26,7 @@ def plot_reasoning_scores(tom_scores: List[Dict], agent_names: List[str], save_p
                 marker='o',
                 linewidth=2
             )
-        ax.set_title(metric.capitalize(), fontsize=14)
+        ax.set_title(metric_titles[metric], fontsize=14)
         ax.set_xlabel("Conversation Round", fontsize=12)
         ax.set_ylabel("Score (0–10)", fontsize=12)
         ax.grid(True, linestyle='--', alpha=0.6)
