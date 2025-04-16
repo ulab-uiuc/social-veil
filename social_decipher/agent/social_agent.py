@@ -83,7 +83,8 @@ class SocialAgent(Agent):
             print(f"**{self.name} INITIAL RESPONSE: {response}")
 
             encrypted_response = self.encryption(response) if self.encryption else response
-            print(f"**{self.name} ENCRYPTED RESPONSE: {encrypted_response}")
+            if self.encryption is not None:
+                print(f"**{self.name} ENCRYPTED RESPONSE: {encrypted_response}")
             self.log.append({
                 "initial": True,
                 "response_raw": response,
@@ -101,7 +102,8 @@ class SocialAgent(Agent):
         print(f"**{self.name} ORIGINAL RESPONSE: {response}")
 
         encrypted_response = self.encryption(response) if self.encryption else response
-        print(f"**{self.name} ENCRYPTED RESPONSE: {encrypted_response}")
+        if self.encryption is not None:
+            print(f"**{self.name} ENCRYPTED RESPONSE: {encrypted_response}")
 
         self.log.append({
             "received_raw": received,
@@ -109,7 +111,6 @@ class SocialAgent(Agent):
             "response_raw": response,
             "response_encrypted": encrypted_response
         })
-
 
         return encrypted_response
         
