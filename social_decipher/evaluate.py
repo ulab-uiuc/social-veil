@@ -61,11 +61,17 @@ class ConversationEvaluator:
             bleu = round(compute_bleu(true_reason, predicted_reason), 3)
             rouge = round(compute_rouge_l(true_reason, predicted_reason), 3)
             bertscore = round(compute_bertscore(true_reason, predicted_reason), 3)
+            llmscore = float(compute_gpt_metric(true_reason, 
+                                                predicted_reason, 
+                                                self.evaluation_template,
+                                                self.client,
+                                                self.model))
 
             return predicted_reason, {
                 "bleu": bleu,
                 "rouge": rouge,
-                "bertscore": bertscore
+                "bertscore": bertscore,
+                "llmscore": llmscore
             }
 
         except Exception as e:
@@ -73,7 +79,8 @@ class ConversationEvaluator:
             return "", {
                 "bleu": 0.0,
                 "rouge": 0.0,
-                "bertscore": 0.0
+                "bertscore": 0.0,
+                "llmscore": 0.0
             }
         
     def compute_goal_similarity(self, conversation: List[str], agent_goals: List[str]) -> Dict[str, float]:

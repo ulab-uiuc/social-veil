@@ -6,6 +6,7 @@ from typing import List
 from nltk.translate.bleu_score import SmoothingFunction, sentence_bleu
 from rouge_score import rouge_scorer
 from bert_score import score as bert_score
+from typing import Dict, Any
 
 nltk.download('punkt')
 
@@ -50,5 +51,27 @@ def compute_bertscore(reference: str, hypothesis: str) -> float:
         return 0.0
 
 
-def compute_gpt_metric(reference: str, hypothesis: str) -> float:
-    pass
+def compute_gpt_metric(reference: str, 
+                       hypothesis: str, 
+                       template: Dict[str, str], 
+                       client: Any, 
+                       model: str) -> float:
+    
+    criteria = template["LLM_ToM_Score"].format(
+        true_reason = reference,
+        predicted_reason = hypothesis,
+    )
+
+    try:
+        response = client.chat.completions.create(
+            model= model,
+            messages=[{"role": "user", "content": criteria}],
+            temperature=0
+        )
+        result = response.choices[0].message.content.strip()
+        return result
+    
+    except Exception as e:
+        print("LLM evaluation failed:", e)
+        return False
+    
