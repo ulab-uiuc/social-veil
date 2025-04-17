@@ -44,7 +44,9 @@ def simulate_conversation(
         max_prompt_tokens=3000,
     )
 
+
     conversation_log = []
+    encrypted_conversation_log = []
     predict_reason_log = []
     tom_scores = []
     mcq_logs = []
@@ -53,9 +55,10 @@ def simulate_conversation(
     personB.set_agency(agency)
 
     if encryption_enabled:
-        encryption = MappingEncryption(key=random.randint(1, 100))
-        personA.set_encryption(encryption)
-        personB.set_encryption(encryption)
+        encryption1 = MappingEncryption(key=random.randint(1, 100))
+        encryption2 = MappingEncryption(key=random.randint(1, 100))
+        personA.set_encryption(encryption1)
+        personB.set_encryption(encryption2)
 
     personA_message = personA.act(message=None, initial=True)
     conversation_log.append(f"{personA.name}: {personA.log[-1]['response_raw']}")
@@ -66,16 +69,21 @@ def simulate_conversation(
 
         personB_response = personB.act(personA_message)
         conversation_log.append(f"{personB.name}: {personB.log[-1]['response_raw']}")
-
-        goal_mcq_A = evaluator.predict_mcq_answer(
-            transcript=conversation_log,
-            mcqa=agent_goals_mcqas[1],
-            prompt_type="goal"
+        encrypted_conversation_log.append(
+            f"{personB.name}: {personB.log[-1]['response_encrypted']}"
         )
-        reason_mcq_A = evaluator.predict_mcq_answer(
-            transcript=conversation_log,
-            mcqa=agent_reasons_mcqas[1],
-            prompt_type="reason"
+
+        goal_mcq_A = personB.predict_mcq_answer(
+            transcript=encrypted_conversation_log,
+            mcqa=agent_goals_mcqas[0],
+            test_prompt = evaluator.evaluation_template,
+            task_type="goal"
+        )
+        reason_mcq_A = personB.predict_mcq_answer(
+            transcript=encrypted_conversation_log,
+            mcqa=agent_reasons_mcqas[0],
+            test_prompt = evaluator.evaluation_template,
+            task_type="reason"
         )
 
         # predicted_by_A, score_by_A = evaluator.evaluate_reason_prediction(
@@ -88,16 +96,20 @@ def simulate_conversation(
 
         personA_message = personA.act(personB_response)
         conversation_log.append(f"{personA.name}: {personA.log[-1]['response_raw']}")
-
-        goal_mcq_B = evaluator.predict_mcq_answer(
-            transcript=conversation_log,
-            mcqa=agent_goals_mcqas[0],
-            prompt_type="goal"
+        encrypted_conversation_log.append(
+            f"{personA.name}: {personA.log[-1]['response_encrypted']}"
         )
-        reason_mcq_B = evaluator.predict_mcq_answer(
-            transcript=conversation_log,
-            mcqa=agent_reasons_mcqas[0],
-            prompt_type="reason"
+        goal_mcq_B = personA.predict_mcq_answer(
+            transcript=encrypted_conversation_log,
+            mcqa=agent_goals_mcqas[1],
+            test_prompt = evaluator.evaluation_template,
+            task_type="goal"
+        )
+        reason_mcq_B = personA.predict_mcq_answer(
+            transcript=encrypted_conversation_log,
+            mcqa=agent_reasons_mcqas[1],
+            test_prompt = evaluator.evaluation_template,
+            task_type="reason"
         )
 
         # predicted_by_B, score_by_B = evaluator.evaluate_reason_prediction(
@@ -179,12 +191,16 @@ def parse_args() -> argparse.Namespace:
         "--encryption", action="store_true", help="Enable encryption between agents"
     )
     parser.add_argument(
+        "--action", action="store_true"
+    )
+    parser.add_argument(
         "--model", type=str, default="gpt-4o"
     )
     parser.add_argument(
         "--max_round", type=int, default=10, help="Max conversation rounds"
     )
     return parser.parse_args()
+ 
 
 def main():
     args = parse_args()
@@ -195,6 +211,9 @@ def main():
 
     generator = EnvironmentGenerator(client)
     environment = generator.generate_environments(num_scenarios=1)[0]
+
+    print(environment.env)
+
 
     profile_a = AgentProfile(
         first_name="Alex",

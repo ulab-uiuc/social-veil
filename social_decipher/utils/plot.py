@@ -40,10 +40,6 @@ def plot_reasoning_scores(
 
 
 def plot_mcq_scores(mcq_scores: List[Dict], agent_names: List[str], save_path: str = None):
-    """
-    Plot the confidence scores for MCQ goal and reason predictions over conversation rounds.
-    Each subplot shows the confidence trend for one MCQ type per agent.
-    """
     rounds = [entry["round"] for entry in mcq_scores]
     fig, axes = plt.subplots(2, 2, figsize=(14, 8), sharex=True)
 
@@ -57,21 +53,34 @@ def plot_mcq_scores(mcq_scores: List[Dict], agent_names: List[str], save_path: s
                 entry.get(f"{agent}_{mcq_type}", {}).get("correct", False)
                 for entry in mcq_scores
             ]
-            axes[i][j].plot(rounds, confidences, label="Confidence", marker="o", color="blue")
-            axes[i][j].scatter(
-                rounds,
-                confidences,
-                c=["green" if c else "red" for c in corrects],
-                s=100,
-                label="Correctness",
-                alpha=0.6,
-                edgecolors="black"
-            )
-            axes[i][j].set_title(f"{agent} - {mcq_type.replace('_', ' ').title()}")
-            axes[i][j].set_ylim(0, 1.05)
-            axes[i][j].set_ylabel("Confidence")
-            axes[i][j].grid(True)
-            axes[i][j].legend()
+
+            ax = axes[i][j]
+            ax.plot(rounds, confidences, label="Confidence", color="blue", linewidth=2)
+
+            for r, conf, correct in zip(rounds, confidences, corrects):
+                marker_style = 'o' if correct else 'x'
+                ax.scatter(
+                    r,
+                    conf,
+                    marker=marker_style,
+                    color="black",
+                    s=100,
+                    alpha=0.8
+                )
+
+            ax.set_title(f"{agent} - {mcq_type.replace('_', ' ').title()}")
+            ax.set_ylim(0, 1.05)
+            ax.set_ylabel("Confidence")
+            ax.grid(True)
+
+            # Add custom legend for correctness
+            handles = [
+                plt.Line2D([0], [0], marker='o', color='w', label='Correct',
+                           markerfacecolor='black', markersize=10),
+                plt.Line2D([0], [0], marker='x', color='w', label='Incorrect',
+                           markeredgecolor='black', markersize=10)
+            ]
+            ax.legend(handles=handles, loc="upper right", fontsize=9)
 
     axes[1][0].set_xlabel("Conversation Round")
     axes[1][1].set_xlabel("Conversation Round")

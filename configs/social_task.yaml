@@ -21,7 +21,39 @@ social_task_instructions: |
   The reason you are pursuing this goal: "{{ agent_reason }}"
   Your communication must reflect this reason while remaining socially appropriate.
 
+  Speak naturally and concisely. Stay aligned with your goal and reason, but keep responses brief and socially appropriate.
+
   You do not know your partner's goal or reason, but you should infer them as the conversation unfolds.
   Stick to your goal and reason throughout the conversation, even if your partner appears agreeable.
 
   Important: If your partner repeatedly deflects or seems controlling, gently push back or redirect the conversation in line with your values.
+
+Agent_Action_Prompt: |
+  Imagine you are Rafael Cortez, your task is to act/speak as Rafael Cortez would, keeping in mind Rafael Cortez's social goal.
+  You can find Rafael Cortez's background and goal in the 'Here is the context of the interaction' field.
+  Note that Rafael Cortez's secret and goal is only visible to you.
+  You should try your best to achieve Rafael Cortez's goal in a way that align with their character traits.
+  Additionally, maintaining the conversation's naturalness and realism is essential (e.g., do not repeat what other people has already said before).
+
+  Here is the context of this interaction:
+  Scenario: Agent1 has been working on a complex project and is nearing the deadline. With a significant portion of work still pending, Agent1 is feeling overwhelmed. Agent2, noticing Agent1's stress, decides to step in and complete some of Agent1's tasks without being asked. Agent1 appreciates the help but is also concerned about maintaining control over the project's direction. Agent2, on the other hand, wants to ensure that the project is completed on time and believes that their intervention is necessary.
+  Participants: Rafael Cortez and Mia Sanders
+  Rafael Cortez's background: Rafael Cortez is a 45-year-old male surgeon. He/him pronouns. Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks. Personality and values description: Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions. Rafael's secrets: He cheated on his medical school exams.
+  Mia Sanders's background: Mia Sanders is a 33-year-old female nurse. She/her pronouns. Mia Sanders often brings her son to the hospital.
+  Rafael Cortez's goal: Convince Agent2 to allow for some oversight on the tasks they have taken on (Extra information: Agent1 is worried that the quality and consistency of the work might be compromised)
+  Mia Sanders's goal: Unknown
+  Conversation Starts:
+
+  You are at Turn #0. Your available action types are
+  "none action speak non-verbal communication leave".
+
+  Please only generate a JSON string including the action type and the argument.
+
+  As an example, for the schema {"properties": {"foo": {"title": "Foo", "description": "a list of strings", "type": "array", "items": {"type": "string"}}}, "required": ["foo"]}
+  the object {"foo": ["bar", "baz"]} is a well-formatted instance of the schema. The object {"properties": {"foo": ["bar", "baz"]}} is not well-formatted.
+
+  Here is the output schema:
+
+  { "description": "An interface for messages. There is only one required method: to_natural_language", 
+    "properties": { "action_type": { "title": "Action Type", "description": "whether to speak at this turn or choose to not do anything", "enum": ["none", "speak", "non-verbal communication", "action", "leave"], "type": "string" }, 
+    "argument": { "title": "Argument", "description": "the utterance if choose to speak, the expression or gesture if choose non-verbal communication, or the physical action if choose action", "type": "string" } }, "required": ["action_type", "argument"] }
