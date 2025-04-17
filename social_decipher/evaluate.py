@@ -3,7 +3,8 @@ from typing import Any
 
 import yaml
 from sentence_transformers import SentenceTransformer, util
-from utils.metrics import (
+
+from .utils.metrics import (
     compute_bertscore,
     compute_bleu,
     compute_gpt_metric,

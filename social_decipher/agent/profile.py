@@ -22,17 +22,3 @@ class Agent_Profile:
             "personality_and_values": personality_and_values,
             "model_id": model_id,
         }
-
-
-class Environment_Profile:
-    def __init__(
-        self,
-        scenario: str,
-        agent_goals: list[str],
-        agent_reasons: list[str],
-    ):
-        self.env = {
-            "scenario": scenario,
-            "agent_goals": agent_goals,
-            "agent_reasons": agent_reasons,
-        }

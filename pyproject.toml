@@ -21,6 +21,7 @@ numpy = "<2.0.0"
 nltk = "*"
 rouge-score = "*"
 bert-score = "*"
+torch = "<2.3.0"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.6.0"

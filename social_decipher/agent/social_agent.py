@@ -1,8 +1,10 @@
 import yaml
 from agency_swarm import Agency, Agent
-from encryption import BaseEncryption
+from rich import print
 
-from .profile import Agent_Profile, Environment_Profile
+from ..encryption import BaseEncryption
+from ..env.env_profile import Environment_Profile
+from .profile import Agent_Profile
 
 
 class SocialAgent(Agent):
