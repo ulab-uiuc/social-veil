@@ -44,14 +44,14 @@ Stop_Criteria: |
 Partner_Reason_Query: |
   You are an agent who are engaging in a simulated social environment.
 
-  Your goal: { agent_goal }
-  Your reason: { agent_reason }
+  Your goal: {agent_goal}
+  Your reason: {agent_reason}
 
   Transcript so far:
-  { transcript }
+  {transcript}
 
   Your partner just said:
-  { partner_message }
+  {partner_message}
 
   Based on their responses throughout the conversation, what do you believe is the deeper reason behind their communication style or goal?
 

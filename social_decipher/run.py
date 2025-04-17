@@ -57,9 +57,6 @@ def simulate_conversation(personA: Agent,
         personB_response = personB.act(personA_message)
         conversation_log.append(f"{personB.name}: {personB.log[-1]['response_raw']}")
 
-        personA_message = personA.act(personB_response)
-        conversation_log.append(f"{personA.name}: {personA.log[-1]['response_raw']}")
-
         predicted_by_A, score_by_A = evaluator.evaluate_reason_prediction(
                                                 agent_goal = agent_goals[0],
                                                 agent_reason = agent_reasons[0],
@@ -67,6 +64,10 @@ def simulate_conversation(personA: Agent,
                                                 transcript=conversation_log,
                                                 true_reason=agent_reasons[1]
                                             )
+        
+        personA_message = personA.act(personB_response)
+        conversation_log.append(f"{personA.name}: {personA.log[-1]['response_raw']}")
+
 
         predicted_by_B, score_by_B = evaluator.evaluate_reason_prediction(
                                                 agent_goal = agent_goals[1],

@@ -53,7 +53,7 @@ class ConversationEvaluator:
             partner_message=partner_message,
             transcript="\n".join(transcript)
         )
-
+        
         try:
             response = self.client.chat.completions.create(
                 model=self.model,
