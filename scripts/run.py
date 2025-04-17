@@ -12,6 +12,7 @@ from social_decipher.encryption import MappingEncryption
 from social_decipher.environment.env_profile import EnvironmentProfile
 from social_decipher.evaluate import ConversationEvaluator
 from social_decipher.utils.plot import plot_reasoning_scores
+from social_decipher.environment.env_generator import EnvironmentGenerator
 
 os.environ[
     "OPENAI_API_KEY"
@@ -149,6 +150,9 @@ def main():
     client = OpenAI()
     model = args.model
 
+    generator = EnvironmentGenerator(client)
+    environment = generator.generate_environments(num_scenarios=1)
+
     profile_a = AgentProfile(
         first_name="Alex",
         last_name="Carter",
@@ -158,7 +162,7 @@ def main():
         occupation="Sports Commentator",
         public_info="Always talks about football",
         personality_and_values="Enthusiastic, expressive, goal-driven",
-        model_id="gpt-4",
+        model_id="gpt-4o",
     )
 
     profile_b = AgentProfile(
@@ -170,20 +174,7 @@ def main():
         occupation="Therapist",
         public_info="Calm",
         personality_and_values="Thoughtful, assertive, values balanced conversations",
-        model_id="gpt-4",
-    )
-
-    # Create environment profile
-    environment = EnvironmentProfile(
-        scenario="Two people with different interests meet at a café.",
-        agent_goals=[
-            "Discuss sports news with your conversation partner.",
-            "Avoid talking about sports and steer the conversation toward emotions or personal values.",
-        ],
-        agent_reasons=[
-            "You are passionate about sports and want to share your excitement.",
-            "You dislike talking about sports because the other person always dominates the conversation and you want to redirect.",
-        ],
+        model_id="gpt-4o",
     )
 
     agent_goals = environment.env["agent_goals"]
