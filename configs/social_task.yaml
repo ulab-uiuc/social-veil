@@ -1,4 +1,4 @@
-agent_profile: |
+AgentProfile: |
   name: "{{ first_name }} {{ last_name }}"
   age: {{ age }}
   gender: {{ gender }}

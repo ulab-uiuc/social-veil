@@ -6,10 +6,10 @@ import random
 from agency_swarm import Agency, Agent
 from openai import OpenAI
 
-from social_decipher.agent.profile import Agent_Profile
+from social_decipher.agent.profile import AgentProfile
 from social_decipher.agent.social_agent import SocialAgent
 from social_decipher.encryption import MappingEncryption
-from social_decipher.env.env_profile import Environment_Profile
+from social_decipher.env.env_profile import EnvironmentProfile
 from social_decipher.evaluate import ConversationEvaluator
 from social_decipher.utils.plot import plot_reasoning_scores
 
@@ -149,7 +149,7 @@ def main():
     client = OpenAI()
     model = args.model
 
-    profile_a = Agent_Profile(
+    profile_a = AgentProfile(
         first_name="Alex",
         last_name="Carter",
         age=30,
@@ -161,7 +161,7 @@ def main():
         model_id="gpt-4",
     )
 
-    profile_b = Agent_Profile(
+    profile_b = AgentProfile(
         first_name="Jamie",
         last_name="Rivers",
         age=29,
@@ -174,7 +174,7 @@ def main():
     )
 
     # Create environment profile
-    environment = Environment_Profile(
+    environment = EnvironmentProfile(
         scenario="Two people with different interests meet at a café.",
         agent_goals=[
             "Discuss sports news with your conversation partner.",

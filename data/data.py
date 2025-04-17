@@ -53,18 +53,18 @@ def generate_unique_completions(prompt: str, n: int, output_file: str):
         time.sleep(1)
 
 
-def generate_agent_profiles(num: int, output_file="agent_profiles.json"):
+def generate_AgentProfiles(num: int, output_file="AgentProfiles.json"):
     prompt = generation_prompts["Profile"]
     generate_unique_completions(prompt, num, output_file)
     print(f"✅ Saved {num} unique agent profiles to {output_file}")
 
 
-def generate_environment_profiles(num: int, output_file="environment_profiles.json"):
+def generate_EnvironmentProfiles(num: int, output_file="EnvironmentProfiles.json"):
     prompt = generation_prompts["Environment"]
     generate_unique_completions(prompt, num, output_file)
     print(f"✅ Saved {num} unique environment profiles to {output_file}")
 
 
 if __name__ == "__main__":
-    generate_agent_profiles(num=5)
-    generate_environment_profiles(num=5)
+    generate_AgentProfiles(num=5)
+    generate_EnvironmentProfiles(num=5)

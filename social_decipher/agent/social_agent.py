@@ -3,13 +3,13 @@ from agency_swarm import Agency, Agent
 from rich import print
 
 from ..encryption import BaseEncryption
-from ..env.env_profile import Environment_Profile
-from .profile import Agent_Profile
+from ..env.env_profile import EnvironmentProfile
+from .profile import AgentProfile
 
 
 class SocialAgent(Agent):
     def __init__(
-        self, name, profile: Agent_Profile, env: Environment_Profile, role_num: int
+        self, name, profile: AgentProfile, env: EnvironmentProfile, role_num: int
     ):
         description = ""
         instruction = self.set_instruction(env, profile, role_num)
@@ -29,7 +29,7 @@ class SocialAgent(Agent):
         )
 
     def set_instruction(
-        self, env: Environment_Profile, profile: Agent_Profile, agent_role: int
+        self, env: EnvironmentProfile, profile: AgentProfile, agent_role: int
     ) -> str:
         with open("../configs/social_task.yaml") as template_file:
             template_sections = yaml.safe_load(template_file)

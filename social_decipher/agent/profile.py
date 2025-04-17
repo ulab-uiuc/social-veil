@@ -1,4 +1,4 @@
-class Agent_Profile:
+class AgentProfile:
     def __init__(
         self,
         first_name: str,
