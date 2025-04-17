@@ -3,7 +3,7 @@ from agency_swarm import Agency, Agent
 from rich import print
 
 from ..encryption import BaseEncryption
-from ..env.env_profile import EnvironmentProfile
+from ..environment.env_profile import EnvironmentProfile
 from .profile import AgentProfile
 
 

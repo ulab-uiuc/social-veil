@@ -9,7 +9,7 @@ from openai import OpenAI
 from social_decipher.agent.profile import AgentProfile
 from social_decipher.agent.social_agent import SocialAgent
 from social_decipher.encryption import MappingEncryption
-from social_decipher.env.env_profile import EnvironmentProfile
+from social_decipher.environment.env_profile import EnvironmentProfile
 from social_decipher.evaluate import ConversationEvaluator
 from social_decipher.utils.plot import plot_reasoning_scores
 
