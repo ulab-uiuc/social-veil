@@ -42,13 +42,20 @@ Stop_Criteria: |
   Respond with only "Yes" if the conversation should stop, or "No" if it should continue.
 
 Partner_Reason_Query: |
-  You are simulating a social conversation. So far, here is the full conversation:
+  You are an agent who are engaging in a simulated social environment.
 
-  {transcript}
+  Your goal: "{{ agent_goal }}"
+  Your reason: "{{ agent_reason }}"
 
-  Based on this conversation, infer the **underlying motivation** behind your partner’s conversational behavior.
+  Transcript so far:
+  {{ transcript }}
 
-  Respond in 1–2 sentences with their **likely reason** for pursuing their current goal.
+  Your partner just said:
+  "{{ partner_message }}"
+
+  Based on their responses throughout the conversation, what do you believe is the deeper reason behind their communication style or goal?
+
+  Answer in 1 sentences with the most likely underlying motivation.
 
 LLM_ToM_Score: |
   You are evaluating whether an AI agent correctly inferred the **underlying reason** behind their partner's actions in a social conversation.

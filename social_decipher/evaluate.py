@@ -41,11 +41,15 @@ class ConversationEvaluator:
             return False
         
     def evaluate_reason_prediction(self,
+                                agent_goal: str,
+                                agent_reason: str,
                                 partner_message: str,
                                 transcript: List[str],
                                 true_reason: str) -> Dict[str, Any]:
 
         prompt = self.evaluation_template["Partner_Reason_Query"].format(
+            agent_goal = agent_goal,
+            agent_reason = agent_reason,
             partner_message=partner_message,
             transcript="\n".join(transcript)
         )

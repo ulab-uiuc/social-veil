@@ -61,12 +61,16 @@ def simulate_conversation(personA: Agent,
         conversation_log.append(f"{personA.name}: {personA.log[-1]['response_raw']}")
 
         predicted_by_A, score_by_A = evaluator.evaluate_reason_prediction(
+                                                agent_goal = agent_goals[0],
+                                                agent_reason = agent_reasons[0],
                                                 partner_message=personB.log[-1]['response_raw'],
                                                 transcript=conversation_log,
                                                 true_reason=agent_reasons[1]
                                             )
 
         predicted_by_B, score_by_B = evaluator.evaluate_reason_prediction(
+                                                agent_goal = agent_goals[1],
+                                                agent_reason = agent_reasons[1],
                                                 partner_message=personA.log[-1]['response_raw'],
                                                 transcript=conversation_log,
                                                 true_reason=agent_reasons[0]
