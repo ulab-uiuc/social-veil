@@ -3,6 +3,7 @@ import json
 import os
 import random
 
+
 from agency_swarm import Agency, Agent
 from openai import OpenAI
 
@@ -11,7 +12,9 @@ from social_decipher.agent.social_agent import SocialAgent
 from social_decipher.encryption import MappingEncryption
 from social_decipher.environment.env_generator import EnvironmentGenerator
 from social_decipher.evaluate import ConversationEvaluator
-from social_decipher.utils.plot import plot_reasoning_scores
+from social_decipher.utils.plot import plot_reasoning_scores, plot_mcq_scores
+
+from typing import Dict, List, Any
 
 os.environ[
     "OPENAI_API_KEY"
@@ -22,8 +25,10 @@ def simulate_conversation(
     personA: Agent,
     personB: Agent,
     num_turns: int,
-    agent_goals: list[str],
-    agent_reasons: list[str],
+    agent_goals: List[str],
+    agent_reasons: List[str],
+    agent_goals_mcqas: Dict[str, Any],
+    agent_reasons_mcqas: Dict[str, Any],
     evaluator: ConversationEvaluator,
     encryption_enabled: bool = True,
 ) -> None:
@@ -42,6 +47,7 @@ def simulate_conversation(
     conversation_log = []
     predict_reason_log = []
     tom_scores = []
+    mcq_logs = []
 
     personA.set_agency(agency)
     personB.set_agency(agency)
@@ -61,68 +67,103 @@ def simulate_conversation(
         personB_response = personB.act(personA_message)
         conversation_log.append(f"{personB.name}: {personB.log[-1]['response_raw']}")
 
-        predicted_by_A, score_by_A = evaluator.evaluate_reason_prediction(
-            agent_goal=agent_goals[0],
-            agent_reason=agent_reasons[0],
-            partner_message=personB.log[-1]["response_raw"],
+        goal_mcq_A = evaluator.predict_mcq_answer(
             transcript=conversation_log,
-            true_reason=agent_reasons[1],
+            mcqa=agent_goals_mcqas[1],
+            prompt_type="goal"
         )
+        reason_mcq_A = evaluator.predict_mcq_answer(
+            transcript=conversation_log,
+            mcqa=agent_reasons_mcqas[1],
+            prompt_type="reason"
+        )
+
+        # predicted_by_A, score_by_A = evaluator.evaluate_reason_prediction(
+        #     agent_goal=agent_goals[0],
+        #     agent_reason=agent_reasons[0],
+        #     partner_message=personB.log[-1]["response_raw"],
+        #     transcript=conversation_log,
+        #     true_reason=agent_reasons[1],
+        # )
 
         personA_message = personA.act(personB_response)
         conversation_log.append(f"{personA.name}: {personA.log[-1]['response_raw']}")
 
-        predicted_by_B, score_by_B = evaluator.evaluate_reason_prediction(
-            agent_goal=agent_goals[1],
-            agent_reason=agent_reasons[1],
-            partner_message=personA.log[-1]["response_raw"],
+        goal_mcq_B = evaluator.predict_mcq_answer(
             transcript=conversation_log,
-            true_reason=agent_reasons[0],
+            mcqa=agent_goals_mcqas[0],
+            prompt_type="goal"
+        )
+        reason_mcq_B = evaluator.predict_mcq_answer(
+            transcript=conversation_log,
+            mcqa=agent_reasons_mcqas[0],
+            prompt_type="reason"
         )
 
-        predict_reason_log.append(
-            {
-                personA.name: predicted_by_A,
-                personB.name: predicted_by_B,
-            }
-        )
+        # predicted_by_B, score_by_B = evaluator.evaluate_reason_prediction(
+        #     agent_goal=agent_goals[1],
+        #     agent_reason=agent_reasons[1],
+        #     partner_message=personA.log[-1]["response_raw"],
+        #     transcript=conversation_log,
+        #     true_reason=agent_reasons[0],
+        # )
 
-        tom_scores.append(
-            {
-                "round": num + 1,
-                personA.name: {
-                    "bleu": score_by_A["bleu"],
-                    "rouge": score_by_A["rouge"],
-                    "bertscore": score_by_A["bertscore"],
-                    "llmscore": score_by_A["llmscore"],
-                },
-                personB.name: {
-                    "bleu": score_by_B["bleu"],
-                    "rouge": score_by_B["rouge"],
-                    "bertscore": score_by_B["bertscore"],
-                    "llmscore": score_by_B["llmscore"],
-                },
-            }
-        )
+        # predict_reason_log.append(
+        #     {
+        #         personA.name: predicted_by_A,
+        #         personB.name: predicted_by_B,
+        #     }
+        # )
+
+        # tom_scores.append(
+        #     {
+        #         "round": num + 1,
+        #         personA.name: {
+        #             "bleu": score_by_A["bleu"],
+        #             "rouge": score_by_A["rouge"],
+        #             "bertscore": score_by_A["bertscore"],
+        #             "llmscore": score_by_A["llmscore"],
+        #         },
+        #         personB.name: {
+        #             "bleu": score_by_B["bleu"],
+        #             "rouge": score_by_B["rouge"],
+        #             "bertscore": score_by_B["bertscore"],
+        #             "llmscore": score_by_B["llmscore"],
+        #         },
+        #     }
+        # )
+
+        mcq_logs.append({
+            "round": num + 1,
+            f"{personA.name}_goal_mcq": goal_mcq_A,
+            f"{personA.name}_reason_mcq": reason_mcq_A,
+            f"{personB.name}_goal_mcq": goal_mcq_B,
+            f"{personB.name}_reason_mcq": reason_mcq_B,
+        })
 
         # # each agent should be evaluated whether it has understood reason of partner's message
         # if evaluator.should_stop_conversation(agent_goals, conversation_log):
         #     print(f"✅ Agents signaled task completion at round {num+1}. Stopping early.")
         # break
 
+
     # save conversation log
-    with open("./results/conversation_log.txt", "w") as f:
+    with open("../social_decipher/results/conversation_log.txt", "w") as f:
         for line in conversation_log:
             f.write(line + "\n")
 
     # save reason prediction log
-    with open("./results/reason_prediction_log.json", "w") as f:
-        json.dump(predict_reason_log, f, indent=2)
 
-    plot_reasoning_scores(
-        tom_scores=tom_scores,
+
+    # plot_reasoning_scores(
+    #     tom_scores=tom_scores,
+    #     agent_names=[personA.name, personB.name],
+    #     save_path="./results/reasoning_trends.png",  # You can use None to just show it
+    # )
+    plot_mcq_scores(
+        mcq_scores=mcq_logs,
         agent_names=[personA.name, personB.name],
-        save_path="./results/reasoning_trends.png",  # You can use None to just show it
+        save_path="../social_decipher/results/mcq_trends.png"
     )
 
     eval_result = evaluator.evaluate_conversation(conversation_log, agent_goals)
@@ -138,19 +179,22 @@ def parse_args() -> argparse.Namespace:
         "--encryption", action="store_true", help="Enable encryption between agents"
     )
     parser.add_argument(
-        "--model", type=str, default="gpt-4o", help="Enable encryption between agents"
+        "--model", type=str, default="gpt-4o"
+    )
+    parser.add_argument(
+        "--max_round", type=int, default=10, help="Max conversation rounds"
     )
     return parser.parse_args()
-
 
 def main():
     args = parse_args()
 
     client = OpenAI()
     model = args.model
+    max_round = args.max_round
 
     generator = EnvironmentGenerator(client)
-    environment = generator.generate_environments(num_scenarios=1)
+    environment = generator.generate_environments(num_scenarios=1)[0]
 
     profile_a = AgentProfile(
         first_name="Alex",
@@ -178,6 +222,8 @@ def main():
 
     agent_goals = environment.env["agent_goals"]
     agent_reasons = environment.env["agent_reasons"]
+    agent_goals_mcqas = environment.env["agent_goals_mcqas"]
+    agent_reasons_mcqas = environment.env["agent_reasons_mcqas"]
 
     # Build agents with profiles and environment
     agent1 = SocialAgent(
@@ -197,7 +243,15 @@ def main():
     evaluator = ConversationEvaluator(client, model)
 
     simulate_conversation(
-        agent1, agent2, 10, agent_goals, agent_reasons, evaluator, args.encryption
+        agent1, 
+        agent2, 
+        max_round, 
+        agent_goals, 
+        agent_reasons, 
+        agent_goals_mcqas, 
+        agent_reasons_mcqas, 
+        evaluator, 
+        args.encryption
     )
 
 
