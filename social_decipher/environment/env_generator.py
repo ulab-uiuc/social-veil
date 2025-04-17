@@ -9,8 +9,6 @@ class EnvironmentGenerator:
         self.client = client
         # Using triple braces to escape the JSON braces in the format string
         self.prompt_template = """
-# Social Scenario Generator
-
 Generate a social scenario involving two individuals with different goals and motivations. The scenario should be realistic, specific, and contain enough context to understand the social dynamics.
 
 Important guidelines:
