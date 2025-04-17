@@ -1,6 +1,7 @@
 import yaml
 from agency_swarm import Agency, Agent
 from rich import print
+from typing import Dict, Any
 
 from ..encryption import BaseEncryption
 from ..environment.env_profile import EnvironmentProfile
@@ -24,8 +25,8 @@ class SocialAgent(Agent):
             schemas_folder="./schemas",
             tools=[],
             tools_folder="./tools",
-            temperature=0.3,
-            max_prompt_tokens=25000,
+            temperature=0.2,
+            max_prompt_tokens=50000,
         )
 
     def set_instruction(
@@ -91,6 +92,7 @@ class SocialAgent(Agent):
             encrypted_response = (
                 self.encryption(response) if self.encryption else response
             )
+
             if self.encryption is not None:
                 print(f"**{self.name} ENCRYPTED RESPONSE: {encrypted_response}")
             self.log.append(
@@ -123,8 +125,52 @@ class SocialAgent(Agent):
                 "response_encrypted": encrypted_response,
             }
         )
-
         return encrypted_response
+
+    def predict_mcq_answer(self, 
+                           transcript: list[str], 
+                           mcqa: Dict[str, Any], 
+                           test_prompt: Dict[str, str],
+                           task_type: str) -> Dict[str, Any]:
+        assert self.agency is not None, "Agent must be assigned to an agency before acting."
+        assert task_type in {"goal", "reason"}, "task_type must be 'goal' or 'reason'"
+        
+        if len(transcript) > 6:
+            short_transcript = transcript[-6:]
+        else:
+            short_transcript = transcript
+
+        formatted_options = "\n".join([f"{k}: {v}" for k, v in mcqa["options"].items()])
+        conversation_str = "\n".join(short_transcript)
+
+        prompt = test_prompt[
+            "MCQ_Goal_Prediction_Prompt" if task_type == "goal" else "MCQ_Reason_Prediction_Prompt"
+        ].format(
+            question=mcqa["question"],
+            options=formatted_options,
+            transcript=conversation_str
+        )
+
+        response = self.agency.get_completion(prompt, recipient_agent=self).strip()
+        selected = None
+        confidence = 0.0
+        try:
+            for line in response.split("\n"):
+                if line.lower().startswith("selected:"):
+                    selected = line.split(":")[1].strip().upper()
+                elif line.lower().startswith("confidence:"):
+                    confidence = float(line.split(":")[1].strip())
+        except Exception as e:
+            print(f"Error parsing MCQ response from agent {self.name}: {e}")
+
+        return {
+            "selected": selected if selected in mcqa["options"] else "Invalid",
+            "confidence": max(0.0, min(confidence, 1.0)),  # clamp between 0-1
+            "correct": selected == mcqa["correct_answer"]
+        }
+
+
+
 
     def response_validator(self, message):
         return message
