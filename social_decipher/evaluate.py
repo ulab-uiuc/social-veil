@@ -1,5 +1,5 @@
 import json
-from typing import Any
+from typing import Any, Dict
 
 import yaml
 from sentence_transformers import SentenceTransformer, util
@@ -10,6 +10,8 @@ from .utils.metrics import (
     compute_gpt_metric,
     compute_rouge_l,
 )
+
+from typing import List
 
 
 class ConversationEvaluator:
@@ -148,3 +150,45 @@ class ConversationEvaluator:
             "agent_2_similarity": similarity["agent_2_sim"],
             "llm_success": llm_success,
         }
+
+    def predict_mcq_answer(
+        self,
+        transcript: List[str],
+        mcqa: Dict[str, Any],
+        prompt_type: str = "goal"  # or "reason"
+    ) -> Dict[str, Any]:
+        prompt_template_key = (
+            "MCQ_Goal_Prediction_Prompt" if prompt_type == "goal" else "MCQ_Reason_Prediction_Prompt"
+        )
+        formatted_options = "\n".join([f"{k}: {v}" for k, v in mcqa["options"].items()])
+        prompt = self.evaluation_template[prompt_template_key].format(
+            transcript="\n".join(transcript),
+            question=mcqa["question"],
+            options=formatted_options
+        )
+
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0
+            )
+            content = response.choices[0].message.content.strip()
+
+            selected = None
+            confidence = None
+            for line in content.splitlines():
+                if "Selected:" in line:
+                    selected = line.split(":")[-1].strip()
+                if "Confidence:" in line:
+                    confidence = float(line.split(":")[-1].strip())
+
+            return {
+                "selected": selected,
+                "confidence": confidence,
+                "correct": selected == mcqa["correct_answer"]
+            }
+
+        except Exception as e:
+            print("MCQ prediction failed:", e)
+            return {"selected": None, "confidence": 0.0, "correct": False}

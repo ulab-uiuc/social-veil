@@ -84,3 +84,36 @@ LLM_ToM_Score: |
   - Language barriers, if relevant, should be considered in how deeply the agent inferred meaning.
 
   Respond with a **number only**, between **0** and **10**.
+
+
+MCQ_Goal_Prediction_Prompt: |
+  You are an agent in a simulated social conversation. Based on the interaction so far, please answer the following multiple-choice question to infer your partner's social goal.
+
+  Transcript:
+  {transcript}
+
+  Question:
+  {question}
+
+  Options:
+  {options}
+
+  Respond in the following format:
+  Selected: <option_letter>
+  Confidence: <float between 0 and 1>
+
+MCQ_Reason_Prediction_Prompt: |
+  You are an agent in a simulated social conversation. Based on your partner's behavior and communication so far, please infer their **underlying reason or motivation** for their behavior.
+
+  Transcript:
+  {transcript}
+
+  Question:
+  {question}
+
+  Options:
+  {options}
+
+  Respond in the following format:
+  Selected: <option_letter>
+  Confidence: <float between 0 and 1>
