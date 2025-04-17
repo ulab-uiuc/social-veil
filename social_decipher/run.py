@@ -103,18 +103,18 @@ def simulate_conversation(personA: Agent,
         # break
 
     # save conversation log
-    with open("conversation_log.txt", "w") as f:
+    with open("./results/conversation_log.txt", "w") as f:
         for line in conversation_log:
             f.write(line + "\n")
 
     # save reason prediction log
-    with open("reason_prediction_log.json", "w") as f:
+    with open("./results/reason_prediction_log.json", "w") as f:
         json.dump(predict_reason_log, f, indent=2)
 
     plot_reasoning_scores(
         tom_scores=tom_scores,
         agent_names=[personA.name, personB.name],
-        save_path="./plots/reasoning_trends.png"  # You can use None to just show it
+        save_path="./results/reasoning_trends.png"  # You can use None to just show it
     )
 
     eval_result = evaluator.evaluate_conversation(conversation_log, agent_goals)
