@@ -103,13 +103,13 @@ class SocialAgent(Agent):
             return encrypted_response
 
         received = message
-        print(f"**{self.name} RECEIVED MESSAGE: {received}")
+        print(f"[bold cyan]**{self.name} RECEIVED MESSAGE: {received}")
         if self.encryption is not None:
             message = self.encryption.decrypt(message)
             print(f"**{self.name} DECRYPTED MESSAGE: {message}\n")
 
         response = self.agency.get_completion(message, recipient_agent=self)
-        print(f"**{self.name} ORIGINAL RESPONSE: {response}")
+        print(f"[yellow]**{self.name} ORIGINAL RESPONSE: {response}")
 
         encrypted_response = self.encryption(response) if self.encryption else response
         if self.encryption is not None:
