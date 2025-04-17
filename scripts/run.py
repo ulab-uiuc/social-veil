@@ -4,14 +4,14 @@ import os
 import random
 
 from agency_swarm import Agency, Agent
+from openai import OpenAI
+
 from social_decipher.agent.profile import Agent_Profile
-from social_decipher.env.env_profile import Environment_Profile
 from social_decipher.agent.social_agent import SocialAgent
 from social_decipher.encryption import MappingEncryption
+from social_decipher.env.env_profile import Environment_Profile
 from social_decipher.evaluate import ConversationEvaluator
-from openai import OpenAI
 from social_decipher.utils.plot import plot_reasoning_scores
-
 
 os.environ[
     "OPENAI_API_KEY"
