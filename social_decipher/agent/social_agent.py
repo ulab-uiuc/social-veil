@@ -1,15 +1,14 @@
-from agency_swarm import Agent, Agency
-from .profile import Agent_Profile, Environment_Profile
 import yaml
+from agency_swarm import Agency, Agent
 from encryption import BaseEncryption
 
+from .profile import Agent_Profile, Environment_Profile
+
+
 class SocialAgent(Agent):
-    def __init__(self, 
-                 name, 
-                 profile: Agent_Profile,
-                 env: Environment_Profile,
-                 role_num: int):
-        
+    def __init__(
+        self, name, profile: Agent_Profile, env: Environment_Profile, role_num: int
+    ):
         description = ""
         instruction = self.set_instruction(env, profile, role_num)
         self.agency = None
@@ -27,13 +26,10 @@ class SocialAgent(Agent):
             max_prompt_tokens=25000,
         )
 
-    def set_instruction(self, 
-                        env: Environment_Profile, 
-                        profile: Agent_Profile,
-                        agent_role: int
-                        ) -> str:
-
-        with open("../configs/social_task.yaml", "r") as template_file:
+    def set_instruction(
+        self, env: Environment_Profile, profile: Agent_Profile, agent_role: int
+    ) -> str:
+        with open("../configs/social_task.yaml") as template_file:
             template_sections = yaml.safe_load(template_file)
 
         profile_dict = profile.profile
@@ -53,11 +49,14 @@ class SocialAgent(Agent):
             "scenario": env_dict["scenario"],
             "agent_goal": agent_goal,
             "partner_goal": partner_goal,
-            "agent_reason": agent_reason
+            "agent_reason": agent_reason,
         }
 
-        instruction = template_sections["profile_description"] + "\n\n" \
-                    + template_sections["social_task_instructions"]
+        instruction = (
+            template_sections["profile_description"]
+            + "\n\n"
+            + template_sections["social_task_instructions"]
+        )
 
         for key, value in merged.items():
             instruction = instruction.replace(f"{{{{ {key} }}}}", str(value))
@@ -75,21 +74,30 @@ class SocialAgent(Agent):
         return response
 
     def act(self, message=None, initial: bool = False):
-        assert self.agency is not None, "Agent must be assigned to an agency before acting."
+        assert (
+            self.agency is not None
+        ), "Agent must be assigned to an agency before acting."
 
         if initial:
             # Use the system instruction to generate an opening message
-            response = self.agency.get_completion("Now, generate your initial message to start the conversation, try to be concise", recipient_agent=self)
+            response = self.agency.get_completion(
+                "Now, generate your initial message to start the conversation, try to be concise",
+                recipient_agent=self,
+            )
             print(f"**{self.name} INITIAL RESPONSE: {response}")
 
-            encrypted_response = self.encryption(response) if self.encryption else response
+            encrypted_response = (
+                self.encryption(response) if self.encryption else response
+            )
             if self.encryption is not None:
                 print(f"**{self.name} ENCRYPTED RESPONSE: {encrypted_response}")
-            self.log.append({
-                "initial": True,
-                "response_raw": response,
-                "response_encrypted": encrypted_response
-            })
+            self.log.append(
+                {
+                    "initial": True,
+                    "response_raw": response,
+                    "response_encrypted": encrypted_response,
+                }
+            )
             return encrypted_response
 
         received = message
@@ -105,14 +113,16 @@ class SocialAgent(Agent):
         if self.encryption is not None:
             print(f"**{self.name} ENCRYPTED RESPONSE: {encrypted_response}")
 
-        self.log.append({
-            "received_raw": received,
-            "received_decrypted": message if self.encryption else received,
-            "response_raw": response,
-            "response_encrypted": encrypted_response
-        })
+        self.log.append(
+            {
+                "received_raw": received,
+                "received_decrypted": message if self.encryption else received,
+                "response_raw": response,
+                "response_encrypted": encrypted_response,
+            }
+        )
 
         return encrypted_response
-        
+
     def response_validator(self, message):
         return message

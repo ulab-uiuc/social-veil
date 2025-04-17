@@ -1,5 +1,6 @@
 from openai import swarm
 
+
 class SocialTaskEnvironment(swarm.Environment):
     def __init__(self):
         super().__init__()

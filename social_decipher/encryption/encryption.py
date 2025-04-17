@@ -1,6 +1,3 @@
-import random
-from typing import Dict, MutableMapping, KT, VT
-
 class BaseEncryption:
     def __init__(self, key):
         self.key = key
@@ -13,11 +10,10 @@ class BaseEncryption:
 
     def decrypt(self, message: str) -> str:
         pass
-    
+
     # should randomly generate a word mapping set
-    def random_word_mapping(self) -> Dict:
+    def random_word_mapping(self) -> dict:
         pass
-    
 
     def rag(self, message: str) -> str:
-        pass 
+        pass

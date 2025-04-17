@@ -1,38 +1,43 @@
+import argparse
 import json
 import os
 import random
-import argparse
 
-from utils.plot import plot_reasoning_scores
-
-from typing import List, Dict, Any
-from openai import OpenAI
-from agent.social_agent import SocialAgent
-from agency_swarm import Agent, set_openai_key, BaseTool, Agency
+from agency_swarm import Agency, Agent
 from agent.profile import Agent_Profile, Environment_Profile
+from agent.social_agent import SocialAgent
 from encryption import MappingEncryption
 from evaluate import ConversationEvaluator
-#from social_task.social_env import SocialTaskEnvironment
+from openai import OpenAI
+from utils.plot import plot_reasoning_scores
 
-os.environ['OPENAI_API_KEY'] = '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'
+# from social_task.social_env import SocialTaskEnvironment
 
-def simulate_conversation(personA: Agent, 
-                          personB: Agent, 
-                          num_turns: int, 
-                          agent_goals: List[str],
-                          agent_reasons: List[str],
-                          evaluator: ConversationEvaluator,
-                          encryption_enabled: bool = True) -> None:
-    
-    agency = Agency([personA, 
-                    [personA,personB], 
-                    [personB, personA], 
-                    [personA,personB], 
-                    [personB, personA]],  # Define the conversation participants.
-                    temperature=0.3,
-                    max_prompt_tokens=3000,
+os.environ[
+    "OPENAI_API_KEY"
+] = "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"
+
+
+def simulate_conversation(
+    personA: Agent,
+    personB: Agent,
+    num_turns: int,
+    agent_goals: list[str],
+    agent_reasons: list[str],
+    evaluator: ConversationEvaluator,
+    encryption_enabled: bool = True,
+) -> None:
+    agency = Agency(
+        [
+            personA,
+            [personA, personB],
+            [personB, personA],
+            [personA, personB],
+            [personB, personA],
+        ],  # Define the conversation participants.
+        temperature=0.3,
+        max_prompt_tokens=3000,
     )
-
 
     conversation_log = []
     predict_reason_log = []
@@ -49,54 +54,56 @@ def simulate_conversation(personA: Agent,
     personA_message = personA.act(message=None, initial=True)
     conversation_log.append(f"{personA.name}: {personA.log[-1]['response_raw']}")
 
-
     for num in range(num_turns):
-        print('\n')
+        print("\n")
         print(f"################# ROUND{num+1} #################")
 
         personB_response = personB.act(personA_message)
         conversation_log.append(f"{personB.name}: {personB.log[-1]['response_raw']}")
 
         predicted_by_A, score_by_A = evaluator.evaluate_reason_prediction(
-                                                agent_goal = agent_goals[0],
-                                                agent_reason = agent_reasons[0],
-                                                partner_message=personB.log[-1]['response_raw'],
-                                                transcript=conversation_log,
-                                                true_reason=agent_reasons[1]
-                                            )
-        
+            agent_goal=agent_goals[0],
+            agent_reason=agent_reasons[0],
+            partner_message=personB.log[-1]["response_raw"],
+            transcript=conversation_log,
+            true_reason=agent_reasons[1],
+        )
+
         personA_message = personA.act(personB_response)
         conversation_log.append(f"{personA.name}: {personA.log[-1]['response_raw']}")
 
-
         predicted_by_B, score_by_B = evaluator.evaluate_reason_prediction(
-                                                agent_goal = agent_goals[1],
-                                                agent_reason = agent_reasons[1],
-                                                partner_message=personA.log[-1]['response_raw'],
-                                                transcript=conversation_log,
-                                                true_reason=agent_reasons[0]
-                                            )
-        
-        predict_reason_log.append({
-            personA.name: predicted_by_A,
-            personB.name: predicted_by_B,
-        })
+            agent_goal=agent_goals[1],
+            agent_reason=agent_reasons[1],
+            partner_message=personA.log[-1]["response_raw"],
+            transcript=conversation_log,
+            true_reason=agent_reasons[0],
+        )
 
-        tom_scores.append({
-            "round": num + 1,
-            personA.name: {
-                "bleu": score_by_A['bleu'],
-                "rouge": score_by_A['rouge'],
-                "bertscore": score_by_A['bertscore'],
-                "llmscore": score_by_A['llmscore']
-            },
-            personB.name: {
-                "bleu": score_by_B['bleu'],
-                "rouge": score_by_B['rouge'],
-                "bertscore": score_by_B['bertscore'],
-                "llmscore": score_by_B['llmscore']
+        predict_reason_log.append(
+            {
+                personA.name: predicted_by_A,
+                personB.name: predicted_by_B,
             }
-        })
+        )
+
+        tom_scores.append(
+            {
+                "round": num + 1,
+                personA.name: {
+                    "bleu": score_by_A["bleu"],
+                    "rouge": score_by_A["rouge"],
+                    "bertscore": score_by_A["bertscore"],
+                    "llmscore": score_by_A["llmscore"],
+                },
+                personB.name: {
+                    "bleu": score_by_B["bleu"],
+                    "rouge": score_by_B["rouge"],
+                    "bertscore": score_by_B["bertscore"],
+                    "llmscore": score_by_B["llmscore"],
+                },
+            }
+        )
 
         # # each agent should be evaluated whether it has understood reason of partner's message
         # if evaluator.should_stop_conversation(agent_goals, conversation_log):
@@ -115,7 +122,7 @@ def simulate_conversation(personA: Agent,
     plot_reasoning_scores(
         tom_scores=tom_scores,
         agent_names=[personA.name, personB.name],
-        save_path="./results/reasoning_trends.png"  # You can use None to just show it
+        save_path="./results/reasoning_trends.png",  # You can use None to just show it
     )
 
     eval_result = evaluator.evaluate_conversation(conversation_log, agent_goals)
@@ -128,17 +135,13 @@ def simulate_conversation(personA: Agent,
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run social agent simulation")
     parser.add_argument(
-        "--encryption",
-        action="store_true",
-        help="Enable encryption between agents"
+        "--encryption", action="store_true", help="Enable encryption between agents"
     )
     parser.add_argument(
-        "--model",
-        type=str,
-        default= "gpt-4o",
-        help="Enable encryption between agents"
+        "--model", type=str, default="gpt-4o", help="Enable encryption between agents"
     )
     return parser.parse_args()
+
 
 def main():
     args = parse_args()
@@ -155,7 +158,7 @@ def main():
         occupation="Sports Commentator",
         public_info="Always talks about football",
         personality_and_values="Enthusiastic, expressive, goal-driven",
-        model_id="gpt-4"
+        model_id="gpt-4",
     )
 
     profile_b = Agent_Profile(
@@ -167,7 +170,7 @@ def main():
         occupation="Therapist",
         public_info="Calm",
         personality_and_values="Thoughtful, assertive, values balanced conversations",
-        model_id="gpt-4"
+        model_id="gpt-4",
     )
 
     # Create environment profile
@@ -175,38 +178,38 @@ def main():
         scenario="Two people with different interests meet at a café.",
         agent_goals=[
             "Discuss sports news with your conversation partner.",
-            "Avoid talking about sports and steer the conversation toward emotions or personal values."
+            "Avoid talking about sports and steer the conversation toward emotions or personal values.",
         ],
         agent_reasons=[
             "You are passionate about sports and want to share your excitement.",
-            "You dislike talking about sports because the other person always dominates the conversation and you want to redirect."
-        ]
+            "You dislike talking about sports because the other person always dominates the conversation and you want to redirect.",
+        ],
     )
 
-    agent_goals = environment.env['agent_goals']
-    agent_reasons = environment.env['agent_reasons']
+    agent_goals = environment.env["agent_goals"]
+    agent_reasons = environment.env["agent_reasons"]
 
     # Build agents with profiles and environment
-    agent1 = SocialAgent(name=profile_a.profile["first_name"], 
-                         profile=profile_a, 
-                         env=environment,
-                         role_num=0)
-    
-    agent2 = SocialAgent(name=profile_b.profile["first_name"], 
-                         profile=profile_b,
-                         env=environment,
-                         role_num=1)
-    
+    agent1 = SocialAgent(
+        name=profile_a.profile["first_name"],
+        profile=profile_a,
+        env=environment,
+        role_num=0,
+    )
+
+    agent2 = SocialAgent(
+        name=profile_b.profile["first_name"],
+        profile=profile_b,
+        env=environment,
+        role_num=1,
+    )
+
     evaluator = ConversationEvaluator(client, model)
 
-    simulate_conversation(agent1, 
-                          agent2, 
-                          10, 
-                          agent_goals, 
-                          agent_reasons, 
-                          evaluator,
-                          args.encryption
-                        )
+    simulate_conversation(
+        agent1, agent2, 10, agent_goals, agent_reasons, evaluator, args.encryption
+    )
+
 
 if __name__ == "__main__":
     main()

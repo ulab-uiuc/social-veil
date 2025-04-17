@@ -1,9 +1,11 @@
-from agency_swarm.tools import BaseTool
-from pydantic import Field
 import os
 
+from agency_swarm.tools import BaseTool
+from pydantic import Field
+
 account_id = "MY_ACCOUNT_ID"
-api_key = os.getenv("MY_API_KEY") # or access_token = os.getenv("MY_ACCESS_TOKEN")
+api_key = os.getenv("MY_API_KEY")  # or access_token = os.getenv("MY_ACCESS_TOKEN")
+
 
 class ExampleTool(BaseTool):
     """
@@ -14,7 +16,8 @@ class ExampleTool(BaseTool):
 
     # Define the fields with descriptions using Pydantic Field
     example_field: str = Field(
-        ..., description="Description of the example field, explaining its purpose and usage for the Agent."
+        ...,
+        description="Description of the example field, explaining its purpose and usage for the Agent.",
     )
 
     def run(self):

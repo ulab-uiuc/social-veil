@@ -1,14 +1,15 @@
 # generate_data.py
 import json
-import yaml
 import time
-from openai import OpenAI
 from pathlib import Path
-from typing import List, Dict
+
+import yaml
+from openai import OpenAI
 
 # Load prompts from YAML file
-with open("../configs/data_generation.yaml", "r") as f:
+with open("../configs/data_generation.yaml") as f:
     generation_prompts = yaml.safe_load(f)
+
 
 def generate_unique_completions(prompt: str, n: int, output_file: str):
     unique_data = set()
@@ -31,7 +32,7 @@ def generate_unique_completions(prompt: str, n: int, output_file: str):
             response = client.chat.completions.create(
                 model="gpt-4",
                 messages=[{"role": "system", "content": prompt}],
-                temperature=0.9
+                temperature=0.9,
             )
             content = response.choices[0].message.content.strip()
 
@@ -51,15 +52,18 @@ def generate_unique_completions(prompt: str, n: int, output_file: str):
             print(f"❌ Error during generation: {e}")
         time.sleep(1)
 
+
 def generate_agent_profiles(num: int, output_file="agent_profiles.json"):
     prompt = generation_prompts["Profile"]
     generate_unique_completions(prompt, num, output_file)
     print(f"✅ Saved {num} unique agent profiles to {output_file}")
 
+
 def generate_environment_profiles(num: int, output_file="environment_profiles.json"):
     prompt = generation_prompts["Environment"]
     generate_unique_completions(prompt, num, output_file)
     print(f"✅ Saved {num} unique environment profiles to {output_file}")
+
 
 if __name__ == "__main__":
     generate_agent_profiles(num=5)

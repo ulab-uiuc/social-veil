@@ -12,7 +12,7 @@ combinations = [c + v for c in consonants for v in vowels]
 selected_combinations = random.sample(combinations, len(alphabet))
 
 # Create the mapping dictionary
-mapping = dict(zip(alphabet, selected_combinations))
+mapping = dict(zip(alphabet, selected_combinations, strict=False))
 
 # Print the mapping
 for letter, combo in mapping.items():
