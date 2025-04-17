@@ -1,8 +1,8 @@
-
-from typing import Dict, List, Any, Tuple
-import re
 import json
+import re
+
 from ..environment.env_profile import EnvironmentProfile
+
 
 class EnvironmentGenerator:
     def __init__(self, client=None):
@@ -91,7 +91,6 @@ Ensure your response is properly formatted, valid JSON that can be parsed by Pyt
 {additional_instructions}
 """
 
-
     def set_client(self, client):
         self.client = client
 
@@ -99,21 +98,23 @@ Ensure your response is properly formatted, valid JSON that can be parsed by Pyt
         additional_instructions = f"Please generate {num_scenarios} different scenario(s) in the 'scenarios' array."
         if domain:
             additional_instructions += f" Focus on scenarios in the {domain} domain."
-        return self.prompt_template.format(additional_instructions=additional_instructions)
-    
-    def parse_response(self, response: str) -> List[EnvironmentProfile]:
+        return self.prompt_template.format(
+            additional_instructions=additional_instructions
+        )
+
+    def parse_response(self, response: str) -> list[EnvironmentProfile]:
         # Extract JSON from response (handling cases where there might be text outside the JSON)
-        json_match = re.search(r'```json\s*(.*?)\s*```', response, re.DOTALL)
+        json_match = re.search(r"```json\s*(.*?)\s*```", response, re.DOTALL)
         if json_match:
             json_str = json_match.group(1)
         else:
             # Try to find JSON without code blocks
             json_str = response.strip()
-        
+
         try:
             # Parse the JSON
             data = json.loads(json_str)
-            
+
             environment_profiles = []
             for scenario_data in data.get("scenarios", []):
                 try:
@@ -123,69 +124,93 @@ Ensure your response is properly formatted, valid JSON that can be parsed by Pyt
                     agent1_reason = scenario_data.get("agent1", {}).get("reason", "")
                     agent2_goal = scenario_data.get("agent2", {}).get("goal", "")
                     agent2_reason = scenario_data.get("agent2", {}).get("reason", "")
-                    
+
                     # Get MCQs
                     goal_mcqas = scenario_data.get("mcqs", {}).get("goals", [])
                     reason_mcqas = scenario_data.get("mcqs", {}).get("reasons", [])
-                    
+
                     profile = EnvironmentProfile(
                         scenario=scenario,
                         agent_goals=[agent1_goal, agent2_goal],
                         agent_reasons=[agent1_reason, agent2_reason],
                         agent_goals_mcqas=goal_mcqas,
-                        agent_reasons_mcqas=reason_mcqas
+                        agent_reasons_mcqas=reason_mcqas,
                     )
-                    
+
                     environment_profiles.append(profile)
                 except Exception as e:
                     print(f"Error parsing scenario: {e}")
                     continue
-                    
+
             return environment_profiles
         except json.JSONDecodeError as e:
             print(f"Error decoding JSON: {e}")
             print(f"Received response: {response}")
             return []
-    
-    def generate_environments(self, num_scenarios: int = 1, domain: str = None, temperature: float = 0.7, model: str = None) -> List[EnvironmentProfile]:
+
+    def generate_environments(
+        self,
+        num_scenarios: int = 1,
+        domain: str = None,
+        temperature: float = 0.7,
+        model: str = None,
+    ) -> list[EnvironmentProfile]:
         if not self.client:
             raise ValueError("Client not set")
-            
+
         prompt = self.generate_prompt(num_scenarios, domain)
-        
+
         # Create the OpenAI chat completion request
         response = self.client.chat.completions.create(
             model=model or "gpt-4o",
             messages=[
-                {"role": "system", "content": "You are a helpful assistant that generates detailed social scenarios in valid JSON format."},
-                {"role": "user", "content": prompt}
+                {
+                    "role": "system",
+                    "content": "You are a helpful assistant that generates detailed social scenarios in valid JSON format.",
+                },
+                {"role": "user", "content": prompt},
             ],
             temperature=temperature,
-            max_tokens=2000
+            max_tokens=2000,
         )
-        
+
         # Extract text content from the response
         response_text = response.choices[0].message.content
-        
+
         return self.parse_response(response_text)
-    
-    def generate_custom_environment(self, scenario_template: Dict[str, str], temperature: float = 0.7, model: str = None) -> EnvironmentProfile:
+
+    def generate_custom_environment(
+        self,
+        scenario_template: dict[str, str],
+        temperature: float = 0.7,
+        model: str = None,
+    ) -> EnvironmentProfile:
         if not self.client:
             raise ValueError("Client not set")
-            
+
         # Create a template for the custom environment
         custom_scenario = {
-            "scenario": scenario_template.get('scenario', '[Complete the scenario description]'),
+            "scenario": scenario_template.get(
+                "scenario", "[Complete the scenario description]"
+            ),
             "agent1": {
-                "goal": scenario_template.get('agent1_goal', '[Complete Agent 1\'s goal]'),
-                "reason": scenario_template.get('agent1_reason', '[Complete the reason behind Agent 1\'s goal]')
+                "goal": scenario_template.get(
+                    "agent1_goal", "[Complete Agent 1's goal]"
+                ),
+                "reason": scenario_template.get(
+                    "agent1_reason", "[Complete the reason behind Agent 1's goal]"
+                ),
             },
             "agent2": {
-                "goal": scenario_template.get('agent2_goal', '[Complete Agent 2\'s goal]'),
-                "reason": scenario_template.get('agent2_reason', '[Complete the reason behind Agent 2\'s goal]')
-            }
+                "goal": scenario_template.get(
+                    "agent2_goal", "[Complete Agent 2's goal]"
+                ),
+                "reason": scenario_template.get(
+                    "agent2_reason", "[Complete the reason behind Agent 2's goal]"
+                ),
+            },
         }
-        
+
         # Create the custom prompt
         custom_prompt = """
 # Social Scenario Generator
@@ -209,63 +234,87 @@ Here is the template to complete:
 Please fill in all the missing information (indicated by brackets) and create the MCQs section. The final output must be valid JSON that can be parsed by Python's json.loads() function. Include plausible but incorrect options for the multiple choice questions.
 
 IMPORTANT: Generate your response as a complete, valid JSON object following the structure shown. Do not include any text outside of the JSON object.
-""" % json.dumps(custom_scenario, indent=2)
-        
+""" % json.dumps(
+            custom_scenario, indent=2
+        )
+
         # Create the OpenAI chat completion request
         response = self.client.chat.completions.create(
             model=model or "gpt-4o",
             messages=[
-                {"role": "system", "content": "You are a helpful assistant that generates detailed social scenarios in valid JSON format."},
-                {"role": "user", "content": custom_prompt}
+                {
+                    "role": "system",
+                    "content": "You are a helpful assistant that generates detailed social scenarios in valid JSON format.",
+                },
+                {"role": "user", "content": custom_prompt},
             ],
             temperature=temperature,
-            max_tokens=2000
+            max_tokens=2000,
         )
-        
+
         # Extract text content from the response
         response_text = response.choices[0].message.content
-        
+
         environments = self.parse_response(response_text)
-        
+
         if environments:
             return environments[0]
         else:
             raise ValueError("Failed to generate a valid environment from the template")
-    
-    def get_predefined_environments(self) -> List[Tuple[str, Dict[str, str]]]:
+
+    def get_predefined_environments(self) -> list[tuple[str, dict[str, str]]]:
         return [
-            ("Workplace Presentation", {
-                "scenario": "Two colleagues are preparing a presentation for an important client meeting.",
-                "agent1_goal": "To showcase technical expertise with complex data visualizations.",
-                "agent2_goal": "To focus on a simple narrative emphasizing business value."
-            }),
-            ("Roommate Conflict", {
-                "scenario": "Two roommates are discussing how to handle their apartment's cleaning schedule.",
-                "agent1_goal": "To create a detailed cleaning rotation with specific tasks.",
-                "agent2_goal": "To maintain a flexible, as-needed approach to cleaning."
-            }),
-            ("Family Vacation", {
-                "scenario": "Two family members are planning the activities for an upcoming vacation.",
-                "agent1_goal": "To schedule a detailed itinerary with many tourist attractions.",
-                "agent2_goal": "To have a relaxed vacation with plenty of downtime."
-            }),
-            ("Group Project", {
-                "scenario": "Two students are assigned to work together on an important class project.",
-                "agent1_goal": "To divide the work evenly and do their part independently.",
-                "agent2_goal": "To collaborate closely on all aspects of the project together."
-            }),
-            ("Restaurant Decision", {
-                "scenario": "Two friends are trying to decide where to go for dinner.",
-                "agent1_goal": "To try a new, trendy restaurant regardless of price.",
-                "agent2_goal": "To go to a familiar, affordable restaurant."
-            })
+            (
+                "Workplace Presentation",
+                {
+                    "scenario": "Two colleagues are preparing a presentation for an important client meeting.",
+                    "agent1_goal": "To showcase technical expertise with complex data visualizations.",
+                    "agent2_goal": "To focus on a simple narrative emphasizing business value.",
+                },
+            ),
+            (
+                "Roommate Conflict",
+                {
+                    "scenario": "Two roommates are discussing how to handle their apartment's cleaning schedule.",
+                    "agent1_goal": "To create a detailed cleaning rotation with specific tasks.",
+                    "agent2_goal": "To maintain a flexible, as-needed approach to cleaning.",
+                },
+            ),
+            (
+                "Family Vacation",
+                {
+                    "scenario": "Two family members are planning the activities for an upcoming vacation.",
+                    "agent1_goal": "To schedule a detailed itinerary with many tourist attractions.",
+                    "agent2_goal": "To have a relaxed vacation with plenty of downtime.",
+                },
+            ),
+            (
+                "Group Project",
+                {
+                    "scenario": "Two students are assigned to work together on an important class project.",
+                    "agent1_goal": "To divide the work evenly and do their part independently.",
+                    "agent2_goal": "To collaborate closely on all aspects of the project together.",
+                },
+            ),
+            (
+                "Restaurant Decision",
+                {
+                    "scenario": "Two friends are trying to decide where to go for dinner.",
+                    "agent1_goal": "To try a new, trendy restaurant regardless of price.",
+                    "agent2_goal": "To go to a familiar, affordable restaurant.",
+                },
+            ),
         ]
 
-    def generate_from_predefined(self, scenario_name: str, temperature: float = 0.7, model: str = None) -> EnvironmentProfile:
+    def generate_from_predefined(
+        self, scenario_name: str, temperature: float = 0.7, model: str = None
+    ) -> EnvironmentProfile:
         predefined = self.get_predefined_environments()
-        
+
         for name, template in predefined:
             if name.lower() == scenario_name.lower():
-                return self.generate_custom_environment(template, temperature=temperature, model=model)
-                
+                return self.generate_custom_environment(
+                    template, temperature=temperature, model=model
+                )
+
         raise ValueError(f"No predefined scenario found with name '{scenario_name}'")
