@@ -6,7 +6,7 @@ import random
 from agency_swarm import Agency, Agent
 from openai import OpenAI
 
-from social_decipher.agent.profile import AgentProfile
+from social_decipher.agent.agent_profile import AgentProfile
 from social_decipher.agent.social_agent import SocialAgent
 from social_decipher.encryption import MappingEncryption
 from social_decipher.environment.env_profile import EnvironmentProfile

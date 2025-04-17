@@ -4,7 +4,7 @@ from rich import print
 
 from ..encryption import BaseEncryption
 from ..environment.env_profile import EnvironmentProfile
-from .profile import AgentProfile
+from .agent_profile import AgentProfile
 
 
 class SocialAgent(Agent):
