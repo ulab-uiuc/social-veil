@@ -31,6 +31,7 @@ def simulate_conversation(
     agent_reasons_mcqas: Dict[str, Any],
     evaluator: ConversationEvaluator,
     encryption_enabled: bool = True,
+    action_enabled: bool = False,
 ) -> None:
     agency = Agency(
         [
@@ -41,9 +42,8 @@ def simulate_conversation(
             [personB, personA],
         ],  # Define the conversation participants.
         temperature=0.3,
-        max_prompt_tokens=3000,
+        max_prompt_tokens=10000,
     )
-
 
     conversation_log = []
     encrypted_conversation_log = []
@@ -67,11 +67,15 @@ def simulate_conversation(
         print("\n")
         print(f"################# ROUND{num+1} #################")
 
-        personB_response = personB.act(personA_message)
-        conversation_log.append(f"{personB.name}: {personB.log[-1]['response_raw']}")
-        encrypted_conversation_log.append(
-            f"{personB.name}: {personB.log[-1]['response_encrypted']}"
+        personB.update_instruction(
+            transcript=encrypted_conversation_log,
+            turn_number=num,
+            use_action=action_enabled
         )
+        
+        personB_message = personB.act(personA_message)
+        conversation_log.append(f"Agent 2: {personB.log[-1]['response_raw']}")
+        encrypted_conversation_log.append(f"Agent 2: {personB.log[-1]['response_encrypted']}")
 
         goal_mcq_A = personB.predict_mcq_answer(
             transcript=encrypted_conversation_log,
@@ -86,19 +90,18 @@ def simulate_conversation(
             task_type="reason"
         )
 
-        # predicted_by_A, score_by_A = evaluator.evaluate_reason_prediction(
-        #     agent_goal=agent_goals[0],
-        #     agent_reason=agent_reasons[0],
-        #     partner_message=personB.log[-1]["response_raw"],
-        #     transcript=conversation_log,
-        #     true_reason=agent_reasons[1],
-        # )
-
-        personA_message = personA.act(personB_response)
-        conversation_log.append(f"{personA.name}: {personA.log[-1]['response_raw']}")
-        encrypted_conversation_log.append(
-            f"{personA.name}: {personA.log[-1]['response_encrypted']}"
+        personA.update_instruction(
+            transcript=encrypted_conversation_log,
+            turn_number=num,
+            use_action=action_enabled
         )
+
+        personA_message = personA.act(personB_message)
+        conversation_log.append(f"Agent 1: {personA.log[-1]['response_raw']}")
+        encrypted_conversation_log.append(f"Agent 1: {personA.log[-1]['response_encrypted']}")
+
+        print(encrypted_conversation_log)
+
         goal_mcq_B = personA.predict_mcq_answer(
             transcript=encrypted_conversation_log,
             mcqa=agent_goals_mcqas[1],
@@ -111,39 +114,6 @@ def simulate_conversation(
             test_prompt = evaluator.evaluation_template,
             task_type="reason"
         )
-
-        # predicted_by_B, score_by_B = evaluator.evaluate_reason_prediction(
-        #     agent_goal=agent_goals[1],
-        #     agent_reason=agent_reasons[1],
-        #     partner_message=personA.log[-1]["response_raw"],
-        #     transcript=conversation_log,
-        #     true_reason=agent_reasons[0],
-        # )
-
-        # predict_reason_log.append(
-        #     {
-        #         personA.name: predicted_by_A,
-        #         personB.name: predicted_by_B,
-        #     }
-        # )
-
-        # tom_scores.append(
-        #     {
-        #         "round": num + 1,
-        #         personA.name: {
-        #             "bleu": score_by_A["bleu"],
-        #             "rouge": score_by_A["rouge"],
-        #             "bertscore": score_by_A["bertscore"],
-        #             "llmscore": score_by_A["llmscore"],
-        #         },
-        #         personB.name: {
-        #             "bleu": score_by_B["bleu"],
-        #             "rouge": score_by_B["rouge"],
-        #             "bertscore": score_by_B["bertscore"],
-        #             "llmscore": score_by_B["llmscore"],
-        #         },
-        #     }
-        # )
 
         mcq_logs.append({
             "round": num + 1,
@@ -158,20 +128,16 @@ def simulate_conversation(
         #     print(f"✅ Agents signaled task completion at round {num+1}. Stopping early.")
         # break
 
-
     # save conversation log
     with open("../social_decipher/results/conversation_log.txt", "w") as f:
         for line in conversation_log:
             f.write(line + "\n")
 
+    # save mcq logs
+    with open("../social_decipher/results/mcq_logs.json", "w") as f:
+        json.dump(mcq_logs, f, indent=4)
+
     # save reason prediction log
-
-
-    # plot_reasoning_scores(
-    #     tom_scores=tom_scores,
-    #     agent_names=[personA.name, personB.name],
-    #     save_path="./results/reasoning_trends.png",  # You can use None to just show it
-    # )
     plot_mcq_scores(
         mcq_scores=mcq_logs,
         agent_names=[personA.name, personB.name],
@@ -214,7 +180,6 @@ def main():
 
     print(environment.env)
 
-
     profile_a = AgentProfile(
         first_name="Alex",
         last_name="Carter",
@@ -248,15 +213,19 @@ def main():
     agent1 = SocialAgent(
         name=profile_a.profile["first_name"],
         profile=profile_a,
+        partner_profile=profile_b,
         env=environment,
         role_num=0,
+        use_action = args.action
     )
 
     agent2 = SocialAgent(
         name=profile_b.profile["first_name"],
         profile=profile_b,
+        partner_profile=profile_a,
         env=environment,
         role_num=1,
+        use_action = args.action
     )
 
     evaluator = ConversationEvaluator(client, model)
@@ -270,7 +239,7 @@ def main():
         agent_goals_mcqas, 
         agent_reasons_mcqas, 
         evaluator, 
-        args.encryption
+        args.encryption,
     )
 
 

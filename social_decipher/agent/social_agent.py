@@ -10,17 +10,27 @@ from .agent_profile import AgentProfile
 
 class SocialAgent(Agent):
     def __init__(
-        self, name, profile: AgentProfile, env: EnvironmentProfile, role_num: int
+        self, 
+        name, 
+        profile: AgentProfile, 
+        partner_profile: AgentProfile, 
+        env: EnvironmentProfile, role_num: int, use_action: bool = False
     ):
-        description = ""
-        instruction = self.set_instruction(env, profile, role_num)
+
         self.agency = None
+        self.env = env
         self.encryption = None
         self.log = []
+        self.role_num = role_num
+        self.profile = profile
+        self.partner_profile = partner_profile
+
+        initial_instruction = self.set_static_instruction(use_action)
+
         super().__init__(
             name=name,
-            description=description,
-            instructions=instruction,
+            description="",
+            instructions=initial_instruction,
             files_folder="./files",
             schemas_folder="./schemas",
             tools=[],
@@ -28,44 +38,65 @@ class SocialAgent(Agent):
             temperature=0.2,
             max_prompt_tokens=50000,
         )
+        self.instructions = initial_instruction
 
-    def set_instruction(
-        self, env: EnvironmentProfile, profile: AgentProfile, agent_role: int
-    ) -> str:
-        with open("../configs/social_task.yaml") as template_file:
-            template_sections = yaml.safe_load(template_file)
+    def set_static_instruction(self, use_action=False) -> str:
+        return self.build_instruction(transcript="", turn_number=0, use_action=use_action)
 
-        profile_dict = profile.profile
-        env_dict = env.env
+    def build_instruction(self, transcript: str, turn_number: int, use_action: bool = False) -> str:
+        with open("../configs/social_task.yaml") as f:
+            templates = yaml.safe_load(f)
 
-        if agent_role == 0:
+        profile = self.profile.profile
+        partner = self.partner_profile.profile
+        env_dict = self.env.env
+
+        if self.role_num == 0:
             agent_goal = env_dict["agent_goals"][0]
-            partner_goal = env_dict["agent_goals"][1]
             agent_reason = env_dict["agent_reasons"][0]
+            partner_goal = env_dict["agent_goals"][1]
         else:
             agent_goal = env_dict["agent_goals"][1]
-            partner_goal = env_dict["agent_goals"][0]
             agent_reason = env_dict["agent_reasons"][1]
+            partner_goal = env_dict["agent_goals"][0]
 
-        merged = {
-            **profile_dict,
+        template_key = "social_task_instructions_action" if use_action else "social_task_instructions"
+        template = templates[template_key]
+
+        mapping = {
+            "agent_name": profile["first_name"],
+            "partner_name": partner["first_name"],
             "scenario": env_dict["scenario"],
+            "agent_background": profile["public_info"],
+            "partner_background": partner["public_info"],
             "agent_goal": agent_goal,
-            "partner_goal": partner_goal,
             "agent_reason": agent_reason,
+            "transcript": transcript,
+            "turn_number": turn_number,
+            "agent_age": profile["age"],
+            "agent_gender": profile["gender"],
+            "agent_occupation": profile["occupation"],
+            "agent_public_info": profile["public_info"],
+            "partner_age": partner["age"],
+            "partner_gender": partner["gender"],
+            "partner_occupation": partner["occupation"],
+            "partner_public_info": partner["public_info"],
         }
 
-        instruction = (
-            template_sections["profile_description"]
-            + "\n\n"
-            + template_sections["social_task_instructions"]
-        )
+        for key, value in mapping.items():
+            template = template.replace(f"{{{{ {key} }}}}", str(value))
 
-        for key, value in merged.items():
-            instruction = instruction.replace(f"{{{{ {key} }}}}", str(value))
+        return template
 
-        return instruction
+    def update_instruction(self, transcript: list[str], turn_number: int, use_action: bool = False):
+        short_transcript = transcript[-4:] if len(transcript) > 4 else transcript
+        transcript_text = "\n".join(short_transcript)
 
+        self.instructions = self.build_instruction(transcript=transcript_text,
+                                                    turn_number=turn_number,
+                                                    use_action=use_action
+                                                    )
+        
     def set_agency(self, agency: Agency):
         self.agency = agency
 
@@ -76,13 +107,12 @@ class SocialAgent(Agent):
         response = self.agency.get_completion(message, recipient_agent=self)
         return response
 
-    def act(self, message=None, initial: bool = False):
+    def act(self, message=None, initial: bool = False) -> str:
         assert (
             self.agency is not None
         ), "Agent must be assigned to an agency before acting."
 
         if initial:
-            # Use the system instruction to generate an opening message
             response = self.agency.get_completion(
                 "Now, generate your initial message to start the conversation, try to be concise",
                 recipient_agent=self,
@@ -106,13 +136,9 @@ class SocialAgent(Agent):
 
         received = message
         print(f"[bold cyan]**{self.name} RECEIVED MESSAGE: {received}")
-        if self.encryption is not None:
-            message = self.encryption.decrypt(message)
-            print(f"[red]**{self.name} DECRYPTED MESSAGE: {message}\n")
-
         response = self.agency.get_completion(message, recipient_agent=self)
+         
         print(f"[yellow]**{self.name} ORIGINAL RESPONSE: {response}")
-
         encrypted_response = self.encryption(response) if self.encryption else response
         if self.encryption is not None:
             print(f"[green]**{self.name} ENCRYPTED RESPONSE: {encrypted_response}")
@@ -135,8 +161,8 @@ class SocialAgent(Agent):
         assert self.agency is not None, "Agent must be assigned to an agency before acting."
         assert task_type in {"goal", "reason"}, "task_type must be 'goal' or 'reason'"
         
-        if len(transcript) > 6:
-            short_transcript = transcript[-6:]
+        if len(transcript) > 4:
+            short_transcript = transcript[-4:]
         else:
             short_transcript = transcript
 
