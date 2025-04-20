@@ -161,7 +161,7 @@ class SocialAgent(Agent):
             encrypted_response = self.encryption(response) if self.encryption else response
 
         if self.encryption is not None:
-            print(f"**{self.name} ENCRYPTED MESSAGE: {encrypted_response}")
+            print(f"[green]**{self.name} ENCRYPTED RESPONSE: {encrypted_response}")
 
         self.log.append(
             {
