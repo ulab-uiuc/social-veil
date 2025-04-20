@@ -12,7 +12,7 @@ from social_decipher.agent.social_agent import SocialAgent
 from social_decipher.encryption import MappingEncryption
 from social_decipher.environment.env_generator import EnvironmentGenerator
 from social_decipher.evaluate import ConversationEvaluator
-from social_decipher.utils.plot import plot_reasoning_scores, plot_mcq_scores
+from social_decipher.utils.plot import plot_reasoning_scores, plot_mcq_scores, plot_social_goal
 
 from typing import Dict, List, Any
 
@@ -30,7 +30,7 @@ def simulate_conversation(
     agent_goals_mcqas: Dict[str, Any],
     agent_reasons_mcqas: Dict[str, Any],
     evaluator: ConversationEvaluator,
-    encryption_enabled: bool = True,
+    encryption_enabled: bool = False,
     action_enabled: bool = False,
 ) -> None:
     agency = Agency(
@@ -60,7 +60,7 @@ def simulate_conversation(
         personA.set_encryption(encryption1)
         personB.set_encryption(encryption2)
 
-    personA_message = personA.act(message=None, initial=True)
+    personA_message = personA.act(message=None, initial=True, use_action=action_enabled)
     conversation_log.append(f"{personA.name}: {personA.log[-1]['response_raw']}")
 
     for num in range(num_turns):
@@ -73,7 +73,7 @@ def simulate_conversation(
             use_action=action_enabled
         )
         
-        personB_message = personB.act(personA_message)
+        personB_message = personB.act(personA_message, use_action=action_enabled)
         conversation_log.append(f"Agent 2: {personB.log[-1]['response_raw']}")
         encrypted_conversation_log.append(f"Agent 2: {personB.log[-1]['response_encrypted']}")
 
@@ -96,7 +96,7 @@ def simulate_conversation(
             use_action=action_enabled
         )
 
-        personA_message = personA.act(personB_message)
+        personA_message = personA.act(personB_message, use_action=action_enabled)
         conversation_log.append(f"Agent 1: {personA.log[-1]['response_raw']}")
         encrypted_conversation_log.append(f"Agent 1: {personA.log[-1]['response_encrypted']}")
 
@@ -123,32 +123,42 @@ def simulate_conversation(
             f"{personB.name}_reason_mcq": reason_mcq_B,
         })
 
-        # # each agent should be evaluated whether it has understood reason of partner's message
-        # if evaluator.should_stop_conversation(agent_goals, conversation_log):
-        #     print(f"✅ Agents signaled task completion at round {num+1}. Stopping early.")
-        # break
-
-    # save conversation log
-    with open("../social_decipher/results/conversation_log.txt", "w") as f:
-        for line in conversation_log:
-            f.write(line + "\n")
-
-    # save mcq logs
-    with open("../social_decipher/results/mcq_logs.json", "w") as f:
-        json.dump(mcq_logs, f, indent=4)
-
-    # save reason prediction log
-    plot_mcq_scores(
-        mcq_scores=mcq_logs,
-        agent_names=[personA.name, personB.name],
-        save_path="../social_decipher/results/mcq_trends.png"
+    print("\n===== Evaluating Social Interaction =====")
+    eval_result = evaluator.evaluate_conversation(
+        conversation_log, 
+        agent_goals, 
+        agent_reasons
     )
 
-    eval_result = evaluator.evaluate_conversation(conversation_log, agent_goals)
-    print("Conversation Evaluation Results:")
-    print(f"Agent 1 Similarity: {eval_result['agent_1_similarity']}")
-    print(f"Agent 2 Similarity: {eval_result['agent_2_similarity']}")
-    print(f"LLM Success: {eval_result['llm_success']}")
+    plot_social_goal(
+        eval_result,
+        [personA.name, personB.name],
+        save_dir="../social_decipher/results/"
+    )
+
+    # print(f"\nAgent 1 Goal Completion: {eval_result['social_performance']['agent_1']['goal_completion']['score']}/10")
+    # print(f"Agent 2 Goal Completion: {eval_result['social_performance']['agent_2']['goal_completion']['score']}/10")
+    # print(f"\nInteraction Quality: {eval_result['social_performance']['interaction_quality']['score']}")
+
+    # # save conversation log
+    # with open("../social_decipher/results/conversation_log.txt", "w") as f:
+    #     for line in conversation_log:
+    #         f.write(line + "\n")
+
+    # # save mcq logs
+    # with open("../social_decipher/results/mcq_logs.json", "w") as f:
+    #     json.dump(mcq_logs, f, indent=4)
+
+    # # save reason prediction log
+    # plot_mcq_scores(
+    #     mcq_scores=mcq_logs,
+    #     agent_names=[personA.name, personB.name],
+    #     save_path="../social_decipher/results/mcq_trends.png"
+    # )
+
+  
+    print(eval_result)
+    exit()
 
 
 def parse_args() -> argparse.Namespace:
@@ -240,6 +250,7 @@ def main():
         agent_reasons_mcqas, 
         evaluator, 
         args.encryption,
+        args.action
     )
 
 
