@@ -1,3 +1,4 @@
+import json
 import yaml
 from agency_swarm import Agency, Agent
 from rich import print
@@ -107,7 +108,7 @@ class SocialAgent(Agent):
         response = self.agency.get_completion(message, recipient_agent=self)
         return response
 
-    def act(self, message=None, initial: bool = False) -> str:
+    def act(self, message=None, initial: bool = False, use_action: bool = False) -> str:
         assert (
             self.agency is not None
         ), "Agent must be assigned to an agency before acting."
@@ -117,14 +118,23 @@ class SocialAgent(Agent):
                 "Now, generate your initial message to start the conversation, try to be concise",
                 recipient_agent=self,
             )
+
             print(f"**{self.name} INITIAL RESPONSE: {response}")
 
-            encrypted_response = (
-                self.encryption(response) if self.encryption else response
-            )
+            if use_action:
+                response = json.loads(response)
+                response["argument"] = (
+                    self.encryption(response["argument"]) if self.encryption else response["argument"]
+                )
+                encrypted_response = response
+            else:
+                encrypted_response = (
+                    self.encryption(response) if self.encryption else response
+                )
 
             if self.encryption is not None:
-                print(f"[green]**{self.name} ENCRYPTED RESPONSE: {encrypted_response}")
+                print(f"**{self.name} ENCRYPTED MESSAGE: {encrypted_response}")
+   
             self.log.append(
                 {
                     "initial": True,
@@ -135,18 +145,28 @@ class SocialAgent(Agent):
             return encrypted_response
 
         received = message
-        print(f"[bold cyan]**{self.name} RECEIVED MESSAGE: {received}")
-        response = self.agency.get_completion(message, recipient_agent=self)
-         
-        print(f"[yellow]**{self.name} ORIGINAL RESPONSE: {response}")
-        encrypted_response = self.encryption(response) if self.encryption else response
+        
+        if use_action:
+            response = self.agency.get_completion(message['argument'], recipient_agent=self) 
+        else:
+            response = self.agency.get_completion(message, recipient_agent=self) 
+
+        if use_action:
+            response = json.loads(response)
+            response["argument"] = (
+                self.encryption(response["argument"]) if self.encryption else response["argument"]
+            )
+            encrypted_response = response
+        else:   
+            encrypted_response = self.encryption(response) if self.encryption else response
+
         if self.encryption is not None:
             print(f"[green]**{self.name} ENCRYPTED RESPONSE: {encrypted_response}")
 
         self.log.append(
             {
                 "received_raw": received,
-                "received_decrypted": message if self.encryption else received,
+                # "received_decrypted": message if self.encryption else received,
                 "response_raw": response,
                 "response_encrypted": encrypted_response,
             }
