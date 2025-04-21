@@ -36,7 +36,7 @@ def simulate_conversation(
             [personB, personA],
         ],  # Define the conversation participants.
         temperature=0.3,
-        max_prompt_tokens=10000,
+        max_prompt_tokens=50000,
     )
 
     conversation_log = []

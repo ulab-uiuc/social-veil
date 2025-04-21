@@ -124,11 +124,13 @@ class SocialAgent(Agent):
 
             if use_action:
                 response = json.loads(response)
-                response["argument"] = (
-                    self.encryption(response["argument"]) if self.encryption else response["argument"]
-                )
+                original_response = response
+                
+                if response["action_type"] == "speak":
+                    response["argument"] = (self.encryption(response["argument"]) if self.encryption else response["argument"])
                 encrypted_response = response
             else:
+                original_response = response
                 encrypted_response = (
                     self.encryption(response) if self.encryption else response
                 )
@@ -139,7 +141,7 @@ class SocialAgent(Agent):
             self.log.append(
                 {
                     "initial": True,
-                    "response_raw": response,
+                    "response_raw": original_response,
                     "response_encrypted": encrypted_response,
                 }
             )
@@ -154,11 +156,12 @@ class SocialAgent(Agent):
 
         if use_action:
             response = json.loads(response)
-            response["argument"] = (
-                self.encryption(response["argument"]) if self.encryption else response["argument"]
-            )
+            original_response = response
+            if response["action_type"] == "speak":
+                response["argument"] = (self.encryption(response["argument"]) if self.encryption else response["argument"])
             encrypted_response = response
         else:   
+            original_response = response
             encrypted_response = self.encryption(response) if self.encryption else response
 
         if self.encryption is not None:
@@ -168,7 +171,7 @@ class SocialAgent(Agent):
             {
                 "received_raw": received,
                 # "received_decrypted": message if self.encryption else received,
-                "response_raw": response,
+                "response_raw": original_response,
                 "response_encrypted": encrypted_response,
             }
         )
