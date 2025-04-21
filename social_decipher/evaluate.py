@@ -1,18 +1,12 @@
 import json
 import re
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 import yaml
 from sentence_transformers import SentenceTransformer, util
 
-from .utils.metrics import (
-    compute_bertscore,
-    compute_bleu,
-    compute_gpt_metric,
-    compute_rouge_l,
-)
-
-from typing import List
+from .utils.metrics import (compute_bertscore, compute_bleu,
+                            compute_gpt_metric, compute_rouge_l)
 
 
 def extract_clean_json(response_str: str) -> dict:

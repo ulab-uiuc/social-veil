@@ -1,18 +1,17 @@
 import argparse
-import json
+from astra_assistants import patch
+from agency_swarm import set_openai_client
+
 import os
-import random
-
-
-from agency_swarm import Agency, Agent
+from dotenv import load_dotenv
 from openai import OpenAI
 
 from social_decipher.agent.agent_profile import AgentProfile
 from social_decipher.agent.social_agent import SocialAgent
-from social_decipher.encryption import MappingEncryption
 from social_decipher.environment.env_generator import EnvironmentGenerator
 from social_decipher.evaluate import ConversationEvaluator
-from social_decipher.utils.plot import plot_reasoning_scores, plot_mcq_scores, plot_social_goal
+from social_decipher.communication import simulate_conversation
+from social_decipher.utils.model import ModelManager
 
 from typing import Dict, List, Any
 
@@ -20,176 +19,66 @@ os.environ[
     "OPENAI_API_KEY"
 ] = "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"
 
-
-def simulate_conversation(
-    personA: Agent,
-    personB: Agent,
-    num_turns: int,
-    agent_goals: List[str],
-    agent_reasons: List[str],
-    agent_goals_mcqas: Dict[str, Any],
-    agent_reasons_mcqas: Dict[str, Any],
-    evaluator: ConversationEvaluator,
-    encryption_enabled: bool = False,
-    action_enabled: bool = False,
-) -> None:
-    agency = Agency(
-        [
-            personA,
-            [personA, personB],
-            [personB, personA],
-            [personA, personB],
-            [personB, personA],
-        ],  # Define the conversation participants.
-        temperature=0.3,
-        max_prompt_tokens=10000,
-    )
-
-    conversation_log = []
-    encrypted_conversation_log = []
-    predict_reason_log = []
-    tom_scores = []
-    mcq_logs = []
-
-    personA.set_agency(agency)
-    personB.set_agency(agency)
-
-    if encryption_enabled:
-        encryption1 = MappingEncryption(key=random.randint(1, 100))
-        encryption2 = MappingEncryption(key=random.randint(1, 100))
-        personA.set_encryption(encryption1)
-        personB.set_encryption(encryption2)
-
-    personA_message = personA.act(message=None, initial=True, use_action=action_enabled)
-    conversation_log.append(f"{personA.name}: {personA.log[-1]['response_raw']}")
-
-    for num in range(num_turns):
-        print("\n")
-        print(f"################# ROUND{num+1} #################")
-
-        personB.update_instruction(
-            transcript=encrypted_conversation_log,
-            turn_number=num,
-            use_action=action_enabled
-        )
-        
-        personB_message = personB.act(personA_message, use_action=action_enabled)
-        conversation_log.append(f"Agent 2: {personB.log[-1]['response_raw']}")
-        encrypted_conversation_log.append(f"Agent 2: {personB.log[-1]['response_encrypted']}")
-
-        goal_mcq_A = personB.predict_mcq_answer(
-            transcript=encrypted_conversation_log,
-            mcqa=agent_goals_mcqas[0],
-            test_prompt = evaluator.evaluation_template,
-            task_type="goal"
-        )
-        reason_mcq_A = personB.predict_mcq_answer(
-            transcript=encrypted_conversation_log,
-            mcqa=agent_reasons_mcqas[0],
-            test_prompt = evaluator.evaluation_template,
-            task_type="reason"
-        )
-
-        personA.update_instruction(
-            transcript=encrypted_conversation_log,
-            turn_number=num,
-            use_action=action_enabled
-        )
-
-        personA_message = personA.act(personB_message, use_action=action_enabled)
-        conversation_log.append(f"Agent 1: {personA.log[-1]['response_raw']}")
-        encrypted_conversation_log.append(f"Agent 1: {personA.log[-1]['response_encrypted']}")
-
-        print(encrypted_conversation_log)
-
-        goal_mcq_B = personA.predict_mcq_answer(
-            transcript=encrypted_conversation_log,
-            mcqa=agent_goals_mcqas[1],
-            test_prompt = evaluator.evaluation_template,
-            task_type="goal"
-        )
-        reason_mcq_B = personA.predict_mcq_answer(
-            transcript=encrypted_conversation_log,
-            mcqa=agent_reasons_mcqas[1],
-            test_prompt = evaluator.evaluation_template,
-            task_type="reason"
-        )
-
-        mcq_logs.append({
-            "round": num + 1,
-            f"{personA.name}_goal_mcq": goal_mcq_A,
-            f"{personA.name}_reason_mcq": reason_mcq_A,
-            f"{personB.name}_goal_mcq": goal_mcq_B,
-            f"{personB.name}_reason_mcq": reason_mcq_B,
-        })
-
-    print("\n===== Evaluating Social Interaction =====")
-    eval_result = evaluator.evaluate_conversation(
-        conversation_log, 
-        agent_goals, 
-        agent_reasons
-    )
-
-    plot_social_goal(
-        eval_result,
-        [personA.name, personB.name],
-        save_dir="../social_decipher/results/"
-    )
-
-    # print(f"\nAgent 1 Goal Completion: {eval_result['social_performance']['agent_1']['goal_completion']['score']}/10")
-    # print(f"Agent 2 Goal Completion: {eval_result['social_performance']['agent_2']['goal_completion']['score']}/10")
-    # print(f"\nInteraction Quality: {eval_result['social_performance']['interaction_quality']['score']}")
-
-    # # save conversation log
-    # with open("../social_decipher/results/conversation_log.txt", "w") as f:
-    #     for line in conversation_log:
-    #         f.write(line + "\n")
-
-    # # save mcq logs
-    # with open("../social_decipher/results/mcq_logs.json", "w") as f:
-    #     json.dump(mcq_logs, f, indent=4)
-
-    # # save reason prediction log
-    # plot_mcq_scores(
-    #     mcq_scores=mcq_logs,
-    #     agent_names=[personA.name, personB.name],
-    #     save_path="../social_decipher/results/mcq_trends.png"
-    # )
-
-  
-    print(eval_result)
-    exit()
-
-
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run social agent simulation")
     parser.add_argument(
         "--encryption", action="store_true", help="Enable encryption between agents"
     )
     parser.add_argument(
+        "--nature_language", action="store_true", help="Use natural language barriers instead of encryption"
+    )
+    parser.add_argument(
         "--action", action="store_true"
     )
     parser.add_argument(
-        "--model", type=str, default="gpt-4o"
+        "--model", type=str, default="gpt-4o-mini"
     )
     parser.add_argument(
         "--max_round", type=int, default=10, help="Max conversation rounds"
     )
     return parser.parse_args()
  
+load_dotenv()
+
+def setup_model_clients():
+    """Set up model clients based on environment configuration"""
+    if os.environ.get("USE_CLAUDE", "false").lower() == "true":
+        # Set up to use Astra proxy which supports mixing OpenAI and Anthropic models
+        os.environ["USE_ASTRA_PROXY"] = "true"
+
+        try:
+            # Get patched OpenAI client
+            client = ModelManager.get_openai_client()
+            
+            # Set it for agency-swarm
+            set_openai_client(client)
+            print("✅ Configured agency-swarm to use multiple model providers")
+        except ImportError:
+            print("astra_assistants package not found. Install with: pip install astra-assistants-api")
 
 def main():
     args = parse_args()
+    setup_model_clients()
 
     client = OpenAI()
     model = args.model
     max_round = args.max_round
 
+    # Generate environment
     generator = EnvironmentGenerator(client)
     environment = generator.generate_environments(num_scenarios=1)[0]
-
     print(environment.env)
 
+    # If using natural language barrier, get the appropriate model pair
+    if args.encryption and args.nature_language:
+        model1, model2, barrier_language = ModelManager.language_barrier_pair(0)
+        print(f"Using language barrier models:")
+        print(f"  - Model 1: {model1} (understands {barrier_language})")
+        print(f"  - Model 2: {model2} (does NOT understand {barrier_language})")
+    else:
+        model1 = model2 = args.model
+
+    # Create agent profiles with appropriate models
     profile_a = AgentProfile(
         first_name="Alex",
         last_name="Carter",
@@ -199,7 +88,7 @@ def main():
         occupation="Sports Commentator",
         public_info="Always talks about football",
         personality_and_values="Enthusiastic, expressive, goal-driven",
-        model_id="gpt-4o",
+        model_id=model1,  # Use model1 from language barrier pair
     )
 
     profile_b = AgentProfile(
@@ -211,7 +100,7 @@ def main():
         occupation="Therapist",
         public_info="Calm",
         personality_and_values="Thoughtful, assertive, values balanced conversations",
-        model_id="gpt-4o",
+        model_id=model2,  # Use model2 from language barrier pair
     )
 
     agent_goals = environment.env["agent_goals"]
@@ -219,40 +108,33 @@ def main():
     agent_goals_mcqas = environment.env["agent_goals_mcqas"]
     agent_reasons_mcqas = environment.env["agent_reasons_mcqas"]
 
-    # Build agents with profiles and environment
-    agent1 = SocialAgent(
-        name=profile_a.profile["first_name"],
-        profile=profile_a,
-        partner_profile=profile_b,
-        env=environment,
-        role_num=0,
-        use_action = args.action
-    )
-
-    agent2 = SocialAgent(
-        name=profile_b.profile["first_name"],
-        profile=profile_b,
-        partner_profile=profile_a,
-        env=environment,
-        role_num=1,
-        use_action = args.action
-    )
-
     evaluator = ConversationEvaluator(client, model)
 
-    simulate_conversation(
-        agent1, 
-        agent2, 
-        max_round, 
-        agent_goals, 
-        agent_reasons, 
-        agent_goals_mcqas, 
-        agent_reasons_mcqas, 
-        evaluator, 
-        args.encryption,
-        args.action
-    )
+    print("\n🚀 Running Experiment 1: No Encryption, No Action")
+    agent1 = SocialAgent("Alex", profile_a, profile_b, environment, 0, use_action=False)
+    agent2 = SocialAgent("Jamie", profile_b, profile_a, environment, 1, use_action=False)
+    simulate_conversation(agent1, agent2, max_round, agent_goals, agent_reasons,
+                          agent_goals_mcqas, agent_reasons_mcqas, evaluator,
+                          encryption_enabled=False, action_enabled=False, use_language_barrier=False,
+                          output_suffix="_no_encryption_no_action")
 
+    # ---------- EXPERIMENT 2: Encryption Only ----------
+    print("\n🔐 Running Experiment 2: With Encryption, No Action")
+    agent1 = SocialAgent("Alex", profile_a, profile_b, environment, 0, use_action=False)
+    agent2 = SocialAgent("Jamie", profile_b, profile_a, environment, 1, use_action=False)
+    simulate_conversation(agent1, agent2, max_round, agent_goals, agent_reasons,
+                          agent_goals_mcqas, agent_reasons_mcqas, evaluator,
+                          encryption_enabled=True, action_enabled=False, use_language_barrier=False,
+                          output_suffix="_encryption_no_action")
+
+    # ---------- EXPERIMENT 3: Encryption + Action ----------
+    print("\n🎭 Running Experiment 3: With Encryption + Action")
+    agent1 = SocialAgent("Alex", profile_a, profile_b, environment, 0, use_action=True)
+    agent2 = SocialAgent("Jamie", profile_b, profile_a, environment, 1, use_action=True)
+    simulate_conversation(agent1, agent2, max_round, agent_goals, agent_reasons,
+                          agent_goals_mcqas, agent_reasons_mcqas, evaluator,
+                          encryption_enabled=True, action_enabled=True, use_language_barrier=False,
+                          output_suffix="_encryption_action")
 
 if __name__ == "__main__":
     main()

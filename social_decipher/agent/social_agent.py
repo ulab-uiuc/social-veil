@@ -1,8 +1,9 @@
 import json
+from typing import Any, Dict
+
 import yaml
 from agency_swarm import Agency, Agent
 from rich import print
-from typing import Dict, Any
 
 from ..encryption import BaseEncryption
 from ..environment.env_profile import EnvironmentProfile
