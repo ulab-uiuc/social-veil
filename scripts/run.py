@@ -115,7 +115,7 @@ def main():
     agent2 = SocialAgent("Jamie", profile_b, profile_a, environment, 1, use_action=False)
     simulate_conversation(agent1, agent2, max_round, agent_goals, agent_reasons,
                           agent_goals_mcqas, agent_reasons_mcqas, evaluator,
-                          encryption_enabled=False, action_enabled=False, use_language_barrier=False,
+                          encryption_enabled=False, action_enabled=False, nature_language=False,
                           output_suffix="_no_encryption_no_action")
 
     # ---------- EXPERIMENT 2: Encryption Only ----------
@@ -124,7 +124,7 @@ def main():
     agent2 = SocialAgent("Jamie", profile_b, profile_a, environment, 1, use_action=False)
     simulate_conversation(agent1, agent2, max_round, agent_goals, agent_reasons,
                           agent_goals_mcqas, agent_reasons_mcqas, evaluator,
-                          encryption_enabled=True, action_enabled=False, use_language_barrier=False,
+                          encryption_enabled=True, action_enabled=False, nature_language=False,
                           output_suffix="_encryption_no_action")
 
     # ---------- EXPERIMENT 3: Encryption + Action ----------
@@ -133,7 +133,7 @@ def main():
     agent2 = SocialAgent("Jamie", profile_b, profile_a, environment, 1, use_action=True)
     simulate_conversation(agent1, agent2, max_round, agent_goals, agent_reasons,
                           agent_goals_mcqas, agent_reasons_mcqas, evaluator,
-                          encryption_enabled=True, action_enabled=True, use_language_barrier=False,
+                          encryption_enabled=True, action_enabled=True, nature_language=False,
                           output_suffix="_encryption_action")
 
 if __name__ == "__main__":

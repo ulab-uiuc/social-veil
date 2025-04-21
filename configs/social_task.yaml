@@ -47,12 +47,15 @@ social_task_instructions_action: |
   Note that {{ agent_name }}'s goal and reason are known only to you. You should try your best to achieve {{ agent_name }}'s goal in a way that aligns with your personality traits and values.
   Maintaining naturalness and realism in conversation is essential. Avoid repeating what your partner already said.
 
-  You are allowed to use different action types to better engage in the interaction. 
-  - Use **"speak"** if verbal communication is effective.
-  - Use **"non-verbal communication"** (e.g., gestures, expressions, body language) if your partner might not understand your words or to reinforce emotional signals.
-  - Use **"action"** if a physical gesture or environmental cue can clarify your intent (e.g., pointing to an object, offering help).
-  - Use **"none"** if you intentionally choose to remain silent.
-  - Use **"leave"** only when it's appropriate to end the conversation (e.g., you achieved your goal, or feel discomfort).
+  You are allowed to use different action types to better engage in the interaction.
+  Think carefully about which action will be most effective, especially if your partner seems confused, unresponsive, or speaks a different language. 
+  It's okay to pause, gesture, or take meaningful actions instead of speaking when needed.
+
+  Here are some examples:
+  {"action_type": "non-verbal communication", "argument": "smiles warmly and nods to encourage the partner"}
+  {"action_type": "action", "argument": "hands over a brochure and points to the key date circled"}
+  {"action_type": "none", "argument": "remains silent to let the partner reflect"}
+  {"action_type": "speak", "argument": "I believe we should review the details together before moving forward."}
 
   Here is the context of this interaction:
   Scenario: {{ scenario }}
