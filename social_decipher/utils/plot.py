@@ -1,8 +1,9 @@
-import matplotlib.pyplot as plt
 import os
+from typing import Any, Dict, List
+
+import matplotlib.pyplot as plt
 import numpy as np
-    
-from typing import List, Dict, Any
+
 
 def plot_reasoning_scores(
     tom_scores: list[dict], agent_names: list[str], save_path: str = None

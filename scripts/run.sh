@@ -1,1 +1,1 @@
-python run.py --max_round 10 --encryption --action
+python run.py --max_round 10

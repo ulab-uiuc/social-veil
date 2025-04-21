@@ -1,2 +1,3 @@
 from .encryption import BaseEncryption
+from .encryption_natural_language import LanguageModelEncryption
 from .encryption_rule_mapping import MappingEncryption
