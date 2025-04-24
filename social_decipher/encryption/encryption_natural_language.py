@@ -1,31 +1,26 @@
-# Add to your encryption.py file
-import os
-from typing import Any, Dict, List, Optional
-
-from openai import OpenAI
-
+from typing import Optional
 from social_decipher.utils.model import ModelManager
+from social_decipher.encryption import BaseEncryption
 
-from .encryption import BaseEncryption
-
-
-class LanguageModelEncryption(BaseEncryption):
+class LanguageModelEncryption(BaseEncryption): 
     def __init__(self, target_language: str, model_id: str, source_language: str = "English"):
+        """
+        Initialize language model encryption
+        
+        Args:
+            target_language: Language to translate to/from
+            model_id: Model ID used by this agent
+            source_language: Original language (default English)
+        """
         self.target_language = target_language
         self.source_language = source_language
         self.model_id = model_id
-
+        
+        # Check if model understands the target language
         self.can_understand = ModelManager.can_model_understand_language(
             model_id, target_language
         )
 
-        model1, model2, _ = ModelManager.language_barrier_pair()
-        self.translator_model = model1  # model1 is always the one that understands the barrier language
-
-        # Debug logging
-        print(f"LanguageModelEncryption for {model_id}: " 
-              f"Can understand {target_language}: {self.can_understand}")
-        
     def __call__(self, text: str) -> str:
         """
         Encrypt message by translating to target language if needed
@@ -35,19 +30,19 @@ class LanguageModelEncryption(BaseEncryption):
         """
         if not text:
             return text
-            
-        # If this model understands the target language, translate to it
+        
+        # IMPORTANT: Only translate if this model can understand the target language
         if self.can_understand:
+    
             result = ModelManager.translate_text(
                 text, 
                 source_language=self.source_language,
                 target_language=self.target_language, 
-                model_id=self.translator_model
+                model_id="gpt-4o-mini"
             )
-            print(f"Translated to {self.target_language}: {result[:50]}...")
+            print(f"- Translated to {self.target_language}: {result}")
             return result
         
         # If model doesn't understand target language, keep in source language
-        # The message will be translated if needed during relay_communication
-        print(f"Keeping in {self.source_language} (model doesn't understand {self.target_language})")
+        print(f"- Keeping in {self.source_language} (model doesn't understand {self.target_language})")
         return text
