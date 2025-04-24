@@ -8,7 +8,7 @@ from .encryption import BaseEncryption
 def LLM_inference(prompt: str) -> str:
     client = OpenAI()
 
-    response = client.responses.create(model="gpt-4o", input=prompt)
+    response = client.responses.create(model="gpt-4o-mini", input=prompt)
     return response.output_text
 
 
@@ -54,9 +54,6 @@ class MappingEncryption(BaseEncryption):
 
     def __call__(self, message: str) -> str:
         return self.encrypt(message)
-
-    def run(self, message: str) -> str:
-        pass
 
     def encrypt(self, message: str) -> str:
         related_vocab = self.rag(message)

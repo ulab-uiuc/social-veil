@@ -26,7 +26,9 @@ def simulate_conversation(
     action_enabled: bool = False,
     nature_language: bool = False, 
     output_suffix: str = "default",
+    pair: Any = 0, 
 ) -> None:
+
     agency = Agency(
         [
             personA,
@@ -48,8 +50,8 @@ def simulate_conversation(
 
     if encryption_enabled:
         if nature_language:
-            strong_model, weak_model, barrier_language = ModelManager.language_barrier_pair(0)
-            
+            strong_model, weak_model, barrier_language = ModelManager.language_barrier_pair(pair)
+   
             encryption1 = LanguageModelEncryption(
                 target_language=barrier_language,
                 model_id=strong_model
@@ -66,6 +68,12 @@ def simulate_conversation(
             print(f"🌐 Language barrier mode enabled:")
             print(f"  - Agent 1 ({personA.name}) using {strong_model} ({strong_provider}) for {barrier_language}")
             print(f"  - Agent 2 ({personB.name}) using {weak_model} ({weak_provider}) for {barrier_language}")
+            
+            # Verify language capabilities for debugging
+            strong_understands = ModelManager.can_model_understand_language(strong_model, barrier_language)
+            weak_understands = ModelManager.can_model_understand_language(weak_model, barrier_language)
+            print(f"  - Agent 1 can understand {barrier_language}: {strong_understands}")
+            print(f"  - Agent 2 can understand {barrier_language}: {weak_understands}")
         else:
             encryption1 = MappingEncryption(key=random.randint(1, 100))
             encryption2 = MappingEncryption(key=random.randint(1, 100))
@@ -75,6 +83,7 @@ def simulate_conversation(
 
     personA_message = personA.act(message=None, initial=True, use_action=action_enabled)
     conversation_log.append(f"{personA.name}: {personA.log[-1]['response_raw']}")
+    encrypted_conversation_log.append(f"{personA.name}: {personA.log[-1]['response_encrypted']}")
 
     for num in range(num_turns):
         print("\n")
@@ -89,6 +98,7 @@ def simulate_conversation(
         personB_message = personB.act(personA_message, use_action=action_enabled)
         conversation_log.append(f"Agent 2: {personB.log[-1]['response_raw']}")
         encrypted_conversation_log.append(f"Agent 2: {personB.log[-1]['response_encrypted']}")
+        exit()
 
         goal_mcq_A = personB.predict_mcq_answer(
             transcript=encrypted_conversation_log,
