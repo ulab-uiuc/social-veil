@@ -1,6 +1,8 @@
 from typing import Optional
-from social_decipher.utils.model import ModelManager
+
 from social_decipher.encryption import BaseEncryption
+from social_decipher.utils.model import ModelManager
+
 
 class LanguageModelEncryption(BaseEncryption): 
     def __init__(self, target_language: str, model_id: str, source_language: str = "English"):

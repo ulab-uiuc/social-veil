@@ -20,6 +20,9 @@ social_task_instructions: |
   Note that {{ agent_name }}'s goal and reason are known only to you. You should try your best to achieve {{ agent_name }}'s goal in a way that aligns with your personality traits and values.
   Maintaining naturalness and realism in conversation is essential. Avoid repeating what your partner already said.
 
+  Memory from previous interactions with {{ partner_name }}:
+  {{ memory_context }}
+  
   Here is the context of this interaction:
   Scenario: {{ scenario }}
   Participants: {{ agent_name }} and {{ partner_name }}

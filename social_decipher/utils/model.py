@@ -1,7 +1,8 @@
 import os
 from typing import Any, Dict, List, Optional, Tuple
-import requests
+
 import anthropic
+import requests
 from openai import OpenAI
 
 
@@ -32,6 +33,24 @@ class ModelManager:
             "provider": "huggingface",
             "description": "1.1B parameter model, very CPU-friendly"
         },
+        "mistral-small-latest": {
+            "languages": ["English", "French", "German", "Spanish"],
+            "strength": "medium",
+            "provider": "mistral",  # changed from huggingface
+            "description": "7B parameter model with good instruction following"
+        },
+        "microsoft/phi-2": {
+            "languages": ["English"],
+            "strength": "medium",
+            "provider": "huggingface",
+            "description": "2.7B parameter model with strong instruction capabilities"
+        },
+        "Qwen/Qwen1.5-1.8B-Chat": {
+            "languages": ["English"],  # This model actually has some Chinese ability
+            "strength": "medium",
+            "provider": "huggingface",
+            "description": "1.8B parameter model with multilingual capabilities"
+        },
         "claude-3-opus-20240229": {
             "languages": ["English", "Chinese", "Spanish", "French", "Japanese", "German"],
             "strength": "high",
@@ -57,28 +76,20 @@ class ModelManager:
         "claude-3-sonnet-20240229": {"provider": "anthropic", "api_format": "anthropic"},
         "claude-3-haiku-20240307": {"provider": "anthropic", "api_format": "anthropic"},
         "TinyLlama/TinyLlama-1.1B-Chat-v1.0": {"provider": "huggingface", "api_format": "huggingface"},
-        # Proxy versions
-        "anthropic/claude-3-opus-20240229": {"provider": "openai", "api_format": "openai_proxy"},
-        "anthropic/claude-3-sonnet-20240229": {"provider": "openai", "api_format": "openai_proxy"},
-        "anthropic/claude-3-haiku-20240307": {"provider": "openai", "api_format": "openai_proxy"}
+        "mistral-small-latest": {"provider": "mistral","api_format": "mistral"},
+        "Qwen/Qwen1.5-1.8B-chat": {"provider": "huggingface", "api_format": "huggingface"},
+        "microsoft/phi-2": {"provider": "huggingface", "api_format": "huggingface"},
     }
     
     # Define language barrier pairs with explicit incompatibility
     LANGUAGE_BARRIER_PAIRS = [
-        # Format: (model_with_strong_support, model_with_weaker_support, barrier_language)
-
-        # gpt-4o-mini is generally stronger in lower-resource languages
+        ("gpt-4o-mini", "Qwen/Qwen1.5-1.8B-chat", "Chinese"),
         ("gpt-4o-mini", "TinyLlama/TinyLlama-1.1B-Chat-v1.0", "Chinese"),
+        ("gpt-4o-mini", "mistral-small-latest", "Chinese"),
+        ("gpt-4o-mini", "microsoft/phi-2", "Chinese"),
         ("gpt-4o-mini", "claude-3-sonnet-20240229", "Chinese"),
         ("gpt-4o-mini", "claude-3-haiku-20240307", "Japanese"),
-        ("gpt-4o-mini", "claude-3-haiku-20240307", "Korean"),
     ]
-
-    NAMED_PAIRS = {
-        "gpt-tiny-chinese": 0,    # GPT-4o-mini and TinyLlama with Chinese barrier
-        "gpt-claude-chinese": 1,  # GPT-4o-mini and Claude Sonnet with Chinese barrier
-        "gpt-claude-japanese": 2,  # GPT-4o-mini and Claude Haiku with Japanese barrier
-    }
 
     @classmethod
     def get_openai_client(cls):
@@ -103,122 +114,37 @@ class ModelManager:
         return cls._anthropic_client
     
     @classmethod
-    def language_barrier_pair(cls, pair_index_or_name: Any = 0) -> Tuple[str, str, str]:
-        """
-        Return a model pair with a true language barrier
-        
-        Args:
-            pair_index_or_name: Index of the pair to use from LANGUAGE_BARRIER_PAIRS,
-                               or a named pair from NAMED_PAIRS
-            
-        Returns:
-            Tuple of (model1, model2, barrier_language)
-            Where:
-            - model1 understands the barrier_language
-            - model2 does NOT understand the barrier_language
-        """
-        # Convert named pair to index if a string is provided
-        if isinstance(pair_index_or_name, str) and pair_index_or_name in cls.NAMED_PAIRS:
-            pair_index = cls.NAMED_PAIRS[pair_index_or_name]
-        else:
-            try:
-                pair_index = int(pair_index_or_name)
-            except (ValueError, TypeError):
-                # Default to the first pair if invalid input
-                pair_index = 0
-                
-        if pair_index >= len(cls.LANGUAGE_BARRIER_PAIRS):
-            pair_index = 0
+    def language_barrier_pair(cls, pair_index: Any = 0) -> Tuple[str, str, str]:
+
+        pair_index = int(pair_index) if isinstance(pair_index, str) and pair_index.isdigit() else pair_index
             
         pair = list(cls.LANGUAGE_BARRIER_PAIRS[pair_index])
-            
-        # Check if we're using the proxy
-        if os.environ.get("USE_ASTRA_PROXY", "false").lower() == "true":
-            # Convert Anthropic model names to proxy format if needed
-            
-            # Convert model1 if it's an Anthropic model
-            if cls.MODEL_PROVIDERS.get(pair[0], {}).get("provider") == "anthropic":
-                pair[0] = f"anthropic/{pair[0]}"
-                
-            # Convert model2 if it's an Anthropic model
-            if cls.MODEL_PROVIDERS.get(pair[1], {}).get("provider") == "anthropic":
-                pair[1] = f"anthropic/{pair[1]}"
-        
+
         print(f"- Model 1: {pair[0]} (understands {pair[2]})")
         print(f"- Model 2: {pair[1]} (does NOT understand {pair[2]})")
         print(f"- Barrier language: {pair[2]}")
         
-        # Verify that model1 understands the barrier language and model2 doesn't
-        model1_understands = cls.can_model_understand_language(pair[0], pair[2])
-        model2_understands = cls.can_model_understand_language(pair[1], pair[2])
-        
-        print(f"- Verification - Model 1 understands barrier: {model1_understands}")
-        print(f"- Verification - Model 2 understands barrier: {model2_understands}")
-        
-        if not model1_understands:
-            print(f"⚠️ WARNING: Model 1 ({pair[0]}) is supposed to understand {pair[2]} but doesn't!")
-        
-        if model2_understands:
-            print(f"⚠️ WARNING: Model 2 ({pair[1]}) is NOT supposed to understand {pair[2]} but does!")
-            
         return tuple(pair)
     
     @classmethod
     def can_model_understand_language(cls, model_id: str, language: str) -> bool:
-        """
-        Check if a model can understand a specific language
-        
-        Args:
-            model_id: The model identifier
-            language: The language to check
-            
-        Returns:
-            True if the model supports the language, False otherwise
-        """
-        # Strip the provider prefix if using proxy format
         if "/" in model_id and not model_id.startswith("TinyLlama/"):
             model_id = model_id.split("/")[1]
             
-        # Get languages supported by this model
         supported_languages = cls.MODEL_CAPABILITIES.get(model_id, {}).get("languages", [])
-        
-        # Debug log
-        print(f"[DEBUG] Checking if {model_id} understands {language}")
-        print(f"- Supported languages: {supported_languages}")
-        print(f"- Result: {language in supported_languages}")
         
         return language in supported_languages
     
     @classmethod
     def translate_text(cls, text: str, source_language: str, target_language: str, model_id: str) -> str:
-        """
-        Translate text from source_language to target_language using the specified model
         
-        Args:
-            text: The text to translate
-            source_language: The language of the input text
-            target_language: The language to translate to
-            model_id: The model to use for translation
-            
-        Returns:
-            The translated text
-        """
-        print(f"\n[DEBUG] Translating text:")
-        print(f"- From: {source_language} to {target_language}")
-        print(f"- Using model: {model_id}")
-        print(f"- Original text: {text[:50]}...")
-        
-        # Strip the provider prefix if using proxy format
         if "/" in model_id and not model_id.startswith("TinyLlama/"):
             model_id = model_id.split("/")[1]
             
         model_info = cls.MODEL_PROVIDERS.get(model_id, {})
         provider = model_info.get("provider", "openai")
         
-        # IMPORTANT FIX: Always use a reliable model for translation
-        # Don't trust TinyLlama to do translations
         if provider == "huggingface":
-            print(f"- Switching from {model_id} to gpt-4o-mini for more reliable translation")
             model_id = "gpt-4o-mini"
             provider = "openai"
         
@@ -235,7 +161,6 @@ class ModelManager:
     
     @classmethod
     def _translate_with_openai(cls, text: str, source_language: str, target_language: str, model_id: str) -> str:
-        """Translate text using OpenAI models"""
         client = cls.get_openai_client()
         prompt = f"Translate the following {source_language} text to {target_language}. Maintain the original structure and format. Return only the translated text without explanations or metadata.\n\n{text}"
         
