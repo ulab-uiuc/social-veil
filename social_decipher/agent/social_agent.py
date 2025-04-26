@@ -1,4 +1,5 @@
 import json
+import os
 from typing import Any, Dict
 
 import yaml
@@ -7,6 +8,7 @@ from rich import print
 
 from ..encryption import BaseEncryption
 from ..environment.env_profile import EnvironmentProfile
+from .agent_memory import AgentMemory
 from .agent_profile import AgentProfile
 
 
@@ -16,7 +18,10 @@ class SocialAgent(Agent):
         name, 
         profile: AgentProfile, 
         partner_profile: AgentProfile, 
-        env: EnvironmentProfile, role_num: int, use_action: bool = False
+        env: EnvironmentProfile, 
+        role_num: int, 
+        use_action: bool = False,
+        memory: AgentMemory = None
     ):
 
         self.agency = None
@@ -26,6 +31,11 @@ class SocialAgent(Agent):
         self.role_num = role_num
         self.profile = profile
         self.partner_profile = partner_profile
+
+        if memory is None:
+            self.memory = AgentMemory(name, partner_profile.profile["first_name"])
+        else:
+            self.memory = memory
 
         initial_instruction = self.set_static_instruction(use_action)
 
@@ -56,14 +66,14 @@ class SocialAgent(Agent):
         if self.role_num == 0:
             agent_goal = env_dict["agent_goals"][0]
             agent_reason = env_dict["agent_reasons"][0]
-            partner_goal = env_dict["agent_goals"][1]
         else:
             agent_goal = env_dict["agent_goals"][1]
             agent_reason = env_dict["agent_reasons"][1]
-            partner_goal = env_dict["agent_goals"][0]
 
         template_key = "social_task_instructions_action" if use_action else "social_task_instructions"
         template = templates[template_key]
+
+        memory_context = self.memory.get_memory_context(detailed=(turn_number == 0))
 
         mapping = {
             "agent_name": profile["first_name"],
@@ -83,6 +93,7 @@ class SocialAgent(Agent):
             "partner_gender": partner["gender"],
             "partner_occupation": partner["occupation"],
             "partner_public_info": partner["public_info"],
+            "memory_context": memory_context,
         }
 
         for key, value in mapping.items():
@@ -96,8 +107,7 @@ class SocialAgent(Agent):
 
         self.instructions = self.build_instruction(transcript=transcript_text,
                                                     turn_number=turn_number,
-                                                    use_action=use_action
-                                                    )
+                                                    use_action=use_action)
         
     def set_agency(self, agency: Agency):
         self.agency = agency
@@ -164,8 +174,7 @@ class SocialAgent(Agent):
             original_response = response
             encrypted_response = self.encryption(response) if self.encryption else response
 
-        if self.encryption is not None:
-            print(f"[green]**{self.name} ENCRYPTED RESPONSE: {encrypted_response}")
+        print(f"[green]**{self.name} RESPONSE: {encrypted_response}")
 
         self.log.append(
             {
@@ -219,8 +228,40 @@ class SocialAgent(Agent):
             "correct": selected == mcqa["correct_answer"]
         }
 
-
-
-
     def response_validator(self, message):
         return message
+
+    def update_memory_after_scenario(self, 
+                                    scenario_log: list[str], 
+                                    scenario_results: Dict[str, Any],
+                                    encryption_enabled: bool = False):
+        """Update agent memory after completing a scenario"""
+        
+        # Get the agent's goal from the environment
+        if self.role_num == 0:
+            agent_goal = self.env.env["agent_goals"][0]
+            goal_achieved = scenario_results.get("agent0_goal_achieved", False)
+        else:
+            agent_goal = self.env.env["agent_goals"][1]
+            goal_achieved = scenario_results.get("agent1_goal_achieved", False)
+            
+        # Update memory
+        self.memory.update_after_scenario(
+            scenario_log=scenario_log,
+            scenario_results=scenario_results,
+            agent_goal=agent_goal,
+            goal_achieved=goal_achieved,
+            encryption_enabled=encryption_enabled
+        )
+        
+    def save_memory(self, output_dir: str):
+        """Save agent memory to file"""
+        os.makedirs(output_dir, exist_ok=True)
+        self.memory.save(os.path.join(output_dir, f"{self.name}_memory.json"))
+        
+    def load_memory(self, filepath: str):
+        """Load agent memory from file"""
+        if os.path.exists(filepath):
+            self.memory = AgentMemory.load(filepath)
+            return True
+        return False
