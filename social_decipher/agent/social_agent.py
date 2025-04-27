@@ -1,6 +1,6 @@
 import json
 import os
-from typing import Any, Dict
+from typing import Any
 
 import yaml
 from agency_swarm import Agency, Agent
@@ -14,16 +14,15 @@ from .agent_profile import AgentProfile
 
 class SocialAgent(Agent):
     def __init__(
-        self, 
-        name, 
-        profile: AgentProfile, 
-        partner_profile: AgentProfile, 
-        env: EnvironmentProfile, 
-        role_num: int, 
+        self,
+        name,
+        profile: AgentProfile,
+        partner_profile: AgentProfile,
+        env: EnvironmentProfile,
+        role_num: int,
         use_action: bool = False,
-        memory: AgentMemory = None
+        memory: AgentMemory = None,
     ):
-
         self.agency = None
         self.env = env
         self.encryption = None
@@ -53,9 +52,13 @@ class SocialAgent(Agent):
         self.instructions = initial_instruction
 
     def set_static_instruction(self, use_action=False) -> str:
-        return self.build_instruction(transcript="", turn_number=0, use_action=use_action)
+        return self.build_instruction(
+            transcript="", turn_number=0, use_action=use_action
+        )
 
-    def build_instruction(self, transcript: str, turn_number: int, use_action: bool = False) -> str:
+    def build_instruction(
+        self, transcript: str, turn_number: int, use_action: bool = False
+    ) -> str:
         with open("../configs/social_task.yaml") as f:
             templates = yaml.safe_load(f)
 
@@ -70,7 +73,11 @@ class SocialAgent(Agent):
             agent_goal = env_dict["agent_goals"][1]
             agent_reason = env_dict["agent_reasons"][1]
 
-        template_key = "social_task_instructions_action" if use_action else "social_task_instructions"
+        template_key = (
+            "social_task_instructions_action"
+            if use_action
+            else "social_task_instructions"
+        )
         template = templates[template_key]
 
         memory_context = self.memory.get_memory_context(detailed=(turn_number == 0))
@@ -101,14 +108,16 @@ class SocialAgent(Agent):
 
         return template
 
-    def update_instruction(self, transcript: list[str], turn_number: int, use_action: bool = False):
+    def update_instruction(
+        self, transcript: list[str], turn_number: int, use_action: bool = False
+    ):
         short_transcript = transcript[-4:] if len(transcript) > 4 else transcript
         transcript_text = "\n".join(short_transcript)
 
-        self.instructions = self.build_instruction(transcript=transcript_text,
-                                                    turn_number=turn_number,
-                                                    use_action=use_action)
-        
+        self.instructions = self.build_instruction(
+            transcript=transcript_text, turn_number=turn_number, use_action=use_action
+        )
+
     def set_agency(self, agency: Agency):
         self.agency = agency
 
@@ -135,9 +144,13 @@ class SocialAgent(Agent):
             if use_action:
                 response = json.loads(response)
                 original_response = response
-                
+
                 if response["action_type"] == "speak":
-                    response["argument"] = (self.encryption(response["argument"]) if self.encryption else response["argument"])
+                    response["argument"] = (
+                        self.encryption(response["argument"])
+                        if self.encryption
+                        else response["argument"]
+                    )
                 encrypted_response = response
             else:
                 original_response = response
@@ -147,7 +160,7 @@ class SocialAgent(Agent):
 
             if self.encryption is not None:
                 print(f"**{self.name} ENCRYPTED MESSAGE: {encrypted_response}")
-   
+
             self.log.append(
                 {
                     "initial": True,
@@ -158,21 +171,29 @@ class SocialAgent(Agent):
             return encrypted_response
 
         received = message
-        
+
         if use_action:
-            response = self.agency.get_completion(message['argument'], recipient_agent=self) 
+            response = self.agency.get_completion(
+                message["argument"], recipient_agent=self
+            )
         else:
-            response = self.agency.get_completion(message, recipient_agent=self) 
+            response = self.agency.get_completion(message, recipient_agent=self)
 
         if use_action:
             response = json.loads(response)
             original_response = response
             if response["action_type"] == "speak":
-                response["argument"] = (self.encryption(response["argument"]) if self.encryption else response["argument"])
+                response["argument"] = (
+                    self.encryption(response["argument"])
+                    if self.encryption
+                    else response["argument"]
+                )
             encrypted_response = response
-        else:   
+        else:
             original_response = response
-            encrypted_response = self.encryption(response) if self.encryption else response
+            encrypted_response = (
+                self.encryption(response) if self.encryption else response
+            )
 
         print(f"[green]**{self.name} RESPONSE: {encrypted_response}")
 
@@ -186,14 +207,18 @@ class SocialAgent(Agent):
         )
         return encrypted_response
 
-    def predict_mcq_answer(self, 
-                           transcript: list[str], 
-                           mcqa: Dict[str, Any], 
-                           test_prompt: Dict[str, str],
-                           task_type: str) -> Dict[str, Any]:
-        assert self.agency is not None, "Agent must be assigned to an agency before acting."
+    def predict_mcq_answer(
+        self,
+        transcript: list[str],
+        mcqa: dict[str, Any],
+        test_prompt: dict[str, str],
+        task_type: str,
+    ) -> dict[str, Any]:
+        assert (
+            self.agency is not None
+        ), "Agent must be assigned to an agency before acting."
         assert task_type in {"goal", "reason"}, "task_type must be 'goal' or 'reason'"
-        
+
         if len(transcript) > 4:
             short_transcript = transcript[-4:]
         else:
@@ -203,11 +228,13 @@ class SocialAgent(Agent):
         conversation_str = "\n".join(short_transcript)
 
         prompt = test_prompt[
-            "MCQ_Goal_Prediction_Prompt" if task_type == "goal" else "MCQ_Reason_Prediction_Prompt"
+            "MCQ_Goal_Prediction_Prompt"
+            if task_type == "goal"
+            else "MCQ_Reason_Prediction_Prompt"
         ].format(
             question=mcqa["question"],
             options=formatted_options,
-            transcript=conversation_str
+            transcript=conversation_str,
         )
 
         response = self.agency.get_completion(prompt, recipient_agent=self).strip()
@@ -225,18 +252,20 @@ class SocialAgent(Agent):
         return {
             "selected": selected if selected in mcqa["options"] else "Invalid",
             "confidence": max(0.0, min(confidence, 1.0)),  # clamp between 0-1
-            "correct": selected == mcqa["correct_answer"]
+            "correct": selected == mcqa["correct_answer"],
         }
 
     def response_validator(self, message):
         return message
 
-    def update_memory_after_scenario(self, 
-                                    scenario_log: list[str], 
-                                    scenario_results: Dict[str, Any],
-                                    encryption_enabled: bool = False):
+    def update_memory_after_scenario(
+        self,
+        scenario_log: list[str],
+        scenario_results: dict[str, Any],
+        encryption_enabled: bool = False,
+    ):
         """Update agent memory after completing a scenario"""
-        
+
         # Get the agent's goal from the environment
         if self.role_num == 0:
             agent_goal = self.env.env["agent_goals"][0]
@@ -244,21 +273,21 @@ class SocialAgent(Agent):
         else:
             agent_goal = self.env.env["agent_goals"][1]
             goal_achieved = scenario_results.get("agent1_goal_achieved", False)
-            
+
         # Update memory
         self.memory.update_after_scenario(
             scenario_log=scenario_log,
             scenario_results=scenario_results,
             agent_goal=agent_goal,
             goal_achieved=goal_achieved,
-            encryption_enabled=encryption_enabled
+            encryption_enabled=encryption_enabled,
         )
-        
+
     def save_memory(self, output_dir: str):
         """Save agent memory to file"""
         os.makedirs(output_dir, exist_ok=True)
         self.memory.save(os.path.join(output_dir, f"{self.name}_memory.json"))
-        
+
     def load_memory(self, filepath: str):
         """Load agent memory from file"""
         if os.path.exists(filepath):

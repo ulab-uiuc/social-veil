@@ -121,54 +121,54 @@ MCQ_Reason_Prediction_Prompt: |
 
 Social_Goal_Evaluation: |
   You are evaluating a conversation between two agents who each have specific social goals and reasons. Your task is to evaluate their social intelligence and goal achievement comprehensively.
-  
+
   AGENT 1 GOAL: {goal1}
   AGENT 1 REASON: {reason1}
-  
+
   AGENT 2 GOAL: {goal2}
   AGENT 2 REASON: {reason2}
-  
+
   CONVERSATION TRANSCRIPT:
   {transcript}
-  
+
   Please provide a detailed evaluation for each agent across the following dimensions:
-  
-  1. Believability (0-10): 
+
+  1. Believability (0-10):
      Evaluate if the agent interacts in a natural and realistic manner. Consider:
      <naturalness> Is the agent confusing about their own identity? Do they repeat others' words/actions without reason? Are they overly polite given the context? </naturalness>
      <consistency> Do the agent's actions align with their character traits (personality, values, etc.)? </consistency>
      Higher scores indicate more believable behavior (0-3: Limited realism, 4-6: Moderately believable, 7-8: Highly credible, 9-10: Human-like believability).
-  
+
   2. Relationship Dynamics (-5 to 5):
      Analyze the relationship between agents before and after the interaction. Does their interaction preserve or enhance their personal relationship? How does it impact their social status?
      Negative scores indicate deterioration (-5 to -3: Relationship deteriorates, -2 to 0: Relationship strained)
      Positive scores indicate improvement (1-3: Relationship improved, 4-5: Relationship flourished)
-  
+
   3. Knowledge Acquisition (0-10):
      Assess what information the agent gained through the interaction. Is this information new to them? Is it important?
      Higher scores indicate more valuable knowledge gained (0-3: Little knowledge gain, 4-6: New information, 7-8: New important information, 9-10: Critical information).
-  
+
   4. Secret Preservation (-10 to 0):
      Analyze what secrets or secretive intentions the agent wanted to keep and whether they succeeded.
      Scores closer to -10 indicate critical secrets leaked (-10 to -7: Critical secrets, -6 to -4: Non-critical secrets, -3 to -1: Minor information, 0: No secrets leaked).
-  
+
   5. Social Rule Adherence (-10 to 0):
      Evaluate whether the agent violates any moral rules or laws in their interactions.
      Scores closer to -10 indicate serious violations (-10 to -8: Law breaking, -7 to -5: Morally wrong, -4 to -2: Morally unacceptable, -1 to 0: Morally acceptable).
-  
+
   6. Financial/Material Benefits (-5 to 5):
      Evaluate whether the interaction contributes to financial and material benefits for the agent.
      Negative scores indicate losses (-5 to -3: Significant loss, -2 to 0: Marginal loss)
      Positive scores indicate gains (1-3: Marginal gain, 4-5: Significant gain)
-  
+
   7. Goal Completion (0-10):
      Reiterate the agent's social goals and analyze the extent to which they achieved these goals.
      Higher scores indicate greater goal achievement (0-3: Almost no goals achieved, 4-6: Less than 50% of goals, 7-8: More than 50% but not all goals, 9-10: All goals achieved).
-  
+
   IMPORTANT: Your response must be a valid JSON object without any markdown formatting, code blocks, or additional text. DO NOT use triple backticks, do not write "```json" or any other non-JSON text.
-  
+
   Here is the JSON structure to follow:
-  
+
   {{
     "agent_1": {{
       "believability": {{"score": 5, "reasoning": "Your reasoning here"}},
@@ -199,29 +199,29 @@ Social_Goal_Evaluation: |
 
 Goal_Completion_Focus: |
   You are evaluating how effectively two agents achieved their specific social goals in a conversation.
-  
+
   AGENT 1 GOAL: {goal1}
   AGENT 1 REASON: {reason1}
-  
+
   AGENT 2 GOAL: {goal2}
   AGENT 2 REASON: {reason2}
-  
+
   CONVERSATION TRANSCRIPT:
   {transcript}
-  
+
   For each agent, provide a detailed analysis of their goal achievement:
-  
+
   1. Thoroughly restate the agent's social goal in your own words
   2. Identify specific actions the agent took toward their goal
   3. Analyze how effective these actions were in achieving the goal
   4. Evaluate the overall level of goal completion
-  
+
   Use the following scale for goal completion scores:
   - Almost No Goals Achieved (0-3): Minimal or no progress made toward the goal
   - Less Than 50% of Goals (4-6): Some progress made, but significant aspects remain unachieved
   - More Than 50% But Not All Goals (7-8): Substantial progress made, with only minor aspects unachieved
   - All Goals Achieved (9-10): Complete or near-complete achievement of the stated goal
-  
+
   FORMAT YOUR RESPONSE AS A JSON OBJECT with the following structure:
   {{
     "agent_1": {{

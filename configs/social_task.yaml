@@ -22,7 +22,7 @@ social_task_instructions: |
 
   Memory from previous interactions with {{ partner_name }}:
   {{ memory_context }}
-  
+
   Here is the context of this interaction:
   Scenario: {{ scenario }}
   Participants: {{ agent_name }} and {{ partner_name }}
@@ -51,7 +51,7 @@ social_task_instructions_action: |
   Maintaining naturalness and realism in conversation is essential. Avoid repeating what your partner already said.
 
   You are allowed to use different action types to better engage in the interaction.
-  Think carefully about which action will be most effective, especially if your partner seems confused, unresponsive, or speaks a different language. 
+  Think carefully about which action will be most effective, especially if your partner seems confused, unresponsive, or speaks a different language.
   It's okay to pause, gesture, or take meaningful actions instead of speaking when needed.
 
   Here are some examples:
