@@ -119,14 +119,6 @@ def main():
     # Create evaluator
     evaluator = ConversationEvaluator(client, model)
 
-    # Create agents
-    agent1 = SocialAgent(
-        "Alex", profile_a, profile_b, first_env, 0, use_action=args.action
-    )
-    agent2 = SocialAgent(
-        "Jamie", profile_b, profile_a, first_env, 1, use_action=args.action
-    )
-
     # Load memory if path provided
     if args.memory_path:
         memory_path_a = os.path.join(args.memory_path, "Alex_memory.json")
@@ -141,8 +133,6 @@ def main():
             agent2.load_memory(memory_path_b)
 
     if args.run_all:
-        # Run all experiment conditions
-
         # EXPERIMENT 1: No Encryption, No Action
         print("\n🚀 Running Experiment 1: No Encryption, No Action")
         agent1 = SocialAgent(
@@ -163,6 +153,8 @@ def main():
             client=client,
             evaluator=evaluator,
         )
+
+        exit()
 
         # EXPERIMENT 2: Encryption Only (Mapping)
         print("\n🔐 Running Experiment 2: With Encryption (Mapping), No Action")

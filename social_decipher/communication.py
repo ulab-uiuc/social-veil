@@ -178,7 +178,6 @@ def simulate_conversation_single_scenario(
 
         # MCQ evaluations
         if use_direct_api:
-            # Use direct API calls for MCQ predictions
             goal_mcq_A = predict_mcq_answer_direct(
                 personB,
                 encrypted_conversation_log,
@@ -194,7 +193,6 @@ def simulate_conversation_single_scenario(
                 "reason",
             )
         else:
-            # Use standard MCQ prediction
             goal_mcq_A = personB.predict_mcq_answer(
                 transcript=encrypted_conversation_log,
                 mcqa=agent_goals_mcqas[0],
@@ -214,8 +212,7 @@ def simulate_conversation_single_scenario(
             turn_number=num,
             use_action=action_enabled,
         )
-
-        # Person A responds
+        
         if use_direct_api:
             # Use custom_act with direct API calls for language barrier experiments
             personA_message = custom_act(
