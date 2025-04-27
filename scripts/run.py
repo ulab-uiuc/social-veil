@@ -1,9 +1,6 @@
 import argparse
 import os
 
-from agency_swarm import set_openai_client
-from astra_assistants import patch
-from dotenv import load_dotenv
 from openai import OpenAI
 
 from social_decipher.agent.agent_profile import AgentProfile

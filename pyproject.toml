@@ -10,7 +10,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.9, <3.12"
+python = ">=3.10, <3.12"
 mypy = "^1.8.0"
 beartype = "^0.17.1"
 pydantic = "^2.8.2"
@@ -22,6 +22,11 @@ nltk = "*"
 rouge-score = "*"
 bert-score = "*"
 torch = "<2.3.0"
+litellm = "1.44.7"
+anthropic = "*"
+mistralai = "*"
+openai = "1.74.0"
+pypinyin = "*"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.6.0"
