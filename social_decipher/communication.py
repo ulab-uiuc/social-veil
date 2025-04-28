@@ -151,7 +151,6 @@ def simulate_conversation_single_scenario(
     )
 
     for num in range(num_turns):
-        print("\n")
         print(
             f"################# SCENARIO {scenario_idx+1} - ROUND {num+1} #################"
         )
@@ -212,7 +211,7 @@ def simulate_conversation_single_scenario(
             turn_number=num,
             use_action=action_enabled,
         )
-        
+
         if use_direct_api:
             # Use custom_act with direct API calls for language barrier experiments
             personA_message = custom_act(
