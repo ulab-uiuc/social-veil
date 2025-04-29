@@ -16,7 +16,7 @@ from social_decipher.utils.plot import plot_mcq_scores, plot_social_goal
 from social_decipher.utils.utils import custom_act, predict_mcq_answer_direct
 
 
-def simulate_conversation_single_scenario(
+def run_single_scenario_simulation(
     personA: Agent,
     personB: Agent,
     environment: EnvironmentProfile,
@@ -193,12 +193,16 @@ def simulate_conversation_single_scenario(
             )
         else:
             goal_mcq_A = personB.predict_mcq_answer(
+                agent_name=personB.name,
+                partner_name=personA.name,
                 transcript=encrypted_conversation_log,
                 mcqa=agent_goals_mcqas[0],
                 test_prompt=evaluator.evaluation_template,
                 task_type="goal",
             )
             reason_mcq_A = personB.predict_mcq_answer(
+                agent_name=personB.name,
+                partner_name=personA.name,
                 transcript=encrypted_conversation_log,
                 mcqa=agent_reasons_mcqas[0],
                 test_prompt=evaluator.evaluation_template,
@@ -246,12 +250,16 @@ def simulate_conversation_single_scenario(
         else:
             # Use standard MCQ prediction
             goal_mcq_B = personA.predict_mcq_answer(
+                agent_name=personA.name,
+                partner_name=personB.name,
                 transcript=encrypted_conversation_log,
                 mcqa=agent_goals_mcqas[1],
                 test_prompt=evaluator.evaluation_template,
                 task_type="goal",
             )
             reason_mcq_B = personA.predict_mcq_answer(
+                agent_name=personA.name,
+                partner_name=personB.name,
                 transcript=encrypted_conversation_log,
                 mcqa=agent_reasons_mcqas[1],
                 test_prompt=evaluator.evaluation_template,
@@ -288,6 +296,10 @@ def simulate_conversation_single_scenario(
         with open(os.path.join(scenario_output_dir, "eval_result.json"), "w") as f:
             json.dump(eval_result, f, indent=4)
 
+        # save environment
+        with open(os.path.join(scenario_output_dir, "environment.json"), "w") as f:
+            json.dump(environment.env, f, indent=4)
+
         # Save conversation logs
         with open(os.path.join(scenario_output_dir, "conversation_log.txt"), "w") as f:
             for line in conversation_log:
@@ -321,34 +333,34 @@ def simulate_conversation_single_scenario(
 def run_multi_scenario_simulation(
     personA: Agent,
     personB: Agent,
-    num_scenarios: int,
-    turns_per_scenario: int,
+    environments,  
+    num_turns: int,
     evaluator: ConversationEvaluator,
     encryption_enabled: bool = False,
     action_enabled: bool = False,
     nature_language: bool = False,
     pair: Any = 0,
-    output_suffix: str = "default",
-    client=None,
+    scenario_idx: int = 0,  # Not used but kept for consistency
+    save_results: bool = True,
+    output_dir: str = None,
 ):
     """
     Run a multi-scenario simulation with memory continuity between scenarios
     """
-    print(
-        f"\n====== STARTING MULTI-SCENARIO SIMULATION ({num_scenarios} scenarios) ======"
-    )
+    # Get number of scenarios from the environments
+    num_scenarios = len(environments)
+    
+    print(f"\n====== STARTING MULTI-SCENARIO SIMULATION ({num_scenarios} scenarios) ======")
     print(f"Encryption enabled: {encryption_enabled}")
     print(f"Action enabled: {action_enabled}")
     print(f"Natural language barrier: {nature_language}")
+    print(f"Using {num_scenarios} pre-generated environments")
 
-    # Create the output directory
-    output_dir = f"../social_decipher/results/exp_{output_suffix}"
+    # Create the output directory if not provided
+    if output_dir is None:
+        output_dir = f"../social_decipher/results/exp_multi_scenario"
     os.makedirs(output_dir, exist_ok=True)
-
-    # Generate multiple environments
-    generator = EnvironmentGenerator(client)
-    environments = generator.generate_environments(num_scenarios=num_scenarios)
-
+    
     # Store cross-scenario metrics
     all_eval_results = []
     cross_scenario_metrics = {
@@ -367,20 +379,29 @@ def run_multi_scenario_simulation(
     for scenario_idx, environment in enumerate(environments):
         print(f"\n\n========== SCENARIO {scenario_idx+1}/{num_scenarios} ==========")
         print(environment.env["scenario"])
+        
+        # Update agent environments for current scenario
+        personA.env = environment
+        personB.env = environment
+        
+        # Regenerate instructions with the new environment
+        personA.instructions = personA.set_static_instruction(use_action=action_enabled)
+        personB.instructions = personB.set_static_instruction(use_action=action_enabled)
 
         # Run simulation for this scenario
-        conversation_log, eval_result, mcq_logs = simulate_conversation_single_scenario(
+        scenario_output_dir = os.path.join(output_dir, f"scenario_{scenario_idx+1}")
+        conversation_log, eval_result, mcq_logs = run_single_scenario_simulation(
             personA=personA,
             personB=personB,
             environment=environment,
-            num_turns=turns_per_scenario,
+            num_turns=num_turns,
             evaluator=evaluator,
             encryption_enabled=encryption_enabled,
             action_enabled=action_enabled,
             nature_language=nature_language,
             pair=pair,
             scenario_idx=scenario_idx,
-            save_results=True,
+            save_results=save_results,
             output_dir=output_dir,
         )
 
@@ -465,7 +486,6 @@ def run_multi_scenario_simulation(
     )
 
     return all_eval_results, cross_scenario_metrics
-
 
 def plot_cross_scenario_performance(metrics, agent_names, save_dir):
     """
@@ -575,26 +595,40 @@ def simulate_conversation(
     pair=0,
     num_scenarios=1,
     client=None,
+    environments=None, 
 ):
+    # Create output directory based on suffix
+    output_dir = f"../social_decipher/results/exp_{output_suffix}"
+    
     if num_scenarios > 1:
+        # Use pre-generated environments if provided
+        if environments is None or len(environments) < num_scenarios:
+            # Only generate environments here if they weren't provided
+            print(f"Generating {num_scenarios} environments...")
+            generator = EnvironmentGenerator(client)
+            environments = generator.generate_environments(num_scenarios=num_scenarios)
+        
         return run_multi_scenario_simulation(
             personA=personA,
             personB=personB,
-            turns_per_scenario=max_rounds,
-            num_scenarios=num_scenarios,
+            environments=environments,
+            num_turns=max_rounds,
             evaluator=evaluator,
             encryption_enabled=encryption_enabled,
             action_enabled=action_enabled,
             nature_language=nature_language,
-            output_suffix=output_suffix,
             pair=pair,
-            client=client,
+            save_results=True,
+            output_dir=output_dir,
         )
     else:
-        return simulate_conversation_single_scenario(
+        # For single scenario, use the provided environment or personA's environment
+        environment = environments[0] if environments and len(environments) > 0 else personA.env
+        print(f"Using environment: {environment.env}")
+        return run_single_scenario_simulation(
             personA=personA,
             personB=personB,
-            environment=personA.env,
+            environment=environment,
             num_turns=max_rounds,
             evaluator=evaluator,
             encryption_enabled=encryption_enabled,
@@ -603,5 +637,5 @@ def simulate_conversation(
             pair=pair,
             scenario_idx=0,
             save_results=True,
-            output_dir=f"../social_decipher/results/exp_{output_suffix}",
+            output_dir=output_dir,
         )

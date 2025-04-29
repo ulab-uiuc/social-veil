@@ -76,17 +76,21 @@ def parse_args() -> argparse.Namespace:
 
 def main():
     args = parse_args()
-
+    
     if args.list_pairs:
         ModelManager.list_available_pairs()
         return
-
+    
     client = OpenAI()
-
     model = args.model
     max_round = args.max_round
     num_scenarios = args.num_scenarios
-
+    
+    # Generate all environments once
+    print(f"Generating {num_scenarios} environments...")
+    generator = EnvironmentGenerator(client)
+    environments = generator.generate_environments(num_scenarios=num_scenarios)
+    
     # Create agent profiles
     profile_a = AgentProfile(
         first_name="Alex",
@@ -111,105 +115,126 @@ def main():
         personality_and_values="Thoughtful, assertive, values balanced conversations",
         model_id=args.model,
     )
-
-    # For the first scenario to initialize environment
-    generator = EnvironmentGenerator(client)
-    first_env = generator.generate_environments(num_scenarios=1)[0]
-
-    # Create evaluator
+    
     evaluator = ConversationEvaluator(client, model)
+    
+    suffix = ""
+    if args.encryption_enabled:
+        if args.nature_language:
+            suffix += "language_barrier"
+        else:
+            suffix += "mapping_encryption"
+    else:
+        suffix += "no_encryption"
 
-    # Load memory if path provided
-    if args.memory_path:
-        memory_path_a = os.path.join(args.memory_path, "Alex_memory.json")
-        memory_path_b = os.path.join(args.memory_path, "Jamie_memory.json")
+    if args.action:
+        suffix += "_action"
+    else:
+        suffix += "_no_action"
 
-        if os.path.exists(memory_path_a):
-            print(f"Loading memory for Alex from {memory_path_a}")
-            agent1.load_memory(memory_path_a)
+    # Add pair info if using language barrier
+    if args.encryption_enabled and args.nature_language:
+        suffix += f"_pair_{args.pair}"
 
-        if os.path.exists(memory_path_b):
-            print(f"Loading memory for Jamie from {memory_path_b}")
-            agent2.load_memory(memory_path_b)
-
+    # Add number of scenarios to output suffix
+    if args.num_scenarios > 1:
+        suffix += f"_{args.num_scenarios}_scenarios"
+    
     if args.run_all:
         # EXPERIMENT 1: No Encryption, No Action
-        print("\n🚀 Running Experiment 1: No Encryption, No Action")
-        agent1 = SocialAgent(
-            "Alex", profile_a, profile_b, first_env, 0, use_action=False
-        )
-        agent2 = SocialAgent(
-            "Jamie", profile_b, profile_a, first_env, 1, use_action=False
-        )
-        simulate_conversation(
-            agent1,
-            agent2,
-            max_round,
-            encryption_enabled=False,
-            action_enabled=False,
-            nature_language=False,
-            output_suffix="no_encryption_no_action",
-            num_scenarios=num_scenarios,
-            client=client,
-            evaluator=evaluator,
-        )
+        # print("\n🚀 Running Experiment 1: No Encryption, No Action")
+        # agent1 = SocialAgent(
+        #     "Alex", profile_a, profile_b, environments[0], 0, use_action=False
+        # )
+        # agent2 = SocialAgent(
+        #     "Jamie", profile_b, profile_a, environments[0], 1, use_action=False
+        # )
+        
+        # # Load memory if path provided
+        # if args.memory_path:
+        #     memory_path_a = os.path.join(args.memory_path, "Alex_memory.json")
+        #     memory_path_b = os.path.join(args.memory_path, "Jamie_memory.json")
+        #     if os.path.exists(memory_path_a):
+        #         print(f"Loading memory for Alex from {memory_path_a}")
+        #         agent1.load_memory(memory_path_a)
+        #     if os.path.exists(memory_path_b):
+        #         print(f"Loading memory for Jamie from {memory_path_b}")
+        #         agent2.load_memory(memory_path_b)
+                
+        # simulate_conversation(
+        #     personA=agent1,
+        #     personB=agent2,
+        #     max_rounds=max_round,
+        #     evaluator=evaluator,
+        #     encryption_enabled=False,
+        #     action_enabled=False,
+        #     nature_language=False,
+        #     output_suffix="no_encryption_no_action",
+        #     num_scenarios=num_scenarios,
+        #     client=client,
+        #     environments=environments
+        # )
 
-        exit()
+        # # EXPERIMENT 2: Encryption Only (Mapping)
+        # print("\n🔐 Running Experiment 2: With Encryption (Mapping), No Action")
+        # agent1 = SocialAgent(
+        #     "Alex", profile_a, profile_b, environments[0], 0, use_action=False
+        # )
+        # agent2 = SocialAgent(
+        #     "Jamie", profile_b, profile_a, environments[0], 1, use_action=False
+        # )
+        # simulate_conversation(
+        #     personA=agent1,
+        #     personB=agent2,
+        #     max_rounds=max_round,
+        #     evaluator=evaluator,
+        #     encryption_enabled=True,
+        #     action_enabled=False,
+        #     nature_language=False,
+        #     output_suffix="mapping_encryption_no_action",
+        #     num_scenarios=num_scenarios,
+        #     client=client,
+        #     environments=environments
+        # )
 
-        # EXPERIMENT 2: Encryption Only (Mapping)
-        print("\n🔐 Running Experiment 2: With Encryption (Mapping), No Action")
-        agent1 = SocialAgent(
-            "Alex", profile_a, profile_b, first_env, 0, use_action=False
-        )
-        agent2 = SocialAgent(
-            "Jamie", profile_b, profile_a, first_env, 1, use_action=False
-        )
-        simulate_conversation(
-            agent1,
-            agent2,
-            max_round,
-            encryption_enabled=True,
-            action_enabled=False,
-            nature_language=False,
-            output_suffix="mapping_encryption_no_action",
-            num_scenarios=num_scenarios,
-            client=client,
-            evaluator=evaluator,
-        )
 
         # EXPERIMENT 3: Encryption + Action (Mapping)
         print("\n🔐🎭 Running Experiment 3: With Encryption (Mapping) + Action")
         agent1 = SocialAgent(
-            "Alex", profile_a, profile_b, first_env, 0, use_action=True
+            "Alex", profile_a, profile_b, environments[0], 0, use_action=True
         )
         agent2 = SocialAgent(
-            "Jamie", profile_b, profile_a, first_env, 1, use_action=True
+            "Jamie", profile_b, profile_a, environments[0], 1, use_action=True
         )
         simulate_conversation(
-            agent1,
-            agent2,
-            max_round,
+            personA=agent1,
+            personB=agent2,
+            max_rounds=max_round,
+            evaluator=evaluator,
             encryption_enabled=True,
             action_enabled=True,
             nature_language=False,
             output_suffix="mapping_encryption_action",
             num_scenarios=num_scenarios,
             client=client,
-            evaluator=evaluator,
+            environments=environments
         )
+
+        exit()
 
         # EXPERIMENT 4: Natural Language Barrier
         print("\n🌐 Running Experiment 4: With Natural Language Barrier, No Action")
         agent1 = SocialAgent(
-            "Alex", profile_a, profile_b, first_env, 0, use_action=False
+            "Alex", profile_a, profile_b, environments[0], 0, use_action=False
         )
         agent2 = SocialAgent(
-            "Jamie", profile_b, profile_a, first_env, 1, use_action=False
+            "Jamie", profile_b, profile_a, environments[0], 1, use_action=False
         )
         simulate_conversation(
-            agent1,
-            agent2,
-            max_round,
+            personA=agent1,
+            personB=agent2,
+            max_rounds=max_round,
+            evaluator=evaluator,
             encryption_enabled=True,
             action_enabled=False,
             nature_language=True,
@@ -217,21 +242,22 @@ def main():
             pair=args.pair,
             num_scenarios=num_scenarios,
             client=client,
-            evaluator=evaluator,
+            environments=environments
         )
 
         # EXPERIMENT 5: Natural Language Barrier + Action
         print("\n🌐🎭 Running Experiment 5: With Natural Language Barrier + Action")
         agent1 = SocialAgent(
-            "Alex", profile_a, profile_b, first_env, 0, use_action=True
+            "Alex", profile_a, profile_b, environments[0], 0, use_action=True
         )
         agent2 = SocialAgent(
-            "Jamie", profile_b, profile_a, first_env, 1, use_action=True
+            "Jamie", profile_b, profile_a, environments[0], 1, use_action=True
         )
         simulate_conversation(
-            agent1,
-            agent2,
-            max_round,
+            personA=agent1,
+            personB=agent2,
+            max_rounds=max_round,
+            evaluator=evaluator,
             encryption_enabled=True,
             action_enabled=True,
             nature_language=True,
@@ -239,47 +265,40 @@ def main():
             pair=args.pair,
             num_scenarios=num_scenarios,
             client=client,
-            evaluator=evaluator,
+            environments=environments
         )
     else:
-        suffix = ""
-        if args.encryption_enabled:
-            if args.nature_language:
-                suffix += "language_barrier"
-            else:
-                suffix += "mapping_encryption"
-        else:
-            suffix += "no_encryption"
-
-        if args.action:
-            suffix += "_action"
-        else:
-            suffix += "_no_action"
-
-        # Add pair info if using language barrier
-        if args.encryption_enabled and args.nature_language:
-            suffix += f"_pair_{args.pair}"
-
-        # Add number of scenarios to output suffix
-        if args.num_scenarios > 1:
-            suffix += f"_{args.num_scenarios}_scenarios"
-
-        # Run simulation
-        print(f"\n🚀 Running experiment with settings: {suffix}")
+        # Create agents with first environment
+        agent1 = SocialAgent("Alex", profile_a, profile_b, environments[0], 0, use_action=args.action)
+        agent2 = SocialAgent("Jamie", profile_b, profile_a, environments[0], 1, use_action=args.action)
+        
+        # Load memory if path provided
+        if args.memory_path:
+            memory_path_a = os.path.join(args.memory_path, "Alex_memory.json")
+            memory_path_b = os.path.join(args.memory_path, "Jamie_memory.json")
+            
+            if os.path.exists(memory_path_a):
+                print(f"Loading memory for Alex from {memory_path_a}")
+                agent1.load_memory(memory_path_a)
+            
+            if os.path.exists(memory_path_b):
+                print(f"Loading memory for Jamie from {memory_path_b}")
+                agent2.load_memory(memory_path_b)
+                
         simulate_conversation(
-            agent1,
-            agent2,
-            max_round,
+            personA=agent1,
+            personB=agent2,
+            max_rounds=max_round,
+            evaluator=evaluator, 
             encryption_enabled=args.encryption_enabled,
             action_enabled=args.action,
             nature_language=args.nature_language,
             output_suffix=suffix,
             pair=args.pair,
-            num_scenarios=args.num_scenarios,
+            num_scenarios=num_scenarios,
             client=client,
-            evaluator=evaluator,
+            environments=environments
         )
-
 
 if __name__ == "__main__":
     main()

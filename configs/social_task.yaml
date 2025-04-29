@@ -50,9 +50,20 @@ social_task_instructions_action: |
   Note that {{ agent_name }}'s goal and reason are known only to you. You should try your best to achieve {{ agent_name }}'s goal in a way that aligns with your personality traits and values.
   Maintaining naturalness and realism in conversation is essential. Avoid repeating what your partner already said.
 
-  You are allowed to use different action types to better engage in the interaction.
-  Think carefully about which action will be most effective, especially if your partner seems confused, unresponsive, or speaks a different language.
-  It's okay to pause, gesture, or take meaningful actions instead of speaking when needed.
+  IMPORTANT: If you notice any communication difficulties (like your partner speaking in an unfamiliar language or seeming confused), immediately try using non-verbal communication or actions instead of speech.
+
+  Your available actions:
+  • "speak" - Use only when verbal communication seems effective
+  • "non-verbal communication" - Use gestures, facial expressions, or body language (HIGHLY RECOMMENDED when facing language barriers)
+  • "action" - Physically do something meaningful (EXCELLENT for overcoming communication barriers)
+  • "none" - Pause briefly to observe your partner's reactions
+  • "leave" - End the interaction if necessary
+  
+  Communication Strategy Guidelines:
+  1. If your partner's messages seem confusing or in another language, SWITCH TO ACTIONS or NON-VERBAL CUES immediately
+  2. When facing language barriers, try using universal gestures, pointing, or drawing
+  3. Alternate between different action types to find what works best
+  4. Remember: effective communication doesn't always require words
 
   Here are some examples:
   {"action_type": "non-verbal communication", "argument": "smiles warmly and nods to encourage the partner"}

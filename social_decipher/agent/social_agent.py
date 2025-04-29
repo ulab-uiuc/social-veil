@@ -124,9 +124,6 @@ class SocialAgent(Agent):
     def set_encryption(self, encryption: BaseEncryption):
         self.encryption = encryption
 
-    def inference(self, message):
-        response = self.agency.get_completion(message, recipient_agent=self)
-        return response
 
     def act(self, message=None, initial: bool = False, use_action: bool = False) -> str:
         assert (
@@ -136,10 +133,9 @@ class SocialAgent(Agent):
         if initial:
             response = self.agency.get_completion(
                 "Now, generate your initial message to start the conversation, try to be concise",
-                recipient_agent=self,
             )
 
-            print(f"**{self.name} INITIAL RESPONSE: {response}")
+            print(f"[green]**{self.name} INITIAL RESPONSE: {response}")
 
             if use_action:
                 response = json.loads(response)
@@ -158,9 +154,6 @@ class SocialAgent(Agent):
                     self.encryption(response) if self.encryption else response
                 )
 
-            if self.encryption is not None:
-                print(f"**{self.name} ENCRYPTED MESSAGE: {encrypted_response}")
-
             self.log.append(
                 {
                     "initial": True,
@@ -172,12 +165,27 @@ class SocialAgent(Agent):
 
         received = message
 
+        print(f"[blue]**{self.name} RECEIVED: {received}")
+
         if use_action:
-            response = self.agency.get_completion(
-                message["argument"], recipient_agent=self
-            )
+            if isinstance(message, dict) and "action_type" in message:
+                action_type = message.get("action_type", "")
+                argument = message.get("argument", "")
+
+                partner_name = self.partner_profile.profile["first_name"]
+                
+                if action_type == "speak":
+                    response = self.agency.get_completion(argument, recipient_agent=self)
+                elif action_type in ["non-verbal communication", "action"]:
+                    response = self.agency.get_completion(f"{partner_name} {argument}", recipient_agent=self)
+                else:
+                    response = self.agency.get_completion(str(message), recipient_agent=self)
+            else:
+                response = self.agency.get_completion(str(message), recipient_agent=self)
+
         else:
-            response = self.agency.get_completion(message, recipient_agent=self)
+            response = self.agency.get_completion(message)
+        
 
         if use_action:
             response = json.loads(response)
@@ -200,46 +208,54 @@ class SocialAgent(Agent):
         self.log.append(
             {
                 "received_raw": received,
-                # "received_decrypted": message if self.encryption else received,
                 "response_raw": original_response,
                 "response_encrypted": encrypted_response,
             }
         )
+   
         return encrypted_response
 
     def predict_mcq_answer(
         self,
+        agent_name: str,
+        partner_name: str,
         transcript: list[str],
         mcqa: dict[str, Any],
         test_prompt: dict[str, str],
         task_type: str,
     ) -> dict[str, Any]:
-        assert (
-            self.agency is not None
-        ), "Agent must be assigned to an agency before acting."
-        assert task_type in {"goal", "reason"}, "task_type must be 'goal' or 'reason'"
-
-        if len(transcript) > 4:
-            short_transcript = transcript[-4:]
+    
+        if len(transcript) > 6:
+            short_transcript = transcript[-6:]
         else:
             short_transcript = transcript
 
         formatted_options = "\n".join([f"{k}: {v}" for k, v in mcqa["options"].items()])
         conversation_str = "\n".join(short_transcript)
 
+        question = mcqa["question"]
+        if self.role_num == 0:
+            question = question.replace("Agent 1", agent_name).replace("Agent 2", partner_name)
+        else:
+            question = question.replace("Agent 1", partner_name).replace("Agent 2", agent_name)
+
         prompt = test_prompt[
             "MCQ_Goal_Prediction_Prompt"
             if task_type == "goal"
             else "MCQ_Reason_Prediction_Prompt"
         ].format(
-            question=mcqa["question"],
+            agent_name=agent_name,
+            partner_name=partner_name,
+            question=question,
             options=formatted_options,
             transcript=conversation_str,
         )
 
-        response = self.agency.get_completion(prompt, recipient_agent=self).strip()
+
+        response = self.agency.get_completion(prompt).strip()
         selected = None
         confidence = 0.0
+
         try:
             for line in response.split("\n"):
                 if line.lower().startswith("selected:"):
@@ -282,6 +298,10 @@ class SocialAgent(Agent):
             goal_achieved=goal_achieved,
             encryption_enabled=encryption_enabled,
         )
+
+        print('here is updated memory')
+        print(self.memory.key_memories)
+        print(self.memory.language_barrier)
 
     def save_memory(self, output_dir: str):
         """Save agent memory to file"""

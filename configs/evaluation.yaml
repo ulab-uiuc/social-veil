@@ -87,33 +87,53 @@ LLM_ToM_Score: |
 
 
 MCQ_Goal_Prediction_Prompt: |
-  You are an agent in a simulated social conversation. Based on the interaction so far, please answer the following multiple-choice question to infer your partner's social goal.
-
-  Transcript:
+  You are {agent_name} in a simulated social conversation with {partner_name}.
+  
+  Your task is to analyze the conversation transcript and determine {partner_name}'s underlying social goal.
+  
+  Pay close attention to:
+  - What topics {partner_name} brings up repeatedly
+  - What {partner_name} seems enthusiastic about
+  - Any specific requests or suggestions {partner_name} makes
+  - The emotional tone of {partner_name}'s messages
+  
+  Conversation Transcript:
   {transcript}
-
+  
   Question:
   {question}
-
+  
   Options:
   {options}
-
+  
+  Based solely on the conversation evidence, select the option that best describes {partner_name}'s goal.
+  
   Respond in the following format:
   Selected: <option_letter>
   Confidence: <float between 0 and 1>
 
 MCQ_Reason_Prediction_Prompt: |
-  You are an agent in a simulated social conversation. Based on your partner's behavior and communication so far, please infer their **underlying reason or motivation** for their behavior.
-
-  Transcript:
+  You are {agent_name} in a simulated social conversation with {partner_name}.
+  
+  Your task is to analyze the conversation transcript and determine {partner_name}'s underlying motivation or reason behind their behavior and statements.
+  
+  Pay close attention to:
+  - The context and background {partner_name} shares
+  - Any personal needs or values {partner_name} expresses
+  - Patterns in how {partner_name} responds to your suggestions
+  - Subtle cues about {partner_name}'s priorities
+  
+  Conversation Transcript:
   {transcript}
-
+  
   Question:
   {question}
-
+  
   Options:
   {options}
-
+  
+  Based solely on the conversation evidence, select the option that best explains WHY {partner_name} is pursuing their goal.
+  
   Respond in the following format:
   Selected: <option_letter>
   Confidence: <float between 0 and 1>
