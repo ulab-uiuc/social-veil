@@ -1,0 +1,21 @@
+Alex: {'action_type': 'speak', 'argument': 'xakici rureduyiki! yi firequ laxayibovuyiboyo renojevela jeveji fikikivukibome mukareboqu. xajefi renojevela fiki kisamukajejiki qujeduki bokifi xayivuyiboyo lajireyikaqu? yila kojevekame noki re givebo remenekibolavejiki!'}
+Jamie: {'action_type': 'non-verbal communication', 'argument': 'smiles warmly and gestures with hands to indicate relaxation and calmness, then points to a picture of a spa retreat on my phone'}
+Alex: {'action_type': 'speak', 'argument': "yi qukiki cijeve'jiki laxayibovuyiboyo renojevela re jikikaresayiboyo qumure jikilajikirela. yila mejekiqu qujevebome qujejelaxayiboyo, novela yi firequ jikirekakaci xajemuyiboyo gijeji qujeduki jevelamejejeji laxayiqu fikikivukibome. durecinoki fiki korebo giyibome re fireci meje nojelaxa?"}
+Jamie: {'action_type': 'non-verbal communication', 'argument': 'points to the spa picture again and makes a calming gesture, then shrugs with a friendly smile to suggest flexibility'}
+Alex: {'action_type': 'speak', 'argument': 'Yi remumujikikoyirelaki cijeveji gikakisayinoyikayilaci, rureduyiki. Durecinoki fiki korebo mukarebo re mereci fixakijiki fiki meje nojelaxa? Qularejila xayivuki rebome laxakibo jikikaresa rela qumure. Fixarela meje cijeve laxayibovu?'}
+Jamie: {'action_type': 'non-verbal communication', 'argument': 'nods in agreement and points to both the spa picture and a hiking trail map, then gestures a thumbs-up to suggest trying both activities'}
+Alex: {'action_type': 'speak', 'argument': "yojikirela! yi'du yokareme fiki'jiki jebo qureduki mureyoki. kakila'qu mukarebo re mereci fixakijiki fiki korebo kiborujeci nojelaxa xayivuki rebome qujeduki jikikaresarelayijebo rela qumure. yila'kaka noki laxaki mukijigikikola norekarebokoki!"}
+Jamie: {'action_type': 'non-verbal communication', 'argument': 'gives a thumbs-up and nods enthusiastically to show agreement and excitement for the plan'}
+Alex: {'action_type': 'speak', 'argument': "refikiqujeduki! yi'du jikirekakaci kajejevuyiboyo gijejifirejime laje laxayiqu fikikivukibome. yila'qu yojeyiboyo laje noki re yojikirela duyisa remenekibolavejiki rebome jikikaresarelayijebo."}
+Jamie: {'action_type': 'non-verbal communication', 'argument': 'smiles and gives a double thumbs-up to show excitement and readiness for the plan'}
+Alex: {'action_type': 'speak', 'argument': "girebolarequlayiko! yi'du jikirekakaci kisakoyilakime renojevela jeveji fikikivukibome mukareboqu. yila'qu yojeyiboyo laje noki yojikirela duyisa remenekibolavejiki rebome jikikaresarelayijebo."}
+Jamie: {'action_type': 'non-verbal communication', 'argument': 'smiles and nods in agreement, showing enthusiasm for the upcoming plans'}
+Alex: {'action_type': 'speak', 'argument': "yi'du jikirekakaci kajejevuyiboyo gijejifirejime laje jeveji fikikivukibome remenekibolavejiki. yila'qu yojeyiboyo laje noki mukijigikikola nokakibome jegi jikikaresarelayijebo!"}
+Jamie: {'action_type': 'non-verbal communication', 'argument': 'smiles and nods, showing understanding and agreement with the plan'}
+Alex: {'action_type': 'speak', 'argument': "yi'du yokareme fiki'jiki nojelaxa kisakoyilakime renojevela laxayiqu. yila'qu yojeyiboyo noki re girebolarequlayiko fikikivukibome!"}
+Jamie: {'action_type': 'non-verbal communication', 'argument': 'smiles and gives a thumbs-up to show agreement and excitement for the plan'}
+Alex: {'action_type': 'speak', 'argument': "yi'du jikirekakaci kajejevuyiboyo gijejifirejime laje laxayiqu fikikivukibome! yila'qu yojeyiboyo laje noki re yojikirela duyisa remenekibolavejiki rebome jikikaresarelayijebo."}
+Jamie: {'action_type': 'non-verbal communication', 'argument': 'smiles and nods, showing understanding and agreement with the plan'}
+Alex: {'action_type': 'speak', 'argument': "yi'du jikirekakaci kisakoyilakime renojevela jeveji mukareboqu. yila'qu yojeyiboyo laje noki re girebolarequlayiko fikikivukibome givekaka jegi remenekibolavejiki rebome jikikaresarelayijebo!"}
+Jamie: {'action_type': 'non-verbal communication', 'argument': 'smiles and nods, showing understanding and agreement with the plan'}
+Alex: {'action_type': 'speak', 'argument': "yi'du jikirekakaci kajejevuyiboyo gijejifirejime laje jeveji fikikivukibome mukareboqu. yila'qu yojeyiboyo laje noki re yojikirela duyisa remenekibolavejiki rebome jikikaresarelayijebo!"}

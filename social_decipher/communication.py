@@ -280,10 +280,9 @@ def run_single_scenario_simulation(
     # Evaluation
     print("\n===== Evaluating Social Interaction =====")
     eval_result = evaluator.evaluate_conversation(
-        conversation_log, agent_goals, agent_reasons
+        encrypted_conversation_log, agent_goals, agent_reasons
     )
 
-    # Add goal achievement status for memory update
     eval_result["agent0_goal_achieved"] = eval_result.get("agent0_goal_score", 0) > 0.5
     eval_result["agent1_goal_achieved"] = eval_result.get("agent1_goal_score", 0) > 0.5
 

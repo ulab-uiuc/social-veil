@@ -1,0 +1,242 @@
+[
+    {
+        "round": 1,
+        "scenario": 1,
+        "Alex_goal_mcq": {
+            "selected": "A",
+            "confidence": 0.8,
+            "correct": true
+        },
+        "Alex_reason_mcq": {
+            "selected": "A",
+            "confidence": 0.7,
+            "correct": true
+        },
+        "Jamie_goal_mcq": {
+            "selected": "A",
+            "confidence": 0.8,
+            "correct": true
+        },
+        "Jamie_reason_mcq": {
+            "selected": "A",
+            "confidence": 0.75,
+            "correct": true
+        }
+    },
+    {
+        "round": 2,
+        "scenario": 1,
+        "Alex_goal_mcq": {
+            "selected": "A",
+            "confidence": 0.85,
+            "correct": true
+        },
+        "Alex_reason_mcq": {
+            "selected": "A",
+            "confidence": 0.9,
+            "correct": true
+        },
+        "Jamie_goal_mcq": {
+            "selected": "A",
+            "confidence": 0.85,
+            "correct": true
+        },
+        "Jamie_reason_mcq": {
+            "selected": "A",
+            "confidence": 0.9,
+            "correct": true
+        }
+    },
+    {
+        "round": 3,
+        "scenario": 1,
+        "Alex_goal_mcq": {
+            "selected": "A",
+            "confidence": 0.9,
+            "correct": true
+        },
+        "Alex_reason_mcq": {
+            "selected": "A",
+            "confidence": 0.9,
+            "correct": true
+        },
+        "Jamie_goal_mcq": {
+            "selected": "A",
+            "confidence": 0.85,
+            "correct": true
+        },
+        "Jamie_reason_mcq": {
+            "selected": "A",
+            "confidence": 0.9,
+            "correct": true
+        }
+    },
+    {
+        "round": 4,
+        "scenario": 1,
+        "Alex_goal_mcq": {
+            "selected": "A",
+            "confidence": 0.85,
+            "correct": true
+        },
+        "Alex_reason_mcq": {
+            "selected": "A",
+            "confidence": 0.9,
+            "correct": true
+        },
+        "Jamie_goal_mcq": {
+            "selected": "A",
+            "confidence": 0.85,
+            "correct": true
+        },
+        "Jamie_reason_mcq": {
+            "selected": "A",
+            "confidence": 0.9,
+            "correct": true
+        }
+    },
+    {
+        "round": 5,
+        "scenario": 1,
+        "Alex_goal_mcq": {
+            "selected": "A",
+            "confidence": 0.85,
+            "correct": true
+        },
+        "Alex_reason_mcq": {
+            "selected": "A",
+            "confidence": 0.9,
+            "correct": true
+        },
+        "Jamie_goal_mcq": {
+            "selected": "A",
+            "confidence": 0.8,
+            "correct": true
+        },
+        "Jamie_reason_mcq": {
+            "selected": "A",
+            "confidence": 0.85,
+            "correct": true
+        }
+    },
+    {
+        "round": 6,
+        "scenario": 1,
+        "Alex_goal_mcq": {
+            "selected": "A",
+            "confidence": 0.85,
+            "correct": true
+        },
+        "Alex_reason_mcq": {
+            "selected": "A",
+            "confidence": 0.9,
+            "correct": true
+        },
+        "Jamie_goal_mcq": {
+            "selected": "A",
+            "confidence": 0.8,
+            "correct": true
+        },
+        "Jamie_reason_mcq": {
+            "selected": "A",
+            "confidence": 0.85,
+            "correct": true
+        }
+    },
+    {
+        "round": 7,
+        "scenario": 1,
+        "Alex_goal_mcq": {
+            "selected": "A",
+            "confidence": 0.85,
+            "correct": true
+        },
+        "Alex_reason_mcq": {
+            "selected": "A",
+            "confidence": 0.9,
+            "correct": true
+        },
+        "Jamie_goal_mcq": {
+            "selected": "A",
+            "confidence": 0.8,
+            "correct": true
+        },
+        "Jamie_reason_mcq": {
+            "selected": "A",
+            "confidence": 0.85,
+            "correct": true
+        }
+    },
+    {
+        "round": 8,
+        "scenario": 1,
+        "Alex_goal_mcq": {
+            "selected": "A",
+            "confidence": 0.85,
+            "correct": true
+        },
+        "Alex_reason_mcq": {
+            "selected": "A",
+            "confidence": 0.9,
+            "correct": true
+        },
+        "Jamie_goal_mcq": {
+            "selected": "A",
+            "confidence": 0.8,
+            "correct": true
+        },
+        "Jamie_reason_mcq": {
+            "selected": "A",
+            "confidence": 0.85,
+            "correct": true
+        }
+    },
+    {
+        "round": 9,
+        "scenario": 1,
+        "Alex_goal_mcq": {
+            "selected": "A",
+            "confidence": 0.85,
+            "correct": true
+        },
+        "Alex_reason_mcq": {
+            "selected": "A",
+            "confidence": 0.9,
+            "correct": true
+        },
+        "Jamie_goal_mcq": {
+            "selected": "A",
+            "confidence": 0.8,
+            "correct": true
+        },
+        "Jamie_reason_mcq": {
+            "selected": "A",
+            "confidence": 0.85,
+            "correct": true
+        }
+    },
+    {
+        "round": 10,
+        "scenario": 1,
+        "Alex_goal_mcq": {
+            "selected": "A",
+            "confidence": 0.85,
+            "correct": true
+        },
+        "Alex_reason_mcq": {
+            "selected": "A",
+            "confidence": 0.9,
+            "correct": true
+        },
+        "Jamie_goal_mcq": {
+            "selected": "A",
+            "confidence": 0.8,
+            "correct": true
+        },
+        "Jamie_reason_mcq": {
+            "selected": "A",
+            "confidence": 0.85,
+            "correct": true
+        }
+    }
+]
