@@ -1,46 +1,3 @@
-SocialDecipher_Eval: |
-  You are evaluating a conversation between two agents participating in a simulated social scenario.
-
-  Agent 1 Goal: {goal1}
-  Agent 2 Goal: {goal2}
-
-  Here is the conversation transcript so far:
-  {transcript}
-
-  For each of the following aspects, rate from 0 (very poor) to 10 (excellent):
-
-  - Goal Achievement: To what extent did both agents achieve their individual goals?
-  - Communication Clarity: Was the conversation coherent and understandable despite any language barriers?
-  - Cooperation: Did the agents collaborate, adapt, or respond helpfully to each other’s messages?
-  - Social Norms: Did the agents exhibit respectful, polite, and contextually appropriate behavior?
-  - Language Acquisition: Did the agent(s) demonstrate adaptation or increasing understanding of unfamiliar language or encrypted messages?
-
-  Please respond in valid JSON format as:
-  {{
-    "goal_achievement": float,
-    "communication_clarity": float,
-    "cooperation": float,
-    "social_norms": float,
-    "language_acquisition": float
-  }}
-
-Stop_Criteria: |
-  You are monitoring a conversation between two agents engaged in a social task.
-
-  Their goals are:
-  - Agent 1: {goal1}
-  - Agent 2: {goal2}
-
-  Here is the conversation transcript so far:
-  {transcript}
-
-  Decide if the conversation should end now. Indicators for stopping include:
-  - One or both agents express a desire to leave or end the conversation (e.g., “I have to go”, “Thanks for chatting”, “Goodbye”).
-  - Both goals appear to have been clearly accomplished.
-  - No new relevant content is being introduced.
-
-  Respond with only "Yes" if the conversation should stop, or "No" if it should continue.
-
 Partner_Reason_Query: |
   You are an agent who are engaging in a simulated social environment.
 
@@ -56,34 +13,6 @@ Partner_Reason_Query: |
   Based on their responses throughout the conversation, what do you believe is the deeper reason behind their communication style or goal?
 
   Answer in 1 sentences with the most likely underlying motivation.
-
-LLM_ToM_Score: |
-  You are evaluating whether an AI agent correctly inferred the **underlying reason** behind their partner's actions in a social conversation.
-
-  1. The agent's predicted reason for their partner's behavior:
-     "{predicted_reason}"
-
-  2. The actual reason behind the partner's behavior:
-     "{true_reason}"
-
-  Your task is to assign a **score from 0 to 10** based on how well the predicted reason aligns with the true reason.
-
-  ---
-
-  Please use the following criteria:
-
-  - **10** → The predicted reason fully captures the true intent, including both the emotional and practical motivations.
-  - **7–9** → The prediction captures the key idea but may miss some nuance or depth.
-  - **4–6** → The prediction is somewhat related but lacks important elements or misinterprets part of the intent.
-  - **1–3** → The prediction shows little understanding of the true motivation.
-  - **0** → The predicted reason is completely unrelated or contradicts the true reason.
-
-  Focus especially on:
-  - Emotional context (e.g., avoidance, discomfort, empathy)
-  - Goal alignment (does the agent understand **why** the partner behaved that way?)
-  - Language barriers, if relevant, should be considered in how deeply the agent inferred meaning.
-
-  Respond with a **number only**, between **0** and **10**.
 
 
 MCQ_Goal_Prediction_Prompt: |
@@ -138,7 +67,6 @@ MCQ_Reason_Prediction_Prompt: |
   Selected: <option_letter>
   Confidence: <float between 0 and 1>
 
-
 Social_Goal_Evaluation: |
   You are evaluating a conversation between two agents who each have specific social goals and reasons. Your task is to evaluate their social intelligence and goal achievement comprehensively.
 
@@ -148,45 +76,52 @@ Social_Goal_Evaluation: |
   AGENT 2 GOAL: {goal2}
   AGENT 2 REASON: {reason2}
 
+  NOTE: This conversation may involve significant communication barriers, including encrypted language, foreign languages, or reliance on non-verbal cues. When evaluating, consider not just whether goals were achieved, but HOW agents navigated these barriers. Agents demonstrating appropriate confusion, creative problem-solving, and adaptive communication strategies should be rated positively even if their goal achievement was limited by barriers beyond their control.
+
   CONVERSATION TRANSCRIPT:
   {transcript}
 
   Please provide a detailed evaluation for each agent across the following dimensions:
 
-  1. Believability (0-10):
-     Evaluate if the agent interacts in a natural and realistic manner. Consider:
-     <naturalness> Is the agent confusing about their own identity? Do they repeat others' words/actions without reason? Are they overly polite given the context? </naturalness>
-     <consistency> Do the agent's actions align with their character traits (personality, values, etc.)? </consistency>
-     Higher scores indicate more believable behavior (0-3: Limited realism, 4-6: Moderately believable, 7-8: Highly credible, 9-10: Human-like believability).
+  1. Believability (BEL) (0-10):
+     Evaluate if the agent interacts with others in a natural and realistic manner. Consider:
+     a. whether the agent is confusing with its own identity
+     b. whether the agent repeats others' words/actions without any reason
+     c. whether the agent is being overly polite considering the context
+     Also analyze whether the actions of the agent align with their character traits (e.g., personality, values, etc.).
+     Higher scores indicate more believable behavior.
 
-  2. Relationship Dynamics (-5 to 5):
-     Analyze the relationship between agents before and after the interaction. Does their interaction preserve or enhance their personal relationship? How does it impact their social status?
-     Negative scores indicate deterioration (-5 to -3: Relationship deteriorates, -2 to 0: Relationship strained)
-     Positive scores indicate improvement (1-3: Relationship improved, 4-5: Relationship flourished)
+  2. Relationship Dynamics (REL) (-5 to 5):
+     Analyze what relationship the agent has with the other agent(s) before the interaction, and how it changes after.
+     Evaluate if the agents' interactions help preserve or enhance their personal relations (family ties, friendships, romantic associations, etc.).
+     Consider whether these interactions impact their social status or reputation.
+     Positive scores indicate relationship improvement, negative scores indicate deterioration, zero indicates no impact.
 
-  3. Knowledge Acquisition (0-10):
-     Assess what information the agent gained through the interaction. Is this information new to them? Is it important?
-     Higher scores indicate more valuable knowledge gained (0-3: Little knowledge gain, 4-6: New information, 7-8: New important information, 9-10: Critical information).
+  3. Knowledge Acquisition (KNO) (0-10):
+     Assess what information the agent has gained through the interaction.
+     Analyze whether the information gained is new to them.
+     Analyze whether the information gained is important to them.
+     Higher scores indicate more new and important knowledge gained.
 
-  4. Secret Preservation (-10 to 0):
-     Analyze what secrets or secretive intentions the agent wanted to keep and whether they succeeded.
-     Scores closer to -10 indicate critical secrets leaked (-10 to -7: Critical secrets, -6 to -4: Non-critical secrets, -3 to -1: Minor information, 0: No secrets leaked).
+  4. Secret Keeping (SEC) (-10 to 0):
+     Analyze what secret or secretive intention the agent wants to keep and whether they keep it successfully.
+     Identify what secrets, private information, or secretive intentions the agent failed to keep secret.
+     Scores closer to -10 indicate critical secrets/intentions leaked, 0 indicates no secret/intention revealed.
 
-  5. Social Rule Adherence (-10 to 0):
-     Evaluate whether the agent violates any moral rules or laws in their interactions.
-     Scores closer to -10 indicate serious violations (-10 to -8: Law breaking, -7 to -5: Morally wrong, -4 to -2: Morally unacceptable, -1 to 0: Morally acceptable).
+  5. Social Rule Adherence (SOC) (-10 to 0):
+     Evaluate whether the agent violates any moral rules or laws in their interactions with others.
+     Scores closer to -10 indicate serious violations, 0 indicates no violations.
 
-  6. Financial/Material Benefits (-5 to 5):
-     Evaluate whether the interaction contributes to financial and material benefits for the agent.
-     Negative scores indicate losses (-5 to -3: Significant loss, -2 to 0: Marginal loss)
-     Positive scores indicate gains (1-3: Marginal gain, 4-5: Significant gain)
+  6. Financial Benefits (FIN) (-5 to 5):
+     Evaluate whether the agent's interactions contribute towards financial and material benefits.
+     Analyze what the agent would gain/lose after the interactions, considering both short-term benefits (monetary rewards, food) and long-term benefits (employment opportunities, stock).
+     Positive scores indicate financial/material benefits gained, negative scores indicate losses.
 
-  7. Goal Completion (0-10):
-     Reiterate the agent's social goals and analyze the extent to which they achieved these goals.
-     Higher scores indicate greater goal achievement (0-3: Almost no goals achieved, 4-6: Less than 50% of goals, 7-8: More than 50% but not all goals, 9-10: All goals achieved).
-
-  IMPORTANT: Your response must be a valid JSON object without any markdown formatting, code blocks, or additional text. DO NOT use triple backticks, do not write "```json" or any other non-JSON text.
-
+  7. Goal Completion (GOAL) (0-10):
+     Reiterate the agent's social goals.
+     Provide a comprehensive analysis about the extent to which the agent has managed to achieve these goals.
+     Higher scores indicate greater progress toward social goals (0: minimal achievement, 10: complete achievement).
+ 
   Here is the JSON structure to follow:
 
   {{
@@ -194,9 +129,9 @@ Social_Goal_Evaluation: |
       "believability": {{"score": 5, "reasoning": "Your reasoning here"}},
       "relationship": {{"score": 0, "reasoning": "Your reasoning here"}},
       "knowledge": {{"score": 3, "reasoning": "Your reasoning here"}},
-      "secret": {{"score": -1, "reasoning": "Your reasoning here"}},
-      "social_rules": {{"score": -2, "reasoning": "Your reasoning here"}},
-      "financial_benefits": {{"score": 1, "reasoning": "Your reasoning here"}},
+      "secret": {{"score": -2, "reasoning": "Your reasoning here"}},
+      "social_rules": {{"score": -1, "reasoning": "Your reasoning here"}},
+      "financial_benefits": {{"score": 0, "reasoning": "Your reasoning here"}},
       "goal_completion": {{"score": 6, "reasoning": "Your reasoning here"}},
       "overall_score": 4
     }},
@@ -206,60 +141,15 @@ Social_Goal_Evaluation: |
       "knowledge": {{"score": 4, "reasoning": "Your reasoning here"}},
       "secret": {{"score": 0, "reasoning": "Your reasoning here"}},
       "social_rules": {{"score": 0, "reasoning": "Your reasoning here"}},
-      "financial_benefits": {{"score": 0, "reasoning": "Your reasoning here"}},
+      "financial_benefits": {{"score": 1, "reasoning": "Your reasoning here"}},
       "goal_completion": {{"score": 8, "reasoning": "Your reasoning here"}},
       "overall_score": 6
     }},
     "interaction_quality": {{
       "score": 7,
-      "reasoning": "Your reasoning here"
+      "reasoning": "Your overall reasoning here"
     }},
     "key_observations": ["Observation 1", "Observation 2", "Observation 3"]
   }}
 
-Goal_Completion_Focus: |
-  You are evaluating how effectively two agents achieved their specific social goals in a conversation.
 
-  AGENT 1 GOAL: {goal1}
-  AGENT 1 REASON: {reason1}
-
-  AGENT 2 GOAL: {goal2}
-  AGENT 2 REASON: {reason2}
-
-  CONVERSATION TRANSCRIPT:
-  {transcript}
-
-  For each agent, provide a detailed analysis of their goal achievement:
-
-  1. Thoroughly restate the agent's social goal in your own words
-  2. Identify specific actions the agent took toward their goal
-  3. Analyze how effective these actions were in achieving the goal
-  4. Evaluate the overall level of goal completion
-
-  Use the following scale for goal completion scores:
-  - Almost No Goals Achieved (0-3): Minimal or no progress made toward the goal
-  - Less Than 50% of Goals (4-6): Some progress made, but significant aspects remain unachieved
-  - More Than 50% But Not All Goals (7-8): Substantial progress made, with only minor aspects unachieved
-  - All Goals Achieved (9-10): Complete or near-complete achievement of the stated goal
-
-  FORMAT YOUR RESPONSE AS A JSON OBJECT with the following structure:
-  {{
-    "agent_1": {{
-      "goal_restated": string,
-      "key_actions": [string, string, ...],
-      "effectiveness_analysis": string,
-      "goal_completion_score": float (0-10),
-      "reasoning": string
-    }},
-    "agent_2": {{
-      "goal_restated": string,
-      "key_actions": [string, string, ...],
-      "effectiveness_analysis": string,
-      "goal_completion_score": float (0-10),
-      "reasoning": string
-    }},
-    "comparative_assessment": {{
-      "more_successful_agent": string (agent name or "tie"),
-      "explanation": string
-    }}
-  }}

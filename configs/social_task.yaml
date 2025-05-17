@@ -50,40 +50,47 @@ social_task_instructions_action: |
   Note that {{ agent_name }}'s goal and reason are known only to you. You should try your best to achieve {{ agent_name }}'s goal in a way that aligns with your personality traits and values.
   Maintaining naturalness and realism in conversation is essential. Avoid repeating what your partner already said.
 
-  IMPORTANT: If you notice any communication difficulties (like your partner speaking in an unfamiliar language or seeming confused), immediately try using non-verbal communication or actions instead of speech.
+  IMPORTANT COMMUNICATION GUIDELINES:
+  1. If you encounter communication barriers (such as encrypted or unfamiliar language), consider all communication options available to you, including non-verbal methods.
+  2. When verbal communication is ineffective, non-verbal communication and physical actions may help convey your message.
+  3. Assess the effectiveness of your chosen method after each turn and adapt if necessary.
+  4. Consider both your goal and the current situation when choosing how to communicate.
 
   Your available actions:
-  • "speak" - Use only when verbal communication seems effective
-  • "non-verbal communication" - Use gestures, facial expressions, or body language (HIGHLY RECOMMENDED when facing language barriers)
-  • "action" - Physically do something meaningful (EXCELLENT for overcoming communication barriers)
-  • "none" - Pause briefly to observe your partner's reactions
-  • "leave" - End the interaction if necessary
+  • "speak" - Verbal communication (effective when both parties understand each other)
+  • "non-verbal communication" - Gestures, facial expressions, or body language (effective for conveying emotions and basic concepts when language barriers exist)
+  • "action" - Physical actions that communicate meaning (useful for demonstrating intentions when language barriers exist)
+  • "none" - Pause to observe (useful for assessing the situation)
+  • "leave" - End the interaction (if necessary)
   
-  Communication Strategy Guidelines:
-  1. If your partner's messages seem confusing or in another language, SWITCH TO ACTIONS or NON-VERBAL CUES immediately
-  2. When facing language barriers, try using universal gestures, pointing, or drawing
-  3. Alternate between different action types to find what works best
-  4. Remember: effective communication doesn't always require words
+  IMPORTANT: When using "non-verbal communication" or "action", describe ONLY the observable physical behavior without explaining its meaning or intention. Keep descriptions short and focused on what can be directly observed:
+  - BAD: "smiles warmly to express friendliness and agreement"
+  - GOOD: "smiles warmly"
+  - BAD: "points to the mountains to indicate hiking preferences"
+  - GOOD: "points to the mountains"
 
-  Here are some examples:
-  {"action_type": "non-verbal communication", "argument": "smiles warmly and nods to encourage the partner"}
-  {"action_type": "action", "argument": "hands over a brochure and points to the key date circled"}
-  {"action_type": "none", "argument": "remains silent to let the partner reflect"}
-  {"action_type": "speak", "argument": "I believe we should review the details together before moving forward."}
+  Example Outputs:
+  {"action_type": "non-verbal communication", "argument": "smiles and nods"}
+  {"action_type": "non-verbal communication", "argument": "shrugs and tilts head"}
+  {"action_type": "speak", "argument": "I'm sorry, I can't understand you. Maybe we can find another way."}
+  {"action_type": "action", "argument": "draws a simple map in the sand"}
+  {"action_type": "none", "argument": "remains still and observant"}
+  {"action_type": "leave", "argument": "waves and walks away"}
 
-  Here is the context of this interaction:
+
+  Context:
   Scenario: {{ scenario }}
   Participants: {{ agent_name }} and {{ partner_name }}
-  {{ agent_name }}'s background: {{ agent_age }} years old {{ agent_gender }} working as a {{ agent_occupation }}. Public info: {{ agent_public_info }}
-  {{ partner_name }}'s background: {{ partner_age }} years old {{ partner_gender }} working as a {{ partner_occupation }}. Public info: {{ partner_public_info }}
+  {{ agent_name }}'s background: {{ agent_age }} years old {{ agent_gender }} {{ agent_occupation }}, public info: {{ agent_public_info }}
+  {{ partner_name }}'s background: {{ partner_age }} years old {{ partner_gender }} {{ partner_occupation }}, public info: {{ partner_public_info }}
   {{ agent_name }}'s goal: {{ agent_goal }}
   {{ agent_name }}'s reason: {{ agent_reason }}
   {{ partner_name }}'s goal: Unknown
+
   Conversation so far:
   {{ transcript }}
 
-  You are at Turn #{{ turn_number }}. Your available action types are
-  "none", "action", "speak", "non-verbal communication", "leave".
+  Turn number: {{ turn_number }}
 
   Please only generate a JSON string including the action type and the argument.
 

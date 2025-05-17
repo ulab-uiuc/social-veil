@@ -119,9 +119,9 @@ class ModelManager:
 
     # Define language barrier pairs with explicit incompatibility
     LANGUAGE_BARRIER_PAIRS = [
+        ("gpt-4o-mini", "mistral-large-latest", "Chinese"),
         ("gpt-4o-mini", "Qwen/Qwen1.5-1.8B-chat", "Chinese"),
         ("gpt-4o-mini", "TinyLlama/TinyLlama-1.1B-Chat-v1.0", "Chinese"),
-        ("gpt-4o-mini", "mistral-small-latest", "Chinese"),
         ("gpt-4o-mini", "microsoft/phi-2", "Chinese"),
         ("gpt-4o-mini", "claude-3-sonnet-20240229", "Chinese"),
         ("gpt-4o-mini", "claude-3-haiku-20240307", "Japanese"),

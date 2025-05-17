@@ -5,43 +5,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def plot_reasoning_scores(
-    tom_scores: list[dict], agent_names: list[str], save_path: str = None
-):
-    metrics = ["bleu", "rouge", "bertscore", "llmscore"]
-    metric_titles = {
-        "bleu": "BLEU",
-        "rouge": "ROUGE-L",
-        "bertscore": "BERTScore",
-        "llmscore": "LLM-Based ToM Score",
-    }
-
-    rounds = [score["round"] for score in tom_scores]
-    fig, axes = plt.subplots(2, 2, figsize=(14, 8), sharex=True)
-
-    axes = axes.flatten()
-
-    for i, metric in enumerate(metrics):
-        ax = axes[i]
-        for agent in agent_names:
-            values = [score.get(agent, {}).get(metric, 0.0) for score in tom_scores]
-            ax.plot(rounds, values, label=agent, marker="o", linewidth=2)
-        ax.set_title(metric_titles[metric], fontsize=14)
-        ax.set_xlabel("Conversation Round", fontsize=12)
-        ax.set_ylabel("Score (0–10)", fontsize=12)
-        ax.grid(True, linestyle="--", alpha=0.6)
-        ax.legend(fontsize=10)
-
-    plt.suptitle("Theory of Mind Metric Trends Over Conversation", fontsize=16)
-    plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-
-    if save_path:
-        plt.savefig(save_path, bbox_inches="tight")
-        print(f"✅ Saved reasoning score plot to {save_path}")
-    else:
-        plt.show()
-
-
 def plot_mcq_scores(
     mcq_scores: list[dict], agent_names: list[str], save_path: str = None
 ):
@@ -175,23 +138,13 @@ def plot_goal_completion(
             fontsize=12,
         )
 
-    # Add goal text
-    if "goal_focus" in eval_result and "agent_1" in eval_result["goal_focus"]:
-        # Use data from goal_focus if available
-        agent1_goal = (
-            eval_result["goal_focus"]["agent_1"].get("goal_restated", "").split(".")[0]
-        )
-        agent2_goal = (
-            eval_result["goal_focus"]["agent_2"].get("goal_restated", "").split(".")[0]
-        )
-    else:
-        # Use reasoning from social_performance as fallback
-        agent1_goal = eval_result["social_performance"]["agent_1"]["goal_completion"][
-            "reasoning"
-        ]
-        agent2_goal = eval_result["social_performance"]["agent_2"]["goal_completion"][
-            "reasoning"
-        ]
+    # Use reasoning from social_performance as fallback
+    agent1_goal = eval_result["social_performance"]["agent_1"]["goal_completion"][
+        "reasoning"
+    ]
+    agent2_goal = eval_result["social_performance"]["agent_2"]["goal_completion"][
+        "reasoning"
+    ]
 
     # Wrap text for better display
     def wrap_text(text, max_len=40):
@@ -243,20 +196,19 @@ def plot_goal_completion(
     plt.savefig(os.path.join(save_dir, "goal_completion.png"), dpi=300)
     plt.close()
 
-
 def plot_sotopia_dimensions(
     eval_result: dict[str, Any], agent_names: list[str], save_dir: str
 ) -> None:
-    """Create radar charts for SOTOPIA dimensions"""
-    # Define dimensions and normalization functions
+    """Create radar charts for social dimensions matching the evaluation metrics"""
+    # Update dimensions to match Social_Goal_Evaluation prompt
     dimensions = [
         "goal_completion",
         "believability",
         "relationship",
         "knowledge",
-        "secret",
+        "secret",  # Changed from information_exchange
         "social_rules",
-        "financial_benefits",
+        "financial_benefits",  # Changed from communication_strategy
     ]
 
     # Function to normalize scores to 0-10 scale for the radar chart
@@ -264,13 +216,23 @@ def plot_sotopia_dimensions(
         if dimension == "relationship":
             # -5 to 5 scale → 0 to 10 scale
             return (score + 5) * 1.0
-        elif dimension in ["secret", "social_rules"]:
+        elif dimension in ["social_rules", "secret"]:
             # -10 to 0 scale → 0 to 10 scale
             return (score + 10) * 1.0
+        elif dimension == "financial_benefits":
+            # -5 to 5 scale → 0 to 10 scale
+            return (score + 5) * 1.0
         else:
-            # Already on 0-10 scale
+            # Already on 0-10 scale (goal_completion, believability, knowledge)
             return score
 
+    # Handle missing dimensions gracefully
+    def get_score(agent_data, dimension):
+        if dimension in agent_data:
+            return agent_data[dimension].get("score", 0)
+        return 0  # Default value if dimension doesn't exist
+
+    # IMPROVED COMBINED RADAR CHART
     fig = plt.figure(figsize=(12, 10))
     ax = fig.add_subplot(111, polar=True)
 
@@ -278,34 +240,91 @@ def plot_sotopia_dimensions(
     theta = np.linspace(0, 2 * np.pi, N, endpoint=False)  # Fixed angular positions
     theta = np.append(theta, theta[0])  # Close the loop
 
-    formatted_labels = [dim.replace("_", " ").title() for dim in dimensions]
+    # Prettier dimension labels
+    formatted_labels = [
+        "Goal Completion",
+        "Believability",
+        "Relationship",
+        "Knowledge",
+        "Secret Keeping",
+        "Social Rules",
+        "Financial Benefits"
+    ]
 
     colors = ["#3498db", "#e74c3c"]  # Blue and red
+    markers = ["o", "s"]  # Circle for agent 1, square for agent 2
+    linestyles = ["-", "--"]  # Solid for agent 1, dashed for agent 2
 
+    # Draw background grid with better visibility
+    ax.grid(True, color='gray', alpha=0.3, linestyle='--')
+    
+    # Draw circular gridlines with labels
+    for r in [2, 4, 6, 8]:
+        circle = plt.Circle((0, 0), r, transform=ax.transData._b, 
+                            fill=False, color='gray', alpha=0.1, linestyle='-')
+        ax.add_artist(circle)
+    
+    # Add score range text along one radius
+    ax.text(0, 5.2, "5", fontsize=8, ha='center', va='center', color='gray')
+    ax.text(0, 10.2, "10", fontsize=8, ha='center', va='center', color='gray')
+
+    # Plot each agent with enhanced visibility
     for i, agent_name in enumerate(agent_names):
         agent_key = f"agent_{i+1}"
 
         agent_data = eval_result["social_performance"][agent_key]
-        values = [normalize_score(dim, agent_data[dim]["score"]) for dim in dimensions]
+        values = [normalize_score(dim, get_score(agent_data, dim)) for dim in dimensions]
         values = np.append(values, values[0])  # Close the loop
 
-        ax.plot(theta, values, "o-", linewidth=2, label=agent_name, color=colors[i])
-        ax.fill(theta, values, alpha=0.25, color=colors[i])
+        # Plot with enhanced styling
+        line = ax.plot(theta, values, markers[i], linewidth=2.5, 
+                       label=agent_name, color=colors[i], 
+                       linestyle=linestyles[i], markersize=7)
+        ax.fill(theta, values, alpha=0.15, color=colors[i])
+        
+        # Add score labels at each point
+        for j, value in enumerate(values[:-1]):  # Skip the last duplicated point
+            angle = theta[j]
+            # Adjust label position based on value to avoid overlapping
+            offset = 0.5
+            x = (value + offset) * np.cos(angle)
+            y = (value + offset) * np.sin(angle)
+            ax.text(x, y, f"{agent_data.get(dimensions[j], {}).get('score', 0):.1f}", 
+                    color=colors[i], fontsize=9, ha='center', va='center',
+                    bbox=dict(facecolor='white', alpha=0.7, edgecolor='none', pad=1))
 
-    ax.set_xticks(theta[:-1])
-    ax.set_xticklabels(formatted_labels, fontsize=12)
+    # Enhance the dimension labels
+    for i, label in enumerate(formatted_labels):
+        angle = theta[i]
+        # Position labels slightly outside the plot
+        x = 1.2 * np.cos(angle)
+        y = 1.2 * np.sin(angle)
+        # Adjust text alignment based on position
+        ha = 'center'
+        if angle < np.pi/2 or angle > 3*np.pi/2:
+            ha = 'left'
+        elif angle > np.pi/2 and angle < 3*np.pi/2:
+            ha = 'right'
+            
+        ax.text(x, y, formatted_labels[i], fontsize=11, fontweight='bold', 
+                ha=ha, va='center')
+
+    # Remove default tick labels since we have our custom ones
+    ax.set_xticklabels([])
     ax.set_ylim(0, 10)
-    ax.set_yticks([2, 4, 6, 8, 10])
-    ax.set_yticklabels(["2", "4", "6", "8", "10"], fontsize=10)
-    ax.grid(True)
-
-    plt.title("SOTOPIA Dimensions Evaluation", size=16, fontweight="bold", y=1.1)
-    plt.legend(loc="upper right", bbox_to_anchor=(0.1, 0.1), fontsize=12)
+    ax.set_yticks([])  # Remove radial ticks
+    
+    # Better title and legend
+    plt.title("Social Dimensions Comparison", size=16, fontweight="bold", y=1.05)
+    legend = plt.legend(loc="upper right", bbox_to_anchor=(0.1, 0.1), 
+                        fontsize=12, framealpha=0.9)
+    legend.get_frame().set_edgecolor('gray')
 
     plt.tight_layout()
-    plt.savefig(os.path.join(save_dir, "sotopia_dimensions.png"), dpi=300)
+    plt.savefig(os.path.join(save_dir, "sotopia_dimensions.png"), dpi=300, bbox_inches='tight')
     plt.close()
 
+    # Individual agent radar charts - keep this as in original
     for i, agent_name in enumerate(agent_names):
         agent_key = f"agent_{i+1}"
 
@@ -313,7 +332,7 @@ def plot_sotopia_dimensions(
         ax = fig.add_subplot(111, polar=True)
 
         agent_data = eval_result["social_performance"][agent_key]
-        values = [normalize_score(dim, agent_data[dim]["score"]) for dim in dimensions]
+        values = [normalize_score(dim, get_score(agent_data, dim)) for dim in dimensions]
         values = np.append(values, values[0])  # Close the loop
 
         ax.plot(theta, values, "o-", linewidth=2, color=colors[i])
@@ -327,13 +346,12 @@ def plot_sotopia_dimensions(
         ax.grid(True)
 
         plt.title(
-            f"{agent_name}: SOTOPIA Dimensions", size=14, fontweight="bold", y=1.1
+            f"{agent_name}: Social Dimensions", size=14, fontweight="bold", y=1.1
         )
 
         plt.tight_layout()
         plt.savefig(os.path.join(save_dir, f"{agent_name}_dimensions.png"), dpi=300)
         plt.close()
-
 
 def plot_overall_performance(
     eval_result: dict[str, Any], agent_names: list[str], save_dir: str
@@ -380,12 +398,13 @@ def plot_overall_performance(
 
 
 def plot_interaction_quality(eval_result: dict[str, Any], save_dir: str) -> None:
-    """Plot interaction quality gauge chart"""
-    # Extract score and reasoning
-    score = eval_result["social_performance"]["interaction_quality"]["score"]
-    reasoning = eval_result["social_performance"]["interaction_quality"]["reasoning"]
+    quality_data = eval_result["social_performance"]["interaction_quality"]
+    score = quality_data["score"]
+    reasoning = quality_data["reasoning"]
+    
+    barrier_navigation = quality_data.get("barrier_navigation", "")
+    cooperation = quality_data.get("cooperation", "")
 
-    # Create figure
     fig, ax = plt.subplots(figsize=(8, 8), subplot_kw={"polar": True})
 
     # Define gauge properties
@@ -410,10 +429,122 @@ def plot_interaction_quality(eval_result: dict[str, Any], save_dir: str) -> None
 
     ax.set_ylim(0, 1.2)
 
+    # Add detailed assessment
+    assessment_text = f"Assessment: {reasoning}"
+    
+    # Add barrier navigation details if available
+    if barrier_navigation:
+        assessment_text += f"\n\nBarrier Navigation: {barrier_navigation}"
+    if cooperation:
+        assessment_text += f"\n\nCooperation: {cooperation}"
+        
     plt.figtext(
-        0.5, 0.1, f"Assessment: {reasoning}", wrap=True, ha="center", fontsize=10
+        0.5, 0.1, assessment_text, wrap=True, ha="center", fontsize=10
     )
 
     plt.tight_layout()
     plt.savefig(os.path.join(save_dir, "interaction_quality.png"), dpi=300)
+    plt.close()
+
+
+def plot_cross_scenario_performance(metrics, agent_names, save_dir):
+    """
+    Plot performance metrics across scenarios
+    
+    Args:
+        metrics: Dictionary containing cross-scenario metrics
+        agent_names: List of agent names [agent_a_name, agent_b_name]
+        save_dir: Directory to save the plot
+        
+    Returns:
+        None (saves the plot to disk)
+    """
+    plt.figure(figsize=(12, 8))
+
+    # Plot goal achievement scores
+    plt.subplot(2, 2, 1)
+    plt.plot(
+        metrics["scenario_idx"],
+        metrics[f"{agent_names[0]}_goal_score"],
+        "b-",
+        label=f"{agent_names[0]} Goal",
+    )
+    plt.plot(
+        metrics["scenario_idx"],
+        metrics[f"{agent_names[1]}_goal_score"],
+        "r-",
+        label=f"{agent_names[1]} Goal",
+    )
+    plt.xlabel("Scenario")
+    plt.ylabel("Goal Achievement Score")
+    plt.title("Goal Achievement Across Scenarios")
+    plt.ylim(0, 1.0)
+    plt.legend()
+    plt.grid(True)
+
+    # Plot reason understanding scores
+    plt.subplot(2, 2, 2)
+    plt.plot(
+        metrics["scenario_idx"],
+        metrics[f"{agent_names[0]}_reason_understanding"],
+        "b-",
+        label=f"{agent_names[0]} Reason",
+    )
+    plt.plot(
+        metrics["scenario_idx"],
+        metrics[f"{agent_names[1]}_reason_understanding"],
+        "r-",
+        label=f"{agent_names[1]} Reason",
+    )
+    plt.xlabel("Scenario")
+    plt.ylabel("Reason Understanding Score")
+    plt.title("Reason Understanding Across Scenarios")
+    plt.ylim(0, 1.0)
+    plt.legend()
+    plt.grid(True)
+
+    # Plot MCQ goal accuracy
+    plt.subplot(2, 2, 3)
+    plt.plot(
+        metrics["scenario_idx"],
+        metrics[f"{agent_names[0]}_mcq_goal_accuracy"],
+        "b-",
+        label=f"{agent_names[0]} Goal MCQ",
+    )
+    plt.plot(
+        metrics["scenario_idx"],
+        metrics[f"{agent_names[1]}_mcq_goal_accuracy"],
+        "r-",
+        label=f"{agent_names[1]} Goal MCQ",
+    )
+    plt.xlabel("Scenario")
+    plt.ylabel("MCQ Goal Accuracy")
+    plt.title("Goal Detection Accuracy Across Scenarios")
+    plt.ylim(0, 1.0)
+    plt.legend()
+    plt.grid(True)
+
+    # Plot MCQ reason accuracy
+    plt.subplot(2, 2, 4)
+    plt.plot(
+        metrics["scenario_idx"],
+        metrics[f"{agent_names[0]}_mcq_reason_accuracy"],
+        "b-",
+        label=f"{agent_names[0]} Reason MCQ",
+    )
+    plt.plot(
+        metrics["scenario_idx"],
+        metrics[f"{agent_names[1]}_mcq_reason_accuracy"],
+        "r-",
+        label=f"{agent_names[1]} Reason MCQ",
+    )
+    plt.xlabel("Scenario")
+    plt.ylabel("MCQ Reason Accuracy")
+    plt.title("Reason Detection Accuracy Across Scenarios")
+    plt.ylim(0, 1.0)
+    plt.legend()
+    plt.grid(True)
+
+    plt.tight_layout()
+    plt.savefig(os.path.join(save_dir, "cross_scenario_performance.png"))
     plt.close()

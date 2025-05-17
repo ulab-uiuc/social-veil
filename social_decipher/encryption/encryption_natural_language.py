@@ -18,7 +18,7 @@ class LanguageModelEncryption(BaseEncryption):
         self.source_language = source_language
         self.model_id = model_id
 
-        # Check if model understands the target language
+        # Check if model understands the target language 
         self.can_understand = ModelManager.can_model_understand_language(
             model_id, target_language
         )

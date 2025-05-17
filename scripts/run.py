@@ -1,5 +1,6 @@
 import argparse
 import os
+import json
 
 from openai import OpenAI
 
@@ -7,15 +8,13 @@ from social_decipher.agent.agent_profile import AgentProfile
 from social_decipher.agent.social_agent import SocialAgent
 from social_decipher.communication import simulate_conversation
 from social_decipher.environment.env_generator import EnvironmentGenerator
-from social_decipher.evaluate import ConversationEvaluator
+from social_decipher.evaluate import ConversationEvaluator, calculate_experiment_averages, analyze_mcq_trajectories
 from social_decipher.utils.model import ModelManager
 
 os.environ[
     "OPENAI_API_KEY"
 ] = "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"
-
 os.environ["HF_API_TOKEN"] = "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"
-
 os.environ["MISTRAL_API_KEY"] = "yQ9wm2nsnrlujAjTbBDuRwnjTV2bA1oT"
 
 
@@ -76,6 +75,16 @@ def parse_args() -> argparse.Namespace:
 
 def main():
     args = parse_args()
+
+    experiment_tag = ['normal', 'construct_enc', 'construct_act', 'nl_enc', 'nl_act']
+
+    result = {
+        experiment_tag[0]: [],
+        experiment_tag[1]: [],
+        experiment_tag[2]: [],
+        experiment_tag[3]: [],
+        experiment_tag[4]: [],
+    }
     
     if args.list_pairs:
         ModelManager.list_available_pairs()
@@ -161,7 +170,7 @@ def main():
                 print(f"Loading memory for Jamie from {memory_path_b}")
                 agent2.load_memory(memory_path_b)
                 
-        simulate_conversation(
+        result[experiment_tag[0]], _ = simulate_conversation(
             personA=agent1,
             personB=agent2,
             max_rounds=max_round,
@@ -172,7 +181,8 @@ def main():
             output_suffix="no_encryption_no_action",
             num_scenarios=num_scenarios,
             client=client,
-            environments=environments
+            environments=environments,
+            result=result[experiment_tag[0]]
         )
 
         # EXPERIMENT 2: Encryption Only (Mapping)
@@ -183,7 +193,7 @@ def main():
         agent2 = SocialAgent(
             "Jamie", profile_b, profile_a, environments[0], 1, use_action=False
         )
-        simulate_conversation(
+        result[experiment_tag[1]], _ = simulate_conversation(
             personA=agent1,
             personB=agent2,
             max_rounds=max_round,
@@ -194,7 +204,8 @@ def main():
             output_suffix="mapping_encryption_no_action",
             num_scenarios=num_scenarios,
             client=client,
-            environments=environments
+            environments=environments,
+            result=result[experiment_tag[1]]
         )
 
         # EXPERIMENT 3: Encryption + Action (Mapping)
@@ -205,7 +216,7 @@ def main():
         agent2 = SocialAgent(
             "Jamie", profile_b, profile_a, environments[0], 1, use_action=True
         )
-        simulate_conversation(
+        result[experiment_tag[2]], _ = simulate_conversation(
             personA=agent1,
             personB=agent2,
             max_rounds=max_round,
@@ -216,10 +227,9 @@ def main():
             output_suffix="mapping_encryption_action",
             num_scenarios=num_scenarios,
             client=client,
-            environments=environments
+            environments=environments,
+            result=result[experiment_tag[2]]
         )
-
-        exit()
 
         # EXPERIMENT 4: Natural Language Barrier
         print("\n🌐 Running Experiment 4: With Natural Language Barrier, No Action")
@@ -229,7 +239,7 @@ def main():
         agent2 = SocialAgent(
             "Jamie", profile_b, profile_a, environments[0], 1, use_action=False
         )
-        simulate_conversation(
+        result[experiment_tag[3]], _ = simulate_conversation(
             personA=agent1,
             personB=agent2,
             max_rounds=max_round,
@@ -241,7 +251,8 @@ def main():
             pair=args.pair,
             num_scenarios=num_scenarios,
             client=client,
-            environments=environments
+            environments=environments,
+            result=result[experiment_tag[3]]
         )
 
         # EXPERIMENT 5: Natural Language Barrier + Action
@@ -252,7 +263,7 @@ def main():
         agent2 = SocialAgent(
             "Jamie", profile_b, profile_a, environments[0], 1, use_action=True
         )
-        simulate_conversation(
+        result[experiment_tag[4]], _ = simulate_conversation(
             personA=agent1,
             personB=agent2,
             max_rounds=max_round,
@@ -264,8 +275,79 @@ def main():
             pair=args.pair,
             num_scenarios=num_scenarios,
             client=client,
-            environments=environments
+            environments=environments,
+            result=result[experiment_tag[4]]
         )
+
+        # After all experiments have run
+        results_dir = "../social_decipher/results"
+        os.makedirs(results_dir, exist_ok=True)
+        
+        # Save consolidated results
+        with open(os.path.join(results_dir, f"consolidated_results_{num_scenarios}_scenarios.json"), "w") as f:
+            json.dump(result, f, indent=4)
+        
+        # Calculate and save average scores
+        experiment_averages = calculate_experiment_averages(result, experiment_tag)
+        with open(os.path.join(results_dir, f"experiment_averages_{num_scenarios}_scenarios.json"), "w") as f:
+            json.dump(experiment_averages, f, indent=4)
+        
+        # Process MCQ trajectories separately
+        print("Analyzing MCQ trajectories...")
+        mcq_analysis = analyze_mcq_trajectories(experiment_tag, num_scenarios)
+        
+        # Create a combined analysis for easier comparison
+        combined_analysis = {
+            "performance_comparison": {},
+            "mcq_comparison": {},
+            "understanding_improvement_ranking": []
+        }
+        
+        # Add performance metrics for comparison
+        for tag in experiment_tag:
+            if tag in experiment_averages and "no_data" not in experiment_averages[tag]:
+                combined_analysis["performance_comparison"][tag] = {
+                    "goal_completion": (
+                        experiment_averages[tag]["agent1_goal_completion"] + 
+                        experiment_averages[tag]["agent2_goal_completion"]
+                    ) / 2,
+                    "believability": (
+                        experiment_averages[tag]["agent1_believability"] + 
+                        experiment_averages[tag]["agent2_believability"]
+                    ) / 2,
+                    "overall_score": (
+                        experiment_averages[tag]["agent1_overall"] + 
+                        experiment_averages[tag]["agent2_overall"]
+                    ) / 2,
+                    "interaction_quality": experiment_averages[tag]["interaction_quality"]
+                }
+        
+        # Add MCQ metrics for comparison
+        for tag in experiment_tag:
+            if tag in mcq_analysis:
+                combined_analysis["mcq_comparison"][tag] = {
+                    "average_accuracy": (
+                        mcq_analysis[tag]["average_accuracy"]["Alex_goal"] +
+                        mcq_analysis[tag]["average_accuracy"]["Jamie_goal"] +
+                        mcq_analysis[tag]["average_accuracy"]["Alex_reason"] +
+                        mcq_analysis[tag]["average_accuracy"]["Jamie_reason"]
+                    ) / 4,
+                    "understanding_improvement": mcq_analysis[tag].get("understanding_improvement", 0)
+                }
+        
+        # Rank experiments by understanding improvement
+        combined_analysis["understanding_improvement_ranking"] = sorted(
+            [tag for tag in experiment_tag if tag in mcq_analysis and "understanding_improvement" in mcq_analysis[tag]],
+            key=lambda x: mcq_analysis[x]["understanding_improvement"],
+            reverse=True
+        )
+        
+        # Save combined analysis
+        with open(os.path.join(results_dir, f"combined_analysis_{num_scenarios}_scenarios.json"), "w") as f:
+            json.dump(combined_analysis, f, indent=4)
+        
+        print(f"\n✅ All experiments completed and results saved with full trajectory analysis!")
+
     else:
         # Create agents with first environment
         agent1 = SocialAgent("Alex", profile_a, profile_b, environments[0], 0, use_action=args.action)
@@ -296,7 +378,8 @@ def main():
             pair=args.pair,
             num_scenarios=num_scenarios,
             client=client,
-            environments=environments
+            environments=environments,
+            result=result,
         )
 
 if __name__ == "__main__":
