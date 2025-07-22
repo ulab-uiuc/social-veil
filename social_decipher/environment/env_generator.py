@@ -3,7 +3,6 @@ import re
 
 from ..environment.env_profile import EnvironmentProfile
 
-
 class EnvironmentGenerator:
     def __init__(self, client=None):
         self.client = client
@@ -160,7 +159,7 @@ Ensure your response is properly formatted, valid JSON that can be parsed by Pyt
 
         # Create the OpenAI chat completion request
         response = self.client.chat.completions.create(
-            model=model or "gpt-4o",
+            model="gpt-4o-mini",
             messages=[
                 {
                     "role": "system",
@@ -174,5 +173,6 @@ Ensure your response is properly formatted, valid JSON that can be parsed by Pyt
 
         # Extract text content from the response
         response_text = response.choices[0].message.content
-
+     
         return self.parse_response(response_text)
+

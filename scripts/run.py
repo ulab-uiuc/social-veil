@@ -1,386 +1,333 @@
 import argparse
 import os
 import json
+import sys
+import yaml
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from openai import OpenAI
 
 from social_decipher.agent.agent_profile import AgentProfile
 from social_decipher.agent.social_agent import SocialAgent
 from social_decipher.communication import simulate_conversation
-from social_decipher.environment.env_generator import EnvironmentGenerator
-from social_decipher.evaluate import ConversationEvaluator, calculate_experiment_averages, analyze_mcq_trajectories
+from social_decipher.environment.env_profile import EnvironmentProfile
+from social_decipher.evaluate import ConversationEvaluator, calculate_experiment_averages
 from social_decipher.utils.model import ModelManager
+from social_decipher.utils.utils import load_env
 
-os.environ[
-    "OPENAI_API_KEY"
-] = "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"
-os.environ["HF_API_TOKEN"] = "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"
-os.environ["MISTRAL_API_KEY"] = "yQ9wm2nsnrlujAjTbBDuRwnjTV2bA1oT"
+CONFIG_PATH = os.path.join(os.path.dirname(__file__), "..", "configs/config.yaml")
+with open(CONFIG_PATH, "r") as f:
+    _config = yaml.safe_load(f)
 
+sotopia_env = _config.get("sotopia_env")
+sotopia_hard_env = _config.get("sotopia_hard_env")
+
+os.environ["OPENAI_API_KEY"] = _config.get("OPENAI_API_KEY") 
+os.environ["HF_API_TOKEN"] = _config.get("HF_API_TOKEN")
+os.environ["MISTRAL_API_KEY"] = _config.get("MISTRAL_API_KEY")
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Run social agent simulation")
+    parser = argparse.ArgumentParser(description="Run social agent simulation with 3×3×2 factorial design")
     parser.add_argument(
-        "--encryption_enabled",
-        action="store_true",
-        help="Enable encryption between agents",
+        "--model", type=str, default="gpt-4o-mini", help="Model to use for agents",
     )
     parser.add_argument(
-        "--nature_language",
-        action="store_true",
-        help="Use natural language barriers instead of encryption",
+        "--max_round", type=int, default=20, help="Max conversation rounds per scenario"
     )
     parser.add_argument(
-        "--action", action="store_true", help="Enable action-based communication"
+        "--episode_limit", type=int, default=None, help="Limit number of episodes to process (default: all episodes)",
     )
     parser.add_argument(
-        "--model",
-        type=str,
-        default="gpt-4o-mini",
-        help="Model to use when not using language barriers",
+        "--pair", type=str, default="0", help="Language barrier pair to use (index number or named pair)",
     )
     parser.add_argument(
-        "--max_round", type=int, default=10, help="Max conversation rounds per scenario"
+        "--list_pairs", action="store_true", help="List available language barrier pairs and exit",
     )
     parser.add_argument(
-        "--num_scenarios",
-        type=int,
-        default=1,
-        help="Number of scenarios to run in sequence",
+        "--memory_path", type=str, default="", help="Path to load agent memories from (optional)",
     )
     parser.add_argument(
-        "--pair",
-        type=str,
-        default="0",
-        help="Language barrier pair to use (index number or named pair like 'gpt-claude-chinese')",
+        "--episodes_file", type=str, default="/Users/xuankeyang/Desktop/social-decipher/data/episode_sample.jsonl", 
+        help="Path to the pre-processed episode JSONL file",
     )
     parser.add_argument(
-        "--list_pairs",
-        action="store_true",
-        help="List available language barrier pairs and exit",
+        "--run_all", action="store_true", help="Run all 18 experiment conditions (3×3×2 factorial design)",
     )
     parser.add_argument(
-        "--run_all",
-        action="store_true",
-        help="Run all experiment conditions with the selected model pair",
+        "--scenario_type", type=str, choices=["normal", "language_barrier", "knowledge_barrier"], 
+        default="normal", help="Social scenario type to test",
     )
     parser.add_argument(
-        "--memory_path",
-        type=str,
-        default="",
-        help="Path to load agent memories from (optional)",
+        "--communication_modality", type=str, choices=["text_only", "action_enabled", "text_action_mix"], 
+        default="text_only", help="Communication modality to test",
+    )
+    parser.add_argument(
+        "--memory_strategy", type=str, choices=["memory_off", "memory_on"], 
+        default="memory_off", help="Memory strategy to test",
+    )
+    parser.add_argument(
+        "--results_base_dir", type=str, default="../social_decipher/results", 
+        help="Base directory for experiment results",
     )
     return parser.parse_args()
 
 
+def load_episode_jsonl(path):
+    with open(path, 'r') as f:
+        return [json.loads(line) for line in f if line.strip()]
+
+def build_profile_from_episode_data(episode_data, agent_idx, model_id, scenario_type):
+    agent_profile_data = episode_data["agent_profiles"][agent_idx]
+    
+    # Handle private knowledge based on scenario type
+    if scenario_type == "knowledge_barrier":
+        if agent_idx == 0:
+            private_knowledge = episode_data.get("agent1_private_knowledge", "")
+        else:
+            private_knowledge = episode_data.get("agent2_private_knowledge", "")
+        # Add private_knowledge to the agent profile data
+        agent_profile_data = agent_profile_data.copy()
+        agent_profile_data["private_knowledge"] = private_knowledge
+    else:
+        # No private knowledge for normal and language barrier scenarios
+        agent_profile_data = agent_profile_data.copy()
+        agent_profile_data["private_knowledge"] = ""
+    
+    return AgentProfile.from_dict(agent_profile_data, model_id)
+
+def create_environment_from_episode(episode_data, scenario_type):
+    return EnvironmentProfile(
+        scenario=episode_data["scenario"],
+        agent_goals=episode_data["agent_goals"],
+        agent_reasons=[episode_data["agent1_reason"], episode_data["agent2_reason"]],
+        agent_goals_mcqas=episode_data["agent_goals_mcqas"],
+        agent_reasons_mcqas=episode_data["agent_reasons_mcqas"],
+        agent_knowledge_mcqas=episode_data.get("agent_knowledge_mcqas", []),
+        agent_relationship=episode_data.get("agent_relationship", "friend"),
+        agent1_private_knowledge=episode_data.get("agent1_private_knowledge", "") if scenario_type == "knowledge_barrier" else "",
+        agent2_private_knowledge=episode_data.get("agent2_private_knowledge", "") if scenario_type == "knowledge_barrier" else ""
+    )
+
+def build_profiles_and_env(episode_data, model_id, scenario_type):
+    profile_a = build_profile_from_episode_data(episode_data, 0, model_id, scenario_type)
+    profile_b = build_profile_from_episode_data(episode_data, 1, model_id, scenario_type)
+    env = create_environment_from_episode(episode_data, scenario_type)
+
+    agent1_name = profile_a.first_name
+    agent2_name = profile_b.first_name
+    agent_reasons = [episode_data["agent1_reason"], episode_data["agent2_reason"]]
+    return profile_a, profile_b, env, agent1_name, agent2_name, agent_reasons
+
+def create_agents(profile_a, profile_b, env, agent1_name, agent2_name, communication_modality):
+    # Map communication modality to agent parameters
+    if communication_modality == "text_only":
+        use_action = False
+        mix = False
+    elif communication_modality == "action_enabled":
+        use_action = True
+        mix = False
+    else:  # text_action_mix
+        use_action = True
+        mix = True
+    
+    agent1 = SocialAgent(agent1_name, profile_a, profile_b, env, 0, use_action=use_action, mix=mix)
+    agent2 = SocialAgent(agent2_name, profile_b, profile_a, env, 1, use_action=use_action, mix=mix)
+    return agent1, agent2
+
+def load_agent_memories(agent1, agent2, memory_path, agent1_name, agent2_name, memory_strategy):
+    if memory_strategy == "memory_on" and memory_path:
+        memory_path_a = os.path.join(memory_path, f"{agent1_name}_memory.json")
+        memory_path_b = os.path.join(memory_path, f"{agent2_name}_memory.json")
+        if os.path.exists(memory_path_a):
+            agent1.load_memory(memory_path_a)
+        if os.path.exists(memory_path_b):
+            agent2.load_memory(memory_path_b)
+
+def get_experiment_config(scenario_type, communication_modality, memory_strategy, results_base_dir):
+    """Generate experiment configuration based on the 3×3×2 factorial design"""
+    
+    tag_parts = []
+    tag_parts.append(scenario_type)
+    tag_parts.append(communication_modality)
+    tag_parts.append(memory_strategy)
+    tag = "_".join(tag_parts)
+    
+    # Create results directory
+    results_dir = os.path.join(results_base_dir, f"exp_{tag}")
+    
+    # Map scenario type to encryption/nature_language settings
+    if scenario_type == "normal":
+        encryption_enabled = False
+        nature_language = False
+    elif scenario_type == "language_barrier":
+        encryption_enabled = True
+        nature_language = True
+    else:  # knowledge_barrier
+        encryption_enabled = False
+        nature_language = False
+    
+    # Map communication modality to action settings
+    if communication_modality == "text_only":
+        use_action = False
+        mix = False
+    elif communication_modality == "action_enabled":
+        use_action = True
+        mix = False
+    else:  # text_action_mix
+        use_action = True
+        mix = True
+    
+    return {
+        "tag": tag,
+        "results_dir": results_dir,
+        "scenario_type": scenario_type,
+        "communication_modality": communication_modality,
+        "memory_strategy": memory_strategy,
+        "encryption_enabled": encryption_enabled,
+        "use_action": use_action,
+        "nature_language": nature_language,
+        "mix": mix
+    }
+
+def run_experiment(episodes, experiment_config, evaluator, client, args):
+    results_dir = experiment_config["results_dir"]
+    os.makedirs(results_dir, exist_ok=True)
+    
+    print(f"\n🧪 Running experiment: {experiment_config['tag']}")
+    print(f"   Scenario Type: {experiment_config['scenario_type']}")
+    print(f"   Communication: {experiment_config['communication_modality']}")
+    print(f"   Memory: {experiment_config['memory_strategy']}")
+    print(f"   Results: {results_dir}")
+    
+    eval_results, mcq_logs = [], []
+    
+    for scenario_idx, episode_data in enumerate(episodes):
+        print(f"   📝 Scenario {scenario_idx + 1}/{len(episodes)}")
+        
+        profile_a, profile_b, env, agent1_name, agent2_name, agent_reasons = build_profiles_and_env(
+            episode_data, args.model, experiment_config["scenario_type"]
+        )
+        
+        agent1, agent2 = create_agents(
+            profile_a, profile_b, env, agent1_name, agent2_name, 
+            experiment_config["communication_modality"]
+        )
+        
+        load_agent_memories(
+            agent1, agent2, args.memory_path, agent1_name, agent2_name, 
+            experiment_config["memory_strategy"]
+        )
+        
+        conversation_log, eval_result, mcq_log = simulate_conversation(
+            personA=agent1,
+            personB=agent2,
+            evaluator=evaluator,
+            max_rounds=args.max_round,
+            encryption_enabled=experiment_config["encryption_enabled"],
+            action_enabled=experiment_config["use_action"],
+            nature_language=experiment_config["nature_language"],
+            output_suffix=f"{experiment_config['tag']}_scenario_{scenario_idx+1}",
+            pair=args.pair,
+            client=client,
+            environment=env,
+            result=None,
+            root_dir=results_dir,
+            mix=experiment_config.get("mix", False)
+        )
+        
+        eval_results.append(eval_result)
+        mcq_logs.append(mcq_log)
+        
+        # Save individual scenario results
+        scenario_dir = os.path.join(results_dir, f"scenario_{scenario_idx+1}")
+        os.makedirs(scenario_dir, exist_ok=True)
+        
+        with open(os.path.join(scenario_dir, "conversation_log.txt"), "w") as f:
+            f.write("\n".join(conversation_log))
+        
+        with open(os.path.join(scenario_dir, "eval_result.json"), "w") as f:
+            json.dump(eval_result, f, indent=4)
+        
+        if mcq_log:
+            with open(os.path.join(scenario_dir, "mcq_log.json"), "w") as f:
+                json.dump(mcq_log, f, indent=4)
+    
+    # Save aggregated results
+    with open(os.path.join(results_dir, f"{experiment_config['tag']}_eval.json"), "w") as f:
+        json.dump(eval_results, f, indent=4)
+    
+    with open(os.path.join(results_dir, f"{experiment_config['tag']}_mcq.json"), "w") as f:
+        json.dump(mcq_logs, f, indent=4)
+    
+    print(f"   ✅ {experiment_config['tag']} completed for all scenarios!")
+
+def generate_all_experiment_configs(results_base_dir):
+    """Generate all 18 experiment configurations for the 3×3×2 factorial design"""
+    scenario_types = ["normal", "language_barrier", "knowledge_barrier"]
+    communication_modalities = ["text_only", "action_enabled", "text_action_mix"]
+    memory_strategies = ["memory_off", "memory_on"]
+    
+    configs = []
+    for scenario_type in scenario_types:
+        for communication_modality in communication_modalities:
+            for memory_strategy in memory_strategies:
+                config = get_experiment_config(
+                    scenario_type, communication_modality, memory_strategy, results_base_dir
+                )
+                configs.append(config)
+    
+    return configs
+
 def main():
     args = parse_args()
 
-    experiment_tag = ['normal', 'construct_enc', 'construct_act', 'nl_enc', 'nl_act']
-
-    result = {
-        experiment_tag[0]: [],
-        experiment_tag[1]: [],
-        experiment_tag[2]: [],
-        experiment_tag[3]: [],
-        experiment_tag[4]: [],
-    }
-    
     if args.list_pairs:
         ModelManager.list_available_pairs()
         return
-    
+
     client = OpenAI()
-    model = args.model
-    max_round = args.max_round
-    num_scenarios = args.num_scenarios
     
-    # Generate all environments once
-    print(f"Generating {num_scenarios} environments...")
-    generator = EnvironmentGenerator(client)
-    environments = generator.generate_environments(num_scenarios=num_scenarios)
+    episodes = load_episode_jsonl(args.episodes_file)
+    print(f"Loaded {len(episodes)} episodes from {args.episodes_file}")
     
-    # Create agent profiles
-    profile_a = AgentProfile(
-        first_name="Alex",
-        last_name="Carter",
-        age=30,
-        gender="Male",
-        gender_pronoun="he/him",
-        occupation="Sports Commentator",
-        public_info="Always talks about football",
-        personality_and_values="Enthusiastic, expressive, goal-driven",
-        model_id=args.model,
-    )
+    # Apply episode limit if specified
+    if args.episode_limit:
+        episodes = episodes[:args.episode_limit]
+        print(f"Using first {len(episodes)} episodes (limited by --episode_limit)")
+    
+    evaluator = ConversationEvaluator(client, args.model)
 
-    profile_b = AgentProfile(
-        first_name="Jamie",
-        last_name="Rivers",
-        age=29,
-        gender="Non-binary",
-        gender_pronoun="they/them",
-        occupation="Therapist",
-        public_info="Calm",
-        personality_and_values="Thoughtful, assertive, values balanced conversations",
-        model_id=args.model,
-    )
-    
-    evaluator = ConversationEvaluator(client, model)
-    
-    suffix = ""
-    if args.encryption_enabled:
-        if args.nature_language:
-            suffix += "language_barrier"
-        else:
-            suffix += "mapping_encryption"
-    else:
-        suffix += "no_encryption"
-
-    if args.action:
-        suffix += "_action"
-    else:
-        suffix += "_no_action"
-
-    # Add pair info if using language barrier
-    if args.encryption_enabled and args.nature_language:
-        suffix += f"_pair_{args.pair}"
-
-    # Add number of scenarios to output suffix
-    if args.num_scenarios > 1:
-        suffix += f"_{args.num_scenarios}_scenarios"
-    
     if args.run_all:
-        # EXPERIMENT 1: No Encryption, No Action
-        print("\n🚀 Running Experiment 1: No Encryption, No Action")
-        agent1 = SocialAgent(
-            "Alex", profile_a, profile_b, environments[0], 0, use_action=False
-        )
-        agent2 = SocialAgent(
-            "Jamie", profile_b, profile_a, environments[0], 1, use_action=False
-        )
+        print("🧪 Running complete 3×3×2 factorial design experiment")
+        print("=" * 60)
+        print("Experimental Design:")
+        print("1. Social Scenario Types: Normal, Language Barrier, Knowledge Barrier")
+        print("2. Communication Modality: Text-only, Action-enabled, Text-Action Mix")
+        print("3. Memory Strategies: Memory OFF, Memory ON")
+        print("=" * 60)
         
-        # Load memory if path provided
-        if args.memory_path:
-            memory_path_a = os.path.join(args.memory_path, "Alex_memory.json")
-            memory_path_b = os.path.join(args.memory_path, "Jamie_memory.json")
-            if os.path.exists(memory_path_a):
-                print(f"Loading memory for Alex from {memory_path_a}")
-                agent1.load_memory(memory_path_a)
-            if os.path.exists(memory_path_b):
-                print(f"Loading memory for Jamie from {memory_path_b}")
-                agent2.load_memory(memory_path_b)
-                
-        result[experiment_tag[0]], _ = simulate_conversation(
-            personA=agent1,
-            personB=agent2,
-            max_rounds=max_round,
-            evaluator=evaluator,
-            encryption_enabled=False,
-            action_enabled=False,
-            nature_language=False,
-            output_suffix="no_encryption_no_action",
-            num_scenarios=num_scenarios,
-            client=client,
-            environments=environments,
-            result=result[experiment_tag[0]]
-        )
+        experiment_configs = generate_all_experiment_configs(args.results_base_dir)
+        
+        print(f"Total experiments to run: {len(experiment_configs)}")
+        print(f"Episodes per experiment: {len(episodes)}")
+        
+        for i, config in enumerate(experiment_configs, 1):
+            print(f"\n[{i}/{len(experiment_configs)}] Starting experiment...")
+            run_experiment(episodes, config, evaluator, client, args)
+        
+        print("\n🎉 All experiments completed!")
+        print("Results saved in:", args.results_base_dir)
+        return
 
-        # EXPERIMENT 2: Encryption Only (Mapping)
-        print("\n🔐 Running Experiment 2: With Encryption (Mapping), No Action")
-        agent1 = SocialAgent(
-            "Alex", profile_a, profile_b, environments[0], 0, use_action=False
-        )
-        agent2 = SocialAgent(
-            "Jamie", profile_b, profile_a, environments[0], 1, use_action=False
-        )
-        result[experiment_tag[1]], _ = simulate_conversation(
-            personA=agent1,
-            personB=agent2,
-            max_rounds=max_round,
-            evaluator=evaluator,
-            encryption_enabled=True,
-            action_enabled=False,
-            nature_language=False,
-            output_suffix="mapping_encryption_no_action",
-            num_scenarios=num_scenarios,
-            client=client,
-            environments=environments,
-            result=result[experiment_tag[1]]
-        )
-
-        # EXPERIMENT 3: Encryption + Action (Mapping)
-        print("\n🔐🎭 Running Experiment 3: With Encryption (Mapping) + Action")
-        agent1 = SocialAgent(
-            "Alex", profile_a, profile_b, environments[0], 0, use_action=True
-        )
-        agent2 = SocialAgent(
-            "Jamie", profile_b, profile_a, environments[0], 1, use_action=True
-        )
-        result[experiment_tag[2]], _ = simulate_conversation(
-            personA=agent1,
-            personB=agent2,
-            max_rounds=max_round,
-            evaluator=evaluator,
-            encryption_enabled=True,
-            action_enabled=True,
-            nature_language=False,
-            output_suffix="mapping_encryption_action",
-            num_scenarios=num_scenarios,
-            client=client,
-            environments=environments,
-            result=result[experiment_tag[2]]
-        )
-
-        # EXPERIMENT 4: Natural Language Barrier
-        print("\n🌐 Running Experiment 4: With Natural Language Barrier, No Action")
-        agent1 = SocialAgent(
-            "Alex", profile_a, profile_b, environments[0], 0, use_action=False
-        )
-        agent2 = SocialAgent(
-            "Jamie", profile_b, profile_a, environments[0], 1, use_action=False
-        )
-        result[experiment_tag[3]], _ = simulate_conversation(
-            personA=agent1,
-            personB=agent2,
-            max_rounds=max_round,
-            evaluator=evaluator,
-            encryption_enabled=True,
-            action_enabled=False,
-            nature_language=True,
-            output_suffix="language_barrier_no_action",
-            pair=args.pair,
-            num_scenarios=num_scenarios,
-            client=client,
-            environments=environments,
-            result=result[experiment_tag[3]]
-        )
-
-        # EXPERIMENT 5: Natural Language Barrier + Action
-        print("\n🌐🎭 Running Experiment 5: With Natural Language Barrier + Action")
-        agent1 = SocialAgent(
-            "Alex", profile_a, profile_b, environments[0], 0, use_action=True
-        )
-        agent2 = SocialAgent(
-            "Jamie", profile_b, profile_a, environments[0], 1, use_action=True
-        )
-        result[experiment_tag[4]], _ = simulate_conversation(
-            personA=agent1,
-            personB=agent2,
-            max_rounds=max_round,
-            evaluator=evaluator,
-            encryption_enabled=True,
-            action_enabled=True,
-            nature_language=True,
-            output_suffix="language_barrier_action",
-            pair=args.pair,
-            num_scenarios=num_scenarios,
-            client=client,
-            environments=environments,
-            result=result[experiment_tag[4]]
-        )
-
-        # After all experiments have run
-        results_dir = "../social_decipher/results"
-        os.makedirs(results_dir, exist_ok=True)
-        
-        # Save consolidated results
-        with open(os.path.join(results_dir, f"consolidated_results_{num_scenarios}_scenarios.json"), "w") as f:
-            json.dump(result, f, indent=4)
-        
-        # Calculate and save average scores
-        experiment_averages = calculate_experiment_averages(result, experiment_tag)
-        with open(os.path.join(results_dir, f"experiment_averages_{num_scenarios}_scenarios.json"), "w") as f:
-            json.dump(experiment_averages, f, indent=4)
-        
-        # Process MCQ trajectories separately
-        print("Analyzing MCQ trajectories...")
-        mcq_analysis = analyze_mcq_trajectories(experiment_tag, num_scenarios)
-        
-        # Create a combined analysis for easier comparison
-        combined_analysis = {
-            "performance_comparison": {},
-            "mcq_comparison": {},
-            "understanding_improvement_ranking": []
-        }
-        
-        # Add performance metrics for comparison
-        for tag in experiment_tag:
-            if tag in experiment_averages and "no_data" not in experiment_averages[tag]:
-                combined_analysis["performance_comparison"][tag] = {
-                    "goal_completion": (
-                        experiment_averages[tag]["agent1_goal_completion"] + 
-                        experiment_averages[tag]["agent2_goal_completion"]
-                    ) / 2,
-                    "believability": (
-                        experiment_averages[tag]["agent1_believability"] + 
-                        experiment_averages[tag]["agent2_believability"]
-                    ) / 2,
-                    "overall_score": (
-                        experiment_averages[tag]["agent1_overall"] + 
-                        experiment_averages[tag]["agent2_overall"]
-                    ) / 2,
-                    "interaction_quality": experiment_averages[tag]["interaction_quality"]
-                }
-        
-        # Add MCQ metrics for comparison
-        for tag in experiment_tag:
-            if tag in mcq_analysis:
-                combined_analysis["mcq_comparison"][tag] = {
-                    "average_accuracy": (
-                        mcq_analysis[tag]["average_accuracy"]["Alex_goal"] +
-                        mcq_analysis[tag]["average_accuracy"]["Jamie_goal"] +
-                        mcq_analysis[tag]["average_accuracy"]["Alex_reason"] +
-                        mcq_analysis[tag]["average_accuracy"]["Jamie_reason"]
-                    ) / 4,
-                    "understanding_improvement": mcq_analysis[tag].get("understanding_improvement", 0)
-                }
-        
-        # Rank experiments by understanding improvement
-        combined_analysis["understanding_improvement_ranking"] = sorted(
-            [tag for tag in experiment_tag if tag in mcq_analysis and "understanding_improvement" in mcq_analysis[tag]],
-            key=lambda x: mcq_analysis[x]["understanding_improvement"],
-            reverse=True
-        )
-        
-        # Save combined analysis
-        with open(os.path.join(results_dir, f"combined_analysis_{num_scenarios}_scenarios.json"), "w") as f:
-            json.dump(combined_analysis, f, indent=4)
-        
-        print(f"\n✅ All experiments completed and results saved with full trajectory analysis!")
-
-    else:
-        # Create agents with first environment
-        agent1 = SocialAgent("Alex", profile_a, profile_b, environments[0], 0, use_action=args.action)
-        agent2 = SocialAgent("Jamie", profile_b, profile_a, environments[0], 1, use_action=args.action)
-        
-        # Load memory if path provided
-        if args.memory_path:
-            memory_path_a = os.path.join(args.memory_path, "Alex_memory.json")
-            memory_path_b = os.path.join(args.memory_path, "Jamie_memory.json")
-            
-            if os.path.exists(memory_path_a):
-                print(f"Loading memory for Alex from {memory_path_a}")
-                agent1.load_memory(memory_path_a)
-            
-            if os.path.exists(memory_path_b):
-                print(f"Loading memory for Jamie from {memory_path_b}")
-                agent2.load_memory(memory_path_b)
-                
-        simulate_conversation(
-            personA=agent1,
-            personB=agent2,
-            max_rounds=max_round,
-            evaluator=evaluator, 
-            encryption_enabled=args.encryption_enabled,
-            action_enabled=args.action,
-            nature_language=args.nature_language,
-            output_suffix=suffix,
-            pair=args.pair,
-            num_scenarios=num_scenarios,
-            client=client,
-            environments=environments,
-            result=result,
-        )
+    # Run single experiment based on specified parameters
+    experiment_config = get_experiment_config(
+        args.scenario_type, 
+        args.communication_modality, 
+        args.memory_strategy, 
+        args.results_base_dir
+    )
+    
+    run_experiment(episodes, experiment_config, evaluator, client, args)
 
 if __name__ == "__main__":
     main()

@@ -7,103 +7,34 @@ import yaml
 from sentence_transformers import SentenceTransformer
 
 from .utils.metrics import (compute_bertscore, compute_bleu,
-                            compute_gpt_metric, compute_rouge_l)
-
+                            compute_gpt_metric, compute_rouge_l,
+                            get_confidence_bin, validate_confidence_consistency,
+                            analyze_confidence_distribution)
 
 def extract_clean_json(response_str: str) -> dict:
     cleaned = re.sub(r"^```(?:json)?\n|\n```$", "", response_str.strip())
     return json.loads(cleaned)
 
-
 class ConversationEvaluator:
     def __init__(self, client: Any, model: str):
         with open("../configs/evaluation.yaml") as template_file:
             self.evaluation_template = yaml.safe_load(template_file)
-
         self.model = model
         self.client = client
-        self.semantic_model = SentenceTransformer("all-MiniLM-L6-v2")
-
-    def should_stop_conversation(
-        self, agent_goals: list[str], conversation: list[str]
-    ) -> bool:
-        prompt = self.evaluation_template["Stop_Criteria"].format(
-            goal1=agent_goals[0],
-            goal2=agent_goals[1],
-            transcript="\n".join(conversation),
-        )
-
-        try:
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0,
-            )
-            result = response.choices[0].message.content.strip()
-            return result.lower().startswith("yes")
-
-        except Exception as e:
-            print("LLM evaluation failed:", e)
-            return False
-
-    def evaluate_reason_prediction(
-        self,
-        agent_goal: str,
-        agent_reason: str,
-        partner_message: str,
-        transcript: list[str],
-        true_reason: str,
-    ) -> dict[str, Any]:
-        prompt = self.evaluation_template["Partner_Reason_Query"].format(
-            agent_goal=agent_goal,
-            agent_reason=agent_reason,
-            partner_message=partner_message,
-            transcript="\n".join(transcript),
-        )
-
-        try:
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.7,
-            )
-            predicted_reason = response.choices[0].message.content.strip()
-
-            bleu = round(compute_bleu(true_reason, predicted_reason), 3)
-            rouge = round(compute_rouge_l(true_reason, predicted_reason), 3)
-            bertscore = round(compute_bertscore(true_reason, predicted_reason), 3)
-            llmscore = float(
-                compute_gpt_metric(
-                    true_reason,
-                    predicted_reason,
-                    self.evaluation_template,
-                    self.client,
-                    self.model,
-                )
-            )
-
-            return predicted_reason, {
-                "bleu": bleu,
-                "rouge": rouge,
-                "bertscore": bertscore,
-                "llmscore": llmscore,
-            }
-
-        except Exception as e:
-            print("Failed to evaluate reason prediction:", e)
-            return "", {"bleu": 0.0, "rouge": 0.0, "bertscore": 0.0, "llmscore": 0.0}
 
     def evaluate_social_goal_performance(
         self,
         conversation: list[str],
         agent_goals: list[str],
         agent_reasons: list[str] = None,
+        scenario: str = "",
     ) -> dict[str, Any]:
         conversation_str = "\n".join(conversation)
 
         # Create evaluation prompt
         prompt = self.evaluation_template["Social_Goal_Evaluation"].format(
             transcript=conversation_str,
+            scenario=scenario,
             goal1=agent_goals[0],
             goal2=agent_goals[1],
             reason1=agent_reasons[0]
@@ -133,53 +64,15 @@ class ConversationEvaluator:
                 "agent_2": {"overall_score": 0.0},
             }
 
-    def evaluate_goal_completion_focus(
-        self, conversation: list[str], agent_goals: list[str], agent_reasons: list[str]
-    ) -> dict[str, Any]:
-        """
-        Provides a focused evaluation specifically on goal completion.
-        """
-        conversation_str = "\n".join(conversation)
-
-        prompt = self.evaluation_template["Goal_Completion_Focus"].format(
-            transcript=conversation_str,
-            goal1=agent_goals[0],
-            goal2=agent_goals[1],
-            reason1=agent_reasons[0],
-            reason2=agent_reasons[1],
-        )
-
-        try:
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.1,
-            )
-            result = response.choices[0].message.content.strip()
-            evaluation_results = extract_clean_json(result)
-
-            return evaluation_results
-
-        except Exception as e:
-            print(f"Goal completion evaluation failed: {e}")
-            return {
-                "agent_1": {"goal_completion_score": 0.0},
-                "agent_2": {"goal_completion_score": 0.0},
-                "error": str(e),
-            }
-
     def evaluate_conversation(
-        self, conversation: list[str], agent_goals: list[str], agent_reasons: list[str]
+        self, conversation: list[str], agent_goals: list[str], agent_reasons: list[str], mcq_logs=None
     ) -> dict:
         social_performance = self.evaluate_social_goal_performance(
             conversation, agent_goals, agent_reasons
         )
 
-
         # Compile comprehensive evaluation
         evaluation = {
-            "social_performance": social_performance,
-            # Aggregate scores for easy comparison
             "aggregated_scores": {
                 "agent_1": {
                     "goal_completion": social_performance.get("agent_1", {})
@@ -233,6 +126,92 @@ class ConversationEvaluator:
             },
         }
 
+        # --- Enhanced MCQ Metrics ---
+        import numpy as np
+        def compute_mcq_metrics(mcq_logs, agent_prefix):
+            metrics = {}
+            for mcq_type in ["goal", "reason", "knowledge"]:
+                correct_list = []
+                confidence_list = []
+                mcq_pure_list = []
+                confidence_consistency_issues = []
+                
+                for log in mcq_logs:
+                    mcq = log.get(f"{agent_prefix}_{mcq_type}_mcq")
+        
+                    if mcq is not None:
+                        correct = mcq.get("is_correct")
+                        conf = mcq.get("confidence", 0)
+                        correct_list.append(1 if correct else 0)
+                        confidence_list.append(conf)
+                        mcq_pure_list.append({"correct": correct, "confidence": conf})
+                        
+                        # Validate confidence consistency if both value and class are provided
+                        if "confidence_class" in mcq:
+                            is_consistent = validate_confidence_consistency(conf, mcq["confidence_class"])
+                            if not is_consistent:
+                                confidence_consistency_issues.append({
+                                    "round": log.get("round", "unknown"),
+                                    "predicted_value": conf,
+                                    "predicted_class": mcq["confidence_class"],
+                                    "actual_class": get_confidence_bin(conf)
+                                })
+                
+                total = len(correct_list)
+                metrics[f"{mcq_type}_pure_list"] = mcq_pure_list
+                
+                # Confidence binning analysis
+                if confidence_list:
+                    confidence_analysis = analyze_confidence_distribution(confidence_list)
+                    metrics[f"{mcq_type}_confidence_bins"] = confidence_analysis
+                    metrics[f"{mcq_type}_confidence_consistency_issues"] = confidence_consistency_issues
+                
+                # Basic averages
+                metrics[f"{mcq_type}_accuracy"] = np.mean(correct_list) if total > 0 else None
+                metrics[f"{mcq_type}_avg_confidence"] = np.mean(confidence_list) if total > 0 else None
+                
+                # First/last N (N = max(1, total//3))
+                N = max(1, total // 3)
+                if total >= 2*N:
+                    first_acc = np.mean(correct_list[:N])
+                    last_acc = np.mean(correct_list[-N:])
+                    first_conf = np.mean(confidence_list[:N])
+                    last_conf = np.mean(confidence_list[-N:])
+                else:
+                    first_acc = last_acc = first_conf = last_conf = None
+                metrics[f"{mcq_type}_firstN_accuracy"] = first_acc
+                metrics[f"{mcq_type}_lastN_accuracy"] = last_acc
+                metrics[f"{mcq_type}_accuracy_improvement"] = (last_acc - first_acc) if (first_acc is not None and last_acc is not None) else None
+                metrics[f"{mcq_type}_firstN_confidence"] = first_conf
+                metrics[f"{mcq_type}_lastN_confidence"] = last_conf
+                metrics[f"{mcq_type}_confidence_improvement"] = (last_conf - first_conf) if (first_conf is not None and last_conf is not None) else None
+                
+                # Slope (trend) for correctness/confidence
+                if total > 1:
+                    x = np.arange(total)
+                    correct_slope = float(np.polyfit(x, correct_list, 1)[0])
+                    conf_slope = float(np.polyfit(x, confidence_list, 1)[0])
+                else:
+                    correct_slope = conf_slope = None
+                metrics[f"{mcq_type}_accuracy_trend_slope"] = correct_slope
+                metrics[f"{mcq_type}_confidence_trend_slope"] = conf_slope
+                
+                # Longest correct streak
+                max_streak = 0
+                current_streak = 0
+                for val in correct_list:
+                    if val:
+                        current_streak += 1
+                        max_streak = max(max_streak, current_streak)
+                    else:
+                        current_streak = 0
+                metrics[f"{mcq_type}_longest_correct_streak"] = max_streak
+            return metrics
+        if mcq_logs is not None:
+            evaluation["mcq_metrics"] = {
+                "agent_1": compute_mcq_metrics(mcq_logs, "agent_1"),
+                "agent_2": compute_mcq_metrics(mcq_logs, "agent_2"),
+            }
 
         return evaluation
     
@@ -366,7 +345,6 @@ def calculate_experiment_averages(result, experiment_tag):
     
     return averages
 
-def analyze_mcq_trajectories(experiment_tag, num_scenarios):
     """Analyze MCQ logs for all experiments and scenarios."""
     results_dir = "../social_decipher/results"
     mcq_analysis = {}

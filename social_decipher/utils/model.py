@@ -29,6 +29,8 @@ class ModelManager:
                 "Italian",
                 "Hindi",
                 "Bengali",
+                "Vietnamese",
+                "Thai"
             ],
             "strength": "high",
             "provider": "openai",
@@ -46,12 +48,10 @@ class ModelManager:
             "strength": "medium",
             "provider": "openai",
         },
-        # IMPORTANT FIX: TinyLlama definitely does NOT understand Chinese
         "TinyLlama/TinyLlama-1.1B-Chat-v1.0": {
-            "languages": ["English"],  # Reduced language support to be more accurate
+            "languages": ["English"],
             "strength": "low",
             "provider": "huggingface",
-            "description": "1.1B parameter model, very CPU-friendly",
         },
         "mistral-small-latest": {
             "languages": ["English", "French", "German", "Spanish"],
@@ -59,27 +59,34 @@ class ModelManager:
             "provider": "mistral",  # changed from huggingface
             "description": "7B parameter model with good instruction following",
         },
+        "mistral-3b-latest": {
+            "languages": ["English", "French", "German", "Spanish"],
+            "strength": "medium",
+            "provider": "mistral",  # changed from huggingface
+            "description": "3B parameter model with good instruction following",
+        },
+        "mistral-small-2506": {
+            "languages": ["English", "Spanish", "French", "Dutch", "German", "Russian", "Italian", "Hindi"],
+        },
+        "ministral-8b-latest": {
+            "languages": ["English", "French", "German", "Spanish"],
+            "strength": "medium",
+            "provider": "mistral",  # changed from huggingface
+            "description": "8B parameter model with good instruction following",
+        },
         "microsoft/phi-2": {
             "languages": ["English"],
             "strength": "medium",
             "provider": "huggingface",
             "description": "2.7B parameter model with strong instruction capabilities",
         },
-        "Qwen/Qwen1.5-1.8B-Chat": {
+        "Qwen/Qwen2.5-7B-Instruct": {
             "languages": ["English"],  # This model actually has some Chinese ability
             "strength": "medium",
             "provider": "huggingface",
-            "description": "1.8B parameter model with multilingual capabilities",
         },
         "claude-3-opus-20240229": {
-            "languages": [
-                "English",
-                "Chinese",
-                "Spanish",
-                "French",
-                "Japanese",
-                "German",
-            ],
+            "languages": ["English","Chinese","Spanish","French","Japanese","German"],
             "strength": "high",
             "provider": "anthropic",
         },
@@ -92,6 +99,11 @@ class ModelManager:
             "languages": ["English", "Spanish", "French"],
             "strength": "low",
             "provider": "anthropic",
+        },
+        "mistralai/Mistral-7B-v0.1": {
+            "languages": ["English"],
+            "strength": "medium",
+            "provider": "huggingface",
         },
     }
 
@@ -109,19 +121,24 @@ class ModelManager:
             "provider": "huggingface",
             "api_format": "huggingface",
         },
+        "mistralai/Mistral-7B-v0.1": {"provider": "huggingface", "api_format": "huggingface"},
         "mistral-small-latest": {"provider": "mistral", "api_format": "mistral"},
-        "Qwen/Qwen1.5-1.8B-chat": {
+        "mistral-small-2506": {"provider": "mistral", "api_format": "mistral"},
+        "ministral-3b-latest": {"provider": "mistral", "api_format": "mistral"},
+        "Qwen/Qwen2.5-7B-Instruct": {
             "provider": "huggingface",
             "api_format": "huggingface",
         },
         "microsoft/phi-2": {"provider": "huggingface", "api_format": "huggingface"},
+        
     }
 
     # Define language barrier pairs with explicit incompatibility
     LANGUAGE_BARRIER_PAIRS = [
-        ("gpt-4o-mini", "mistral-large-latest", "Chinese"),
-        ("gpt-4o-mini", "Qwen/Qwen1.5-1.8B-chat", "Chinese"),
+        ("gpt-4o-mini", "Qwen/Qwen2.5-7B-Instruct", "Chinese"),
         ("gpt-4o-mini", "TinyLlama/TinyLlama-1.1B-Chat-v1.0", "Chinese"),
+        ("gpt-4o-mini", "ministral-3b-latest","Chinese"),
+        ("gpt-4o-mini", "mistral-small-latest", "Chinese"),
         ("gpt-4o-mini", "microsoft/phi-2", "Chinese"),
         ("gpt-4o-mini", "claude-3-sonnet-20240229", "Chinese"),
         ("gpt-4o-mini", "claude-3-haiku-20240307", "Japanese"),
@@ -203,17 +220,40 @@ class ModelManager:
             print(f"Unsupported provider: {provider}")
             return text
 
-        print(f"- Translated text: {result[:50]}...")
         return result
 
     @classmethod
-    def _translate_with_openai(
-        cls, text: str, source_language: str, target_language: str, model_id: str
-    ) -> str:
+    def _translate_with_openai(cls, text: str, source_language: str, target_language: str, model_id: str) -> str:
+        # First, check if text is already in the target language
         client = cls.get_openai_client()
-        prompt = f"Translate the following {source_language} text to {target_language}. Maintain the original structure and format. Return only the translated text without explanations or metadata.\n\n{text}"
-
+        
+        # Language detection step
+        detect_prompt = f"Identify if this text is in {source_language} or {target_language}. Just respond with ONLY the language name, no explanations:\n\n{text}"
+        
         try:
+            detect_response = client.chat.completions.create(
+                model=model_id,
+                messages=[
+                    {"role": "system", "content": "You are a language detection tool. Respond with ONLY the language name."},
+                    {"role": "user", "content": detect_prompt},
+                ],
+                temperature=0.0,
+            )
+            detected_language = detect_response.choices[0].message.content.strip().lower()
+            
+            # If already in target language or not in source language, don't translate
+            if target_language.lower() in detected_language:
+                print(f"Text already in {target_language}, skipping translation")
+                return text
+                
+            # Only translate if text is in source language
+            if source_language.lower() not in detected_language:
+                print(f"Text not in {source_language}, might be {detected_language}. Skipping translation.")
+                return text
+                
+            # Otherwise proceed with translation
+            prompt = f"Translate the following {source_language} text to {target_language}. Maintain the original structure and format. Return only the translated text without explanations or metadata.\n\n{text}"
+            
             response = client.chat.completions.create(
                 model=model_id,
                 messages=[
@@ -222,7 +262,15 @@ class ModelManager:
                 ],
                 temperature=0.0,
             )
-            return response.choices[0].message.content
+            
+            translated_text = response.choices[0].message.content
+            
+            # Verify translation actually happened
+            if translated_text.strip() == text.strip():
+                print(f"Warning: Translation returned identical text. Possible failure.")
+            
+            return translated_text
+            
         except Exception as e:
             print(f"Translation error with {model_id}: {e}")
             return text
