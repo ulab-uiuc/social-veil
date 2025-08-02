@@ -4,8 +4,6 @@ import json
 import sys
 import yaml
 import requests
-import subprocess
-import time
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from openai import OpenAI
@@ -17,7 +15,6 @@ from social_decipher.environment.env_profile import EnvironmentProfile
 from social_decipher.evaluate import ConversationEvaluator, calculate_experiment_averages
 from social_decipher.utils.model import ModelManager
 from social_decipher.utils.utils import load_env
-from social_decipher.utils.local_model_manager import local_model_registry
 
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), "..", "configs/config.yaml")
 with open(CONFIG_PATH, "r") as f:
@@ -41,7 +38,7 @@ def parse_args() -> argparse.Namespace:
         "--model_a", type=str, help="Model to use for agent A (overrides --model)",
     )
     parser.add_argument(
-        "--model_b", type=str, help="Model to use for agent B (overrides --model)",
+        "--model_b", type=str, help="Model to use for agent B (overrides --model). For local models, use 'Qwen/Qwen2.5-7B-Instruct' and set HF_API_TOKEN",
     )
     parser.add_argument(
         "--max_round", type=int, default=20, help="Max conversation rounds per scenario"
@@ -82,124 +79,11 @@ def parse_args() -> argparse.Namespace:
         "--results_base_dir", type=str, default="../social_decipher/results", 
         help="Base directory for experiment results",
     )
-    parser.add_argument(
-        "--start_vllm", action="store_true", help="Start vLLM server automatically for local models",
-    )
 
     return parser.parse_args()
 
 
-def setup_local_models():
-    """Set up local models for experiments."""
-    print("🔧 Setting up local models...")
-    
-    try:
-        # Get the absolute path to the templat
-        template_path = os.path.join(os.path.dirname(__file__), "../configs/qwen2.5-7b.jinja")
-        
-        # Check what model is actually running on vLLM server
-        try:
-            response = requests.get("http://localhost:8000/v1/models", timeout=5)
-            if response.status_code == 200:
-                models = response.json()
-                if models.get("data") and len(models["data"]) > 0:
-                    actual_model_name = models["data"][0]["id"]
-                    print(f"🔍 Found vLLM server running model: {actual_model_name}")
-                    # Use the actual model name that's running
-                    local_model_registry.register_model(
-                        name="qwen2.5-7b",
-                        model_path=actual_model_name,  # Use the actual model name
-                        template_path=template_path,
-                        use_vllm=True,
-                        vllm_port=8000,
-                        temperature=0.7,
-                        top_p=0.9,
-                    )
-                else:
-                    print("⚠️ No models found on vLLM server")
-                    return False
-            else:
-                print(f"⚠️ Could not check vLLM server models: {response.status_code}")
-                return False
-        except Exception as e:
-            print(f"⚠️ Error checking vLLM server models: {e}")
-            return False
-        print("✅ Qwen model registered for local inference")
-        return True
-    except Exception as e:
-        print(f"⚠️  Could not register Qwen model: {e}")
-        print("   Will use HuggingFace API instead")
-        return False
 
-
-def check_vllm_server():
-    """Check if vLLM server is running."""
-    try:
-        
-        response = requests.get("http://localhost:8000/health", timeout=5)
-        return response.status_code == 200
-    except:
-        return False
-
-def check_vllm_model():
-    """Check what model is running on vLLM server."""
-    try:
-        response = requests.get("http://localhost:8000/v1/models", timeout=5)
-        if response.status_code == 200:
-            models = response.json()
-            if models.get("data") and len(models["data"]) > 0:
-                return models["data"][0]["id"]
-        return None
-    except:
-        return None
-
-
-def start_vllm_server():
-    """Start vLLM server if not running."""
-    if check_vllm_server():
-        print("✅ vLLM server is already running")
-        return True
-    
-    print("🚀 Starting vLLM server...")
-    print("   This will download the model if not already cached.")
-    print("   Please wait...")
-    
-    try:
-       
-        template_path = os.path.join(os.path.dirname(__file__), "../configs/qwen2.5-7b.jinja")
-        
-        cmd = [
-            "python", "-m", "vllm.entrypoints.openai.api_server",
-            "--model", "Qwen/Qwen2.5-7B-Instruct",
-            "--port", "8000",
-            "--chat-template", template_path,
-            "--served-model-name", "qwen2.5-7b",
-            "--max-model-len", "4096",
-            "--tensor-parallel-size", "1",
-        ]
-        
-        process = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True
-        )
-        
-        print(f"✅ vLLM server started with PID: {process.pid}")
-        print("   Server will be available at: http://localhost:8000")
-        
-        time.sleep(10)
-        
-        if check_vllm_server():
-            print("✅ vLLM server is ready!")
-            return True
-        else:
-            print("❌ vLLM server failed to start")
-            return False
-            
-    except Exception as e:
-        print(f"❌ Error starting vLLM server: {e}")
-        return False
 
 
 def load_episode_jsonl(path):
@@ -423,33 +307,7 @@ def main():
     print(f"   Agent B: {args.model_b or args.model}")
     print()
 
-    # Check if we need to start vLLM server
-    if args.start_vllm:
-        if not start_vllm_server():
-            print("❌ Failed to start vLLM server. Exiting.")
-            return
-    else:
-        # Check if vLLM server is running for local models
-        if args.model_a and "qwen" in args.model_a.lower() or args.model_b and "qwen" in args.model_b.lower():
-            if not check_vllm_server():
-                print("⚠️  vLLM server is not running for local Qwen models!")
-                print("   Use --start_vllm flag or ./scripts/quick_local_setup.sh")
-                print("   Continuing anyway...")
 
-    # Set up local models if needed
-    if args.model_a and "qwen" in args.model_a.lower() or args.model_b and "qwen" in args.model_b.lower():
-        setup_local_models()
-    
-    # Check if vLLM server is running with the correct model
-    if args.model_a and "qwen" in args.model_a.lower() or args.model_b and "qwen" in args.model_b.lower():
-        current_model = check_vllm_model()
-        if current_model:
-            print(f"🔍 Current vLLM server model: {current_model}")
-            if "0.5B" in current_model and ("7B" in args.model_a or "7B" in args.model_b):
-                print("⚠️ Warning: vLLM server is running with Qwen2.5-0.5B but you requested Qwen2.5-7B")
-                print("   The system will use the available model (0.5B) instead")
-        else:
-            print("⚠️ Could not determine vLLM server model")
 
     client = OpenAI()
     

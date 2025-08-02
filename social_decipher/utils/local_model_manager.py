@@ -9,43 +9,20 @@ import time
 
 
 class LocalModelManager:
-    """Manager for local model inference with vLLM API and direct model loading support."""
+    """Simple API client for vLLM server."""
     
     def __init__(
         self,
-        model_path: str,
-        model_name: str = "local-model",
-        template_path: Optional[str] = None,
-        use_vllm: bool = True,
-        vllm_port: int = 8000,
-        vllm_api_url: Optional[str] = None,
-        use_quantization: bool = True,
-        device_map: str = "auto",
-        max_length: int = 4096,
+        model_name: str = "qwen2.5-7b-instruct",
+        vllm_port: int = 8010,
         temperature: float = 0.7,
         top_p: float = 0.9,
     ):
-        self.model_path = model_path
         self.model_name = model_name
-        self.use_vllm = use_vllm
         self.vllm_port = vllm_port
-        self.vllm_api_url = vllm_api_url or f"http://localhost:{vllm_port}/v1"
-        self.use_quantization = use_quantization
-        self.device_map = device_map
-        self.max_length = max_length
+        self.vllm_api_url = f"http://localhost:{vllm_port}/v1"
         self.temperature = temperature
         self.top_p = top_p
-        
-        # Initialize template if provided
-        self.template = None
-        if template_path:
-            self._setup_template(template_path)
-        
-        # Initialize direct model if not using vLLM
-        self.model = None
-        self.tokenizer = None
-        if not use_vllm:
-            self._setup_direct_model()
     
     def _setup_template(self, template_path: str):
         """Setup Jinja2 template for chat formatting."""
@@ -210,49 +187,3 @@ class LocalModelManager:
                 "total_tokens": 0
             }
         }
-
-
-class LocalModelRegistry:
-    """Registry for managing multiple local models."""
-    
-    def __init__(self):
-        self.models: Dict[str, LocalModelManager] = {}
-    
-    def register_model(
-        self,
-        name: str,
-        model_path: str,
-        template_path: Optional[str] = None,
-        use_vllm: bool = True,
-        vllm_port: Optional[int] = None,
-        **kwargs
-    ) -> LocalModelManager:
-        """Register a new local model."""
-        if vllm_port is None:
-            vllm_port = 8000 + len(self.models)
-        
-        model_manager = LocalModelManager(
-            model_path=model_path,
-            model_name=name,
-            template_path=template_path,
-            use_vllm=use_vllm,
-            vllm_port=vllm_port,
-            **kwargs
-        )
-        
-        self.models[name] = model_manager
-        return model_manager
-    
-    def get_model(self, name: str) -> LocalModelManager:
-        """Get a registered model by name."""
-        if name not in self.models:
-            raise KeyError(f"Model '{name}' not found in registry")
-        return self.models[name]
-    
-    def list_models(self) -> List[str]:
-        """List all registered model names."""
-        return list(self.models.keys())
-
-
-# Global registry instance
-local_model_registry = LocalModelRegistry() 

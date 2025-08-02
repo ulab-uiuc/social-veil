@@ -85,24 +85,10 @@ def direct_completion(
     system_message = agent.instructions
     if hasattr(agent, 'encryption') and agent.encryption is not None:
         system_message = "IMPORTANT: Always respond in English only. Your response will be translated later if needed.\n\n" + system_message
-    
-    # Check for local model first
-    if model_id.startswith("local:"):
-        return local_model_completion(model_id, system_message, message, use_action)
-    # Check for Qwen models and use local inference
     elif "qwen" in model_id.lower():
         return local_qwen_completion(model_id, system_message, message, use_action)
-    # Call appropriate API based on model_id
-    elif model_id == "TinyLlama/TinyLlama-1.1B-Chat-v1.0":
-        return local_tinyllama_inference(system_message, message, use_action)
     elif "mistral" in model_id.lower() or "ministral" in model_id.lower():
         return mistral_completion(model_id, system_message, message, use_action)
-    elif (
-        "tinyllama" in model_id.lower()
-        or "huggingface" in model_id.lower()
-        or "phi" in model_id.lower()
-    ):
-        return huggingface_completion(model_id, system_message, message, use_action)
     else:
         return openai_completion(model_id, system_message, message, use_action)
     
@@ -274,126 +260,34 @@ def mistral_completion(model_id, system_message, message, use_action=False, max_
         # If even the final attempt fails, throw an exception to avoid silent failure
         raise RuntimeError(f"Mistral API repeatedly failed after exhausting all retries: {str(final_e)}")      
 
-def local_tinyllama_inference(system_message, message, use_action=False):
-    from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
-    import os
-    model_id = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
-    # Optional: Check if model is already downloaded
-    cache_dir = os.path.expanduser("~/.cache/huggingface/hub")
-    model_dir = os.path.join(cache_dir, f"models--{model_id.replace('/', '--')}")
-    if not os.path.exists(model_dir):
-        print(f"[INFO] Model {model_id} not found locally. Downloading and deploying...")
-    else:
-        print(f"[INFO] Model {model_id} found locally. Using local deployment.")
-    try:
-        tokenizer = AutoTokenizer.from_pretrained(model_id)
-        model = AutoModelForCausalLM.from_pretrained(model_id)
-        pipe = pipeline("text-generation", model=model, tokenizer=tokenizer)
-        prompt = f"{system_message}\n{message}" if system_message else message
-        outputs = pipe(prompt, max_new_tokens=128, do_sample=True, temperature=0.7)
-        content = outputs[0]["generated_text"]
-        if use_action and not (content.startswith("{") and content.endswith("}")):
-            content = json.dumps({"action_type": "speak", "argument": content})
-        return content
-    except Exception as e:
-        print(f"[ERROR] Local TinyLlama inference failed: {e}")
-        return error_response(use_action, f"Local TinyLlama inference failed: {str(e)}")
-
-
-def huggingface_completion(model_id, system_message, message, use_action=False):
-    hf_token = _config.get("HF_API_TOKEN")
-    if not hf_token:
-        error_msg = "HF_API_TOKEN not set in environment variables"
-        print(f"[ERROR] {error_msg}")
-        return error_response(use_action, error_msg)
-    from huggingface_hub import InferenceClient
-    client = InferenceClient(model=model_id, token=hf_token)
-    messages = []
-    if system_message:
-        messages.append({"role": "system", "content": system_message})
-    messages.append({"role": "user", "content": message})
-    try:
-        completion = client.chat.completions.create(
-            model=model_id,
-            messages=messages,
-        )
-        content = completion.choices[0].message.content
-        if use_action and not (content.startswith("{") and content.endswith("}")):
-            content = json.dumps({"action_type": "speak", "argument": content})
-        return content
-    except Exception as e:
-        print(f"[ERROR] HuggingFace InferenceClient error: {e}")
-        return error_response(use_action, str(e))
 
 def local_qwen_completion(model_id, system_message, message, use_action=False):
-    """Generate completion using local Qwen model."""
+    """Generate completion using local Qwen model via vLLM server."""
     print(f"🔧 Local Qwen completion for model: {model_id}")
     print(f"   System message: {system_message[:100]}{'...' if len(system_message) > 100 else ''}")
     print(f"   User message: {message[:100]}{'...' if len(message) > 100 else ''}")
     
     try:
-        from .local_model_manager import local_model_registry
+        from .local_model_manager import LocalModelManager
         
-        # Try to get Qwen model from registry first
-        qwen_model_names = ["qwen2.5-7b", "qwen", "qwen2.5", "qwen-7b"]
-        model_manager = None
-        
-        for model_name in qwen_model_names:
-            try:
-                model_manager = local_model_registry.get_model(model_name)
-                print(f"✅ Using registered Qwen model: {model_name}")
-                break
-            except KeyError:
-                print(f"   Model '{model_name}' not found in registry")
-                continue
-        
-        if model_manager is None:
-            # If no registered Qwen model, create a default one
-            print(f"⚠️ No registered Qwen model found. Creating default Qwen model for: {model_id}")
-            # Get the absolute path to the template
-            import os
-            template_path = os.path.join(os.path.dirname(__file__), "../../configs/qwen2.5-7b.jinja")
-            
-            # Check what model is actually running on vLLM server
-            try:
-                import requests
-                response = requests.get("http://localhost:8000/v1/models", timeout=5)
-                if response.status_code == 200:
-                    models = response.json()
-                    if models.get("data") and len(models["data"]) > 0:
-                        actual_model_name = models["data"][0]["id"]
-                        print(f"🔍 Found vLLM server running model: {actual_model_name}")
-                        model_path = actual_model_name
-                    else:
-                        print("⚠️ No models found on vLLM server, using default")
-                        model_path = "Qwen/Qwen2.5-7B-Instruct"
-                else:
-                    print(f"⚠️ Could not check vLLM server models: {response.status_code}, using default")
-                    model_path = "Qwen/Qwen2.5-7B-Instruct"
-            except Exception as e:
-                print(f"⚠️ Error checking vLLM server models: {e}, using default")
-                model_path = "Qwen/Qwen2.5-7B-Instruct"
-            
-            model_manager = local_model_registry.register_model(
-                name="qwen2.5-7b",
-                model_path=model_path,
-                template_path=template_path,
-                use_vllm=True,
-                vllm_port=8000,
-            )
-            print(f"✅ Default Qwen model registered")
+        # Create model manager directly
+        vllm_port = int(os.environ.get("VLLM_PORT", "8010"))
+        model_manager = LocalModelManager(
+            model_name="qwen2.5-7b-instruct",
+            vllm_port=vllm_port
+        )
         
         # Prepare messages
         messages = [
             {"role": "system", "content": system_message},
             {"role": "user", "content": message}
         ]
-        
+
         # Generate response
         print(f"🚀 Generating response via local Qwen model...")
-        response = model_manager.generate(messages, max_new_tokens=512)
-        print(f"✅ Local Qwen response: {response[:100]}{'...' if len(response) > 100 else ''}")
-        
+        response = model_manager.generate(messages, max_new_tokens=1024)
+        print(f"✅ Local Qwen response: {response}")
+        exit()
         # Format response for action if needed
         if use_action and not (response.startswith("{") and response.endswith("}")):
             response = json.dumps({"action_type": "speak", "argument": response})
@@ -402,40 +296,8 @@ def local_qwen_completion(model_id, system_message, message, use_action=False):
         
     except Exception as e:
         print(f"❌ [ERROR] Local Qwen completion failed: {e}")
-        # Fallback to HuggingFace API if local model fails
-        print(f"🔄 Falling back to HuggingFace API for {model_id}")
-        return huggingface_completion(model_id, system_message, message, use_action)
-
-
-def local_model_completion(model_id, system_message, message, use_action=False):
-    """Generate completion using local model via LocalModelManager."""
-    try:
-        from .local_model_manager import local_model_registry
-        
-        # Extract model name from local:model_name format
-        model_name = model_id.replace("local:", "")
-        
-        # Get the model from registry
-        model_manager = local_model_registry.get_model(model_name)
-        
-        # Prepare messages
-        messages = [
-            {"role": "system", "content": system_message},
-            {"role": "user", "content": message}
-        ]
-        
-        # Generate response
-        response = model_manager.generate(messages, max_new_tokens=512)
-        
-        # Format response for action if needed
-        if use_action and not (response.startswith("{") and response.endswith("}")):
-            response = json.dumps({"action_type": "speak", "argument": response})
-        
-        return response
-        
-    except Exception as e:
-        print(f"[ERROR] Local model completion failed: {e}")
-        return error_response(use_action, f"Local model completion failed: {str(e)}")
+        print(f"   Make sure vLLM server is running with: ./scripts/start_vllm_server.sh")
+        return None
 
 
 def error_response(use_action, error_message):

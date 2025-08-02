@@ -4,8 +4,6 @@ import os
 from typing import Any
 
 import yaml
-from sentence_transformers import SentenceTransformer
-
 from .utils.metrics import (get_confidence_bin, validate_confidence_consistency,
                             analyze_confidence_distribution)
 
