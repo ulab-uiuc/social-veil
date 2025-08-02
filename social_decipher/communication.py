@@ -107,10 +107,19 @@ def run_single_scenario_simulation(
     print(f"Using direct API: {use_direct_api}")
     
     if use_direct_api:
-        strong_model, weak_model, barrier_language = ModelManager.language_barrier_pair(pair)
-
-        personA.profile.model_id = strong_model
-        personB.profile.model_id = weak_model
+        # Check if models are already set in agent profiles
+        if personA.profile.model_id and personB.profile.model_id:
+            # Use models from agent profiles
+            strong_model = personA.profile.model_id
+            weak_model = personB.profile.model_id
+            barrier_language = "Chinese"  # Default barrier language, can be customized
+            print(f"🌐 Using agent profile models: {personA.name}({strong_model}) ↔ {personB.name}({weak_model})")
+        else:
+            # Fall back to language barrier pair if models not set
+            strong_model, weak_model, barrier_language = ModelManager.language_barrier_pair(pair)
+            personA.profile.model_id = strong_model
+            personB.profile.model_id = weak_model
+            print(f"🌐 Language Barrier (fallback): {personA.name}({strong_model}) ↔ {personB.name}({weak_model}) - {barrier_language}")
 
         strong_provider = ModelManager.MODEL_PROVIDERS.get(strong_model, {}).get(
             "provider"
@@ -118,15 +127,20 @@ def run_single_scenario_simulation(
         weak_provider = ModelManager.MODEL_PROVIDERS.get(weak_model, {}).get(
             "provider"
         )
-
-        print(f"🌐 Language Barrier: {personA.name}({strong_model}) ↔ {personB.name}({weak_model}) - {barrier_language}")
     else:
         print(f"🔄 Standard Mode: {personA.name} ↔ {personB.name}")
         barrier_language = None
 
     # Set up encryption
     if encryption_enabled and nature_language:
-        strong_model, weak_model, barrier_language = ModelManager.language_barrier_pair(pair)
+        # Use models from agent profiles or fall back to language barrier pair
+        if personA.profile.model_id and personB.profile.model_id:
+            strong_model = personA.profile.model_id
+            weak_model = personB.profile.model_id
+            barrier_language = "Chinese"  # Default barrier language
+        else:
+            strong_model, weak_model, barrier_language = ModelManager.language_barrier_pair(pair)
+        
         encryption1 = LanguageModelEncryption(
             target_language=barrier_language, model_id=strong_model
         )
@@ -353,4 +367,4 @@ def run_single_scenario_simulation(
                 f.write(line + "\n")
 
     return conversation_log, eval_result, mcq_logs
-
+    
