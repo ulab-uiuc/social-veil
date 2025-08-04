@@ -72,18 +72,15 @@ def parse_args() -> argparse.Namespace:
         default="text_only", help="Communication modality to test",
     )
     parser.add_argument(
-        "--memory_strategy", type=str, choices=["memory_off", "memory_on"], 
-        default="memory_off", help="Memory strategy to test",
+        "--memory_strategy", type=str, choices=["off", "on"], 
+        default="off", help="Memory strategy to test",
     )
     parser.add_argument(
-        "--results_base_dir", type=str, default="../social_decipher/results", 
+        "--results_dir", type=str, default="../social_decipher/results", 
         help="Base directory for experiment results",
     )
 
     return parser.parse_args()
-
-
-
 
 
 def load_episode_jsonl(path):
@@ -143,8 +140,6 @@ def create_environment_from_episode(episode_data, scenario_type):
         agent2_private_knowledge=episode_data.get("agent2_private_knowledge", "") if scenario_type == "knowledge_barrier" else ""
     )
 
-
-
 def create_agents(profile_a, profile_b, env, agent1_name, agent2_name, communication_modality):
     # Map communication modality to agent parameters
     if communication_modality == "text_only":
@@ -162,7 +157,7 @@ def create_agents(profile_a, profile_b, env, agent1_name, agent2_name, communica
     return agent1, agent2
 
 def load_agent_memories(agent1, agent2, memory_path, agent1_name, agent2_name, memory_strategy):
-    if memory_strategy == "memory_on" and memory_path:
+    if memory_strategy == "on" and memory_path:
         memory_path_a = os.path.join(memory_path, f"{agent1_name}_memory.json")
         memory_path_b = os.path.join(memory_path, f"{agent2_name}_memory.json")
         if os.path.exists(memory_path_a):
@@ -170,17 +165,12 @@ def load_agent_memories(agent1, agent2, memory_path, agent1_name, agent2_name, m
         if os.path.exists(memory_path_b):
             agent2.load_memory(memory_path_b)
 
-def get_experiment_config(scenario_type, communication_modality, memory_strategy, results_base_dir):
-    """Generate experiment configuration based on the 3×3×2 factorial design"""
-    
+def get_experiment_config(scenario_type, communication_modality, memory_strategy, results_dir):
     tag_parts = []
     tag_parts.append(scenario_type)
     tag_parts.append(communication_modality)
     tag_parts.append(memory_strategy)
     tag = "_".join(tag_parts)
-    
-    # Create results directory
-    results_dir = os.path.join(results_base_dir, f"exp_{tag}")
     
     # Map scenario type to encryption/nature_language settings
     if scenario_type == "normal":
@@ -229,7 +219,7 @@ def run_experiment(episodes, experiment_config, evaluator, client, args):
     eval_results, mcq_logs = [], []
     
     for scenario_idx, episode_data in enumerate(episodes):
-        print(f"   📝 Scenario {scenario_idx + 1}/{len(episodes)}")
+        print(f"📝 Scenario {scenario_idx + 1}/{len(episodes)}")
         
         profile_a, profile_b, env, agent1_name, agent2_name, agent_reasons = build_profiles_and_env(
             episode_data, args.model, args.model_a, args.model_b, experiment_config["scenario_type"]
@@ -307,8 +297,6 @@ def main():
     print(f"   Agent B: {args.model_b or args.model}")
     print()
 
-
-
     client = OpenAI()
     
     episodes = load_episode_jsonl(args.episodes_file)
@@ -326,7 +314,7 @@ def main():
         args.scenario_type, 
         args.communication_modality, 
         args.memory_strategy, 
-        args.results_base_dir
+        args.results_dir
     )
     
     run_experiment(episodes, experiment_config, evaluator, client, args)

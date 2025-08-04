@@ -9,20 +9,43 @@ import time
 
 
 class LocalModelManager:
-    """Simple API client for vLLM server."""
+    """Manager for local model inference with vLLM API and direct model loading support."""
     
     def __init__(
         self,
-        model_name: str = "qwen2.5-7b-instruct",
+        model_path: str = "qwen2.5-7b-instruct",
+        model_name: str = "qwen2.5-7b-instruct", 
+        template_path: Optional[str] = None,
+        use_vllm: bool = True,
         vllm_port: int = 8010,
+        vllm_api_url: Optional[str] = None,
+        use_quantization: bool = True,
+        device_map: str = "auto",
+        max_length: int = 4096,
         temperature: float = 0.7,
         top_p: float = 0.9,
     ):
+        self.model_path = model_path
         self.model_name = model_name
+        self.use_vllm = use_vllm
         self.vllm_port = vllm_port
-        self.vllm_api_url = f"http://localhost:{vllm_port}/v1"
+        self.vllm_api_url = vllm_api_url or f"http://localhost:{vllm_port}/v1"
+        self.use_quantization = use_quantization
+        self.device_map = device_map
+        self.max_length = max_length
         self.temperature = temperature
         self.top_p = top_p
+        
+        # Initialize template if provided
+        self.template = None
+        if template_path:
+            self._setup_template(template_path)
+        
+        # Initialize direct model if not using vLLM
+        self.model = None
+        self.tokenizer = None
+        if not use_vllm:
+            self._setup_direct_model()
     
     def _setup_template(self, template_path: str):
         """Setup Jinja2 template for chat formatting."""
@@ -86,42 +109,34 @@ class LocalModelManager:
             
             return formatted
     
-    def generate_via_vllm(self, messages: List[Dict[str, str]], max_new_tokens: int = 512) -> str:
-        """Generate response using vLLM API."""
+    def generate_via_vllm(self, messages: List[Dict[str, str]], max_new_tokens: int = 256) -> str:
+        """Simplified version for debugging timeout issues."""
         payload = {
             "model": self.model_name,
             "messages": messages,
-            "temperature": self.temperature,
-            "top_p": self.top_p,
-            "max_tokens": max_new_tokens,
-            "stop": ["<|im_end|>", "\n\n"] if self.tokenizer else None,
+            "temperature": 0.3,  # Fixed lower temperature
+            "max_tokens": min(max_new_tokens, 256),  # Cap at 256 tokens
+            "stream": False
         }
-        
-        print(f"🔧 vLLM API call to {self.vllm_api_url}/chat/completions")
-        print(f"   Model: {self.model_name}")
-        print(f"   Messages: {len(messages)} messages")
         
         try:
             response = requests.post(
                 f"{self.vllm_api_url}/chat/completions",
                 json=payload,
-                timeout=30
+                timeout=90,  # Single 90s timeout
+                headers={"Content-Type": "application/json"}
             )
-            response.raise_for_status()
             
+            response.raise_for_status()
             result = response.json()
-            if "choices" in result and len(result["choices"]) > 0:
-                generated_text = result["choices"][0]["message"]["content"].strip()
-                print(f"✅ vLLM response: {generated_text[:100]}{'...' if len(generated_text) > 100 else ''}")
-                return generated_text
-            else:
-                raise ValueError("No choices in vLLM response")
-                
+            
+            return result["choices"][0]["message"]["content"].strip()
+            
+        except requests.Timeout:
+            return "Error: Simple request timed out"
         except Exception as e:
-            print(f"❌ vLLM API error: {e}")
-            print(f"   Response status: {response.status_code if 'response' in locals() else 'N/A'}")
-            print(f"   Response content: {response.text if 'response' in locals() else 'N/A'}")
             return f"Error: {str(e)}"
+
     
     def generate_direct(self, messages: List[Dict[str, str]], max_new_tokens: int = 512) -> str:
         """Generate response using direct model inference."""

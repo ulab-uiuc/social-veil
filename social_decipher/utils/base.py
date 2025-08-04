@@ -16,6 +16,7 @@ from openai import OpenAI
 from pypinyin import Style, lazy_pinyin
 from rich import print
 from huggingface_hub import InferenceClient
+from .local_model_manager import LocalModelManager
 
 CONFIG_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../configs/config.yaml"))
 with open(CONFIG_PATH, "r") as f:
@@ -85,7 +86,7 @@ def direct_completion(
     system_message = agent.instructions
     if hasattr(agent, 'encryption') and agent.encryption is not None:
         system_message = "IMPORTANT: Always respond in English only. Your response will be translated later if needed.\n\n" + system_message
-    elif "qwen" in model_id.lower():
+    if "qwen" in model_id.lower():
         return local_qwen_completion(model_id, system_message, message, use_action)
     elif "mistral" in model_id.lower() or "ministral" in model_id.lower():
         return mistral_completion(model_id, system_message, message, use_action)
@@ -95,7 +96,6 @@ def direct_completion(
 
 
 def openai_completion(model_id, system_message, message, use_action=False):
-  
     client = get_openai_client()
     try:
         if use_action:
@@ -112,7 +112,6 @@ def openai_completion(model_id, system_message, message, use_action=False):
             temperature=0.3,
         )
         content = response.choices[0].message.content
-
         if use_action and not (content.startswith("{") and content.endswith("}")):
             content = json.dumps({"action_type": "speak", "argument": content})
 
@@ -267,13 +266,19 @@ def local_qwen_completion(model_id, system_message, message, use_action=False):
     print(f"   System message: {system_message[:100]}{'...' if len(system_message) > 100 else ''}")
     print(f"   User message: {message[:100]}{'...' if len(message) > 100 else ''}")
     
-    try:
-        from .local_model_manager import LocalModelManager
-        
+    try:        
         # Create model manager directly
-        vllm_port = int(os.environ.get("VLLM_PORT", "8010"))
+        vllm_port = int(os.environ.get("VLLM_PORT", 8000))  # Default to 8000 if not set
+        print(f"   Using vLLM server at port {vllm_port}")
+
+        # Get the absolute path to the template
+        template_path = os.path.join(os.path.dirname(__file__), "../../configs/qwen2.5-7b.jinja")
+        
         model_manager = LocalModelManager(
-            model_name="qwen2.5-7b-instruct",
+            model_path="/mnt/data_from_server1/models/Qwen2.5-7B-Instruct",
+            model_name="qwen2.5-7b-instruct",  # Match server's served-model-name
+            template_path=template_path,
+            use_vllm=True,
             vllm_port=vllm_port
         )
         
@@ -285,9 +290,9 @@ def local_qwen_completion(model_id, system_message, message, use_action=False):
 
         # Generate response
         print(f"🚀 Generating response via local Qwen model...")
-        response = model_manager.generate(messages, max_new_tokens=1024)
-        print(f"✅ Local Qwen response: {response}")
-        exit()
+        response = model_manager.generate(messages, max_new_tokens=512)
+        print(f"✅ Local Qwen response: {response[:100]}{'...' if len(response) > 100 else ''}")
+        
         # Format response for action if needed
         if use_action and not (response.startswith("{") and response.endswith("}")):
             response = json.dumps({"action_type": "speak", "argument": response})
@@ -297,7 +302,7 @@ def local_qwen_completion(model_id, system_message, message, use_action=False):
     except Exception as e:
         print(f"❌ [ERROR] Local Qwen completion failed: {e}")
         print(f"   Make sure vLLM server is running with: ./scripts/start_vllm_server.sh")
-        return None
+        return "I'm having trouble responding right now due to a technical issue."
 
 
 def error_response(use_action, error_message):

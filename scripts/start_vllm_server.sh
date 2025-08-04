@@ -1,8 +1,8 @@
 #!/bin/bash
 
 export GLOBAL_MODEL_B="/mnt/data_from_server1/models/Qwen2.5-7B-Instruct"
-export VLLM_GPU=0
-export VLLM_PORT=8010
+export VLLM_GPU=1
+export VLLM_PORT=6900
 
 echo "===================================="
 echo "🚀 Starting vLLM Server"
