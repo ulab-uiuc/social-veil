@@ -34,6 +34,39 @@ def _contains_chinese(text):
     return bool(chinese_pattern.search(text))
 
 
+def _get_default_template_for_model(model_id):
+    """Auto-detect the appropriate template based on model name"""
+    model_lower = model_id.lower()
+    
+    # Model-specific template mapping
+    if "llama" in model_lower:
+        if "3.1" in model_lower or "3-1" in model_lower:
+            return "configs/llama3.1-8b.jinja"
+        else:
+            # For other Llama versions, use 3.1 template as it's backward compatible
+            return "configs/llama3.1-8b.jinja"
+    elif "qwen" in model_lower:
+        if "2.5" in model_lower or "2-5" in model_lower:
+            return "configs/qwen2.5-7b.jinja"
+        else:
+            # Default to Qwen 2.5 template for other Qwen versions
+            return "configs/qwen2.5-7b.jinja"
+    elif "mistral" in model_lower:
+        # Mistral models typically use Llama-style templates
+        return "configs/llama3.1-8b.jinja"
+    else:
+        # Default fallback - check if Llama template exists, otherwise use Qwen
+        import os
+        config_dir = os.path.dirname(CONFIG_PATH)
+        project_root = os.path.dirname(config_dir)
+        llama_template = os.path.join(project_root, "configs/llama3.1-8b.jinja")
+        
+        if os.path.exists(llama_template):
+            return "configs/llama3.1-8b.jinja"
+        else:
+            return "configs/qwen2.5-7b.jinja"
+
+
 def chinese_to_pinyin(text: Any) -> Any:
     if isinstance(text, dict) and "argument" in text:
         argument = text["argument"]
@@ -86,10 +119,14 @@ def direct_completion(
     system_message = agent.instructions
     if hasattr(agent, 'encryption') and agent.encryption is not None:
         system_message = "IMPORTANT: Always respond in English only. Your response will be translated later if needed.\n\n" + system_message
-    if "qwen" in model_id.lower():
-        return local_qwen_completion(model_id, system_message, message, use_action)
+    
+    # Check if it's a local model (contains path or specific local model names)
+    if "/" in model_id or "qwen" in model_id.lower() or "llama" in model_id.lower():
+        return local_model_completion(model_id, system_message, message, use_action)
     elif "mistral" in model_id.lower() or "ministral" in model_id.lower():
         return mistral_completion(model_id, system_message, message, use_action)
+    elif "claude" in model_id.lower():
+        return anthropic_completion(model_id, system_message, message, use_action)
     else:
         return openai_completion(model_id, system_message, message, use_action)
     
@@ -260,9 +297,9 @@ def mistral_completion(model_id, system_message, message, use_action=False, max_
         raise RuntimeError(f"Mistral API repeatedly failed after exhausting all retries: {str(final_e)}")      
 
 
-def local_qwen_completion(model_id, system_message, message, use_action=False):
-    """Generate completion using local Qwen model via vLLM server."""
-    print(f"🔧 Local Qwen completion for model: {model_id}")
+def local_model_completion(model_id, system_message, message, use_action=False):
+    """Generate completion using local model via vLLM server (supports Qwen, Llama, etc.)."""
+    print(f"🔧 Local model completion for: {model_id}")
     print(f"   System message: {system_message[:100]}{'...' if len(system_message) > 100 else ''}")
     print(f"   User message: {message}")
     
@@ -271,8 +308,23 @@ def local_qwen_completion(model_id, system_message, message, use_action=False):
         vllm_port = int(os.environ.get("VLLM_PORT", 8000))  # Default to 8000 if not set
         print(f"   Using vLLM server at port {vllm_port}")
 
-        # Get the absolute path to the template
-        template_path = os.path.join(os.path.dirname(__file__), "../../configs/qwen2.5-7b.jinja")
+        # Get the template path from config or auto-detect based on model
+        template_path = _config.get("models", {}).get("chat_template")
+        
+        # Auto-detect template if not specified in config
+        if not template_path:
+            template_path = _get_default_template_for_model(model_id)
+            print(f"   Auto-detected template for {model_id}: {template_path}")
+        else:
+            print(f"   Using configured template: {template_path}")
+        
+        # Convert relative path to absolute path if needed
+        if not os.path.isabs(template_path):
+            config_dir = os.path.dirname(CONFIG_PATH)
+            project_root = os.path.dirname(config_dir)
+            template_path = os.path.join(project_root, template_path)
+        
+        print(f"   Using template: {template_path}")
         
         modal_name = model_id.split("/")[-1].lower()  # Extract model name from ID
 
@@ -291,9 +343,9 @@ def local_qwen_completion(model_id, system_message, message, use_action=False):
         ]
 
         # Generate response
-        print(f"🚀 Generating response via local Qwen model...")
+        print(f"🚀 Generating response via local model...")
         response = model_manager.generate(messages, max_new_tokens=512)
-        print(f"✅ Local Qwen response: {response}")
+        print(f"✅ Local model response: {response}")
 
         # Format response for action if needed
         if use_action and not (response.startswith("{") and response.endswith("}")):
@@ -302,7 +354,7 @@ def local_qwen_completion(model_id, system_message, message, use_action=False):
         return response
         
     except Exception as e:
-        print(f"❌ [ERROR] Local Qwen completion failed: {e}")
+        print(f"❌ [ERROR] Local model completion failed: {e}")
         print(f"   Make sure vLLM server is running with: ./scripts/start_vllm_server.sh")
         return "I'm having trouble responding right now due to a technical issue."
 

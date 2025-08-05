@@ -35,7 +35,14 @@ def get_config_value(key_path: str):
             else:
                 print(f"Error: Key '{key_path}' not found in config", file=sys.stderr)
                 return None
-        
+
+        if isinstance(value, str) and not os.path.isabs(value) and (
+            '/' in value or 
+            value.endswith(('.jinja', '.json', '.yaml', '.yml', '.txt', '.py'))
+        ):
+            project_root = script_dir.parent
+            value = str(project_root / value)
+            
         return value
     
     except Exception as e:
