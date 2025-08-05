@@ -59,7 +59,7 @@ def parse_args() -> argparse.Namespace:
         "--memory_path", type=str, default="", help="Path to load agent memories from (optional)",
     )
     parser.add_argument(
-        "--episodes_file", type=str, default="../data/episode_sample.jsonl", 
+        "--episodes_file", type=str, default="data/episode_sample.jsonl", 
         help="Path to the pre-processed episode JSONL file",
     )
 
@@ -76,7 +76,7 @@ def parse_args() -> argparse.Namespace:
         default="off", help="Memory strategy to test",
     )
     parser.add_argument(
-        "--results_dir", type=str, default="../social_decipher/results", 
+        "--results_dir", type=str, default="social_decipher/results", 
         help="Base directory for experiment results",
     )
 

@@ -44,7 +44,7 @@ echo ""
 
 # Run the experiment
 echo "Starting experiment..."
-CUDA_VISIBLE_DEVICES=$GPU VLLM_PORT=$VLLM_PORT python run.py \
+CUDA_VISIBLE_DEVICES=$GPU VLLM_PORT=$VLLM_PORT python scripts/run.py \
     --model_a $GLOBAL_MODEL_A \
     --model_b $GLOBAL_MODEL_B \
     --scenario_type $SCENARIO_TYPE \
