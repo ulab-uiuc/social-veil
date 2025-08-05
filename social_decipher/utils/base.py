@@ -264,7 +264,7 @@ def local_qwen_completion(model_id, system_message, message, use_action=False):
     """Generate completion using local Qwen model via vLLM server."""
     print(f"🔧 Local Qwen completion for model: {model_id}")
     print(f"   System message: {system_message[:100]}{'...' if len(system_message) > 100 else ''}")
-    print(f"   User message: {message[:100]}{'...' if len(message) > 100 else ''}")
+    print(f"   User message: {message}")
     
     try:        
         # Create model manager directly
@@ -274,9 +274,11 @@ def local_qwen_completion(model_id, system_message, message, use_action=False):
         # Get the absolute path to the template
         template_path = os.path.join(os.path.dirname(__file__), "../../configs/qwen2.5-7b.jinja")
         
+        modal_name = model_id.split("/")[-1].lower()  # Extract model name from ID
+
         model_manager = LocalModelManager(
-            model_path="/mnt/data_from_server1/models/Qwen2.5-7B-Instruct",
-            model_name="qwen2.5-7b-instruct",  # Match server's served-model-name
+            model_path=model_id,  # Match server's GLOBAL_MODEL_B
+            model_name=modal_name,  # Match server's served-model-name
             template_path=template_path,
             use_vllm=True,
             vllm_port=vllm_port
@@ -291,8 +293,8 @@ def local_qwen_completion(model_id, system_message, message, use_action=False):
         # Generate response
         print(f"🚀 Generating response via local Qwen model...")
         response = model_manager.generate(messages, max_new_tokens=512)
-        print(f"✅ Local Qwen response: {response[:100]}{'...' if len(response) > 100 else ''}")
-        
+        print(f"✅ Local Qwen response: {response}")
+
         # Format response for action if needed
         if use_action and not (response.startswith("{") and response.endswith("}")):
             response = json.dumps({"action_type": "speak", "argument": response})
