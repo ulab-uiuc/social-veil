@@ -13,7 +13,9 @@ def extract_clean_json(response_str: str) -> dict:
 
 class ConversationEvaluator:
     def __init__(self, client: Any, model: str):
-        with open("../configs/evaluation.yaml") as template_file:
+        # Get the path relative to the project root
+        config_path = os.path.join(os.path.dirname(__file__), "..", "configs", "evaluation.yaml")
+        with open(config_path) as template_file:
             self.evaluation_template = yaml.safe_load(template_file)
         self.model = model
         self.client = client

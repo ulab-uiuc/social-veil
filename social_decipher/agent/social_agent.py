@@ -24,7 +24,7 @@ class SocialAgent:
         use_action: bool = False,
         memory: Optional[AgentMemory] = None,
         mix: bool = False,
-        template_path: str = "../configs/social_task.yaml",
+        template_path: str = None,
     ):
         self.name = name
         self.env = env
@@ -34,6 +34,11 @@ class SocialAgent:
         self.profile = profile
         self.partner_profile = partner_profile
         self.mix = mix
+        
+        # Set default template path if not provided
+        if template_path is None:
+            template_path = os.path.join(os.path.dirname(__file__), "..", "..", "configs", "social_task.yaml")
+            
         self.template_path = template_path
         if memory is None:
             self.memory = AgentMemory(name, partner_profile.first_name)
