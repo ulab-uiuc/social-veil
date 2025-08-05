@@ -1,8 +1,16 @@
 #!/bin/bash
 
-export GLOBAL_MODEL_B="/mnt/data_from_server1/models/Qwen2.5-7B-Instruct"
-export VLLM_GPU=1
-export VLLM_PORT=6900
+# Read model configuration from config.yaml
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+CONFIG_READER="$SCRIPT_DIR/config_reader.py"
+
+# Change to project root for poetry command
+cd "$PROJECT_ROOT"
+
+export GLOBAL_MODEL_B=$(poetry run python "$CONFIG_READER" models.model_b)
+export VLLM_GPU=$(poetry run python "$CONFIG_READER" models.gpu)
+export VLLM_PORT=$(poetry run python "$CONFIG_READER" models.vllm_port)
 
 echo "===================================="
 echo "🚀 Starting vLLM Server"
@@ -19,13 +27,18 @@ if curl -s http://localhost:$VLLM_PORT/health > /dev/null 2>&1; then
 fi
 
 echo "Starting vLLM server..."
+CHAT_TEMPLATE=$(poetry run python "$CONFIG_READER" models.chat_template)
+SERVED_MODEL_NAME=$(poetry run python "$CONFIG_READER" models.served_model_name)
+MAX_MODEL_LEN=$(poetry run python "$CONFIG_READER" models.max_model_len)
+TENSOR_PARALLEL_SIZE=$(poetry run python "$CONFIG_READER" models.tensor_parallel_size)
+
 CUDA_VISIBLE_DEVICES=$VLLM_GPU python -m vllm.entrypoints.openai.api_server \
     --model $GLOBAL_MODEL_B \
     --port $VLLM_PORT \
-    --chat-template ../configs/qwen2.5-7b.jinja \
-    --served-model-name qwen2.5-7b-instruct \
-    --max-model-len 4096 \
-    --tensor-parallel-size 1
+    --chat-template $CHAT_TEMPLATE \
+    --served-model-name $SERVED_MODEL_NAME \
+    --max-model-len $MAX_MODEL_LEN \
+    --tensor-parallel-size $TENSOR_PARALLEL_SIZE
 
 echo ""
 echo "✅ vLLM server started successfully!"

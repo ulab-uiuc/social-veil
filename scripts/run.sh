@@ -1,9 +1,17 @@
 #!/bin/bash
 
-export GLOBAL_MODEL_A="gpt-4o-mini"
-export GLOBAL_MODEL_B="/mnt/data_from_server1/models/Qwen2.5-7B-Instruct"
-export GPU=1
-export VLLM_PORT=6900
+# Read model configuration from config.yaml
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+CONFIG_READER="$SCRIPT_DIR/config_reader.py"
+
+# Change to project root for poetry command
+cd "$PROJECT_ROOT"
+
+export GLOBAL_MODEL_A=$(poetry run python "$CONFIG_READER" models.model_a)
+export GLOBAL_MODEL_B=$(poetry run python "$CONFIG_READER" models.model_b)
+export GPU=$(poetry run python "$CONFIG_READER" models.gpu)
+export VLLM_PORT=$(poetry run python "$CONFIG_READER" models.vllm_port)
 export SCENARIO_TYPE=${SCENARIO_TYPE:-"language_barrier"}           # normal, knowledge_barrier, language_barrier
 export COMMUNICATION_MODALITY=${COMMUNICATION_MODALITY:-"text_only"}  # text_only, action_enabled, text_action_mix
 export MEMORY_STRATEGY=${MEMORY_STRATEGY:-"off"}          # off, on
