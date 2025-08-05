@@ -15,6 +15,17 @@ models:
   max_model_len: 4096
   tensor_parallel_size: 1
 
+# Example configuration for Llama 3.1 8B Instruct (uncomment and modify path as needed):
+# models:
+#   model_a: "gpt-4o-mini"
+#   model_b: "/path/to/your/models/Llama-3.1-8B-Instruct"
+#   gpu: 1
+#   vllm_port: 6900
+#   chat_template: "../configs/llama3.1-8b.jinja"
+#   served_model_name: "llama3.1-8b-instruct"
+#   max_model_len: 8192
+#   tensor_parallel_size: 1
+
 # Key
 OPENAI_API_KEY: "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"
 HF_API_TOKEN: "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"
