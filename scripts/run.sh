@@ -10,14 +10,15 @@ cd "$PROJECT_ROOT"
 
 export GLOBAL_MODEL_A=$(poetry run python "$CONFIG_READER" models.model_a)
 export GLOBAL_MODEL_B=$(poetry run python "$CONFIG_READER" models.model_b)
+export MODEL_NAME=$(poetry run python "$CONFIG_READER" models.served_model_name)
 export GPU=$(poetry run python "$CONFIG_READER" models.gpu)
 export VLLM_PORT=$(poetry run python "$CONFIG_READER" models.vllm_port)
-export SCENARIO_TYPE=${SCENARIO_TYPE:-"language_barrier"}           # normal, knowledge_barrier, language_barrier
-export COMMUNICATION_MODALITY=${COMMUNICATION_MODALITY:-"text_only"}  # text_only, action_enabled, text_action_mix
+export SCENARIO_TYPE=${SCENARIO_TYPE:-"normal"}           # normal, knowledge_barrier, language_barrier
+export COMMUNICATION_MODALITY=${COMMUNICATION_MODALITY:-"action_enabled"}  # text_only, action_enabled, text_action_mix
 export MEMORY_STRATEGY=${MEMORY_STRATEGY:-"off"}          # off, on
 export EPISODE_LIMIT=${EPISODE_LIMIT:-3}                  # Number of episodes to run
 TIMESTAMP=$(date +%m%d_%H%M)
-export RESULTS_DIR=${RESULTS_DIR:-"../results/exp_${SCENARIO_TYPE}_${COMMUNICATION_MODALITY}_mem${MEMORY_STRATEGY}_${TIMESTAMP}"}
+export RESULTS_DIR=${RESULTS_DIR:-"results/exp_${SCENARIO_TYPE}_${COMMUNICATION_MODALITY}_mem${MEMORY_STRATEGY}_${MODEL_NAME}_${TIMESTAMP}"}
 
 echo "===================================="
 echo "🧪 Running Social Agent Experiment"
