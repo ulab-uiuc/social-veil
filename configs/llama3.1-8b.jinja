@@ -1,41 +1,24 @@
-{{- if or .System .Tools }}<|start_header_id|>system<|end_header_id|>
-{{- if .System }}
-{{ .System }}
-{{- else }}
-You are a helpful assistant.
-{{- end }}
-{{- if .Tools }}
-
-You are a helpful assistant with tool calling capabilities. When you receive a tool call response, use the output to format an answer to the original user question.
-{{- end }}<|eot_id|>
-{{- end }}
-{{- range $i, $_ := .Messages }}
-{{- $last := eq (len (slice $.Messages $i)) 1 }}
-{{- if eq .Role "user" }}<|start_header_id|>user<|end_header_id|>
-{{- if and $.Tools $last }}
-
-Given the following functions, please respond with a JSON for a function call with its proper arguments that best answers the given prompt.
-
-Respond in the format {"name": function name, "parameters": dictionary of argument name and its value}. Do not use variables.
-
-{{ range $.Tools }}
-{{- . }}
-{{ end }}
-
-Question: {{ .Content }}<|eot_id|>
-{{- else }}
-{{ .Content }}<|eot_id|>
-{{- end }}{{ if $last }}<|start_header_id|>assistant<|end_header_id|>
-{{ end }}
-{{- else if eq .Role "assistant" }}<|start_header_id|>assistant<|end_header_id|>
-{{- if .ToolCalls }}
-{{ range .ToolCalls }}
-{"name": "{{ .Function.Name }}", "parameters": {{ .Function.Arguments }}}{{ end }}
-{{- else }}
-{{ .Content }}
-{{- end }}{{ if not $last }}<|eot_id|>{{ end }}
-{{- else if eq .Role "tool" }}<|start_header_id|>ipython<|end_header_id|>
-{{ .Content }}<|eot_id|>{{ if $last }}<|start_header_id|>assistant<|end_header_id|>
-{{ end }}
-{{- end }}
-{{- end }}
+{% if messages %}
+{%- if messages[0]['role'] == 'system' %}<|start_header_id|>system<|end_header_id|>
+{{ messages[0]['content'] }}<|eot_id|>
+{%- else %}<|start_header_id|>system<|end_header_id|>
+You are a helpful assistant.<|eot_id|>
+{%- endif %}
+{%- for message in messages %}
+{%- if message['role'] == 'user' %}<|start_header_id|>user<|end_header_id|>
+{{ message['content'] }}<|eot_id|>
+{%- elif message['role'] == 'assistant' %}<|start_header_id|>assistant<|end_header_id|>
+{{ message['content'] }}
+{%- if not loop.last %}<|eot_id|>{% endif %}
+{%- elif message['role'] == 'system' and not loop.first %}<|start_header_id|>system<|end_header_id|>
+{{ message['content'] }}<|eot_id|>
+{%- endif %}
+{%- endfor %}
+{%- if add_generation_prompt %}<|start_header_id|>assistant<|end_header_id|>
+{%- endif %}
+{%- else %}
+<|start_header_id|>system<|end_header_id|>
+You are a helpful assistant.<|eot_id|>
+{%- if add_generation_prompt %}<|start_header_id|>assistant<|end_header_id|>
+{%- endif %}
+{%- endif %}
