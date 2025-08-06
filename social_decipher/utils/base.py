@@ -300,7 +300,6 @@ def mistral_completion(model_id, system_message, message, use_action=False, max_
 def local_model_completion(model_id, system_message, message, use_action=False):
     """Generate completion using local model via vLLM server (supports Qwen, Llama, etc.)."""
     print(f"🔧 Local model completion for: {model_id}")
-    print(f"   System message: {system_message[:100]}{'...' if len(system_message) > 100 else ''}")
     print(f"   User message: {message}")
     
     try:        
@@ -324,17 +323,22 @@ def local_model_completion(model_id, system_message, message, use_action=False):
             project_root = os.path.dirname(config_dir)
             template_path = os.path.join(project_root, template_path)
         
-        print(f"   Using template: {template_path}")
+        modal_name = _config.get("models", {}).get("served_model_name")
         
-        modal_name = model_id.split("/")[-1].lower()  # Extract model name from ID
-
-        model_manager = LocalModelManager(
-            model_path=model_id,  # Match server's GLOBAL_MODEL_B
-            model_name=modal_name,  # Match server's served-model-name
-            template_path=template_path,
-            use_vllm=True,
-            vllm_port=vllm_port
-        )
+        if not modal_name:
+            modal_name = model_id.split("/")[-1].lower()  # Extract model name from ID
+     
+        try:
+            model_manager = LocalModelManager(
+                model_path=model_id,  # Match server's GLOBAL_MODEL_B
+                model_name=modal_name,  # Match server's served-model-name
+                template_path=template_path,
+                use_vllm=True,
+                vllm_port=vllm_port
+            )
+        except Exception as e:
+            print(f"   ❌ LocalModelManager creation failed: {e}")
+            raise e
         
         # Prepare messages
         messages = [
@@ -344,8 +348,11 @@ def local_model_completion(model_id, system_message, message, use_action=False):
 
         # Generate response
         print(f"🚀 Generating response via local model...")
-        response = model_manager.generate(messages, max_new_tokens=512)
-        print(f"✅ Local model response: {response}")
+        try:
+            response = model_manager.generate(messages, max_new_tokens=512)
+        except Exception as e:
+            print(f"   ❌ Generate call failed: {e}")
+            print(f"   ❌ Generate error type: {type(e)}")
 
         # Format response for action if needed
         if use_action and not (response.startswith("{") and response.endswith("}")):
@@ -356,7 +363,8 @@ def local_model_completion(model_id, system_message, message, use_action=False):
     except Exception as e:
         print(f"❌ [ERROR] Local model completion failed: {e}")
         print(f"   Make sure vLLM server is running with: ./scripts/start_vllm_server.sh")
-        return "I'm having trouble responding right now due to a technical issue."
+        raise e
+
 
 
 def error_response(use_action, error_message):

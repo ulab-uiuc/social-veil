@@ -29,7 +29,8 @@ def simulate_conversation(
     client = None,
     environment = None,
     result = None,
-    root_dir = None
+    root_dir = None,
+    memory_enabled: bool = False
 ) -> Union[Tuple[List[str], Dict[str, Any], List[Dict[str, Any]]], Tuple[List[Dict[str, Any]], Dict[str, List[Any]]]]:
 
     output_dir = f"{root_dir}"
@@ -48,6 +49,7 @@ def simulate_conversation(
         scenario_idx=0,
         mix=mix,
         output_dir=output_dir,
+        memory_enabled=memory_enabled,
     )
 
 def run_single_scenario_simulation(
@@ -63,11 +65,17 @@ def run_single_scenario_simulation(
     scenario_idx: int = 0,
     mix: bool = False,
     output_dir: Optional[str] = None,
+    memory_enabled: bool = False,
 ) -> Tuple[List[str], Dict[str, Any], List[Dict[str, Any]]]:
   
     # Set environment for agents
     personA.env = environment
     personB.env = environment
+    
+    # Reset memory for each independent scenario simulation
+    if memory_enabled:
+        personA.reset_memory_for_scenario(memory_enabled=True)
+        personB.reset_memory_for_scenario(memory_enabled=True)
 
     # Extract environment details
     agent_goals = environment.env["agent_goals"]
@@ -161,6 +169,34 @@ def run_single_scenario_simulation(
 
         if b_left:
             break
+
+        # Real-time memory updates if memory is enabled
+        if memory_enabled and turn_num > 0:  # Skip first turn since no prior exchange
+            # Get the last exchange for memory update
+            if len(conversation_log) >= 2:
+                # Extract clean messages for memory analysis
+                last_personA_msg = conversation_log[-2].split(": ", 1)[1] if ": " in conversation_log[-2] else ""
+                last_personB_msg = conversation_log[-1].split(": ", 1)[1] if ": " in conversation_log[-1] else ""
+                
+                # Update memory for both agents based on the exchange
+                personA.update_memory_from_exchange(
+                    agent_message=last_personA_msg,
+                    partner_response=last_personB_msg,
+                    turn_number=turn_num + 1,
+                    memory_enabled=memory_enabled
+                )
+                
+                # For personB, we need to get their message and personA's response
+                if len(conversation_log) >= 4:  # Make sure we have enough history
+                    prev_personB_msg = conversation_log[-4].split(": ", 1)[1] if ": " in conversation_log[-4] else ""
+                    prev_personA_response = conversation_log[-3].split(": ", 1)[1] if ": " in conversation_log[-3] else ""
+                    
+                    personB.update_memory_from_exchange(
+                        agent_message=prev_personB_msg,
+                        partner_response=prev_personA_response,
+                        turn_number=turn_num,
+                        memory_enabled=memory_enabled
+                    )
 
         # MCQ evaluations for agent A's goal and reason
         goal_mcq_A = personB.predict_mcq_answer(

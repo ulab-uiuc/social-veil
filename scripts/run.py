@@ -156,14 +156,7 @@ def create_agents(profile_a, profile_b, env, agent1_name, agent2_name, communica
     agent2 = SocialAgent(agent2_name, profile_b, profile_a, env, 1, use_action=use_action, mix=mix)
     return agent1, agent2
 
-def load_agent_memories(agent1, agent2, memory_path, agent1_name, agent2_name, memory_strategy):
-    if memory_strategy == "on" and memory_path:
-        memory_path_a = os.path.join(memory_path, f"{agent1_name}_memory.json")
-        memory_path_b = os.path.join(memory_path, f"{agent2_name}_memory.json")
-        if os.path.exists(memory_path_a):
-            agent1.load_memory(memory_path_a)
-        if os.path.exists(memory_path_b):
-            agent2.load_memory(memory_path_b)
+
 
 def get_experiment_config(scenario_type, communication_modality, memory_strategy, results_dir):
     tag_parts = []
@@ -230,11 +223,6 @@ def run_experiment(episodes, experiment_config, evaluator, client, args):
             experiment_config["communication_modality"]
         )
         
-        load_agent_memories(
-            agent1, agent2, args.memory_path, agent1_name, agent2_name, 
-            experiment_config["memory_strategy"]
-        )
-        
         conversation_log, eval_result, mcq_log = simulate_conversation(
             personA=agent1,
             personB=agent2,
@@ -249,7 +237,8 @@ def run_experiment(episodes, experiment_config, evaluator, client, args):
             environment=env,
             result=None,
             root_dir=results_dir,
-            mix=experiment_config.get("mix", False)
+            mix=experiment_config.get("mix", False),
+            memory_enabled=(experiment_config["memory_strategy"] == "on")
         )
         
         eval_results.append(eval_result)

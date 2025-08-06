@@ -362,8 +362,7 @@ class SocialAgent:
             agent_reason=agent_reason,
             scenario=self.env.env.get("scenario", "") if self.env and hasattr(self.env, "env") else "",
         )
-        
-        print(prompt)
+
         # Generate response using direct completion
         response = direct_completion(self, prompt, use_action=False).strip()
     
@@ -407,53 +406,12 @@ class SocialAgent:
             "options": mcqa["options"],
         }
     
-    def update_memory_after_scenario(
-        self,
-        scenario_log: List[str],
-        scenario_results: Dict[str, Any],
-        encryption_enabled: bool = False,
-    ):
-        """
-        Update agent memory after completing a scenario.
-        
-        Args:
-            scenario_log: Conversation log
-            scenario_results: Scenario evaluation results
-            encryption_enabled: Whether encryption was enabled
-        """
-        # Get the agent's goal from the environment
-        if self.role_num == 0:
-            agent_goal = self.env.env["agent_goals"][0]
-            goal_achieved = scenario_results.get("agent0_goal_achieved", False)
-        else:
-            agent_goal = self.env.env["agent_goals"][1]
-            goal_achieved = scenario_results.get("agent1_goal_achieved", False)
-        
-        # Update memory
-        self.memory.update_after_scenario(
-            scenario_log=scenario_log,
-            scenario_results=scenario_results,
-            agent_goal=agent_goal,
-            goal_achieved=goal_achieved,
-            encryption_enabled=encryption_enabled,
-        )
-        
-        print('Updated memory:')
-        print(f"- Key memories: {self.memory.key_memories}")
-        print(f"- Language barrier: {self.memory.language_barrier}")
+    def reset_memory_for_scenario(self, memory_enabled: bool = False):
+        """Reset memory for independent scenario simulation"""
+        if memory_enabled:
+            self.memory.reset_for_new_scenario()
     
-    def save_memory(self, output_dir: str):
-        """
-        Save agent memory to file.
-        
-        Args:
-            output_dir: Output directory
-        """
-        os.makedirs(output_dir, exist_ok=True)
-        self.memory.save(os.path.join(output_dir, f"{self.name}_memory.json"))
-    
-    def load_memory(self, filepath: str) -> bool:
-        if os.path.exists(filepath):
-            self.memory = AgentMemory.load(filepath)
-            return True
-        return False
+    def update_memory_from_exchange(self, agent_message: str, partner_response: str, turn_number: int, memory_enabled: bool = False):
+        """Update memory from a single exchange if memory is enabled"""
+        if memory_enabled:
+            self.memory.update_from_exchange(agent_message, partner_response, turn_number)

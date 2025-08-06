@@ -58,6 +58,7 @@ class LocalModelManager:
         env = Environment(loader=FileSystemLoader(template_dir))
         env.filters['tojson'] = lambda obj: json.dumps(obj)
         self.template = env.get_template(template_file)
+       
     
     def _setup_direct_model(self):
         """Setup direct model loading for local inference."""
@@ -128,13 +129,25 @@ class LocalModelManager:
             )
             
             response.raise_for_status()
+            # Debug: Print raw response to understand the issue
+            print(f"🔍 Raw vLLM response status: {response.status_code}")
+            print(f"🔍 Raw vLLM response text: {response.text[:500]}...")  # First 500 chars
+            
             result = response.json()
             
             return result["choices"][0]["message"]["content"].strip()
             
         except requests.Timeout:
             return "Error: Simple request timed out"
+        except json.JSONDecodeError as e:
+            print(f"❌ JSON parsing error: {e}")
+            print(f"❌ Response content: {response.text[:1000]}")
+            return f"Error: Invalid JSON response from vLLM server"
         except Exception as e:
+            print(f"❌ Request error: {e}")
+            if 'response' in locals():
+                print(f"❌ Response status: {response.status_code}")
+                print(f"❌ Response content: {response.text[:1000]}")
             return f"Error: {str(e)}"
 
     
