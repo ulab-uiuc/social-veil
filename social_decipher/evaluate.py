@@ -1,6 +1,7 @@
 import json
 import re
 import os
+from openai import OpenAI
 from typing import Any
 
 import yaml
@@ -12,13 +13,13 @@ def extract_clean_json(response_str: str) -> dict:
     return json.loads(cleaned)
 
 class ConversationEvaluator:
-    def __init__(self, client: Any, model: str):
+    def __init__(self, model: str):
         # Get the path relative to the project root
         config_path = os.path.join(os.path.dirname(__file__), "..", "configs", "evaluation.yaml")
         with open(config_path) as template_file:
             self.evaluation_template = yaml.safe_load(template_file)
         self.model = model
-        self.client = client
+        self.client = OPENAI()
 
     def evaluate_social_goal_performance(
         self,

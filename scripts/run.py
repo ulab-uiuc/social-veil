@@ -32,7 +32,7 @@ os.environ["MISTRAL_API_KEY"] = _config.get("MISTRAL_API_KEY")
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run social agent simulation with 3×3×2 factorial design")
     parser.add_argument(
-        "--model", type=str, default="gpt-4o-mini", help="Model to use for agents (single model for both agents)",
+        "--model", type=str, default="gpt-4o", help="Model to use for conversation evaluation",
     )
     parser.add_argument(
         "--model_a", type=str, help="Model to use for agent A (overrides --model)",
@@ -106,7 +106,6 @@ def build_profile_from_episode_data(episode_data, agent_idx, model_id, scenario_
     
     return AgentProfile.from_dict(agent_profile_data, model_id)
 
-
 def build_profiles_and_env(episode_data, model_id, model_a=None, model_b=None, scenario_type="normal"):
     """Build agent profiles with custom model configuration."""
     # Use custom models if specified, otherwise use the default model
@@ -155,8 +154,6 @@ def create_agents(profile_a, profile_b, env, agent1_name, agent2_name, communica
     agent1 = SocialAgent(agent1_name, profile_a, profile_b, env, 0, use_action=use_action, mix=mix)
     agent2 = SocialAgent(agent2_name, profile_b, profile_a, env, 1, use_action=use_action, mix=mix)
     return agent1, agent2
-
-
 
 def get_experiment_config(scenario_type, communication_modality, memory_strategy, results_dir):
     tag_parts = []
@@ -232,6 +229,7 @@ def run_experiment(episodes, experiment_config, evaluator, client, args):
             action_enabled=experiment_config["use_action"],
             nature_language=experiment_config["nature_language"],
             output_suffix=f"{experiment_config['tag']}_scenario_{scenario_idx+1}",
+            scenario_index=scenario_idx,
             pair=args.pair,
             client=client,
             environment=env,
@@ -267,8 +265,6 @@ def run_experiment(episodes, experiment_config, evaluator, client, args):
     
     print(f"   ✅ {experiment_config['tag']} completed for all scenarios!")
 
-
-
 def main():
     args = parse_args()
     
@@ -282,11 +278,9 @@ def main():
 
     # Show model configuration
     print("🤖 Model Configuration:")
-    print(f"   Agent A: {args.model_a or args.model}")
-    print(f"   Agent B: {args.model_b or args.model}")
+    print(f"   Agent A: {args.model_a}")
+    print(f"   Agent B: {args.model_b}")
     print()
-
-    client = OpenAI()
     
     episodes = load_episode_jsonl(args.episodes_file)
     print(f"Loaded {len(episodes)} episodes from {args.episodes_file}")
@@ -296,7 +290,7 @@ def main():
         episodes = episodes[:args.episode_limit]
         print(f"Using first {len(episodes)} episodes (limited by --episode_limit)")
     
-    evaluator = ConversationEvaluator(client, args.model)
+    evaluator = ConversationEvaluator(args.model)
 
     # Run single experiment based on specified parameters
     experiment_config = get_experiment_config(

@@ -1,30 +1,25 @@
-sotopia_env: '/Users/xuankeyang/Desktop/social-decipher/data/scenario.jsonl'
-sotopia_hard_env: '/Users/xuankeyang/Desktop/social-decipher/data/scenario_hard.jsonl'
-
-env: '/Users/xuankeyang/Desktop/social-decipher/data/processed_scenarios_200.jsonl'
-hard_env: '/Users/xuankeyang/Desktop/social-decipher/data/processed_scenarios_hard.jsonl'
-
-## Configuration for QWEN 2.5 7B (uncomment and modify path as needed):
-# models:
-#   model_a: "gpt-4o-mini"
-#   model_b: "/mnt/data_from_server1/models/Qwen2.5-7B"
-#   gpu: 1
-#   vllm_port: 6900
-#   chat_template: "configs/qwen2.5-7b.jinja"
-#   served_model_name: "qwen2.5-7b-instruct"
-#   max_model_len: 4096
-#   tensor_parallel_size: 1
-
-## Configuration for Llama 3.1 8B Instruct (uncomment and modify path as needed):
+data_dir: 'data/episode_hard.jsonl'
+# Configuration for QWEN 2.5 7B (uncomment and modify path as needed):
 models:
-  model_a: "gpt-4o-mini"
-  model_b: "/mnt/data_from_server1/models/Llama-3.1-8B-Instruct"
+  model_a: "gpt-4o"
+  model_b: "/mnt/data_from_server1/models/Qwen2.5-7B"
   gpu: 1
   vllm_port: 6900
-  chat_template: "configs/llama3.1-8b.jinja"
-  served_model_name: "llama3.1-8b-instruct"
-  max_model_len: 8192
+  chat_template: "configs/qwen2.5-7b.jinja"
+  served_model_name: "qwen2.5-7b-instruct"
+  max_model_len: 4096
   tensor_parallel_size: 1
+
+## Configuration for Llama 3.1 8B Instruct (uncomment and modify path as needed):
+# models:
+#   model_a: "gpt-4o"
+#   model_b: "/mnt/data_from_server1/models/Llama-3.1-8B-Instruct"
+#   gpu: 1
+#   vllm_port: 6800
+#   chat_template: "configs/llama3.1-8b.jinja"
+#   served_model_name: "llama3.1-8b-instruct"
+#   max_model_len: 8192
+#   tensor_parallel_size: 1
 
 # Key
 OPENAI_API_KEY: "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"
