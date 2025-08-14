@@ -118,7 +118,7 @@ def build_profiles_and_env(episode_data, model_id, model_a=None, model_b=None, s
 
     agent1_name = profile_a.first_name
     agent2_name = profile_b.first_name
-    agent_reasons = [episode_data["agent1_reason"], episode_data["agent2_reason"]]
+    agent_reasons = [episode_data.get("agent1_reason", ""), episode_data.get("agent2_reason", "")]
     
     print(f"🤖 Agent Models:")
     print(f"   {agent1_name}: {agent_a_model}")
@@ -130,9 +130,9 @@ def create_environment_from_episode(episode_data, scenario_type):
     return EnvironmentProfile(
         scenario=episode_data["scenario"],
         agent_goals=episode_data["agent_goals"],
-        agent_reasons=[episode_data["agent1_reason"], episode_data["agent2_reason"]],
-        agent_goals_mcqas=episode_data["agent_goals_mcqas"],
-        agent_reasons_mcqas=episode_data["agent_reasons_mcqas"],
+        agent_reasons=[episode_data.get("agent1_reason", ""), episode_data.get("agent2_reason", "")],
+        agent_goals_mcqas=episode_data.get("agent_goals_mcqas", []),
+        agent_reasons_mcqas=episode_data.get("agent_reasons_mcqas", []),
         agent_knowledge_mcqas=episode_data.get("agent_knowledge_mcqas", []),
         agent_relationship=episode_data.get("agent_relationship", "friend"),
         agent1_private_knowledge=episode_data.get("agent1_private_knowledge", "") if scenario_type == "knowledge_barrier" else "",
