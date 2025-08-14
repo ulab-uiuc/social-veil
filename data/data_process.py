@@ -22,11 +22,79 @@ mcq_gen = SotopiaMCQGenerator(client=client)
 # CLI: control which components to generate/update
 parser = argparse.ArgumentParser(description="Generate Sotopia MCQs/components")
 parser.add_argument(
-    "--task", choices=["reasons", "knowledge", "both"], default="both",
+    "--task", choices=["reasons", "knowledge", "both", "goals"], default="both",
     help="What to generate/update for each episode"
+)
+parser.add_argument(
+    "--input_episodes", type=str, default=None,
+    help="Path to an existing episodes JSONL to update in-place (used with --task goals)"
+)
+parser.add_argument(
+    "--output_episodes", type=str, default=None,
+    help="Optional output path for updated episodes JSONL (defaults to --input_episodes)"
 )
 ARGS = parser.parse_args()
 TASK = ARGS.task
+
+
+# === Helper to shuffle MCQ options and update correct_answer ===
+def shuffle_mcq_options(mcq_list):
+    for mcq in mcq_list or []:
+        options = mcq.get("options", {})
+        if not options or "correct_answer" not in mcq:
+            continue
+        correct_key = mcq.get("correct_answer")
+        if correct_key not in options:
+            continue
+        correct_value = options[correct_key]
+        items = list(options.items())
+        random.shuffle(items)
+        new_options = {}
+        new_correct_key = None
+        for idx, (_k, v) in enumerate(items):
+            new_key = chr(ord('A') + idx)
+            new_options[new_key] = v
+            if v == correct_value:
+                new_correct_key = new_key
+        mcq["options"] = new_options
+        if new_correct_key:
+            mcq["correct_answer"] = new_correct_key
+
+
+# Fast path: update ONLY goal MCQs on an existing episodes file without regenerating reasons/knowledge
+if TASK == "goals" and ARGS.input_episodes:
+    input_path = ARGS.input_episodes
+    output_path = ARGS.output_episodes or input_path
+    updated = 0
+    with open(input_path, "r") as f:
+        lines = [l for l in f if l.strip()]
+    out_lines = []
+    for line in lines:
+        ep = json.loads(line)
+        sotopia_input = {
+            "scenario": ep.get("scenario", ""),
+            "agent1_goal": (ep.get("agent_goals") or ["", ""])[0],
+            "agent2_goal": (ep.get("agent_goals") or ["", ""])[1],
+            "relationship": ep.get("agent_relationship", "friend"),
+            "agent1_profile": ep.get("agent1_profile", ""),
+            "agent2_profile": ep.get("agent2_profile", ""),
+        }
+        try:
+            g = mcq_gen.generate_goal_mcqs(sotopia_input)
+            goals = g.get("mcqs", {}).get("goals", [])
+            if goals:
+                ep["agent_goals_mcqas"] = goals
+                shuffle_mcq_options(ep["agent_goals_mcqas"])  # randomize A/B/C/D positions
+                updated += 1
+        except Exception as e:
+            print(f"Warning: failed to update goals for one episode: {e}")
+        out_lines.append(json.dumps(ep, ensure_ascii=False))
+
+    with open(output_path, "w") as f:
+        for l in out_lines:
+            f.write(l + "\n")
+    print(f"Updated goal MCQs for {updated}/{len(out_lines)} episodes -> {output_path}")
+    sys.exit(0)
 
 # Load datasets
 with open("./processed_sotopia/sotopia_cleaned.jsonl") as f:
@@ -71,29 +139,6 @@ def clean_sotopia_goals(goals):
             
         cleaned_goals.append(goal.strip())
     return cleaned_goals
-
-# === Helper to shuffle MCQ options and update correct_answer ===
-def shuffle_mcq_options(mcq_list):
-    for mcq in mcq_list or []:
-        options = mcq.get("options", {})
-        if not options or "correct_answer" not in mcq:
-            continue
-        correct_key = mcq.get("correct_answer")
-        if correct_key not in options:
-            continue
-        correct_value = options[correct_key]
-        items = list(options.items())
-        random.shuffle(items)
-        new_options = {}
-        new_correct_key = None
-        for idx, (_k, v) in enumerate(items):
-            new_key = chr(ord('A') + idx)
-            new_options[new_key] = v
-            if v == correct_value:
-                new_correct_key = new_key
-        mcq["options"] = new_options
-        if new_correct_key:
-            mcq["correct_answer"] = new_correct_key
 
 # === Helper function to format episode first ===
 def format_episode_basic(ep, scenario):
@@ -162,6 +207,13 @@ def generate_mcqs_for_formatted_episode(formatted_episode):
                 formatted_episode["agent_knowledge_mcqas"] = knowledge
                 # Randomize correct answer position for knowledge MCQs
                 shuffle_mcq_options(formatted_episode["agent_knowledge_mcqas"])
+
+        # Always (re)generate goal MCQs from the scenario+goals (independent of reasons/knowledge)
+        g = mcq_gen.generate_goal_mcqs(sotopia_input)
+        goals = g.get("mcqs", {}).get("goals", [])
+        if goals:
+            formatted_episode["agent_goals_mcqas"] = goals
+            shuffle_mcq_options(formatted_episode["agent_goals_mcqas"])
     except Exception as e:
         print(f"Skipping episode due to MCQ generation error: {e}")
         return None

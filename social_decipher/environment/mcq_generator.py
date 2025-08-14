@@ -121,6 +121,60 @@ Output strictly in this JSON format:
 ```
 """
 
+        # Focused prompt: generate only goal MCQs (no reasons or knowledge)
+        self.goal_generation_prompt = """
+You are an expert in designing evaluation questions for social agents in simulation environments.
+
+Task: ONLY generate two goal MCQs that test whether each agent can infer the partner's true goal from the scenario and profiles. Do NOT generate reasons or knowledge items.
+
+Construction rules:
+- Q1 asks: "What is Agent 2's goal in this scenario?"
+  - Option A MUST be EXACTLY Agent 2's true goal from input.
+  - Option B MUST be Agent 1's goal from input (to test confusion).
+  - Option C MUST be a plausible but incorrect goal grounded in the scenario.
+  - Option D MUST be a generic/irrelevant goal.
+- Q2 mirrors Q1 for Agent 1.
+- Set correct_answer to "A" for both questions.
+
+Input context:
+SCENARIO: {scenario}
+AGENT RELATIONSHIP: {agent_relationship}
+AGENT 1 GOAL: {agent1_goal}
+AGENT 2 GOAL: {agent2_goal}
+AGENT 1 PROFILE: {agent1_profile}
+AGENT 2 PROFILE: {agent2_profile}
+
+Output strictly in this JSON format:
+```json
+{{
+  "mcqs": {{
+    "goals": [
+      {{
+        "question": "What is Agent 2's goal in this scenario?",
+        "options": {{
+          "A": "<EXACTLY agent2_goal>",
+          "B": "<agent1_goal>",
+          "C": "<plausible but incorrect goal>",
+          "D": "<generic or irrelevant goal>"
+        }},
+        "correct_answer": "A"
+      }},
+      {{
+        "question": "What is Agent 1's goal in this scenario?",
+        "options": {{
+          "A": "<EXACTLY agent1_goal>",
+          "B": "<agent2_goal>",
+          "C": "<plausible but incorrect goal>",
+          "D": "<generic or irrelevant goal>"
+        }},
+        "correct_answer": "A"
+      }}
+    ]
+  }}
+}}
+```
+"""
+
     def _call_openai(self, prompt: str, temperature: float = 0.7, model: str = "gpt-4o-mini") -> str:
         if not self.client:
             self.client = OpenAI()
@@ -158,6 +212,45 @@ Output strictly in this JSON format:
             mcq["options"] = new_options
             if correct_key:
                 mcq["correct_answer"] = correct_key
+
+    def generate_goal_mcqs(self, sotopia_data: Dict[str, Any], temperature: float = 0.2, model: str = "gpt-4o") -> Dict[str, Any]:
+        scenario = sotopia_data.get("scenario", "")
+        agent1_goal = sotopia_data.get("agent1_goal", "")
+        agent2_goal = sotopia_data.get("agent2_goal", "")
+        relationship = sotopia_data.get("relationship", "")
+        agent1_profile = sotopia_data.get("agent1_profile", "")
+        agent2_profile = sotopia_data.get("agent2_profile", "")
+
+        prompt = self.goal_generation_prompt.format(
+            scenario=scenario,
+            agent1_goal=agent1_goal,
+            agent2_goal=agent2_goal,
+            agent_relationship=relationship,
+            agent1_profile=agent1_profile,
+            agent2_profile=agent2_profile,
+        )
+
+        try:
+            content = self._call_openai(prompt, temperature=temperature, model=model)
+            data = self._extract_json(content)
+            goals = data.get("mcqs", {}).get("goals", [])
+
+            # Enforce Option A exact match with provided true goals
+            if isinstance(goals, list):
+                if len(goals) >= 1 and isinstance(goals[0], dict):
+                    opts0 = goals[0].setdefault("options", {})
+                    opts0["A"] = agent2_goal
+                    goals[0]["correct_answer"] = "A"
+                if len(goals) >= 2 and isinstance(goals[1], dict):
+                    opts1 = goals[1].setdefault("options", {})
+                    opts1["A"] = agent1_goal
+                    goals[1]["correct_answer"] = "A"
+
+            # Do NOT shuffle here; allow caller to randomize positions if desired
+            return {"mcqs": {"goals": goals}}
+        except Exception as e:
+            print(f"Error during goal MCQ generation: {e}")
+            return {"mcqs": {"goals": []}}
 
     def generate_reasons(self, sotopia_data: Dict[str, Any], temperature: float = 0.2, model: str = "gpt-4o") -> Dict[str, Any]:
         scenario = sotopia_data.get("scenario", "")
