@@ -27,7 +27,6 @@ def simulate_conversation(
     scenario_index: int = 0,
     pair: Any = 0,
     mix: bool = False,
-    client = None,
     environment = None,
     result = None,
     root_dir = None,

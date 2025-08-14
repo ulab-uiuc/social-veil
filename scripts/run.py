@@ -196,7 +196,7 @@ def get_experiment_config(scenario_type, communication_modality, memory_strategy
         "mix": mix
     }
 
-def run_experiment(episodes, experiment_config, evaluator, client, args):
+def run_experiment(episodes, experiment_config, evaluator, args):
     results_dir = experiment_config["results_dir"]
     os.makedirs(results_dir, exist_ok=True)
     
@@ -231,7 +231,6 @@ def run_experiment(episodes, experiment_config, evaluator, client, args):
             output_suffix=f"{experiment_config['tag']}_scenario_{scenario_idx+1}",
             scenario_index=scenario_idx,
             pair=args.pair,
-            client=client,
             environment=env,
             result=None,
             root_dir=results_dir,
@@ -300,7 +299,7 @@ def main():
         args.results_dir
     )
     
-    run_experiment(episodes, experiment_config, evaluator, client, args)
+    run_experiment(episodes, experiment_config, evaluator, args)
 
 if __name__ == "__main__":
     main()

@@ -19,7 +19,7 @@ class ConversationEvaluator:
         with open(config_path) as template_file:
             self.evaluation_template = yaml.safe_load(template_file)
         self.model = model
-        self.client = OPENAI()
+        self.client = OpenAI()
 
     def evaluate_social_goal_performance(
         self,
