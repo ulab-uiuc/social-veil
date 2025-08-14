@@ -406,12 +406,10 @@ class SocialAgent:
             "options": mcqa["options"],
         }
     
-    def reset_memory_for_scenario(self, memory_enabled: bool = False):
+    def reset_memory_for_scenario(self):
         """Reset memory for independent scenario simulation"""
-        if memory_enabled:
-            self.memory.reset_for_new_scenario()
+        self.memory.reset_for_new_scenario()
     
-    def update_memory_from_exchange(self, agent_message: str, partner_response: str, turn_number: int, memory_enabled: bool = False):
-        """Update memory from a single exchange if memory is enabled"""
-        if memory_enabled:
-            self.memory.update_from_exchange(agent_message, partner_response, turn_number)
+    def update_memory_from_exchange(self, agent_message: str, partner_response: str, turn_number: int):
+        """Update memory from a single exchange within the current conversation"""
+        self.memory.update_from_exchange(agent_message, partner_response, turn_number)

@@ -130,13 +130,11 @@ class AgentMemory:
         # Clear all memories since scenarios are independent
         self.short_term_memory = []
         
-        # Reset conversation-specific insights
         self.partner_insights = {
             "communication_style": None,
             "response_patterns": [],
         }
         
-        # Reset language barrier learning
         self.language_barrier = {
             "detected": False,
             "working_phrases": [],
@@ -213,7 +211,7 @@ class AgentMemory:
         memory_lines = []
         
         # Since scenarios are independent, focus on current conversation learning
-        if not self.short_term_memory and not self.long_term_memory:
+        if not self.short_term_memory:
             return f"This is a new conversation with {self.partner_name}."
         
         # Add partner insights learned during this conversation

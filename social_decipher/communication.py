@@ -74,8 +74,8 @@ def run_single_scenario_simulation(
     
     # Reset memory for each independent scenario simulation
     if memory_enabled:
-        personA.reset_memory_for_scenario(memory_enabled=True)
-        personB.reset_memory_for_scenario(memory_enabled=True)
+        personA.reset_memory_for_scenario()
+        personB.reset_memory_for_scenario()
 
     # Extract environment details
     agent_goals = environment.env["agent_goals"]
@@ -183,7 +183,6 @@ def run_single_scenario_simulation(
                     agent_message=last_personA_msg,
                     partner_response=last_personB_msg,
                     turn_number=turn_num + 1,
-                    memory_enabled=memory_enabled
                 )
                 
                 # For personB, we need to get their message and personA's response
@@ -195,7 +194,6 @@ def run_single_scenario_simulation(
                         agent_message=prev_personB_msg,
                         partner_response=prev_personA_response,
                         turn_number=turn_num,
-                        memory_enabled=memory_enabled
                     )
 
         # MCQ evaluations for agent A's goal and reason
