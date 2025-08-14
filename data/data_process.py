@@ -4,6 +4,7 @@ from collections import defaultdict
 import sys
 import yaml
 import os
+import argparse
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from social_decipher.environment.mcq_generator import SotopiaMCQGenerator
@@ -17,6 +18,15 @@ os.environ["OPENAI_API_KEY"] = _config.get("OPENAI_API_KEY")
 
 client = OpenAI()
 mcq_gen = SotopiaMCQGenerator(client=client)
+
+# CLI: control which components to generate/update
+parser = argparse.ArgumentParser(description="Generate Sotopia MCQs/components")
+parser.add_argument(
+    "--task", choices=["reasons", "knowledge", "both"], default="both",
+    help="What to generate/update for each episode"
+)
+ARGS = parser.parse_args()
+TASK = ARGS.task
 
 # Load datasets
 with open("./processed_sotopia/sotopia_cleaned.jsonl") as f:
@@ -62,6 +72,29 @@ def clean_sotopia_goals(goals):
         cleaned_goals.append(goal.strip())
     return cleaned_goals
 
+# === Helper to shuffle MCQ options and update correct_answer ===
+def shuffle_mcq_options(mcq_list):
+    for mcq in mcq_list or []:
+        options = mcq.get("options", {})
+        if not options or "correct_answer" not in mcq:
+            continue
+        correct_key = mcq.get("correct_answer")
+        if correct_key not in options:
+            continue
+        correct_value = options[correct_key]
+        items = list(options.items())
+        random.shuffle(items)
+        new_options = {}
+        new_correct_key = None
+        for idx, (_k, v) in enumerate(items):
+            new_key = chr(ord('A') + idx)
+            new_options[new_key] = v
+            if v == correct_value:
+                new_correct_key = new_key
+        mcq["options"] = new_options
+        if new_correct_key:
+            mcq["correct_answer"] = new_correct_key
+
 # === Helper function to format episode first ===
 def format_episode_basic(ep, scenario):
     """First step: Format episode with clean agent goals"""
@@ -95,7 +128,9 @@ def format_episode_basic(ep, scenario):
 
 # === Helper function to generate MCQs for formatted episode ===
 def generate_mcqs_for_formatted_episode(formatted_episode):
-    """Second step: Generate MCQs using clean formatted data"""
+    """Second step: Generate components using clean formatted data.
+    Updates only the requested parts based on TASK (reasons/knowledge/both).
+    """
     sotopia_input = {
         "scenario": formatted_episode["scenario"],
         "agent1_goal": formatted_episode["agent_goals"][0],  # Already cleaned
@@ -106,27 +141,30 @@ def generate_mcqs_for_formatted_episode(formatted_episode):
     }
 
     try:
-        mcq_result = mcq_gen.generate_mcqs_for_sotopia(sotopia_input)
+        # Generate/update reasons
+        if TASK in ("reasons", "both"):
+            res = mcq_gen.generate_reasons(sotopia_input)
+            formatted_episode["agent1_reason"] = res.get("agent1_reason", formatted_episode.get("agent1_reason", ""))
+            formatted_episode["agent2_reason"] = res.get("agent2_reason", formatted_episode.get("agent2_reason", ""))
+            reasons = res.get("mcqs", {}).get("reasons", [])
+            if reasons:
+                formatted_episode["agent_reasons_mcqas"] = reasons
+                # Randomize correct answer position for reasons MCQs
+                shuffle_mcq_options(formatted_episode["agent_reasons_mcqas"])
+
+        # Generate/update private knowledge
+        if TASK in ("knowledge", "both"):
+            kres = mcq_gen.generate_knowledge(sotopia_input)
+            formatted_episode["agent1_private_knowledge"] = kres.get("agent1_private_knowledge", formatted_episode.get("agent1_private_knowledge", ""))
+            formatted_episode["agent2_private_knowledge"] = kres.get("agent2_private_knowledge", formatted_episode.get("agent2_private_knowledge", ""))
+            knowledge = kres.get("mcqs", {}).get("knowledge", [])
+            if knowledge:
+                formatted_episode["agent_knowledge_mcqas"] = knowledge
+                # Randomize correct answer position for knowledge MCQs
+                shuffle_mcq_options(formatted_episode["agent_knowledge_mcqas"])
     except Exception as e:
         print(f"Skipping episode due to MCQ generation error: {e}")
         return None
-
-    # Extract MCQs from the correct structure
-    mcqs_data = mcq_result.get("mcqs", {})
-    agent_goals_mcqas = mcqs_data.get("goals", []) if isinstance(mcqs_data, dict) else []
-    agent_reasons_mcqas = mcqs_data.get("reasons", []) if isinstance(mcqs_data, dict) else []
-    agent_knowledge_mcqas = mcqs_data.get("knowledge", []) if isinstance(mcqs_data, dict) else []
-
-    # Add MCQ data to formatted episode
-    formatted_episode.update({
-        "agent1_reason": mcq_result.get("agent1_reason", ""),
-        "agent2_reason": mcq_result.get("agent2_reason", ""),
-        "agent1_private_knowledge": mcq_result.get("agent1_private_knowledge", ""),
-        "agent2_private_knowledge": mcq_result.get("agent2_private_knowledge", ""),
-        "agent_goals_mcqas": agent_goals_mcqas,
-        "agent_reasons_mcqas": agent_reasons_mcqas,
-        "agent_knowledge_mcqas": agent_knowledge_mcqas
-    })
 
     return formatted_episode
 
@@ -136,25 +174,47 @@ for sid in SOTOPIA_ALL_ENVS:
         count += 1
 
 # === 2. episode_sample.jsonl ===
-with open("episode_sample.jsonl", "w") as out_all:
-    for sid in SOTOPIA_ALL_ENVS[:5]:
-        scenario = scenario_lookup[sid]
-        candidates = episodes_by_env.get(sid, [])
-        selected_eps = random.sample(candidates, k=2)
+# with open("episode_sample.jsonl", "w") as out_all:
+#     for sid in SOTOPIA_ALL_ENVS[:5]:
+#         scenario = scenario_lookup[sid]
+#         candidates = episodes_by_env.get(sid, [])
+#         selected_eps = random.sample(candidates, k=2)
  
-        for ep in selected_eps:
-            # Step 1: Format episode with clean goals
-            formatted = format_episode_basic(ep, scenario)
-            if formatted is None:
-                continue
+#         for ep in selected_eps:
+#             # Step 1: Format episode with clean goals
+#             formatted = format_episode_basic(ep, scenario)
+#             if formatted is None:
+#                 continue
             
-            # Step 2: Generate MCQs using clean data
-            final_episode = generate_mcqs_for_formatted_episode(formatted)
-            if final_episode is None:
-                continue
+#             # Step 2: Generate requested components using clean data
+#             final_episode = generate_mcqs_for_formatted_episode(formatted)
+#             if final_episode is None:
+#                 continue
                 
-            out_all.write(json.dumps(final_episode) + "\n")
-exit()
+#             out_all.write(json.dumps(final_episode) + "\n")
+
+# # === 2. episode_hard.jsonl ===
+# with open("episode_hard.jsonl", "w") as out_hard:
+#     for sid in SOTOPIA_HARD_ENVS:
+#         if sid not in scenario_lookup:
+#             continue
+#         scenario = scenario_lookup[sid]
+#         candidates = episodes_by_env.get(sid, [])
+#         selected_eps = random.sample(candidates, k=min(2, len(candidates)))
+#         for ep in selected_eps:
+#             # Step 1: Format episode with clean goals
+#             formatted = format_episode_basic(ep, scenario)
+#             if formatted is None:
+#                 continue
+            
+#             # Step 2: Generate MCQs using clean data
+#             final_episode = generate_mcqs_for_formatted_episode(formatted)
+#             if final_episode is None:
+#                 continue
+                
+#             out_hard.write(json.dumps(final_episode) + "\n")
+
+# exit()
 # === 2. episode_all.jsonl ===
 with open("episode_all.jsonl", "w") as out_all:
     for sid in SOTOPIA_ALL_ENVS:
@@ -174,24 +234,3 @@ with open("episode_all.jsonl", "w") as out_all:
                 continue
                 
             out_all.write(json.dumps(final_episode) + "\n")
-
-# === 2. episode_hard.jsonl ===
-with open("episode_hard.jsonl", "w") as out_hard:
-    for sid in SOTOPIA_HARD_ENVS:
-        if sid not in scenario_lookup:
-            continue
-        scenario = scenario_lookup[sid]
-        candidates = episodes_by_env.get(sid, [])
-        selected_eps = random.sample(candidates, k=min(2, len(candidates)))
-        for ep in selected_eps:
-            # Step 1: Format episode with clean goals
-            formatted = format_episode_basic(ep, scenario)
-            if formatted is None:
-                continue
-            
-            # Step 2: Generate MCQs using clean data
-            final_episode = generate_mcqs_for_formatted_episode(formatted)
-            if final_episode is None:
-                continue
-                
-            out_hard.write(json.dumps(final_episode) + "\n")

@@ -2,6 +2,8 @@ import json
 import re
 from typing import Dict, Any
 import random
+import argparse
+import os
 
 from openai import OpenAI
 
@@ -11,116 +13,87 @@ class SotopiaMCQGenerator:
     def __init__(self, client=None):
         """Initialize the generator with an OpenAI client"""
         self.client = client
-        self.mcq_generation_prompt = """
-You are an expert in designing evaluation questions for social agents in simulation environments.
+ 
+        # Focused prompt: generate only reasons and reason MCQs (more constrained and grounded)
+        self.reason_generation_prompt = """
+You are an expert in social cognition and conversational analysis.
 
-You will generate a **set of multiple-choice questions (MCQs)** to evaluate agent understanding to social interaction.
+Task: Generate ONLY (1) each agent's underlying motivation (reason) and (2) two reason MCQs.
 
-Each agent should receive:
-- Goal MCQ: about the other agent’s **true social goal**
-- Reason MCQ: about the other agent’s **underlying motivation**
-- Knowledge MCQ: about the other agent’s **private information**
+Grounding and constraints:
+- Reasons must be causally tied to the agent's goal (use "because", "in order to", or "so that").
+- Reasons must be grounded in the agent's profile (personality/values/decision-making/public info) and appropriate to the relationship.
+- Reasons for Agent 1 and Agent 2 must be distinct and not paraphrases of each other.
+- Do NOT leak or invent private knowledge; use only the scenario, goals, relationship, and profile.
+- Avoid generic/vague wording (e.g., "to get along", "to be happy").
+- Style: one concise sentence (max 35 words) per reason.
 
-### Important Design Constraints:
-- The correct answer must be **clearly and uniquely correct** based on the agent's goal, value, or private knowledge.
-- Avoid distractors that are just **emotionally softened** or **diplomatic paraphrases** of the correct goal (especially for goal MCQs).
-- Make sure the distractors differ not only in **intent** but also in **commitment level** or **core behavior**.
+MCQ construction rules (STRICT):
+- Q1 asks: "What motivates Agent 2 to pursue their goal?"; Option A must be EXACTLY the same text as agent2_reason.
+- Q2 asks: "What motivates Agent 1 to pursue their goal?"; Option A must be EXACTLY the same text as agent1_reason.
+- For each question: B = the OTHER agent's reason; C = a generic/vague motivation; D = a contradictory/implausible motivation. Set correct_answer to "A".
 
-### Distractor Construction Format:
-
-#### 1. Goal MCQ:
-- **Correct answer (A)**: The agent's actual goal.
-- **B**: The other agent’s goal (to test goal confusion).
-- **C**: A plausible but incorrect goal (related to setting).
-- **D**: A generic or irrelevant goal.
-
-#### 2. Reason MCQ:
-- **Correct answer (A)**: Motivation that reflects this agent’s values and explains their goal (must align with `agentX_reason`)
-- **B**: The other agent's motivation.
-- **C**: Generic or vague motivation (e.g., "to get along").
-- **D**: Contradictory or implausible motivation (e.g., “to gain fame” when agent is shy).
-
-#### 3. Private Knowledge MCQ:
-- **Correct answer (A)**: Private belief/plan of the agent.
-- **B**: The other agent’s private belief.
-- **C**: Public/shared knowledge.
-- **D**: Incorrect or fabricated statement.
-
-===========================
+Input context:
 SCENARIO: {scenario}
-
-AGENT 1 NAME: {agent1_name}
-AGENT 2 NAME: {agent2_name}
-
 AGENT RELATIONSHIP: {agent_relationship}
-
 AGENT 1 GOAL: {agent1_goal}
 AGENT 2 GOAL: {agent2_goal}
+AGENT 1 PROFILE: {agent1_profile}
+AGENT 2 PROFILE: {agent2_profile}
 
-===========================
-
-# IMPORTANT: The `agentX_reason` fields must reflect a plausible internal motivation for each agent’s goal.
-# These will be used to construct the MCQ correct answer.
-# Make sure they are:
-# - Specific to the agent’s personality, values, or background
-# - Causally tied to the stated goal
-# - Not overly vague or philosophical (e.g., avoid "seeking peace" or "being a good person")
-# - Distinct from the partner's reasoning
-# - Should be inferable through the agent’s behavior in interaction
-
-Please output your results in the following JSON format:
-
+Output strictly in this JSON format:
 ```json
 {{
-  "agent1_reason": "Agent 1's motivation for their goal",
-  "agent2_reason": "Agent 2's motivation for their goal",
-  "agent1_private_knowledge": "Private info only Agent 1 knows",
-  "agent2_private_knowledge": "Private info only Agent 2 knows",
+  "agent1_reason": "Agent 1's motivation (<= 35 words, grounded, causal)",
+  "agent2_reason": "Agent 2's motivation (<= 35 words, grounded, causal)",
   "mcqs": {{
-    "goals": [
-      {{
-        "question": "What is Agent 2's goal in this scenario?",
-        "options": {{
-          "A": "Agent 2's actual goal.",
-          "B": "Agent 1's goal.",
-          "C": "Plausible but incorrect goal.",
-          "D": "Generic or irrelevant goal."
-        }},
-        "correct_answer": "A"
-      }},
-      {{
-        "question": "What is Agent 1's goal in this scenario?",
-        "options": {{
-          "A": "Agent 1's actual goal.",
-          "B": "Agent 2's goal.",
-          "C": "Plausible but incorrect goal.",
-          "D": "Generic or irrelevant goal."
-        }},
-        "correct_answer": "A"
-      }}
-    ],
     "reasons": [
       {{
         "question": "What motivates Agent 2 to pursue their goal?",
         "options": {{
-          "A": "Motivation for agent.",
-          "B": "Motivation that fits Agent 1, not Agent 2.",
-          "C": "Generic or vague motivation.",
-          "D": "Contradictory or implausible motivation."
+          "A": "<EXACTLY agent2_reason>",
+          "B": "<agent1_reason>",
+          "C": "<generic/vague motivation>",
+          "D": "<contradictory/implausible motivation>"
         }},
         "correct_answer": "A"
       }},
       {{
         "question": "What motivates Agent 1 to pursue their goal?",
         "options": {{
-          "A": "Motivation that reflects Agent 1's values.",
-          "B": "Motivation that fits Agent 2, not Agent 1.",
-          "C": "Generic or vague motivation.",
-          "D": "Contradictory or implausible motivation."
+          "A": "<EXACTLY agent1_reason>",
+          "B": "<agent2_reason>",
+          "C": "<generic/vague motivation>",
+          "D": "<contradictory/implausible motivation>"
         }},
         "correct_answer": "A"
       }}
-    ],
+    ]
+  }}
+}}
+```
+"""
+
+        # Focused prompt: generate only private knowledge and knowledge MCQs
+        self.knowledge_generation_prompt = """
+You are an expert in designing evaluation questions for social agents in simulation environments.
+
+Task: Only generate private knowledge for each agent and the knowledge MCQs. Do not include goal MCQs or reason MCQs.
+
+Input context:
+SCENARIO: {scenario}
+AGENT RELATIONSHIP: {agent_relationship}
+AGENT 1 PROFILE: {agent1_profile}
+AGENT 2 PROFILE: {agent2_profile}
+AGENT 1 GOAL: {agent1_goal}
+AGENT 2 GOAL: {agent2_goal}
+
+Output strictly in this JSON format:
+```json
+{{
+  "agent1_private_knowledge": "Private info only Agent 1 knows",
+  "agent2_private_knowledge": "Private info only Agent 2 knows",
+  "mcqs": {{
     "knowledge": [
       {{
         "question": "Which of the following is something only Agent 2 knows?",
@@ -145,101 +118,125 @@ Please output your results in the following JSON format:
     ]
   }}
 }}
+```
 """
 
-    def set_client(self, client):
-        """Set the OpenAI client"""
-        self.client = client
-
-    def generate_mcqs_for_sotopia(self, sotopia_data: Dict[str, Any]) -> Dict[str, Any]:
-        """Generate MCQs for a Sotopia scenario"""
+    def _call_openai(self, prompt: str, temperature: float = 0.7, model: str = "gpt-4o-mini") -> str:
         if not self.client:
-            raise ValueError("Client not set. Please call set_client() first.")
-            
-        # Extract data from sotopia format
+            self.client = OpenAI()
+        response = self.client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant that outputs strictly valid JSON."},
+                {"role": "user", "content": prompt},
+            ],
+            temperature=temperature,
+            max_tokens=2000,
+        )
+        return response.choices[0].message.content
+
+    def _extract_json(self, content: str) -> Dict[str, Any]:
+        m = re.search(r"```json\s*(.*?)\s*```", content, re.DOTALL)
+        json_str = m.group(1) if m else content.strip()
+        return json.loads(json_str)
+
+    def _shuffle_mcq_options(self, mcq_list):
+        for mcq in mcq_list:
+            options = mcq.get("options", {})
+            if not options:
+                continue
+            correct_value = options.get("A")
+            items = list(options.items())
+            random.shuffle(items)
+            new_options = {}
+            correct_key = None
+            for idx, (_k, v) in enumerate(items):
+                new_key = chr(ord('A') + idx)
+                new_options[new_key] = v
+                if v == correct_value:
+                    correct_key = new_key
+            mcq["options"] = new_options
+            if correct_key:
+                mcq["correct_answer"] = correct_key
+
+    def generate_reasons(self, sotopia_data: Dict[str, Any], temperature: float = 0.2, model: str = "gpt-4o") -> Dict[str, Any]:
         scenario = sotopia_data.get("scenario", "")
-        agent1_goal = sotopia_data.get("agent1_goal")
-        agent2_goal = sotopia_data.get("agent2_goal")
+        agent1_goal = sotopia_data.get("agent1_goal", "")
+        agent2_goal = sotopia_data.get("agent2_goal", "")
         relationship = sotopia_data.get("relationship", "")
         agent1_profile = sotopia_data.get("agent1_profile", "")
         agent2_profile = sotopia_data.get("agent2_profile", "")
 
- 
-        agent1_name = agent1_profile.split(",")[0].strip() if agent1_profile else "Agent 1"
-        agent2_name = agent2_profile.split(",")[0].strip() if agent2_profile else "Agent 2"
-
-        # Format prompt
-        prompt = self.mcq_generation_prompt.format(
+        prompt = self.reason_generation_prompt.format(
             scenario=scenario,
             agent1_goal=agent1_goal,
             agent2_goal=agent2_goal,
             agent_relationship=relationship,
-            agent1_name=agent1_name,
-            agent2_name=agent2_name
+            agent1_profile=agent1_profile,
+            agent2_profile=agent2_profile,
         )
-  
+
         try:
-            # Generate MCQs using OpenAI
-            response = self.client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {
-                        "role": "system",
-                        "content": "You are a helpful assistant that generates detailed MCQs for social scenarios.",
-                    },
-                    {"role": "user", "content": prompt},
-                ],
-                temperature=0.7,
-                max_tokens=2000,
-            )
-            
-            # Extract content
-            response_text = response.choices[0].message.content
-        
-            json_match = re.search(r"```json\s*(.*?)\s*```", response_text, re.DOTALL)
-            json_str = json_match.group(1) if json_match else response_text.strip()  
-            mcq_data = json.loads(json_str)
+            content = self._call_openai(prompt, temperature=temperature, model=model)
+            data = self._extract_json(content)
+            # Extract reasons
+            agent1_reason = (data.get("agent1_reason") or "").strip()
+            agent2_reason = (data.get("agent2_reason") or "").strip()
+            reasons = data.get("mcqs", {}).get("reasons", [])
 
-            def shuffle_mcq_options(mcq_list):
-                for mcq in mcq_list:
-                    options = mcq["options"]
-                    # Find the original correct answer value (always 'A' in the template)
-                    correct_value = options["A"]
-                    # Shuffle the options
-                    items = list(options.items())
-                    random.shuffle(items)
-                    # Assign new keys A/B/C/D
-                    new_options = {}
-                    correct_key = None
-                    for idx, (k, v) in enumerate(items):
-                        new_key = chr(ord('A') + idx)
-                        new_options[new_key] = v
-                        if v == correct_value:
-                            correct_key = new_key
-                    mcq["options"] = new_options
-                    mcq["correct_answer"] = correct_key
-            # Shuffle options for all MCQs
-            for section in ["goals", "reasons", "knowledge"]:
-                if section in mcq_data.get("mcqs", {}):
-                    shuffle_mcq_options(mcq_data["mcqs"][section])
+            # Enforce MCQ Option A alignment with generated reasons and keep A as the correct answer
+            if isinstance(reasons, list):
+                if len(reasons) >= 1 and isinstance(reasons[0], dict):
+                    opts0 = reasons[0].setdefault("options", {})
+                    opts0["A"] = agent2_reason
+                    reasons[0]["correct_answer"] = "A"
+                if len(reasons) >= 2 and isinstance(reasons[1], dict):
+                    opts1 = reasons[1].setdefault("options", {})
+                    opts1["A"] = agent1_reason
+                    reasons[1]["correct_answer"] = "A"
 
-            print(len(mcq_data.get("mcqs", {}).get("goals", [])), "goal questions generated")
-            print(len(mcq_data.get("mcqs", {}).get("reasons", [])), "reason questions generated")
-            print(len(mcq_data.get("mcqs", {}).get("knowledge", [])), "knowledge questions generated")
+            # Do NOT shuffle reasons, to preserve Option A strictness
             return {
-                "agent1_reason": mcq_data.get("agent1_reason", ""),
-                "agent2_reason": mcq_data.get("agent2_reason", ""),
-                "agent1_private_knowledge": mcq_data.get("agent1_private_knowledge", ""),
-                "agent2_private_knowledge": mcq_data.get("agent2_private_knowledge", ""),
-                "mcqs": mcq_data.get("mcqs", {"goals": [], "reasons": [], "knowledge": []})
+                "agent1_reason": agent1_reason,
+                "agent2_reason": agent2_reason,
+                "mcqs": {"reasons": reasons},
             }
-                    
         except Exception as e:
-            print(f"Error during MCQ generation: {e}")
+            print(f"Error during reason generation: {e}")
+            return {"agent1_reason": "", "agent2_reason": "", "mcqs": {"reasons": []}}
+
+    def generate_knowledge(self, sotopia_data: Dict[str, Any], temperature: float = 0.7, model: str = "gpt-4o-mini") -> Dict[str, Any]:
+        scenario = sotopia_data.get("scenario", "")
+        agent1_goal = sotopia_data.get("agent1_goal", "")
+        agent2_goal = sotopia_data.get("agent2_goal", "")
+        relationship = sotopia_data.get("relationship", "")
+        agent1_profile = sotopia_data.get("agent1_profile", "")
+        agent2_profile = sotopia_data.get("agent2_profile", "")
+
+        prompt = self.knowledge_generation_prompt.format(
+            scenario=scenario,
+            agent1_goal=agent1_goal,
+            agent2_goal=agent2_goal,
+            agent_relationship=relationship,
+            agent1_profile=agent1_profile,
+            agent2_profile=agent2_profile,
+        )
+
+        try:
+            content = self._call_openai(prompt, temperature=temperature, model=model)
+            data = self._extract_json(content)
+            knowledge = data.get("mcqs", {}).get("knowledge", [])
+            self._shuffle_mcq_options(knowledge)
             return {
-                "agent1_reason": "",
-                "agent2_reason": "",
+                "agent1_private_knowledge": data.get("agent1_private_knowledge", ""),
+                "agent2_private_knowledge": data.get("agent2_private_knowledge", ""),
+                "mcqs": {"knowledge": knowledge},
+            }
+        except Exception as e:
+            print(f"Error during knowledge generation: {e}")
+            return {
                 "agent1_private_knowledge": "",
                 "agent2_private_knowledge": "",
-                "mcqs": {"goals": [], "reasons": [], "knowledge": []}
+                "mcqs": {"knowledge": []},
             }
+
