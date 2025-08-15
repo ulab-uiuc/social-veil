@@ -79,6 +79,10 @@ def parse_args() -> argparse.Namespace:
         "--results_dir", type=str, default="social_decipher/results", 
         help="Base directory for experiment results",
     )
+    parser.add_argument(
+        "--resume", action="store_true", 
+        help="Resume an unfinished run by skipping scenarios that already have results in --results_dir",
+    )
 
     return parser.parse_args()
 
@@ -200,6 +204,56 @@ def run_experiment(episodes, experiment_config, evaluator, args):
     results_dir = experiment_config["results_dir"]
     os.makedirs(results_dir, exist_ok=True)
     
+    def _get_completed_scenarios(base_dir: str) -> set[int]:
+        completed = set()
+        try:
+            for name in os.listdir(base_dir):
+                if not name.startswith("scenario_"):
+                    continue
+                try:
+                    idx = int(name.split("_")[1])
+                except Exception:
+                    continue
+                scenario_dir = os.path.join(base_dir, name)
+                eval_path = os.path.join(scenario_dir, "eval_result.json")
+                convo_path = os.path.join(scenario_dir, "conversation_log.txt")
+                # Consider a scenario completed only if key outputs exist
+                if os.path.isfile(eval_path) and os.path.isfile(convo_path):
+                    completed.add(idx)
+        except FileNotFoundError:
+            pass
+        return completed
+    
+    def _load_all_existing_results(base_dir: str):
+        eval_results_all, mcq_logs_all = [], []
+        try:
+            # Aggregate in numeric order if possible
+            scenario_dirs = [d for d in os.listdir(base_dir) if d.startswith("scenario_")]
+            def _num(d):
+                try:
+                    return int(d.split("_")[1])
+                except Exception:
+                    return 10**9
+            for name in sorted(scenario_dirs, key=_num):
+                scenario_dir = os.path.join(base_dir, name)
+                eval_path = os.path.join(scenario_dir, "eval_result.json")
+                mcq_path = os.path.join(scenario_dir, "mcq_log.json")
+                if os.path.isfile(eval_path):
+                    try:
+                        with open(eval_path, "r") as f:
+                            eval_results_all.append(json.load(f))
+                    except Exception:
+                        pass
+                if os.path.isfile(mcq_path):
+                    try:
+                        with open(mcq_path, "r") as f:
+                            mcq_logs_all.append(json.load(f))
+                    except Exception:
+                        pass
+        except FileNotFoundError:
+            pass
+        return eval_results_all, mcq_logs_all
+    
     print(f"\n🧪 Running experiment: {experiment_config['tag']}")
     print(f"   Scenario Type: {experiment_config['scenario_type']}")
     print(f"   Communication: {experiment_config['communication_modality']}")
@@ -207,9 +261,16 @@ def run_experiment(episodes, experiment_config, evaluator, args):
     print(f"   Results: {results_dir}")
     
     eval_results, mcq_logs = [], []
+    completed = _get_completed_scenarios(results_dir) if getattr(args, "resume", False) else set()
+    if completed:
+        print(f"   Resume enabled: detected {len(completed)} completed scenario(s) in {results_dir} → will skip them")
     
     for scenario_idx, episode_data in enumerate(episodes):
-        print(f"📝 Scenario {scenario_idx + 1}/{len(episodes)}")
+        scenario_num = scenario_idx + 1
+        if scenario_num in completed:
+            print(f"⏭️  Skipping scenario {scenario_num} (already completed)")
+            continue
+        print(f"📝 Scenario {scenario_num}/{len(episodes)}")
         
         profile_a, profile_b, env, agent1_name, agent2_name, agent_reasons = build_profiles_and_env(
             episode_data, args.model, args.model_a, args.model_b, experiment_config["scenario_type"]
@@ -242,7 +303,7 @@ def run_experiment(episodes, experiment_config, evaluator, args):
         mcq_logs.append(mcq_log)
         
         # Save individual scenario results
-        scenario_dir = os.path.join(results_dir, f"scenario_{scenario_idx+1}")
+        scenario_dir = os.path.join(results_dir, f"scenario_{scenario_num}")
         os.makedirs(scenario_dir, exist_ok=True)
         
         with open(os.path.join(scenario_dir, "conversation_log.txt"), "w") as f:
@@ -256,11 +317,18 @@ def run_experiment(episodes, experiment_config, evaluator, args):
                 json.dump(mcq_log, f, indent=4)
     
     # Save aggregated results
-    with open(os.path.join(results_dir, f"{experiment_config['tag']}_eval.json"), "w") as f:
-        json.dump(eval_results, f, indent=4)
-    
-    with open(os.path.join(results_dir, f"{experiment_config['tag']}_mcq.json"), "w") as f:
-        json.dump(mcq_logs, f, indent=4)
+    if getattr(args, "resume", False):
+        # When resuming, aggregate from disk to include both previous and newly generated results
+        all_eval, all_mcq = _load_all_existing_results(results_dir)
+        with open(os.path.join(results_dir, f"{experiment_config['tag']}_eval.json"), "w") as f:
+            json.dump(all_eval, f, indent=4)
+        with open(os.path.join(results_dir, f"{experiment_config['tag']}_mcq.json"), "w") as f:
+            json.dump(all_mcq, f, indent=4)
+    else:
+        with open(os.path.join(results_dir, f"{experiment_config['tag']}_eval.json"), "w") as f:
+            json.dump(eval_results, f, indent=4)
+        with open(os.path.join(results_dir, f"{experiment_config['tag']}_mcq.json"), "w") as f:
+            json.dump(mcq_logs, f, indent=4)
     
     print(f"   ✅ {experiment_config['tag']} completed for all scenarios!")
 
