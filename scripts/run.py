@@ -68,6 +68,10 @@ def parse_args() -> argparse.Namespace:
         default="normal", help="Social scenario type to test",
     )
     parser.add_argument(
+        "--barrier_ratio", type=float, default=1.0,
+        help="For language_barrier: fraction of Agent A messages to emit in the barrier language (0..1). Default 1.0 (always)",
+    )
+    parser.add_argument(
         "--communication_modality", type=str, choices=["text_only", "action_enabled", "text_action_mix"], 
         default="text_only", help="Communication modality to test",
     )
@@ -202,6 +206,14 @@ def get_experiment_config(scenario_type, communication_modality, memory_strategy
 
 def run_experiment(episodes, experiment_config, evaluator, args):
     results_dir = experiment_config["results_dir"]
+    # If language barrier, include ratio in folder path for easy comparison
+    if experiment_config["scenario_type"] == "language_barrier":
+        try:
+            ratio = float(getattr(args, "barrier_ratio", 1.0))
+        except Exception:
+            ratio = 1.0
+        ratio_label = int(round(ratio * 100))
+
     os.makedirs(results_dir, exist_ok=True)
     
     def _get_completed_scenarios(base_dir: str) -> set[int]:
@@ -296,6 +308,7 @@ def run_experiment(episodes, experiment_config, evaluator, args):
             result=None,
             root_dir=results_dir,
             mix=experiment_config.get("mix", False),
+            barrier_ratio=(getattr(args, "barrier_ratio", 1.0) if experiment_config["scenario_type"] == "language_barrier" else None),
             memory_enabled=(experiment_config["memory_strategy"] == "on")
         )
         

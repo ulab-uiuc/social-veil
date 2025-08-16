@@ -1,6 +1,7 @@
 import json
 import os
 import random
+import math
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 from agency_swarm import Agency
@@ -30,7 +31,8 @@ def simulate_conversation(
     environment = None,
     result = None,
     root_dir = None,
-    memory_enabled: bool = False
+    memory_enabled: bool = False,
+    barrier_ratio: Optional[float] = None,
 ) -> Union[Tuple[List[str], Dict[str, Any], List[Dict[str, Any]]], Tuple[List[Dict[str, Any]], Dict[str, List[Any]]]]:
 
     output_dir = f"{root_dir}"
@@ -50,6 +52,7 @@ def simulate_conversation(
         mix=mix,
         output_dir=output_dir,
         memory_enabled=memory_enabled,
+        barrier_ratio=barrier_ratio,
     )
 
 def run_single_scenario_simulation(
@@ -66,6 +69,7 @@ def run_single_scenario_simulation(
     mix: bool = False,
     output_dir: Optional[str] = None,
     memory_enabled: bool = False,
+    barrier_ratio: Optional[float] = None,
 ) -> Tuple[List[str], Dict[str, Any], List[Dict[str, Any]]]:
   
     # Set environment for agents
@@ -97,9 +101,18 @@ def run_single_scenario_simulation(
             target_language=barrier_language, model_id=personA.profile.model_id
         )
         encryption2 = None
-        personA.set_encryption(encryption1)
         personB.set_encryption(encryption2)
-
+  
+        total_a_turns = 1 + num_turns  # initial A turn + one A response per round
+        ratio = 1.0 if barrier_ratio is None else max(0.0, min(1.0, barrier_ratio))
+        a_barrier_target = int(math.ceil(ratio * total_a_turns))
+        a_barrier_applied = 0
+        
+        # Set initial encryption for A if within target
+        if a_barrier_applied < a_barrier_target:
+            personA.set_encryption(encryption1)
+        else:
+            personA.set_encryption(None)
     else:
         barrier_language = None
 
@@ -109,6 +122,8 @@ def run_single_scenario_simulation(
     personA_message = personA.act(
         initial=True, use_action=action_enabled
     )
+    if barrier:
+        a_barrier_applied += 1
 
     if mix and isinstance(personA_message, dict):
         # Format mixed action response for logs
@@ -230,6 +245,13 @@ def run_single_scenario_simulation(
                 task_type="knowledge",
             )
 
+        # Before Agent A's next turn, set encryption based on remaining barrier budget
+        if barrier:
+            if a_barrier_applied < a_barrier_target:
+                personA.set_encryption(encryption1)
+            else:
+                personA.set_encryption(None)
+
         # Update agent A's instructions
         personA.update_instruction(
             transcript=encrypted_conversation_log,
@@ -241,6 +263,8 @@ def run_single_scenario_simulation(
         personA_message = personA.act(
             personB_message, use_action=action_enabled
         )
+        if barrier:
+            a_barrier_applied += 1
 
         if mix and isinstance(personA_message, dict):
             # Format mixed action response for logs
