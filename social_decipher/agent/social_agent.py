@@ -135,7 +135,6 @@ class SocialAgent:
         if initial:
             prompt = "Now, generate your initial message to start the conversation, try to be concise"
             response = direct_completion(self, message=prompt, use_action=use_action)
-            
             if self.mix:
                 try:
                     if isinstance(response, str):
@@ -165,25 +164,22 @@ class SocialAgent:
                             response_json = response
                             
                         original_response = response_json
-                        
+                  
                         if response_json["action_type"] == "speak":
                             # Always check if encryption should be applied
                             if self.encryption is not None:
                                 response_json["argument"] = self._encrypt_and_pinyin(response_json["argument"])
-                    
                             response_json["argument"] = chinese_to_pinyin(response_json["argument"])
-                        
+                
                         encrypted_response = response_json
+
                     except (json.JSONDecodeError, KeyError) as e:
-                        # Handle case where response is not valid JSON
                         print(f"❌ Error processing action response: {e}")
                         original_response = response
-                        # Always check if encryption should be applied
                         encrypted_response = self.encryption(response) if self.encryption is not None else response
                 else:
                     # Handle text-based communication
                     original_response = response
-                    # Always check if encryption should be applied
                     encrypted_response = self.encryption(response) if self.encryption is not None else response
                     encrypted_response = chinese_to_pinyin(encrypted_response)
                 
@@ -199,7 +195,6 @@ class SocialAgent:
                 }
             )
             return encrypted_response
-
         received = message
         # print(f"[blue]**{self.name} RECEIVED: {received}")
     

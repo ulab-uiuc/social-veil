@@ -41,7 +41,7 @@ def parse_args() -> argparse.Namespace:
         "--model_b", type=str, help="Model to use for agent B (overrides --model). For local models, use 'Qwen/Qwen2.5-7B-Instruct' and set HF_API_TOKEN",
     )
     parser.add_argument(
-        "--max_round", type=int, default=20, help="Max conversation rounds per scenario"
+        "--max_round", type=int, default=2, help="Max conversation rounds per scenario"
     )
     parser.add_argument(
         "--episode_limit", type=int, default=None, help="Limit number of episodes to process (default: all episodes)",
@@ -213,7 +213,6 @@ def run_experiment(episodes, experiment_config, evaluator, args):
         except Exception:
             ratio = 1.0
         ratio_label = int(round(ratio * 100))
-
     os.makedirs(results_dir, exist_ok=True)
     
     def _get_completed_scenarios(base_dir: str) -> set[int]:
@@ -293,7 +292,7 @@ def run_experiment(episodes, experiment_config, evaluator, args):
             experiment_config["communication_modality"]
         )
         
-        conversation_log, eval_result, mcq_log = simulate_conversation(
+        simulate_conversation(
             personA=agent1,
             personB=agent2,
             evaluator=evaluator,
@@ -312,39 +311,6 @@ def run_experiment(episodes, experiment_config, evaluator, args):
             memory_enabled=(experiment_config["memory_strategy"] == "on")
         )
         
-        eval_results.append(eval_result)
-        mcq_logs.append(mcq_log)
-        
-        # Save individual scenario results
-        scenario_dir = os.path.join(results_dir, f"scenario_{scenario_num}")
-        os.makedirs(scenario_dir, exist_ok=True)
-        
-        with open(os.path.join(scenario_dir, "conversation_log.txt"), "w") as f:
-            f.write("\n".join(conversation_log))
-        
-        with open(os.path.join(scenario_dir, "eval_result.json"), "w") as f:
-            json.dump(eval_result, f, indent=4)
-        
-        if mcq_log:
-            with open(os.path.join(scenario_dir, "mcq_log.json"), "w") as f:
-                json.dump(mcq_log, f, indent=4)
-    
-    # Save aggregated results
-    if getattr(args, "resume", False):
-        # When resuming, aggregate from disk to include both previous and newly generated results
-        all_eval, all_mcq = _load_all_existing_results(results_dir)
-        with open(os.path.join(results_dir, f"{experiment_config['tag']}_eval.json"), "w") as f:
-            json.dump(all_eval, f, indent=4)
-        with open(os.path.join(results_dir, f"{experiment_config['tag']}_mcq.json"), "w") as f:
-            json.dump(all_mcq, f, indent=4)
-    else:
-        with open(os.path.join(results_dir, f"{experiment_config['tag']}_eval.json"), "w") as f:
-            json.dump(eval_results, f, indent=4)
-        with open(os.path.join(results_dir, f"{experiment_config['tag']}_mcq.json"), "w") as f:
-            json.dump(mcq_logs, f, indent=4)
-    
-    print(f"   ✅ {experiment_config['tag']} completed for all scenarios!")
-
 def main():
     args = parse_args()
     

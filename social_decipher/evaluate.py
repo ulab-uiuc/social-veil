@@ -3,6 +3,7 @@ import re
 import os
 from openai import OpenAI
 from typing import Any
+import numpy as np
 
 import yaml
 from .utils.metrics import (get_confidence_bin, validate_confidence_consistency,
@@ -126,7 +127,6 @@ class ConversationEvaluator:
         }
 
         # --- Enhanced MCQ Metrics ---
-        import numpy as np
         def compute_mcq_metrics(mcq_logs, agent_prefix):
             metrics = {}
             for mcq_type in ["goal", "reason", "knowledge"]:

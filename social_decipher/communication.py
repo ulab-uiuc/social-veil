@@ -94,15 +94,16 @@ def run_single_scenario_simulation(
     mcq_logs = []
 
     barrier = encryption_enabled and nature_language
-
+  
     if barrier:
         barrier_language = "Chinese" 
         encryption1 = LanguageModelEncryption(
             target_language=barrier_language, model_id=personA.profile.model_id
         )
+        
         encryption2 = None
         personB.set_encryption(encryption2)
-  
+      
         total_a_turns = 1 + num_turns  # initial A turn + one A response per round
         ratio = 1.0 if barrier_ratio is None else max(0.0, min(1.0, barrier_ratio))
         a_barrier_target = int(math.ceil(ratio * total_a_turns))
@@ -136,17 +137,17 @@ def run_single_scenario_simulation(
             response_text += f'[action] {personA_message["action"]} '
         
         conversation_log.append(f"{personA.name}: {response_text.strip()}")
-        encrypted_conversation_log.append(f"{personA.name}: {response_text.strip()}")
+   
     else:
         # Keep your existing logging for non-mix formats
-        conversation_log.append(f"{personA.name}: {personA.log[-1]['response_raw']}")
-        encrypted_conversation_log.append(f"{personA.name}: {personA.log[-1]['response_encrypted']}")
+        conversation_log.append(f"{personA.name}: {personA.log[-1]['response_encrypted']}")
+ 
 
     for turn_num in range(num_turns):
         print(f"\n--- Round {turn_num+1} ---")
 
         personB.update_instruction(
-            transcript=encrypted_conversation_log,
+            transcript=conversation_log,
             turn_number=turn_num,
             use_action=action_enabled,
             mix = mix
@@ -165,18 +166,13 @@ def run_single_scenario_simulation(
                 response_text += f'[action] {personB_message["action"]} '
             
             conversation_log.append(f"{personB.name}: {response_text.strip()}")
-            encrypted_conversation_log.append(f"{personB.name}: {response_text.strip()}")
         else:
-            conversation_log.append(f"{personB.name}: {personB.log[-1]['response_raw']}")
-            encrypted_conversation_log.append(
-                f"{personB.name}: {personB.log[-1]['response_encrypted']}"
-            )
-  
+            conversation_log.append(f"{personB.name}: {personB.log[-1]['response_encrypted']}")
+
         b_left = False
         if action_enabled and isinstance(personB_message, dict) and personB_message.get("action_type") == "leave":
             b_left = True
             conversation_log.append(f"{personB.name} left the conversation")
-            encrypted_conversation_log.append(f"{personB.name} left the conversation")
             print(f"❌ {personB.name} left the conversation")
         elif not action_enabled and isinstance(personB_message, str) and "left the conversation" in personB_message.lower():
             b_left = True
@@ -217,7 +213,7 @@ def run_single_scenario_simulation(
         goal_mcq_A = personB.predict_mcq_answer(
             agent_name=personB.name,
             partner_name=personA.name,
-            transcript=encrypted_conversation_log,
+            transcript=conversation_log,
             mcqa=agent_goals_mcqas[0],
             test_prompt=evaluator.evaluation_template,
             task_type="goal",
@@ -226,7 +222,7 @@ def run_single_scenario_simulation(
         reason_mcq_A = personB.predict_mcq_answer(
             agent_name=personB.name,
             partner_name=personA.name,
-            transcript=encrypted_conversation_log,
+            transcript=conversation_log,
             mcqa=agent_reasons_mcqas[0],
             test_prompt=evaluator.evaluation_template,
             task_type="reason",
@@ -239,7 +235,7 @@ def run_single_scenario_simulation(
             knowledge_mcq_A = personB.predict_mcq_answer(
                 agent_name=personB.name,
                 partner_name=personA.name,
-                transcript=encrypted_conversation_log,
+                transcript=conversation_log,
                 mcqa=agent_knowledge_mcqas[0],
                 test_prompt=evaluator.evaluation_template,
                 task_type="knowledge",
@@ -254,7 +250,7 @@ def run_single_scenario_simulation(
 
         # Update agent A's instructions
         personA.update_instruction(
-            transcript=encrypted_conversation_log,
+            transcript=conversation_log,
             turn_number=turn_num,
             use_action=action_enabled,
             mix = mix
@@ -277,18 +273,15 @@ def run_single_scenario_simulation(
                 response_text += f'[action] {personA_message["action"]} '
             
             conversation_log.append(f"{personA.name}: {response_text.strip()}")
-            encrypted_conversation_log.append(f"{personA.name}: {response_text.strip()}")
         else:
             # Keep your existing logging for non-mix formats
-            conversation_log.append(f"{personA.name}: {personA.log[-1]['response_raw']}")
-            encrypted_conversation_log.append(f"{personA.name}: {personA.log[-1]['response_encrypted']}")
+            conversation_log.append(f"{personA.name}: {personA.log[-1]['response_encrypted']}")
         
         # Check if A decided to leave
         a_left = False
         if action_enabled and isinstance(personA_message, dict) and personA_message.get("action_type") == "leave":
             a_left = True
             conversation_log.append(f"{personA.name} left the conversation")
-            encrypted_conversation_log.append(f"{personA.name} left the conversation")
             print(f"❌ {personA.name} left the conversation")
         elif not action_enabled and isinstance(personA_message, str) and "left the conversation" in personA_message.lower():
             a_left = True
@@ -301,7 +294,7 @@ def run_single_scenario_simulation(
         goal_mcq_B = personA.predict_mcq_answer(
             agent_name=personA.name,
             partner_name=personB.name,
-            transcript=encrypted_conversation_log,
+            transcript=conversation_log,
             mcqa=agent_goals_mcqas[1],
             test_prompt=evaluator.evaluation_template,
             task_type="goal",
@@ -310,7 +303,7 @@ def run_single_scenario_simulation(
         reason_mcq_B = personA.predict_mcq_answer(
             agent_name=personA.name,
             partner_name=personB.name,
-            transcript=encrypted_conversation_log,
+            transcript=conversation_log,
             mcqa=agent_reasons_mcqas[1],
             test_prompt=evaluator.evaluation_template,
             task_type="reason",
@@ -323,7 +316,7 @@ def run_single_scenario_simulation(
             knowledge_mcq_B = personA.predict_mcq_answer(
                 agent_name=personA.name,
                 partner_name=personB.name,
-                transcript=encrypted_conversation_log,
+                transcript=conversation_log,
                 mcqa=agent_knowledge_mcqas[1],
                 test_prompt=evaluator.evaluation_template,
                 task_type="knowledge",
@@ -342,12 +335,15 @@ def run_single_scenario_simulation(
                 f"agent_2_knowledge_mcq": knowledge_mcq_B,
             }
         )
-
+    print(f"Conversation ended after {len(conversation_log)} turns.")
+    print(conversation_log)
+    
     # Evaluate conversation
     print("\n===== Evaluating Social Interaction =====")
     eval_result = evaluator.evaluate_conversation(
-        encrypted_conversation_log, agent_goals, agent_reasons, mcq_logs
+        conversation_log, agent_goals, agent_reasons, mcq_logs
     )
+    print(f"Evaluation Result: {eval_result}")
 
     if output_dir:
         scenario_output_dir = os.path.join(output_dir, f"scenario_{scenario_idx+1}")
@@ -405,10 +401,7 @@ def run_single_scenario_simulation(
                     "barrier_language": barrier_language if (encryption_enabled and nature_language and 'barrier_language' in locals()) else None
                 }
             },
-            "conversation_log": {
-                "raw_messages": conversation_log,
-                "encrypted_messages": encrypted_conversation_log
-            },
+            "conversation_log": conversation_log,
             "mcq_logs": mcq_logs
         }
 
@@ -418,81 +411,7 @@ def run_single_scenario_simulation(
 
         # Save human-readable conversation log as TXT
         with open(os.path.join(scenario_output_dir, "conversation_log.txt"), "w") as f:
-            # Write experimental context header
-            f.write("=" * 80 + "\n")
-            f.write("EXPERIMENTAL CONTEXT\n")
-            f.write("=" * 80 + "\n\n")
-            
-            # Environment information
-            f.write("📝 SCENARIO:\n")
-            f.write(f"{environment.env['scenario']}\n\n")
-            
-            # Agent profiles
-            f.write("👥 AGENT PROFILES:\n")
-            f.write(f"Agent A: {personA.name}\n")
-            f.write(f"  - Profile: {personA.profile.first_name} {personA.profile.last_name}, {personA.profile.age} years old\n")
-            f.write(f"  - Occupation: {personA.profile.occupation}\n")
-            f.write(f"  - Personality: {personA.profile.personality_and_values}\n")
-            f.write(f"  - Public Info: {personA.profile.public_info}\n")
-            f.write(f"  - Model: {personA.profile.model_id}\n\n")
-            
-            f.write(f"Agent B: {personB.name}\n")
-            f.write(f"  - Profile: {personB.profile.first_name} {personB.profile.last_name}, {personB.profile.age} years old\n")
-            f.write(f"  - Occupation: {personB.profile.occupation}\n")
-            f.write(f"  - Personality: {personB.profile.personality_and_values}\n")
-            f.write(f"  - Public Info: {personB.profile.public_info}\n")
-            f.write(f"  - Model: {personB.profile.model_id}\n\n")
-            
-            # Agent goals and reasons
-            f.write("🎯 AGENT GOALS:\n")
-            f.write(f"{personA.name}'s Goal: {agent_goals[0]}\n")
-            f.write(f"{personA.name}'s Reason: {agent_reasons[0]}\n\n")
-            f.write(f"{personB.name}'s Goal: {agent_goals[1]}\n")
-            f.write(f"{personB.name}'s Reason: {agent_reasons[1]}\n\n")
-            
-            # Private knowledge (if any)
-            agent1_private = environment.env.get("agent1_private_knowledge", "").strip()
-            agent2_private = environment.env.get("agent2_private_knowledge", "").strip()
-            if agent1_private or agent2_private:
-                f.write("🔒 PRIVATE KNOWLEDGE:\n")
-                if agent1_private:
-                    f.write(f"{personA.name}'s Private Knowledge: {agent1_private}\n")
-                if agent2_private:
-                    f.write(f"{personB.name}'s Private Knowledge: {agent2_private}\n")
-                f.write("\n")
-            
-            # Experimental configuration
-            f.write("⚙️ EXPERIMENTAL CONFIGURATION:\n")
-            f.write(f"Encryption Enabled: {encryption_enabled}\n")
-            f.write(f"Action Enabled: {action_enabled}\n")
-            f.write(f"Nature Language: {nature_language}\n")
-            f.write(f"Mix Mode: {mix}\n")
-            f.write(f"Max Rounds: {num_turns}\n")
-            if encryption_enabled and nature_language and 'barrier_language' in locals():
-                f.write(f"Barrier Language: {barrier_language}\n")
-            f.write(f"Agent Relationship: {environment.env.get('agent_relationship', 'Unknown')}\n\n")
-            
-            f.write("=" * 80 + "\n")
-            f.write("CONVERSATION LOG\n")
-            f.write("=" * 80 + "\n\n")
-            
-            # Write actual conversation
             for line in conversation_log:
-                f.write(line + "\n")
-
-        # Save encrypted conversation logs in both formats
-        with open(os.path.join(scenario_output_dir, "encrypted_conversation_log.json"), "w") as f:
-            encrypted_log_data = {
-                "experimental_context": log_data["experimental_context"],
-                "encrypted_conversation": encrypted_conversation_log
-            }
-            json.dump(encrypted_log_data, f, indent=4, ensure_ascii=False)
-
-        with open(os.path.join(scenario_output_dir, "encrypted_conversation_log.txt"), "w") as f:
-            f.write("=" * 80 + "\n")
-            f.write("ENCRYPTED CONVERSATION LOG\n")
-            f.write("=" * 80 + "\n\n")
-            for line in encrypted_conversation_log:
                 f.write(line + "\n")
 
         # Save MCQ logs in both formats
@@ -536,5 +455,4 @@ def run_single_scenario_simulation(
                 f.write("\n")
 
 
-    return conversation_log, eval_result, mcq_logs
     
