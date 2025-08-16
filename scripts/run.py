@@ -12,7 +12,7 @@ from social_decipher.agent.agent_profile import AgentProfile
 from social_decipher.agent.social_agent import SocialAgent
 from social_decipher.communication import simulate_conversation
 from social_decipher.environment.env_profile import EnvironmentProfile
-from social_decipher.evaluate import ConversationEvaluator, calculate_experiment_averages
+from social_decipher.evaluate import ConversationEvaluator
 from social_decipher.utils.model import ModelManager
 from social_decipher.utils.utils import load_env
 

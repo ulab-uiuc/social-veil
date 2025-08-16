@@ -21,19 +21,11 @@ export SCENARIO_TYPE=${SCENARIO_TYPE:-"normal"}           # normal, knowledge_ba
 export COMMUNICATION_MODALITY=${COMMUNICATION_MODALITY:-"text_only"}  # text_only, action_enabled, text_action_mix
 export MEMORY_STRATEGY=${MEMORY_STRATEGY:-"off"}          # off, on
 export BARRIER_RATIO=${BARRIER_RATIO:-1.0}                # For language_barrier: 0..1
+export BARRIER_RATIOS=${BARRIER_RATIOS:-""}              # Optional list, e.g. "0.1 0.5 0.75 1"
 TIMESTAMP=$(date +%m%d_%H%M)
 
-# If language barrier, append ratio tag to results dir for easy comparison
-if [ "$SCENARIO_TYPE" = "language_barrier" ]; then
-    # Compute integer label (e.g., 0.5 -> 50)
-    RATIO_LABEL=$(python - "$BARRIER_RATIO" <<'PY'
-import sys
-r=float(sys.argv[1])
-print(int(round(r*100)))
-PY
-)
-    export RESULTS_DIR=${RESULTS_DIR:-"results/exp_${SCENARIO_TYPE}_${COMMUNICATION_MODALITY}_mem${MEMORY_STRATEGY}_ratio${RATIO_LABEL}_${MODEL_NAME}_${DATA_TAG}_${TIMESTAMP}"}
-else
+# Set default RESULTS_DIR only for non-language-barrier; for language barrier we set per ratio below
+if [ "$SCENARIO_TYPE" != "language_barrier" ]; then
     export RESULTS_DIR=${RESULTS_DIR:-"results/exp_${SCENARIO_TYPE}_${COMMUNICATION_MODALITY}_mem${MEMORY_STRATEGY}_${MODEL_NAME}_${DATA_TAG}_${TIMESTAMP}"}
 fi
 
@@ -60,22 +52,47 @@ fi
 echo "✅ vLLM server is running"
 echo ""
 
-# Run the experiment
 echo "Starting experiment..."
-EXTRA_ARGS=""
-if [ "$SCENARIO_TYPE" = "language_barrier" ]; then
-    EXTRA_ARGS="$EXTRA_ARGS --barrier_ratio $BARRIER_RATIO"
-fi
 
-CUDA_VISIBLE_DEVICES=$GPU VLLM_PORT=$VLLM_PORT python scripts/run.py \
-    --model_a $GLOBAL_MODEL_A \
-    --model_b $GLOBAL_MODEL_B \
-    --episodes_file $DATA_NAME\
-    --scenario_type $SCENARIO_TYPE \
-    --communication_modality $COMMUNICATION_MODALITY \
-    --memory_strategy $MEMORY_STRATEGY \
-    --results_dir $RESULTS_DIR \
-    $EXTRA_ARGS
+if [ "$SCENARIO_TYPE" = "language_barrier" ]; then
+    # Determine ratios to sweep: prefer BARRIER_RATIOS if provided; else single BARRIER_RATIO; else default set
+    if [ -n "$BARRIER_RATIOS" ]; then
+        RATIOS="$BARRIER_RATIOS"
+    elif [ -n "$BARRIER_RATIO" ]; then
+        RATIOS="$BARRIER_RATIO"
+    else
+        RATIOS="0.1 0.5 0.75 1"
+    fi
+
+    for R in $RATIOS; do
+        echo "\n➡️  Running language barrier with ratio=$R"
+        RATIO_LABEL=$(python - "$R" <<'PY'
+import sys
+r=float(sys.argv[1])
+print(int(round(r*100)))
+PY
+)
+        RUN_RESULTS_DIR=${RESULTS_DIR:-"results"}/exp_${SCENARIO_TYPE}_${COMMUNICATION_MODALITY}_mem${MEMORY_STRATEGY}_ratio${RATIO_LABEL}_${MODEL_NAME}_${DATA_TAG}_${TIMESTAMP}
+        CUDA_VISIBLE_DEVICES=$GPU VLLM_PORT=$VLLM_PORT python scripts/run.py \
+            --model_a $GLOBAL_MODEL_A \
+            --model_b $GLOBAL_MODEL_B \
+            --episodes_file $DATA_NAME\
+            --scenario_type $SCENARIO_TYPE \
+            --communication_modality $COMMUNICATION_MODALITY \
+            --memory_strategy $MEMORY_STRATEGY \
+            --results_dir $RUN_RESULTS_DIR \
+            --barrier_ratio $R
+    done
+else
+    CUDA_VISIBLE_DEVICES=$GPU VLLM_PORT=$VLLM_PORT python scripts/run.py \
+        --model_a $GLOBAL_MODEL_A \
+        --model_b $GLOBAL_MODEL_B \
+        --episodes_file $DATA_NAME\
+        --scenario_type $SCENARIO_TYPE \
+        --communication_modality $COMMUNICATION_MODALITY \
+        --memory_strategy $MEMORY_STRATEGY \
+        --results_dir $RESULTS_DIR
+fi
 
 echo ""
 echo "✅ Experiment completed!" 
