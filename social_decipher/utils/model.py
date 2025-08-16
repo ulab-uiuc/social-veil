@@ -145,6 +145,17 @@ class ModelManager:
     ]
 
     @classmethod
+    def _normalize_model_id(cls, model_id: str) -> str:
+        """Normalize model id for capability/provider lookup.
+
+        For HF-style ids like "org/model", keep the full id only for TinyLlama
+        (which is explicitly listed). Otherwise use the model suffix for lookup.
+        """
+        if "/" in model_id and not model_id.startswith("TinyLlama/"):
+            return model_id.split("/")[-1]
+        return model_id
+
+    @classmethod
     def get_openai_client(cls):
         """Get or initialize the OpenAI client"""
         if cls._openai_client is None:
@@ -185,8 +196,7 @@ class ModelManager:
 
     @classmethod
     def can_model_understand_language(cls, model_id: str, language: str) -> bool:
-        if "/" in model_id and not model_id.startswith("TinyLlama/"):
-            model_id = model_id.split("/")[1]
+        model_id = cls._normalize_model_id(model_id)
 
         supported_languages = cls.MODEL_CAPABILITIES.get(model_id, {}).get(
             "languages", []
@@ -198,8 +208,7 @@ class ModelManager:
     def translate_text(
         cls, text: str, source_language: str, target_language: str, model_id: str
     ) -> str:
-        if "/" in model_id and not model_id.startswith("TinyLlama/"):
-            model_id = model_id.split("/")[1]
+        model_id = cls._normalize_model_id(model_id)
 
         model_info = cls.MODEL_PROVIDERS.get(model_id, {})
         provider = model_info.get("provider", "openai")
@@ -297,16 +306,8 @@ class ModelManager:
 
     @classmethod
     def list_available_pairs(cls):
-        """List all available language barrier pairs"""
+        """List all available language barrier pairs (by index)."""
         print("\n=== Available Language Barrier Pairs ===")
-
-        # First list the named pairs for easy reference
-        print("\nNamed Pairs (use with --pair parameter):")
-        for name, index in cls.NAMED_PAIRS.items():
-            model1, model2, language = cls.LANGUAGE_BARRIER_PAIRS[index]
-            print(f"  '{name}': {model1} <-> {model2} ({language})")
-
-        # Then list all pairs by index
         print("\nAll Pairs (use index with --pair parameter):")
         for idx, (model1, model2, language) in enumerate(cls.LANGUAGE_BARRIER_PAIRS):
             model1_understands = cls.can_model_understand_language(model1, language)
