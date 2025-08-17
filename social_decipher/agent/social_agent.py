@@ -142,15 +142,13 @@ class SocialAgent:
                     else:
                         response_json = response
                         
-                    original_response = response_json
+                    # Preserve original before any transformation
+                    original_response = json.loads(json.dumps(response_json))
                
-                    # Process spoken component if present
-                    if response_json.get("speak"):
-                        if self.encryption is not None:
-                            response_json["speak"] = self._encrypt_and_pinyin(response_json["speak"])
-                        response_json["speak"] = chinese_to_pinyin(response_json["speak"])
-                    
-                    encrypted_response = response_json
+                    # Process spoken component if present (only if encryption is set)
+                    encrypted_response = json.loads(json.dumps(response_json))
+                    if encrypted_response.get("speak") and self.encryption is not None:
+                        encrypted_response["speak"] = self._encrypt_and_pinyin(encrypted_response["speak"])
                 except (json.JSONDecodeError, KeyError) as e:
                     print(f"❌ Error processing mixed action response: {e}")
                     original_response = response
@@ -163,16 +161,13 @@ class SocialAgent:
                         else:
                             response_json = response
                             
-                        original_response = response_json
-                  
-                        if response_json["action_type"] == "speak":
-                            # Always check if encryption should be applied
-                            if self.encryption is not None:
-                                response_json["argument"] = self._encrypt_and_pinyin(response_json["argument"])
-                            response_json["argument"] = chinese_to_pinyin(response_json["argument"])
+                        # Preserve original
+                        original_response = json.loads(json.dumps(response_json))
+                        encrypted_response = json.loads(json.dumps(response_json))
+                        
+                        if encrypted_response.get("action_type") == "speak" and self.encryption is not None:
+                            encrypted_response["argument"] = self._encrypt_and_pinyin(encrypted_response["argument"])
                 
-                        encrypted_response = response_json
-
                     except (json.JSONDecodeError, KeyError) as e:
                         print(f"❌ Error processing action response: {e}")
                         original_response = response
@@ -181,7 +176,6 @@ class SocialAgent:
                     # Handle text-based communication
                     original_response = response
                     encrypted_response = self.encryption(response) if self.encryption is not None else response
-                    encrypted_response = chinese_to_pinyin(encrypted_response)
                 
             if self.encryption is not None:
                 print(f"🔐 {self.name} (encrypted): {str(encrypted_response)[:100]}{'...' if len(str(encrypted_response)) > 100 else ''}")
@@ -228,14 +222,13 @@ class SocialAgent:
                 else:
                     response_json = response
                     
-                original_response = response_json
+                original_response = json.loads(json.dumps(response_json))
                 
-                # Apply encryption to spoken component if present
-                if response_json.get("speak") and self.encryption is not None:
-                    response_json["speak"] = self._encrypt_and_pinyin(response_json["speak"])
-                    response_json["speak"] = chinese_to_pinyin(response_json["speak"])
+                # Apply encryption to spoken component if present (only if encryption is set)
+                encrypted_response = json.loads(json.dumps(response_json))
+                if encrypted_response.get("speak") and self.encryption is not None:
+                    encrypted_response["speak"] = self._encrypt_and_pinyin(encrypted_response["speak"])
                 
-                encrypted_response = response_json
             except (json.JSONDecodeError, KeyError) as e:
                 print(f"❌ Error processing mixed action response: {e}")
                 original_response = response
@@ -265,28 +258,22 @@ class SocialAgent:
                     else:
                         response_json = response
                         
-                    original_response = response_json
+                    original_response = json.loads(json.dumps(response_json))
+                    encrypted_response = json.loads(json.dumps(response_json))
                     
-                    if response_json["action_type"] == "speak":
-                        # Always check if encryption should be applied
-                        if self.encryption is not None:
-                            response_json["argument"] = self._encrypt_and_pinyin(response_json["argument"])
-                        response_json["argument"] = chinese_to_pinyin(response_json["argument"])
+                    if encrypted_response.get("action_type") == "speak" and self.encryption is not None:
+                        encrypted_response["argument"] = self._encrypt_and_pinyin(encrypted_response["argument"])
                     
-                    encrypted_response = response_json
                 except (json.JSONDecodeError, KeyError) as e:
                     # Handle case where response is not valid JSON
                     print(f"❌ Error processing action response: {e}")
                     original_response = response
-                    # Always check if encryption should be applied
                     encrypted_response = self.encryption(response) if self.encryption is not None else response
             else:
                 # Handle text-based communication
                 response = direct_completion(self, message=message)
                 original_response = response
-                # Always check if encryption should be applied
                 encrypted_response = self.encryption(response) if self.encryption is not None else response
-                encrypted_response = chinese_to_pinyin(encrypted_response)
             
         print(f"💬 {self.name}: {str(original_response)[:100]}{'...' if len(str(original_response)) > 100 else ''}")
         
