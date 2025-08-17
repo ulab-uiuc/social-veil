@@ -2,6 +2,7 @@ import json
 import os
 import random
 import math
+import re
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 from agency_swarm import Agency
@@ -72,6 +73,9 @@ def run_single_scenario_simulation(
     barrier_ratio: Optional[float] = None,
 ) -> Tuple[List[str], Dict[str, Any], List[Dict[str, Any]]]:
   
+    # Optional debugging
+    DEBUG_BARRIER = os.environ.get("BARRIER_DEBUG", "0") == "1"
+
     # Set environment for agents
     personA.env = environment
     personB.env = environment
@@ -90,57 +94,103 @@ def run_single_scenario_simulation(
 
     # Initialize conversation logs
     conversation_log = []
-    encrypted_conversation_log = []
     mcq_logs = []
 
     barrier = encryption_enabled and nature_language
   
     if barrier:
         barrier_language = "Chinese" 
-        encryption1 = LanguageModelEncryption(
-            target_language=barrier_language, model_id=personA.profile.model_id
-        )
-        
-        encryption2 = None
-        personB.set_encryption(encryption2)
+        # Switch to instruction + masking; disable translation-based encryption
+        personA.set_encryption(None)
+        personB.set_encryption(None)
       
         total_a_turns = 1 + num_turns  # initial A turn + one A response per round
         ratio = 1.0 if barrier_ratio is None else max(0.0, min(1.0, barrier_ratio))
         a_barrier_target = int(math.ceil(ratio * total_a_turns))
         a_barrier_applied = 0
-        
-        # Set initial encryption for A if within target
-        if a_barrier_applied < a_barrier_target:
-            personA.set_encryption(encryption1)
-        else:
-            personA.set_encryption(None)
+        # Barrier-language instruction preface to bias A output in Chinese
+        barrier_preface = (
+            f"IMPORTANT: During this phase, respond in {barrier_language} only."
+        )
+        if DEBUG_BARRIER:
+            print(f"[DBG] Barrier active: ratio={ratio}, total_a_turns={total_a_turns}, target={a_barrier_target}")
     else:
         barrier_language = None
+
+    # Helpers to normalize and mask
+    def _to_str(val: Any) -> str:
+        if isinstance(val, (dict, list)):
+            try:
+                return json.dumps(val, ensure_ascii=False)
+            except Exception:
+                return str(val)
+        return str(val)
+
+    def _mask_non_english(text: str) -> str:
+        if text is None:
+            return ""
+        # Replace contiguous CJK blocks with <UNK>
+        return re.sub(r"[\u3400-\u4dbf\u4e00-\u9fff\uF900-\uFAFF]+", "<UNK>", text)
+
+    def _deliver_masked(raw_obj: Any, use_action_flag: bool, mix_flag: bool) -> str:
+        """Return the delivered content string with non-English segments masked."""
+        try:
+            if isinstance(raw_obj, dict):
+                obj = dict(raw_obj)
+                if mix_flag and "speak" in obj and isinstance(obj.get("speak"), str):
+                    obj["speak"] = _mask_non_english(obj.get("speak", ""))
+                    return json.dumps(obj, ensure_ascii=False)
+                if use_action_flag and obj.get("action_type") == "speak":
+                    obj["argument"] = _mask_non_english(obj.get("argument", ""))
+                    return json.dumps(obj, ensure_ascii=False)
+                return _mask_non_english(_to_str(obj))
+            if isinstance(raw_obj, str):
+                s = raw_obj.strip()
+                if s.startswith("{") and s.endswith("}"):
+                    parsed = json.loads(s)
+                    return _deliver_masked(parsed, use_action_flag, mix_flag)
+                return _mask_non_english(s)
+            return _mask_non_english(_to_str(raw_obj))
+        except Exception:
+            return _mask_non_english(_to_str(raw_obj))
 
     print(f"🌐 Using agent profile models: {personA.name}({personA.profile.model_id}) ↔ {personB.name}({personB.profile.model_id})")
 
     # First message from agent A - using the agent's act method directly
+    if barrier and a_barrier_applied < a_barrier_target:
+        # Prepend language preface for this turn
+        personA.instructions = barrier_preface + "\n\n" + personA.instructions
+        if DEBUG_BARRIER:
+            print(f"[DBG] A-turn#1 preface injected")
     personA_message = personA.act(
         initial=True, use_action=action_enabled
     )
     if barrier:
-        a_barrier_applied += 1
-
-    if mix and isinstance(personA_message, dict):
-        # Format mixed action response for logs
-        response_text = ""
-        if personA_message.get("speak"):
-            response_text += f'says: "{personA_message["speak"]}" '
-        if personA_message.get("nonverbal"):
-            response_text += f'[nonverbal] {personA_message["nonverbal"]} '
-        if personA_message.get("action"):
-            response_text += f'[action] {personA_message["action"]} '
-        
-        conversation_log.append(f"{personA.name}: {response_text.strip()}")
-   
+        raw_initial = personA.log[-1].get('response_raw')
+        delivered_text = _deliver_masked(raw_initial, action_enabled, mix) if a_barrier_applied < a_barrier_target else _to_str(raw_initial)
+        if DEBUG_BARRIER:
+            print(f"[DBG] A-turn#1 masked={a_barrier_applied < a_barrier_target} raw='{_to_str(raw_initial)[:120]}' delivered='{delivered_text[:120]}'")
+        conversation_log.append(f"{personA.name}: {delivered_text}")
+        # Feed delivered text to B
+        personA_message = delivered_text
+        if a_barrier_applied < a_barrier_target:
+            a_barrier_applied += 1
     else:
-        # Keep your existing logging for non-mix formats
-        conversation_log.append(f"{personA.name}: {personA.log[-1]['response_encrypted']}")
+        if mix and isinstance(personA_message, dict):
+            # Format mixed action response for logs
+            response_text = ""
+            if personA_message.get("speak"):
+                response_text += f'says: "{personA_message["speak"]}" '
+            if personA_message.get("nonverbal"):
+                response_text += f'[nonverbal] {personA_message["nonverbal"]} '
+            if personA_message.get("action"):
+                response_text += f'[action] {personA_message["action"]} '
+            
+            conversation_log.append(f"{personA.name}: {response_text.strip()}")
+   
+        else:
+            # Keep your existing logging for non-mix formats
+            conversation_log.append(f"{personA.name}: {personA.log[-1]['response_encrypted']}")
  
 
     for turn_num in range(num_turns):
@@ -241,12 +291,11 @@ def run_single_scenario_simulation(
                 task_type="knowledge",
             )
 
-        # Before Agent A's next turn, set encryption based on remaining barrier budget
-        if barrier:
-            if a_barrier_applied < a_barrier_target:
-                personA.set_encryption(encryption1)
-            else:
-                personA.set_encryption(None)
+        # Before Agent A's next turn, add barrier preface if still in barrier window
+        if barrier and (a_barrier_applied < a_barrier_target):
+            personA.instructions = barrier_preface + "\n\n" + personA.instructions
+            if DEBUG_BARRIER:
+                print(f"[DBG] A-turn#{a_barrier_applied+1} preface injected")
 
         # Update agent A's instructions
         personA.update_instruction(
@@ -260,7 +309,8 @@ def run_single_scenario_simulation(
             personB_message, use_action=action_enabled
         )
         if barrier:
-            a_barrier_applied += 1
+            raw_a = personA.log[-1].get('response_raw')
+            delivered_text = _deliver_masked(raw_a, action_enabled, mix) if a_barrier_applied < a_barrier_target else _to_str(raw_a)
 
         if mix and isinstance(personA_message, dict):
             # Format mixed action response for logs
@@ -274,8 +324,17 @@ def run_single_scenario_simulation(
             
             conversation_log.append(f"{personA.name}: {response_text.strip()}")
         else:
-            # Keep your existing logging for non-mix formats
-            conversation_log.append(f"{personA.name}: {personA.log[-1]['response_encrypted']}")
+            # Keep your existing logging for non-mix formats (with masking during barrier)
+            if barrier:
+                if DEBUG_BARRIER:
+                    print(f"[DBG] A-turn#{a_barrier_applied+1} masked={a_barrier_applied < a_barrier_target} raw='{_to_str(raw_a)[:120]}' delivered='{delivered_text[:120]}'")
+                conversation_log.append(f"{personA.name}: {delivered_text}")
+                # Feed delivered content to B
+                personA_message = delivered_text
+                if a_barrier_applied < a_barrier_target:
+                    a_barrier_applied += 1
+            else:
+                conversation_log.append(f"{personA.name}: {personA.log[-1]['response_encrypted']}")
         
         # Check if A decided to leave
         a_left = False
@@ -335,15 +394,12 @@ def run_single_scenario_simulation(
                 f"agent_2_knowledge_mcq": knowledge_mcq_B,
             }
         )
-    print(f"Conversation ended after {len(conversation_log)} turns.")
-    print(conversation_log)
     
     # Evaluate conversation
     print("\n===== Evaluating Social Interaction =====")
     eval_result = evaluator.evaluate_conversation(
         conversation_log, agent_goals, agent_reasons, mcq_logs
     )
-    print(f"Evaluation Result: {eval_result}")
 
     if output_dir:
         scenario_output_dir = os.path.join(output_dir, f"scenario_{scenario_idx+1}")
@@ -453,6 +509,8 @@ def run_single_scenario_simulation(
                     f.write(f"{personB.name} Knowledge MCQ: {knowledge_mcq.get('answer', 'N/A')} (confidence: {knowledge_mcq.get('confidence', 0.0):.2f})\n")
                 
                 f.write("\n")
+
+    return conversation_log, eval_result, mcq_logs
 
 
     
