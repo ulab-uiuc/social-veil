@@ -20,10 +20,9 @@ social_task_instructions: |
   Note that {agent_name}'s goal is only visible to you.
   You should try your best to achieve {agent_name}'s goal in a way that aligns with your personality traits and values.
   Additionally, maintain naturalness and readability (e.g., don't repeat what others have already said).
+  
+  Here is the history of the conversation:
   {history}
-
-  Memory from previous interactions with {partner_name}:
-  {memory_context}
 
   Here is the context of this interaction:
   Scenario: {scenario}
@@ -76,6 +75,8 @@ social_task_instructions_action: |
   Note that {agent_name}'s goal is only visible to you.
   You should try your best to achieve {agent_name}'s goal in a way that aligns with your personality traits and values.
   Additionally, maintain naturalness and readability (e.g., don't repeat what others have already said).
+
+  Here is the history of the conversation: d
   {history}
 
   Here is the context of this interaction:
