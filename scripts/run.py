@@ -27,10 +27,8 @@ os.environ["OPENAI_API_KEY"] = _config.get("OPENAI_API_KEY")
 os.environ["HF_API_TOKEN"] = _config.get("HF_API_TOKEN")
 os.environ["MISTRAL_API_KEY"] = _config.get("MISTRAL_API_KEY")
 
-
-
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Run social agent simulation with 3×3×2 factorial design")
+    parser = argparse.ArgumentParser(description="Run social agent simulation: baseline + three barrier variants (semantic/cultural/emotional)")
     parser.add_argument(
         "--model", type=str, default="gpt-4o", help="Model to use for conversation evaluation",
     )
@@ -47,32 +45,17 @@ def parse_args() -> argparse.Namespace:
         "--episode_limit", type=int, default=None, help="Limit number of episodes to process (default: all episodes)",
     )
     parser.add_argument(
-        "--pair", type=str, default="0", help="Language barrier pair to use (index number or named pair) - fallback if models not specified",
-    )
-    parser.add_argument(
-        "--list_pairs", action="store_true", help="List available language barrier pairs and exit",
-    )
-    parser.add_argument(
         "--list_models", action="store_true", help="List available models for agent configuration and exit",
     )
     parser.add_argument(
         "--memory_path", type=str, default="", help="Path to load agent memories from (optional)",
     )
     parser.add_argument(
-        "--episodes_file", type=str, default="data/episode_sample.jsonl", 
+        "--episodes_file", type=str, default="data/episode_original.jsonl", 
         help="Path to the pre-processed episode JSONL file",
     )
-
     parser.add_argument(
-        "--scenario_type", type=str, choices=["normal", "language_barrier", "knowledge_barrier"], 
-        default="normal", help="Social scenario type to test",
-    )
-    parser.add_argument(
-        "--barrier_ratio", type=float, default=1.0,
-        help="For language_barrier: fraction of Agent A messages to emit in the barrier language (0..1). Default 1.0 (always)",
-    )
-    parser.add_argument(
-        "--communication_modality", type=str, choices=["text_only", "action_enabled", "text_action_mix"], 
+        "--communication_modality", type=str, choices=["text_only", "action_enabled"], 
         default="text_only", help="Communication modality to test",
     )
     parser.add_argument(
@@ -92,10 +75,21 @@ def parse_args() -> argparse.Namespace:
 
 
 def load_episode_jsonl(path):
-    with open(path, 'r') as f:
+    with open(path, 'r', encoding='utf-8') as f:
         return [json.loads(line) for line in f if line.strip()]
 
-def build_profile_from_episode_data(episode_data, agent_idx, model_id, scenario_type):
+def load_episodes(path):
+    """Load episodes from either JSONL (one JSON per line) or JSON array file."""
+    if path.lower().endswith('.jsonl'):
+        return load_episode_jsonl(path)
+    # JSON array fallback
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+        if isinstance(data, list):
+            return data
+        raise ValueError(f"Unsupported JSON structure in {path}; expected a list of episodes.")
+
+def build_profile_from_episode_data(episode_data, agent_idx, model_id, scenario_type=None):
     agent_profile_data = episode_data["agent_profiles"][agent_idx]
     
     # Handle private knowledge based on scenario type
@@ -114,7 +108,7 @@ def build_profile_from_episode_data(episode_data, agent_idx, model_id, scenario_
     
     return AgentProfile.from_dict(agent_profile_data, model_id)
 
-def build_profiles_and_env(episode_data, model_id, model_a=None, model_b=None, scenario_type="normal"):
+def build_profiles_and_env(episode_data, model_id, model_a=None, model_b=None, scenario_type=None):
     """Build agent profiles with custom model configuration."""
     # Use custom models if specified, otherwise use the default model
     agent_a_model = model_a if model_a else model_id
@@ -134,7 +128,7 @@ def build_profiles_and_env(episode_data, model_id, model_a=None, model_b=None, s
     
     return profile_a, profile_b, env, agent1_name, agent2_name, agent_reasons
 
-def create_environment_from_episode(episode_data, scenario_type):
+def create_environment_from_episode(episode_data, scenario_type=None):
     return EnvironmentProfile(
         scenario=episode_data["scenario"],
         agent_goals=episode_data["agent_goals"],
@@ -151,68 +145,37 @@ def create_agents(profile_a, profile_b, env, agent1_name, agent2_name, communica
     # Map communication modality to agent parameters
     if communication_modality == "text_only":
         use_action = False
-        mix = False
     elif communication_modality == "action_enabled":
         use_action = True
-        mix = False
-    else:  # text_action_mix
-        use_action = True
-        mix = True
+
     
-    agent1 = SocialAgent(agent1_name, profile_a, profile_b, env, 0, use_action=use_action, mix=mix)
-    agent2 = SocialAgent(agent2_name, profile_b, profile_a, env, 1, use_action=use_action, mix=mix)
+    agent1 = SocialAgent(agent1_name, profile_a, profile_b, env, 0, use_action=use_action)
+    agent2 = SocialAgent(agent2_name, profile_b, profile_a, env, 1, use_action=use_action)
     return agent1, agent2
 
-def get_experiment_config(scenario_type, communication_modality, memory_strategy, results_dir):
+def get_experiment_config(communication_modality, memory_strategy, results_dir):
     tag_parts = []
-    tag_parts.append(scenario_type)
     tag_parts.append(communication_modality)
     tag_parts.append(memory_strategy)
     tag = "_".join(tag_parts)
     
-    # Map scenario type to encryption/nature_language settings
-    if scenario_type == "normal":
-        encryption_enabled = False
-        nature_language = False
-    elif scenario_type == "language_barrier":
-        encryption_enabled = True
-        nature_language = True
-    else:  # knowledge_barrier
-        encryption_enabled = False
-        nature_language = False
-    
     # Map communication modality to action settings
     if communication_modality == "text_only":
         use_action = False
-        mix = False
     elif communication_modality == "action_enabled":
         use_action = True
-        mix = False
-    else:  # text_action_mix
-        use_action = True
-        mix = True
+
     
     return {
         "tag": tag,
         "results_dir": results_dir,
-        "scenario_type": scenario_type,
         "communication_modality": communication_modality,
         "memory_strategy": memory_strategy,
-        "encryption_enabled": encryption_enabled,
         "use_action": use_action,
-        "nature_language": nature_language,
-        "mix": mix
     }
 
-def run_experiment(episodes, experiment_config, evaluator, args):
-    results_dir = experiment_config["results_dir"]
-    # If language barrier, include ratio in folder path for easy comparison
-    if experiment_config["scenario_type"] == "language_barrier":
-        try:
-            ratio = float(getattr(args, "barrier_ratio", 1.0))
-        except Exception:
-            ratio = 1.0
-        ratio_label = int(round(ratio * 100))
+def run_experiment(episodes, experiment_config, evaluator, args, mode_tag: str):
+    results_dir = os.path.join(experiment_config["results_dir"], f"mode_{mode_tag}")
     os.makedirs(results_dir, exist_ok=True)
     
     def _get_completed_scenarios(base_dir: str) -> set[int]:
@@ -266,7 +229,7 @@ def run_experiment(episodes, experiment_config, evaluator, args):
         return eval_results_all, mcq_logs_all
     
     print(f"\n🧪 Running experiment: {experiment_config['tag']}")
-    print(f"   Scenario Type: {experiment_config['scenario_type']}")
+    print(f"   Mode: {mode_tag}")
     print(f"   Communication: {experiment_config['communication_modality']}")
     print(f"   Memory: {experiment_config['memory_strategy']}")
     print(f"   Results: {results_dir}")
@@ -284,7 +247,7 @@ def run_experiment(episodes, experiment_config, evaluator, args):
         print(f"📝 Scenario {scenario_num}/{len(episodes)}")
         
         profile_a, profile_b, env, agent1_name, agent2_name, agent_reasons = build_profiles_and_env(
-            episode_data, args.model, args.model_a, args.model_b, experiment_config["scenario_type"]
+            episode_data, args.model, args.model_a, args.model_b, None
         )
         
         agent1, agent2 = create_agents(
@@ -297,26 +260,20 @@ def run_experiment(episodes, experiment_config, evaluator, args):
             personB=agent2,
             evaluator=evaluator,
             max_rounds=args.max_round,
-            encryption_enabled=experiment_config["encryption_enabled"],
+            encryption_enabled=False,
             action_enabled=experiment_config["use_action"],
-            nature_language=experiment_config["nature_language"],
+            nature_language=False,
             output_suffix=f"{experiment_config['tag']}_scenario_{scenario_idx+1}",
             scenario_index=scenario_idx,
-            pair=args.pair,
+            pair="0",
             environment=env,
             result=None,
             root_dir=results_dir,
-            mix=experiment_config.get("mix", False),
-            barrier_ratio=(getattr(args, "barrier_ratio", 1.0) if experiment_config["scenario_type"] == "language_barrier" else None),
             memory_enabled=(experiment_config["memory_strategy"] == "on")
         )
         
 def main():
     args = parse_args()
-    
-    if args.list_pairs:
-        ModelManager.list_available_pairs()
-        return
     
     if args.list_models:
         ModelManager.list_available_models()
@@ -328,7 +285,7 @@ def main():
     print(f"   Agent B: {args.model_b}")
     print()
     
-    episodes = load_episode_jsonl(args.episodes_file)
+    episodes = load_episodes(args.episodes_file)
     print(f"Loaded {len(episodes)} episodes from {args.episodes_file}")
     
     # Apply episode limit if specified
@@ -340,13 +297,44 @@ def main():
 
     # Run single experiment based on specified parameters
     experiment_config = get_experiment_config(
-        args.scenario_type, 
         args.communication_modality, 
         args.memory_strategy, 
         args.results_dir
     )
     
-    run_experiment(episodes, experiment_config, evaluator, args)
+    semantic_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_semantic.json"))
+    cultural_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_cultural.json"))
+    emotional_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_emotional.json"))
+
+    need_generate = not (os.path.isfile(semantic_path) and os.path.isfile(cultural_path) and os.path.isfile(emotional_path))
+    if need_generate:
+        print("🛠️ Generating augmented barrier episodes (semantic/cultural/emotional)...")
+        bc = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "barrier_creation.py"))
+        os.system(f"python {bc} --mode augment --input_episodes {args.episodes_file} --out_semantic {semantic_path} --out_cultural {cultural_path} --out_emotional {emotional_path}")
+
+    def load_json(path):
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception:
+            return []
+
+    episodes_semantic = load_json(semantic_path)
+    episodes_cultural = load_json(cultural_path)
+    episodes_emotional = load_json(emotional_path)
+
+    # Run baseline then each barrier set
+    print("\n▶️ Running baseline (original episodes)...")
+    run_experiment(episodes, experiment_config, evaluator, args, mode_tag="baseline")
+
+    print("\n▶️ Running semantic barrier episodes...")
+    run_experiment(episodes_semantic, experiment_config, evaluator, args, mode_tag="semantic")
+
+    print("\n▶️ Running cultural barrier episodes...")
+    run_experiment(episodes_cultural, experiment_config, evaluator, args, mode_tag="cultural")
+
+    print("\n▶️ Running emotional barrier episodes...")
+    run_experiment(episodes_emotional, experiment_config, evaluator, args, mode_tag="emotional")
 
 if __name__ == "__main__":
     main()

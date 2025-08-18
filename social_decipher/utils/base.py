@@ -353,10 +353,18 @@ def local_model_completion(model_id, system_message, message, use_action=False):
         except Exception as e:
             print(f"   ❌ Generate call failed: {e}")
             print(f"   ❌ Generate error type: {type(e)}")
+            return json.dumps({"action_type": "speak", "argument": "I'm having trouble responding right now."}) if use_action else "I'm having trouble responding right now."
 
-        # Format response for action if needed
-        if use_action and not (response.startswith("{") and response.endswith("}")):
-            response = json.dumps({"action_type": "speak", "argument": response})
+        # Sanitize noisy multi-block output for action mode
+        sanitized = _sanitize_first_turn(response, use_action)
+        if use_action:
+            if isinstance(sanitized, dict):
+                return json.dumps(sanitized, ensure_ascii=False)
+            # If it's still a string and not a clean JSON, wrap it
+            s = sanitized.strip()
+            if not (s.startswith("{") and s.endswith("}")):
+                return json.dumps({"action_type": "speak", "argument": s}, ensure_ascii=False)
+            return s
         
         return response
         

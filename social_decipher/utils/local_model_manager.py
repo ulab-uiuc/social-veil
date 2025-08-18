@@ -117,7 +117,9 @@ class LocalModelManager:
             "messages": messages,
             "temperature": 0.3,  # Fixed lower temperature
             "max_tokens": min(max_new_tokens, 256),  # Cap at 256 tokens
-            "stream": False
+            "stream": False,
+            # Add stop sequences to avoid multi-turn/role echoing artifacts
+            "stop": ["\nassistant\n", "\nassistant", "assistant\n", "assistant", "angstrom", "obutton"],
         }
         
         try:

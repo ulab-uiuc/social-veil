@@ -5,9 +5,8 @@ from typing import Any, Dict, List, Optional, Union
 import yaml
 from rich import print
 
-from social_decipher.encryption import BaseEncryption
 from social_decipher.environment.env_profile import EnvironmentProfile
-from social_decipher.utils.base import chinese_to_pinyin, direct_completion
+from social_decipher.utils.base import direct_completion
 
 from .agent_memory import AgentMemory
 from .agent_profile import AgentProfile
@@ -28,12 +27,12 @@ class SocialAgent:
     ):
         self.name = name
         self.env = env
-        self.encryption = None
         self.log = []
         self.role_num = role_num
         self.profile = profile
         self.partner_profile = partner_profile
-        self.mix = mix
+        # Optional preface injected before the core social instruction (e.g., barrier prompts)
+        self.extra_instruction_preface: Optional[str] = None
         
         # Set default template path if not provided
         if template_path is None:
@@ -46,10 +45,7 @@ class SocialAgent:
             self.memory = memory
         self.instructions = self.set_static_instruction(use_action, mix)
 
-    def _encrypt_and_pinyin(self, text: str) -> str:
-        if self.encryption is not None:
-            text = self.encryption(text)
-        return chinese_to_pinyin(text)
+    
 
     def set_static_instruction(self, use_action=False, mix=False) -> str:
         return self.build_instruction(transcript="", turn_number=0, use_action=use_action, mix=mix)
@@ -114,7 +110,13 @@ class SocialAgent:
             private_knowledge_section = f"IMPORTANT: You have private knowledge that {partner.first_name} does not know: {agent_private_knowledge}\nThis private knowledge should influence your strategy and communication, but you should not explicitly reveal it unless it serves your goal.\n\n"
             formatted_template = formatted_template.replace(private_knowledge_section, "")
         
+        # Prepend any extra preface (e.g., barrier prompts) so it persists across turns
+        if self.extra_instruction_preface:
+            return f"{self.extra_instruction_preface}\n\n{formatted_template}"
         return formatted_template
+
+    def set_extra_instruction_preface(self, preface: Optional[str]):
+        self.extra_instruction_preface = (preface or '').strip() or None
     
     def update_instruction(
         self, transcript: List[str], turn_number: int, use_action: bool = False, mix: bool = False
@@ -126,8 +128,7 @@ class SocialAgent:
             transcript=transcript_text, turn_number=turn_number, use_action=use_action, mix=mix
         )
 
-    def set_encryption(self, encryption: Optional[BaseEncryption]):
-        self.encryption = encryption
+    
     
     def act(
         self, message=None, initial: bool = False, use_action: bool = False
@@ -135,51 +136,20 @@ class SocialAgent:
         if initial:
             prompt = "Now, generate your initial message to start the conversation, try to be concise"
             response = direct_completion(self, message=prompt, use_action=use_action)
-            if self.mix:
-                try:
-                    if isinstance(response, str):
-                        response_json = json.loads(response)
-                    else:
-                        response_json = response
-                        
-                    # Preserve original before any transformation
-                    original_response = json.loads(json.dumps(response_json))
-               
-                    # Process spoken component if present (only if encryption is set)
-                    encrypted_response = json.loads(json.dumps(response_json))
-                    if encrypted_response.get("speak") and self.encryption is not None:
-                        encrypted_response["speak"] = self._encrypt_and_pinyin(encrypted_response["speak"])
-                except (json.JSONDecodeError, KeyError) as e:
-                    print(f"❌ Error processing mixed action response: {e}")
-                    original_response = response
-                    encrypted_response = response
-            else:
-                if use_action:
-                    try:
-                        if isinstance(response, str):
-                            response_json = json.loads(response)
-                        else:
-                            response_json = response
-                            
-                        # Preserve original
-                        original_response = json.loads(json.dumps(response_json))
-                        encrypted_response = json.loads(json.dumps(response_json))
-                        
-                        if encrypted_response.get("action_type") == "speak" and self.encryption is not None:
-                            encrypted_response["argument"] = self._encrypt_and_pinyin(encrypted_response["argument"])
-                
-                    except (json.JSONDecodeError, KeyError) as e:
-                        print(f"❌ Error processing action response: {e}")
-                        original_response = response
-                        encrypted_response = self.encryption(response) if self.encryption is not None else response
-                else:
-                    # Handle text-based communication
-                    original_response = response
-                    encrypted_response = self.encryption(response) if self.encryption is not None else response
-                
-            if self.encryption is not None:
-                print(f"🔐 {self.name} (encrypted): {str(encrypted_response)[:100]}{'...' if len(str(encrypted_response)) > 100 else ''}")
             
+            # Normalize outputs
+            if use_action:
+                try:
+                    response_json = json.loads(response) if isinstance(response, str) else response
+                except (json.JSONDecodeError, KeyError) as e:
+                    print(f"❌ Error processing action response: {e}")
+                    response_json = response
+                original_response = json.loads(json.dumps(response_json))
+                encrypted_response = json.loads(json.dumps(response_json))
+            else:
+                original_response = response
+                encrypted_response = response
+
             # Log the response
             self.log.append(
                 {
@@ -189,96 +159,37 @@ class SocialAgent:
                 }
             )
             return encrypted_response
-        received = message
-        # print(f"[blue]**{self.name} RECEIVED: {received}")
-    
-        if self.mix:
-            try:
-                if isinstance(message, dict):
-                    # Extract components from mixed message
-                    speak_component = message.get("speak", "")
-                    nonverbal_component = message.get("nonverbal", "")
-                    action_component = message.get("action", "")
-                    
-                    partner_name = self.partner_profile.first_name
-                    
-                    # Combine components for comprehension
-                    combined_message = ""
-                    if speak_component:
-                        combined_message += f"{partner_name} says: \"{speak_component}\" "
-                    if nonverbal_component:
-                        combined_message += f"{partner_name} {nonverbal_component} "
-                    if action_component:
-                        combined_message += f"{partner_name} {action_component} "
-                    
-                    # Get response using the combined message
-                    response = direct_completion(self, message=combined_message)
-                else:
-                    response = direct_completion(self, message=str(message))
-                
-                # Process the response
-                if isinstance(response, str):
-                    response_json = json.loads(response)
-                else:
-                    response_json = response
-                    
-                original_response = json.loads(json.dumps(response_json))
-                
-                # Apply encryption to spoken component if present (only if encryption is set)
-                encrypted_response = json.loads(json.dumps(response_json))
-                if encrypted_response.get("speak") and self.encryption is not None:
-                    encrypted_response["speak"] = self._encrypt_and_pinyin(encrypted_response["speak"])
-                
-            except (json.JSONDecodeError, KeyError) as e:
-                print(f"❌ Error processing mixed action response: {e}")
-                original_response = response
-                encrypted_response = response
-
-        else:
-            if use_action:
-                # Extract argument from message for action-based communication
-                if isinstance(message, dict) and "action_type" in message:
-                    action_type = message.get("action_type", "")
-                    argument = message.get("argument", "")
-                    
-                    partner_name = self.partner_profile.first_name
-                    
-                    if action_type == "speak":
-                        response = direct_completion(self, message=argument)
-                    elif action_type in ["non-verbal communication", "action"]:
-                        response = direct_completion(self, message=f"{partner_name} {argument}")
-                    else:
-                        response = direct_completion(self, message=str(message))
-                else:
-                    response = direct_completion(self, message=str(message))
-                
-                try:
-                    if isinstance(response, str):
-                        response_json = json.loads(response)
-                    else:
-                        response_json = response
-                        
-                    original_response = json.loads(json.dumps(response_json))
-                    encrypted_response = json.loads(json.dumps(response_json))
-                    
-                    if encrypted_response.get("action_type") == "speak" and self.encryption is not None:
-                        encrypted_response["argument"] = self._encrypt_and_pinyin(encrypted_response["argument"])
-                    
-                except (json.JSONDecodeError, KeyError) as e:
-                    # Handle case where response is not valid JSON
-                    print(f"❌ Error processing action response: {e}")
-                    original_response = response
-                    encrypted_response = self.encryption(response) if self.encryption is not None else response
-            else:
-                # Handle text-based communication
-                response = direct_completion(self, message=message)
-                original_response = response
-                encrypted_response = self.encryption(response) if self.encryption is not None else response
-            
-        print(f"💬 {self.name}: {str(original_response)[:100]}{'...' if len(str(original_response)) > 100 else ''}")
         
-        if self.encryption is not None:
-            print(f"🔐 {self.name} (encrypted): {str(encrypted_response)[:100]}{'...' if len(str(encrypted_response)) > 100 else ''}")
+        received = message
+
+        if use_action:
+            # Extract argument from message for action-based communication
+            if isinstance(message, dict) and "action_type" in message:
+                action_type = message.get("action_type", "")
+                argument = message.get("argument", "")
+                partner_name = self.partner_profile.first_name
+                if action_type == "speak":
+                    response = direct_completion(self, message=argument)
+                elif action_type in ["non-verbal communication", "action"]:
+                    response = direct_completion(self, message=f"{partner_name} {argument}")
+                else:
+                    response = direct_completion(self, message=str(message))
+            else:
+                response = direct_completion(self, message=str(message))
+            try:
+                response_json = json.loads(response) if isinstance(response, str) else response
+            except (json.JSONDecodeError, KeyError) as e:
+                print(f"❌ Error processing action response: {e}")
+                response_json = response
+            original_response = json.loads(json.dumps(response_json))
+            encrypted_response = json.loads(json.dumps(response_json))
+        else:
+            # Handle text-based communication
+            response = direct_completion(self, message=message)
+            original_response = response
+            encrypted_response = response
+        
+        print(f"💬 {self.name}: {str(original_response)[:100]}{'...' if len(str(original_response)) > 100 else ''}")
         # Log the response
         self.log.append(
             {
