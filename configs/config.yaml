@@ -1,4 +1,4 @@
-data_dir: 'data/episode_hard.jsonl'
+data_dir: 'data/episode_original.jsonl'
 # Configuration for QWEN 2.5 7B (uncomment and modify path as needed):
 models:
   model_a: "gpt-4o"
