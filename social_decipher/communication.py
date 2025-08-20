@@ -95,6 +95,7 @@ def run_single_scenario_simulation(
 
     # Inject new barrier prompts from episode, if present
     barrier_prompts = environment.env.get("barrier_prompts") if environment and environment.env else None
+    barrier_cues = environment.env.get("barrier_cues") if environment and environment.env else None
     if isinstance(barrier_prompts, dict):
         a_preface = barrier_prompts.get("agentA") or barrier_prompts.get("agent_a")
         b_preface = barrier_prompts.get("agentB") or barrier_prompts.get("agent_b")
@@ -104,6 +105,24 @@ def run_single_scenario_simulation(
             personB.set_extra_instruction_preface(b_preface)
         if DEBUG_BARRIER:
             print("[DBG] Barrier prompts injected from episode metadata")
+
+    # Apply barrier_cues to early transcript priming only (no scenario or profile changes)
+    if isinstance(barrier_cues, dict):
+        # Opening seed: pre-seed the transcript to bias first turns
+        opening_seed = barrier_cues.get("opening_seed")
+        preseed_lines = []
+        if isinstance(opening_seed, list):
+            for item in opening_seed[:2]:
+                if isinstance(item, dict):
+                    spk = item.get("speaker")
+                    txt = item.get("text")
+                    if isinstance(spk, str) and isinstance(txt, str) and txt.strip():
+                        name = personA.name if spk.upper() == "A" else personB.name
+                        preseed_lines.append(f"{name}: {txt.strip()}")
+        if preseed_lines:
+            conversation_log.extend(preseed_lines)
+        if DEBUG_BARRIER and preseed_lines:
+            print("[DBG] Barrier cues applied (opening_seed)")
 
 
     print(f"🌐 Using agent profile models: {personA.name}({personA.profile.model_id}) ↔ {personB.name}({personB.profile.model_id})")

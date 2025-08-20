@@ -144,6 +144,10 @@ def create_environment_from_episode(episode_data, scenario_type=None):
     barrier_prompts = episode_data.get("barrier_prompts")
     if isinstance(barrier_prompts, dict):
         env.env["barrier_prompts"] = barrier_prompts
+    # Attach barrier cues for runtime conditioning (scene addendum, profile notes, opening seed)
+    barrier_cues = episode_data.get("barrier_cues")
+    if isinstance(barrier_cues, dict):
+        env.env["barrier_cues"] = barrier_cues
     # Preserve barrier type metadata if present (not used at runtime but useful for logs)
     if "barrier_type" in episode_data:
         env.env["barrier_type"] = episode_data["barrier_type"]
@@ -332,8 +336,8 @@ def main():
     episodes_emotional = load_json(emotional_path)
 
     # Run baseline then each barrier set
-    print("\n▶️ Running baseline (original episodes)...")
-    run_experiment(episodes, experiment_config, evaluator, args, mode_tag="baseline")
+    # print("\n▶️ Running baseline (original episodes)...")
+    # run_experiment(episodes, experiment_config, evaluator, args, mode_tag="baseline")
 
     print("\n▶️ Running semantic barrier episodes...")
     run_experiment(episodes_semantic, experiment_config, evaluator, args, mode_tag="semantic")

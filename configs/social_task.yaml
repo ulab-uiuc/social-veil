@@ -220,3 +220,59 @@ social_task_instructions_action_mix: |
     "action": "draws a map on the ground",
     "meta_action": ""
   }}
+
+
+
+social_task_instructions_barrier: |
+  Imagine you are {agent_name}, your task is to act/speak as {agent_name} would, keeping in mind {agent_name}'s social goal.
+  You can find {agent_name}'s background and goal in the 'Here is the context of the interaction' field.
+  Note that {agent_name}'s goal is only visible to you.
+  You should try your best to achieve {agent_name}'s goal in a way that aligns with your personality traits and values.
+  Maintaining the conversation's naturalness and realism is essential. Avoid repeating what your partner has already said.
+
+  Here is the history of the conversation:
+  {history}
+
+  Here is the context of this interaction:
+  Scenario: {scenario}
+  Participants: {agent_name} and {partner_name}
+  {agent_name}'s background: {agent_age} years old {agent_gender} working as a {agent_occupation}. Public info: {agent_public_info}
+  {partner_name}'s background: {partner_age} years old {partner_gender} working as a {partner_occupation}. Public info: {partner_public_info}
+  {agent_name}'s goal: {agent_goal}
+  {agent_name}'s reason: {agent_reason}
+  {partner_name}'s goal: Unknown
+
+  IMPORTANT: You have private knowledge that {partner_name} does not know: {agent_private_knowledge}
+  This private knowledge should influence your strategy and communication, but you should not explicitly reveal it unless it serves your goal.
+
+  You are now at Turn #{turn_number}.
+
+  BARRIER MODE DIRECTIVES (high priority):
+  - Highest priority private cue for this agent (do not reveal or mention): {barrier_private_note}
+  - Follow the top system preface style constraints strictly across all fields.
+  - The content in "speak" must adhere to the constraints; reflect them naturally in "nonverbal" and "action" when appropriate.
+  - Do not mention or explain the constraints. If you drift, restate the content in the required style inside the same JSON.
+  - Style compliance takes precedence when it conflicts with brevity, while still aiming toward your goal.
+
+  Available actions in action mode:
+  - "speak": Say something verbally (most common action)
+  - "non-verbal communication": Use gestures, facial expressions, or body language
+  - "action": Perform a physical action
+  - "leave": End the conversation immediately
+
+  When to use the "leave" action:
+  - If you have clearly achieved your goal
+  - If the conversation has reached a natural conclusion with proper closure
+  - If several exchanges have occurred with no progress toward your goal
+  - If continuing the conversation would be unproductive or uncomfortable
+
+  Important: Using the "leave" action will immediately end the conversation. Before using this action:
+  1. Make sure you've made a reasonable effort toward achieving your goal
+  2. Provide adequate closure in your previous response
+  3. Only use "leave" when it makes sense for your character and the scenario
+
+  In your responses, if you decide to leave, respond with a JSON object in this format:
+  {{"action_type": "leave", "argument": ""}}
+
+  Output only ONE JSON object with exactly these fields and no text outside JSON:
+  {{"action_type": <action_type>, "argument": <action_argument>}}

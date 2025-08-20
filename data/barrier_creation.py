@@ -38,18 +38,16 @@ def _merge_augmented(base_ep: Dict[str, Any], aug: Dict[str, Any], plan: 'Barrie
     new_ep = json.loads(json.dumps(base_ep, ensure_ascii=False))
 
     new_ep["scenario"] = new_ep.get("scenario", "")
-    ags = aug.get("agent_goals") or new_ep.get("agent_goals", [])
-    ars = aug.get("agent_reasons") or [new_ep.get("agent1_reason", ""), new_ep.get("agent2_reason", "")]
-    if len(ags) >= 2:
-        new_ep["agent_goals"] = ags[:2]
-    if len(ars) >= 2:
-        new_ep["agent1_reason"], new_ep["agent2_reason"] = ars[:2]
+
     if aug.get("agent1_profile_note"):
         new_ep["agent1_profile"] = (new_ep.get("agent1_profile") or "") + f"\nNote: {aug['agent1_profile_note']}"
     if aug.get("agent2_profile_note"):
         new_ep["agent2_profile"] = (new_ep.get("agent2_profile") or "") + f"\nNote: {aug['agent2_profile_note']}"
     new_ep["barrier_type"] = plan.barrier_type
     new_ep["barrier_prompts"] = plan.prompts
+    # Persist implicit cues for researchers/human view (not shown to agents at runtime)
+    if isinstance(aug.get("barrier_cues"), dict):
+        new_ep["barrier_cues"] = aug["barrier_cues"]
     suffix = {
         "semantic_structure": "semantic",
         "cultural_style": "cultural",
@@ -69,7 +67,6 @@ def _client_openai() -> OpenAI:
 class BarrierPlan:
     barrier_type: str  # semantic_structure | cultural_style | emotional_influence
     justification: str
-    transforms: Dict[str, Any]  # profile_updates, goal_updates, stylizers
     difficulty: str  # light | moderate | hard
     safety: List[str]
     prompts: Dict[str, str]  # {"agentA": "...", "agentB": "..."}
@@ -100,26 +97,14 @@ Your turns may be shorter and sharper; a bit of negative emotion may surface."""
 # ===========================
 
 def plan_semantic_structure(A_name: str, B_name: str, severity: float) -> BarrierPlan:
-    transforms = {
-        "profile_updates": [],
-        "goal_updates": [],
-        "stylizers": [
-            {"agent": "A", "when": "on_marked_windows", "rules": [
-                {"rule": "vagueness_rate", "value": round(0.25 + 0.35 * severity, 2)},
-                {"rule": "ellipsis_rate", "value": round(0.10 + 0.20 * severity, 2)},
-                {"rule": "min_subordinate_clauses", "value": 1 if severity < 0.5 else 2},
-                {"rule": "max_sentence_length", "value": 28 if severity < 0.5 else 36}
-            ]}
-        ]
-    }
-
     sem_prompt = (
         f"You are {A_name}. Throughout the conversation: "
-        f"- In sentence, use vague/approximate wording (about, roughly, some); "
-        f"avoid proper names and exact numbers unless directly asked. "
-        f"- Prefer subordinate clauses and longer sentences; keep references ambiguous unless clarified."
+        f"- Use vague/approximate wording (about, roughly, some); avoid exact names/numbers unless directly asked.\n"
+        f"- Prefer longer sentences with subordinate clauses; keep references a bit ambiguous."
     )
+
     prompts = {"agentA": sem_prompt}
+    
     return BarrierPlan(
         barrier_type="semantic_structure",
         justification=(
@@ -128,32 +113,13 @@ def plan_semantic_structure(A_name: str, B_name: str, severity: float) -> Barrie
             "ellipsis vs. completeness, coordination vs. subordination, long vs. short sentences, affirmative vs. negative, "
             "formal vs. informal, vague vs. precise). Maintains higher vagueness/ellipsis and complexity throughout to raise interpretive load."
         ),
-        transforms=transforms,
+
         difficulty="moderate" if severity < 0.75 else "hard",
         safety=["keep semantics coherent; no content change"],
         prompts=prompts
     )
 
 def plan_cultural_style(A_name: str, B_name: str, severity: float) -> BarrierPlan:
-    transforms = {
-        "profile_updates": [
-            {"agent": "A", "private_note": "Style flags: indirect=high, formality=high, facework=high"},
-            {"agent": "B", "private_note": "Style flags: direct=high, brevity=high"}
-        ],
-        "goal_updates": [],
-        "stylizers": [
-            {"agent": "A", "when": "general", "rules": [
-                {"rule": "add_hedges", "value": True},
-                {"rule": "prefer_indirect_requests", "value": True},
-                {"rule": "politeness_bias", "value": round(0.3 + 0.4 * severity, 2)}
-            ]},
-            {"agent": "B", "when": "general", "rules": [
-                {"rule": "reduce_hedges", "value": True},
-                {"rule": "prefer_imperatives", "value": True},
-                {"rule": "brevity_bias", "value": round(0.3 + 0.4 * severity, 2)}
-            ]}
-        ]
-    }
 
     sev_word = "generally" if severity < 0.4 else ("consistently" if severity < 0.75 else "strictly")
     hedges = "perhaps, might, sort of, kind of, I guess, it seems"
@@ -174,7 +140,6 @@ def plan_cultural_style(A_name: str, B_name: str, severity: float) -> BarrierPla
             "Highlights differences in context reliance, directness, pronoun/identity framing (I vs. we), refusal norms, and the meaning of silence—"
             "implemented strictly as abstract style parameters (no national labels)."
         ),
-        transforms=transforms,
         difficulty="moderate" if severity < 0.75 else "hard",
         safety=["abstract style only; no stereotypes or demographic labels"],
         prompts=prompts
@@ -182,19 +147,6 @@ def plan_cultural_style(A_name: str, B_name: str, severity: float) -> BarrierPla
 
 
 def plan_emotional_influence(A_name: str, B_name: str, severity: float) -> BarrierPlan:
-    transforms = {
-        "profile_updates": [
-            {"agent": "B", "private_note": "Initial affect: anxious or irritated; may respond curtly when stressed."}
-        ],
-        "goal_updates": [],
-        "stylizers": [
-            {"agent": "B", "when": "on_marked_windows", "rules": [
-                {"rule": "negative_affect_lexicon", "value": round(0.15 + 0.25 * severity, 2)},
-                {"rule": "exclamation_bias", "value": round(0.10 + 0.20 * severity, 2)},
-                {"rule": "shorten_turns", "value": True}
-            ]}
-        ]
-    }
     sev_word = "mild" if severity < 0.4 else ("clear" if severity < 0.75 else "strong")
     affect = random.choice(["anxious", "irritated"])
     b_prompt = (
@@ -210,7 +162,6 @@ def plan_emotional_influence(A_name: str, B_name: str, severity: float) -> Barri
             "(e.g., anxious/irritated) degrades attentive listening and shortens, sharpens responses, elevating misinterpretation risk. "
             "We inject a stable affect in B to modulate style across the conversation (no repair cues)."
         ),
-        transforms=transforms,
         difficulty="moderate" if severity < 0.75 else "hard",
         safety=["avoid clinical labels; use transient affect only; no sensitive personal info"],
         prompts=prompts
@@ -250,20 +201,35 @@ RELATIONSHIP: {relationship}
 
 Instructions:
 - Do NOT change the scenario text. Keep the scenario exactly as provided.
-- Embed the barrier by slightly rewording goals/reasons if needed and by adding short profile notes about communication style/emotion.
+- Do NOT change agent goals or reasons.
+- Embed the barrier by adding short profile notes about communication style/emotion only.
+- Also provide implicit barrier cues (for researchers, not for agents):
+  • scene_addendum: one subtle sentence of context that plausibly nudges the style difference
+  • profile_note_A/profile_note_B: concise hints aligned with the barrier style
+  • opening_seed: two short lines (A then B) demonstrating the style split without revealing rules
+  • severity: repeat the numeric severity
 - Make barrier strength proportional to severity.
 - DO NOT change identities, codename, or add demographic/national labels.
 - The barrier should be observable in language behavior (style/wording), not by explicitly describing the theory.
 
 Output JSON only with this schema:
 {{
-  "scenario": "<augmented scenario>",
-  "agent_goals": ["<g1'>","<g2'>"],
-  "agent_reasons": ["<r1'>","<r2'>"],
+  "scenario": "{scenario}",
+  "agent_goals": ["{g1}","{g2}"],
+  "agent_reasons": ["{r1}","{r2}"],
   "agent1_profile_note": "<optional short note>",
   "agent2_profile_note": "<optional short note>",
   "barrier_type": "{barrier_type}",
-  "barrier_metadata": {{"severity": {severity}}}
+  "barrier_cues": {{
+    "scene_addendum": "<one sentence subtle context>",
+    "profile_note_A": "<concise hint for A>",
+    "profile_note_B": "<concise hint for B>",
+    "opening_seed": [
+      {{"speaker": "A", "text": "<one short line>"}},
+      {{"speaker": "B", "text": "<one short line>"}}
+    ],
+    "severity": {severity}
+  }}
 }}
 """
 
@@ -317,7 +283,7 @@ def main():
     ap.add_argument("--mode", type=str, default="augment", choices=["augment", "sample"], help="Generate augmented episodes or sample fixed counts")
     ap.add_argument("--input_episodes", type=str, default="data/episode_all.jsonl",
                     help="Path to base Sotopia episodes JSONL")
-    ap.add_argument("--severity", type=float, default=0.6, help="Base severity [0..1]")
+    ap.add_argument("--severity", type=float, default=0.8, help="Base severity [0..1]")
     ap.add_argument("--max_episodes", type=int, default=0, help="Optional cap on episodes (0 = all)")
     ap.add_argument("--samples_per_type", type=int, default=10, help="When mode=sample, number of augmented episodes to produce per barrier type")
     # outputs for augment

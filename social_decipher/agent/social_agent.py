@@ -69,15 +69,26 @@ class SocialAgent:
             agent_goal = env_dict["agent_goals"][1]
             agent_reason = env_dict["agent_reasons"][1]
             agent_private_knowledge = env_dict.get("agent2_private_knowledge", "")
+        # Choose barrier-aware templates if barrier prompts are present
+        barrier_present = isinstance(env_dict.get("barrier_prompts"), dict)
         if mix:
-            template_key = "social_task_instructions_action_mix"
+            template_key = "social_task_instructions_action_mix_barrier" if barrier_present else "social_task_instructions_action_mix"
         else:
             if use_action:
-                template_key = "social_task_instructions_action"
+                template_key = "social_task_instructions_action_barrier" if barrier_present else "social_task_instructions_action"
             else:
-                template_key = "social_task_instructions"
+                template_key = "social_task_instructions_barrier" if barrier_present else "social_task_instructions"
         template = templates[template_key]
         memory_context = self.memory.get_memory_context(detailed=(turn_number == 0))
+        # Extract private barrier notes per agent (do not expose in public info)
+        barrier_cues = env_dict.get("barrier_cues") if isinstance(env_dict.get("barrier_cues"), dict) else None
+        barrier_private_note = ""
+        if barrier_cues:
+            if self.role_num == 0:
+                barrier_private_note = (barrier_cues.get("profile_note_A") or "").strip()
+            else:
+                barrier_private_note = (barrier_cues.get("profile_note_B") or "").strip()
+
         mapping = {
             "agent_name": profile.first_name,
             "partner_name": partner.first_name,
@@ -98,6 +109,7 @@ class SocialAgent:
             "partner_occupation": partner.occupation,
             "partner_public_info": partner.public_info,
             "memory_context": memory_context,
+            "barrier_private_note": barrier_private_note,
         }
 
         # Format the template with the mapping
