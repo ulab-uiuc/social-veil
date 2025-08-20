@@ -39,7 +39,7 @@ def parse_args() -> argparse.Namespace:
         "--model_b", type=str, help="Model to use for agent B (overrides --model). For local models, use 'Qwen/Qwen2.5-7B-Instruct' and set HF_API_TOKEN",
     )
     parser.add_argument(
-        "--max_round", type=int, default=2, help="Max conversation rounds per scenario"
+        "--max_round", type=int, default=20, help="Max conversation rounds per scenario"
     )
     parser.add_argument(
         "--episode_limit", type=int, default=None, help="Limit number of episodes to process (default: all episodes)",
@@ -129,7 +129,7 @@ def build_profiles_and_env(episode_data, model_id, model_a=None, model_b=None, s
     return profile_a, profile_b, env, agent1_name, agent2_name, agent_reasons
 
 def create_environment_from_episode(episode_data, scenario_type=None):
-    return EnvironmentProfile(
+    env = EnvironmentProfile(
         scenario=episode_data["scenario"],
         agent_goals=episode_data["agent_goals"],
         agent_reasons=[episode_data.get("agent1_reason", ""), episode_data.get("agent2_reason", "")],
@@ -140,6 +140,14 @@ def create_environment_from_episode(episode_data, scenario_type=None):
         agent1_private_knowledge=episode_data.get("agent1_private_knowledge", "") if scenario_type == "knowledge_barrier" else "",
         agent2_private_knowledge=episode_data.get("agent2_private_knowledge", "") if scenario_type == "knowledge_barrier" else ""
     )
+    # Attach barrier prompts from augmented episodes so communication layer can inject them
+    barrier_prompts = episode_data.get("barrier_prompts")
+    if isinstance(barrier_prompts, dict):
+        env.env["barrier_prompts"] = barrier_prompts
+    # Preserve barrier type metadata if present (not used at runtime but useful for logs)
+    if "barrier_type" in episode_data:
+        env.env["barrier_type"] = episode_data["barrier_type"]
+    return env
 
 def create_agents(profile_a, profile_b, env, agent1_name, agent2_name, communication_modality):
     # Map communication modality to agent parameters

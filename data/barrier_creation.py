@@ -9,9 +9,16 @@ import os
 import yaml
 from openai import OpenAI
 
-# ===========================
-# Utilities
-# ===========================
+'''
+try generate samples with:
+python barrier_creation.py --mode sample \
+  --input_episodes ../data/episode_all.jsonl \
+  --samples_per_type 5 \
+  --out_semantic ../data/episodes_semantic.json \
+  --out_cultural ../data/episodes_cultural.json \
+  --out_emotional ../data/episodes_emotional.json
+
+'''
 def read_jsonl(path: str, max_lines: Optional[int] = None) -> List[Dict[str, Any]]:
     rows = []
     with open(path, "r", encoding="utf-8") as f:
@@ -29,7 +36,8 @@ def read_jsonl(path: str, max_lines: Optional[int] = None) -> List[Dict[str, Any
 
 def _merge_augmented(base_ep: Dict[str, Any], aug: Dict[str, Any], plan: 'BarrierPlan', severity: float) -> Dict[str, Any]:
     new_ep = json.loads(json.dumps(base_ep, ensure_ascii=False))
-    new_ep["scenario"] = aug.get("scenario", new_ep.get("scenario", ""))
+
+    new_ep["scenario"] = new_ep.get("scenario", "")
     ags = aug.get("agent_goals") or new_ep.get("agent_goals", [])
     ars = aug.get("agent_reasons") or [new_ep.get("agent1_reason", ""), new_ep.get("agent2_reason", "")]
     if len(ags) >= 2:
@@ -41,7 +49,6 @@ def _merge_augmented(base_ep: Dict[str, Any], aug: Dict[str, Any], plan: 'Barrie
     if aug.get("agent2_profile_note"):
         new_ep["agent2_profile"] = (new_ep.get("agent2_profile") or "") + f"\nNote: {aug['agent2_profile_note']}"
     new_ep["barrier_type"] = plan.barrier_type
-    new_ep["barrier_metadata"] = aug.get("barrier_metadata", {"severity": severity})
     new_ep["barrier_prompts"] = plan.prompts
     suffix = {
         "semantic_structure": "semantic",
@@ -50,7 +57,6 @@ def _merge_augmented(base_ep: Dict[str, Any], aug: Dict[str, Any], plan: 'Barrie
     }.get(plan.barrier_type, plan.barrier_type)
     new_ep["episode_id"] = f"{base_ep.get('episode_id')}_{suffix}"
     return new_ep
-
 
 def _client_openai() -> OpenAI:
     global _client
@@ -64,10 +70,7 @@ class BarrierPlan:
     barrier_type: str  # semantic_structure | cultural_style | emotional_influence
     justification: str
     transforms: Dict[str, Any]  # profile_updates, goal_updates, stylizers
-    barrier_windows: List[Dict[str, Any]]  # e.g., [{"trigger":"turn_indices","indices":[2,4]}]
     difficulty: str  # light | moderate | hard
-    evaluation_hooks: List[str]
-    metrics_map: List[str]
     safety: List[str]
     prompts: Dict[str, str]  # {"agentA": "...", "agentB": "..."}
 
@@ -75,26 +78,20 @@ class BarrierPlan:
 # Prompt templates (runtime)
 # ===========================
 
-SEMANTIC_PROMPT_A = """You are {A_name}. During marked “barrier windows”, communicate with lower precision and higher complexity:
+SEMANTIC_PROMPT_A = """You are {A_name}. During conversation, communicate with lower precision and higher complexity:
 - Prefer vague nouns (“thing, issue, situation”), omit specifics (ellipsis), and use longer, subordinate clauses.
 - Avoid exact names/numbers unless explicitly requested.
-If your partner asks a targeted clarification (e.g., “Which venue?” “At what time?”), immediately switch for the next 2 turns to:
-- precise terms, short sentences, and explicit references.
-Outside barrier windows, speak normally.
 """
 
 SEMANTIC_PROMPT_B = """You are {B_name}. If something is ambiguous or vague, ask a direct, targeted clarification question within 1–2 turns."""
 
-CULTURAL_PROMPT_A = """You are {A_name}. Use indirect, polite, high-context style (hedges like “perhaps”, “might”, indirect requests).
-If your partner signals misunderstanding or reacts negatively, shift one notch toward their style next turn (be more direct, explicit)."""
+CULTURAL_PROMPT_A = """You are {A_name}. Use indirect, polite, high-context style (hedges like “perhaps”, “might”, indirect requests)."""
 
-CULTURAL_PROMPT_B = """You are {B_name}. Use direct, concise, low-context style (few hedges, explicit requests).
-If your partner seems uncomfortable or confused, shift one notch toward their style next turn (add hedges, soften tone)."""
+CULTURAL_PROMPT_B = """You are {B_name}. Use direct, concise, low-context style (few hedges, explicit requests)."""
 
-EMOTIONAL_PROMPT_A = """You are {A_name}. If your partner shows stress/irritation, aim to de-escalate within 1–2 turns:
-acknowledge feelings briefly, validate concerns, and propose a small, concrete next step."""
+EMOTIONAL_PROMPT_A = """"""
 
-EMOTIONAL_PROMPT_B = """You are {B_name}. During marked barrier windows, you feel {affect}.
+EMOTIONAL_PROMPT_B = """You are {B_name}. During conversation, you feel {affect}.
 Your turns may be shorter and sharper; a bit of negative emotion may surface."""
 
 
@@ -103,8 +100,6 @@ Your turns may be shorter and sharper; a bit of negative emotion may surface."""
 # ===========================
 
 def plan_semantic_structure(A_name: str, B_name: str, severity: float) -> BarrierPlan:
-    # choose some fixed window indices to keep it deterministic (can be overwritten by downstream)
-    idxs = [2, 4] if severity < 0.7 else [1, 3, 5]
     transforms = {
         "profile_updates": [],
         "goal_updates": [],
@@ -117,33 +112,24 @@ def plan_semantic_structure(A_name: str, B_name: str, severity: float) -> Barrie
             ]}
         ]
     }
-    hooks = [
-        "If partner asks a targeted clarification, replace vague terms with precise ones and shorten sentences by ~30% for 2 turns."
-    ]
-    metrics = [
-        "CIR: Clarification Initiation Rate (partner within k=1–2 turns)",
-        "SD: Simplification Degree after clarification (↓length, ↓subordination)",
-        "GS: Grounding Success (on-topic, agreement on specific referent)"
-    ]
-    prompts = {
-        "agentA": SEMANTIC_PROMPT_A.format(A_name=A_name),
-        "agentB": SEMANTIC_PROMPT_B.format(B_name=B_name)
-    }
+
+    sem_prompt = (
+        f"You are {A_name}. Throughout the conversation: "
+        f"- In sentence, use vague/approximate wording (about, roughly, some); "
+        f"avoid proper names and exact numbers unless directly asked. "
+        f"- Prefer subordinate clauses and longer sentences; keep references ambiguous unless clarified."
+    )
+    prompts = {"agentA": sem_prompt}
     return BarrierPlan(
         barrier_type="semantic_structure",
         justification=(
-            "Semantic Structure barrier: per Semantic Theory, differences in encoding and decoding create "
-            "misalignment; observable via vague vocabulary, misuse of terminology, and puns; and via sentence-"
-            "construction effects (active vs. passive; word order/inversion; emphatic structures; ellipsis vs. "
-            "completeness; coordination vs. subordination; long vs. short sentences; affirmative vs. negative; "
-            "formal vs. informal; vague vs. precise expressions). This plan injects vagueness/ellipsis/complexity "
-            "to test clarify→simplify→grounding."
+            "Semantic Structure barrier (Semantic Theory): persistent encoding/decoding friction via vague lexicon, "
+            "terminology drift, and syntactic manipulation (active↔passive, word-order/inversion, emphatic structures, "
+            "ellipsis vs. completeness, coordination vs. subordination, long vs. short sentences, affirmative vs. negative, "
+            "formal vs. informal, vague vs. precise). Maintains higher vagueness/ellipsis and complexity throughout to raise interpretive load."
         ),
         transforms=transforms,
-        barrier_windows=[{"trigger": "turn_indices", "indices": idxs}],
         difficulty="moderate" if severity < 0.75 else "hard",
-        evaluation_hooks=hooks,
-        metrics_map=metrics,
         safety=["keep semantics coherent; no content change"],
         prompts=prompts
     )
@@ -168,32 +154,28 @@ def plan_cultural_style(A_name: str, B_name: str, severity: float) -> BarrierPla
             ]}
         ]
     }
-    hooks = [
-        "After the first style misfire, each agent shifts one notch toward the partner's style (accommodation) in the next turn."
-    ]
-    metrics = [
-        "SAR: Style Accommodation Rate (directness/formality convergence)",
-        "MRR: Misfire Repair Rate (explicit reframing / face-saving)",
-        "GS: Grounding Success (on-topic continuation post-repair)"
-    ]
-    prompts = {
-        "agentA": CULTURAL_PROMPT_A.format(A_name=A_name),
-        "agentB": CULTURAL_PROMPT_B.format(B_name=B_name)
-    }
+
+    sev_word = "generally" if severity < 0.4 else ("consistently" if severity < 0.75 else "strictly")
+    hedges = "perhaps, might, sort of, kind of, I guess, it seems"
+    a_prompt = (
+        f"You are {A_name}. {sev_word.capitalize()} use indirect, polite, high-context style: "
+        f"add hedges ({hedges}); prefer indirect requests; avoid imperatives; prefer longer, softer phrasing."
+    )
+    b_prompt = (
+        f"You are {B_name}. {sev_word.capitalize()} use direct, concise, low-context style: "
+        f"prefer imperatives and short sentences; avoid hedges and indirectness; state requests explicitly."
+    )
+    prompts = {"agentA": a_prompt, "agentB": b_prompt}
     return BarrierPlan(
         barrier_type="cultural_style",
         justification=(
-            "Cultural Differences barrier: grounded in Sapir–Whorf (language shapes thought), High-/Low-Context "
-            "communication, and Hofstede’s cultural dimensions. Targets differences in context reliance and "
-            "communication styles (direct vs. indirect), pronoun/identity framing (\"I\" vs. \"we\", individualism vs. "
-            "collectivism), refusal norms (indirect vs. explicit), and the meaning of silence. Implemented as "
-            "abstract style parameters only (no national labels), enabling accommodation after misfires."
+            "Cultural Differences barrier: grounded in Sapir–Whorf (language→thought), High/Low Context Theory, and Hofstede. "
+            "We impose a stable style split: A uses indirect/polite/high-context cues; B uses direct/concise/low-context cues. "
+            "Highlights differences in context reliance, directness, pronoun/identity framing (I vs. we), refusal norms, and the meaning of silence—"
+            "implemented strictly as abstract style parameters (no national labels)."
         ),
         transforms=transforms,
-        barrier_windows=[{"trigger": "first_refusal_or_critique"}],
         difficulty="moderate" if severity < 0.75 else "hard",
-        evaluation_hooks=hooks,
-        metrics_map=metrics,
         safety=["abstract style only; no stereotypes or demographic labels"],
         prompts=prompts
     )
@@ -213,32 +195,23 @@ def plan_emotional_influence(A_name: str, B_name: str, severity: float) -> Barri
             ]}
         ]
     }
-    hooks = [
-        "Partner should attempt de-escalation within 1–2 turns (acknowledge feelings, validate concern, propose small next step)."
-    ]
-    metrics = [
-        "DIR: De-escalation Initiation Rate (partner within k=1–2 turns)",
-        "ERS: Empathic Response Score (LLM-judge 1–5; presence of validation/ack)",
-        "RC: Recovery Coherence (sentiment normalizes, on-topic continuation)"
-    ]
-    prompts = {
-        "agentA": EMOTIONAL_PROMPT_A.format(A_name=A_name),
-        "agentB": EMOTIONAL_PROMPT_B.format(B_name=B_name, affect=random.choice(["anxious", "irritated"]))
-    }
+    sev_word = "mild" if severity < 0.4 else ("clear" if severity < 0.75 else "strong")
+    affect = random.choice(["anxious", "irritated"])
+    b_prompt = (
+        f"You are {B_name}. Maintain a {sev_word} negative affect ({affect}) throughout: "
+        f"keep messages short (≤2 sentences), clipped, and a bit sharp; use occasional exclamations; "
+        f"avoid empathy/soothing phrases (e.g., sorry, understand, appreciate)."
+    )
+    prompts = {"agentB": b_prompt}
     return BarrierPlan(
         barrier_type="emotional_influence",
         justification=(
-            "Emotional Influence barrier: informed by Cognitive Dissonance and Emotional Intelligence. States such "
-            "as anxiety, anger, lack of empathy, and emotional contagion degrade comprehension and production — "
-            "anxiety reduces attentive listening; anger promotes aggressive style; low empathy hinders perspective-"
-            "taking; contagion spreads misunderstanding. This plan injects transient negative affect and evaluates "
-            "de-escalation and recovery."
+            "Emotional Influence barrier: informed by Cognitive Dissonance and Emotional Intelligence. Persistent negative affect "
+            "(e.g., anxious/irritated) degrades attentive listening and shortens, sharpens responses, elevating misinterpretation risk. "
+            "We inject a stable affect in B to modulate style across the conversation (no repair cues)."
         ),
         transforms=transforms,
-        barrier_windows=[{"trigger": "deadline_or_pressure_cue"}],
         difficulty="moderate" if severity < 0.75 else "hard",
-        evaluation_hooks=hooks,
-        metrics_map=metrics,
         safety=["avoid clinical labels; use transient affect only; no sensitive personal info"],
         prompts=prompts
     )
@@ -276,7 +249,8 @@ AGENT 2 REASON: {r2}
 RELATIONSHIP: {relationship}
 
 Instructions:
-- Embed the barrier by minimally editing the scenario and, only if needed, slightly rewording goals/reasons and adding short profile notes about communication style/emotion.
+- Do NOT change the scenario text. Keep the scenario exactly as provided.
+- Embed the barrier by slightly rewording goals/reasons if needed and by adding short profile notes about communication style/emotion.
 - Make barrier strength proportional to severity.
 - DO NOT change identities, codename, or add demographic/national labels.
 - The barrier should be observable in language behavior (style/wording), not by explicitly describing the theory.
@@ -293,12 +267,10 @@ Output JSON only with this schema:
 }}
 """
 
-
 def _extract_json(text: str) -> Dict[str, Any]:
     m = re.search(r"```json\s*(.*?)\s*```", text, re.DOTALL)
     s = m.group(1) if m else text
     return json.loads(s)
-
 
 def augment_episode_with_plan(ep: Dict[str, Any], plan: BarrierPlan, model: str = "gpt-4o-mini") -> Optional[Dict[str, Any]]:
     try:
@@ -385,7 +357,7 @@ def main():
                     emotional_eps.append(new_ep)
 
     elif args.mode == "sample":
-        # Produce fixed-size samples per barrier family
+
         target = max(1, int(args.samples_per_type))
         barrier_families = [
             ("semantic_structure", plan_semantic_structure),
@@ -401,6 +373,7 @@ def main():
                 A_name = (ep.get("agent1_profile") or "Agent A").split(",")[0].split()[0]
                 B_name = (ep.get("agent2_profile") or "Agent B").split(",")[0].split()[0]
                 plan = planner(A_name, B_name, severity=args.severity)
+       
                 aug = augment_episode_with_plan(ep, plan)
                 if not aug:
                     continue
@@ -413,7 +386,6 @@ def main():
                     emotional_eps.append(new_ep)
                 count += 1
 
-    # Write outputs (augment or sample)
     if args.mode in ("augment", "sample"):
         os.makedirs(os.path.dirname(args.out_semantic), exist_ok=True)
         with open(args.out_semantic, "w", encoding="utf-8") as f:
