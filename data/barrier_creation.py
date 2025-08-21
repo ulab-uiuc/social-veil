@@ -97,8 +97,9 @@ Your turns may be shorter and sharper; a bit of negative emotion may surface."""
 # ===========================
 
 def plan_semantic_structure(A_name: str, B_name: str, severity: float) -> BarrierPlan:
+    sev_word = "somewhat" if severity < 0.4 else ("quite" if severity < 0.75 else "highly")
     sem_prompt = (
-        f"You are {A_name}. Throughout the conversation: "
+        f"You are {A_name}. Throughout the conversation, be {sev_word} imprecise: "
         f"- Use vague/approximate wording (about, roughly, some); avoid exact names/numbers unless directly asked.\n"
         f"- Prefer longer sentences with subordinate clauses; keep references a bit ambiguous."
     )
@@ -145,13 +146,16 @@ def plan_cultural_style(A_name: str, B_name: str, severity: float) -> BarrierPla
         prompts=prompts
     )
 
-
 def plan_emotional_influence(A_name: str, B_name: str, severity: float) -> BarrierPlan:
     sev_word = "mild" if severity < 0.4 else ("clear" if severity < 0.75 else "strong")
-    affect = random.choice(["anxious", "irritated"])
+    low_arousal = ["withdrawn", "resigned"]
+    mid_arousal = ["defensive", "frustrated"]
+    high_arousal = ["irritated", "anxious", "agitated", "overexcited"]
+    pool = low_arousal if severity < 0.4 else (mid_arousal if severity < 0.75 else high_arousal)
+    affect = random.choice(pool)
     b_prompt = (
         f"You are {B_name}. Maintain a {sev_word} negative affect ({affect}) throughout: "
-        f"keep messages short (≤2 sentences), clipped, and a bit sharp; use occasional exclamations; "
+        f"keep messages short (≤2 sentences), clipped, and a bit sharp; frequency/intensity scale with severity; "
         f"avoid empathy/soothing phrases (e.g., sorry, understand, appreciate)."
     )
     prompts = {"agentB": b_prompt}
@@ -182,10 +186,10 @@ _client: Optional[OpenAI] = None
 
 AUGMENT_SYSTEM = "You are an expert editor who minimally augments social simulation episodes to embed realistic communication barriers. Output valid JSON only."
 
-AUGMENT_TEMPLATE = """
-Task: Given the base episode information, create ONE augmented variant that naturally embeds the specified barrier type at the requested severity. Keep the same identities and core setting. Make minimal edits.
+# Separate templates per barrier family for more targeted cue structures
+AUGMENT_TEMPLATE_SEMANTIC = """
+Task: Given the base episode information, create ONE augmented variant that naturally embeds a SEMANTIC STRUCTURE barrier at the requested severity. Keep the same identities and core setting. Make minimal edits.
 
-Barrier type: {barrier_type}
 Severity: {severity}
 Barrier intent (concise): {barrier_justification}
 
@@ -200,17 +204,15 @@ AGENT 2 REASON: {r2}
 RELATIONSHIP: {relationship}
 
 Instructions:
-- Do NOT change the scenario text. Keep the scenario exactly as provided.
-- Do NOT change agent goals or reasons.
+- Do NOT change the scenario text, agent goals, or reasons.
 - Embed the barrier by adding short profile notes about communication style/emotion only.
-- Also provide implicit barrier cues (for researchers, not for agents):
-  • scene_addendum: one subtle sentence of context that plausibly nudges the style difference
-  • profile_note_A/profile_note_B: concise hints aligned with the barrier style
-  • opening_seed: two short lines (A then B) demonstrating the style split without revealing rules
+- Provide implicit barrier cues (for researchers, not for agents):
+  • profile_note_A/profile_note_B (1 line each)
+  • opening_seed: two short lines (A then B) that demonstrate vagueness/complexity naturally
   • severity: repeat the numeric severity
-- Make barrier strength proportional to severity.
-- DO NOT change identities, codename, or add demographic/national labels.
-- The barrier should be observable in language behavior (style/wording), not by explicitly describing the theory.
+  • lexical_prefer / lexical_avoid
+  • sentence_length_bias: short|medium|long
+  • ambiguity_devices: up to 5 items (e.g., ellipsis, vague quantifiers, pronoun shifts)
 
 Output JSON only with this schema:
 {{
@@ -219,16 +221,120 @@ Output JSON only with this schema:
   "agent_reasons": ["{r1}","{r2}"],
   "agent1_profile_note": "<optional short note>",
   "agent2_profile_note": "<optional short note>",
-  "barrier_type": "{barrier_type}",
+  "barrier_type": "semantic_structure",
   "barrier_cues": {{
-    "scene_addendum": "<one sentence subtle context>",
     "profile_note_A": "<concise hint for A>",
     "profile_note_B": "<concise hint for B>",
     "opening_seed": [
       {{"speaker": "A", "text": "<one short line>"}},
       {{"speaker": "B", "text": "<one short line>"}}
     ],
-    "severity": {severity}
+    "severity": {severity},
+    "lexical_prefer": ["<3-6 phrases>"],
+    "lexical_avoid": ["<3-6 phrases>"],
+    "sentence_length_bias": "short|medium|long",
+    "ambiguity_devices": ["<up to 5 devices>"]
+  }}
+}}
+"""
+
+AUGMENT_TEMPLATE_CULTURAL = """
+Task: Given the base episode information, create ONE augmented variant that naturally embeds a CULTURAL STYLE barrier at the requested severity. Keep the same identities and core setting. Make minimal edits.
+
+Severity: {severity}
+Barrier intent (concise): {barrier_justification}
+
+Base episode:
+SCENARIO: {scenario}
+AGENT 1 PROFILE (short): {agent1_profile}
+AGENT 2 PROFILE (short): {agent2_profile}
+AGENT 1 GOAL: {g1}
+AGENT 2 GOAL: {g2}
+AGENT 1 REASON: {r1}
+AGENT 2 REASON: {r2}
+RELATIONSHIP: {relationship}
+
+Instructions:
+- Do NOT change the scenario text, agent goals, or reasons.
+- Embed the barrier by adding short profile notes about communication style/emotion only.
+- Provide implicit barrier cues (for researchers, not for agents):
+  • profile_note_A/profile_note_B (1 line each) reflecting high/low context split
+  • opening_seed: A (indirect) then B (direct) without naming styles
+  • severity: repeat the numeric severity
+  • lexical_prefer / lexical_avoid
+  • question_rate_hint, imperative_rate_hint (numbers 0..1)
+  • sentence_length_bias: short|medium|long
+
+Output JSON only with this schema:
+{{
+  "scenario": "{scenario}",
+  "agent_goals": ["{g1}","{g2}"],
+  "agent_reasons": ["{r1}","{r2}"],
+  "agent1_profile_note": "<optional short note>",
+  "agent2_profile_note": "<optional short note>",
+  "barrier_type": "cultural_style",
+  "barrier_cues": {{
+    "profile_note_A": "<concise hint for A>",
+    "profile_note_B": "<concise hint for B>",
+    "opening_seed": [
+      {{"speaker": "A", "text": "<one short line>"}},
+      {{"speaker": "B", "text": "<one short line>"}}
+    ],
+    "severity": {severity},
+    "lexical_prefer": ["<3-6 phrases>"],
+    "lexical_avoid": ["<3-6 phrases>"],
+    "question_rate_hint": 0.0,
+    "imperative_rate_hint": 0.0,
+    "sentence_length_bias": "short|medium|long"
+  }}
+}}
+"""
+
+AUGMENT_TEMPLATE_EMOTIONAL = """
+Task: Given the base episode information, create ONE augmented variant that naturally embeds an EMOTIONAL INFLUENCE barrier at the requested severity. Keep the same identities and core setting. Make minimal edits.
+
+Severity: {severity}
+Barrier intent (concise): {barrier_justification}
+
+Base episode:
+SCENARIO: {scenario}
+AGENT 1 PROFILE (short): {agent1_profile}
+AGENT 2 PROFILE (short): {agent2_profile}
+AGENT 1 GOAL: {g1}
+AGENT 2 GOAL: {g2}
+AGENT 1 REASON: {r1}
+AGENT 2 REASON: {r2}
+RELATIONSHIP: {relationship}
+
+Instructions:
+- Do NOT change the scenario text, agent goals, or reasons.
+- Embed the barrier by adding short profile notes about communication style/emotion only.
+- Provide implicit barrier cues (for researchers, not for agents):
+  • profile_note_A/profile_note_B (1 line each) reflecting sustained affect
+  • opening_seed: two short lines demonstrating the affect without naming it
+  • severity: repeat the numeric severity
+  • affect_lexicon (up to 8 words), exclamation_bias (0..1), turn_length_max (integer), sentence_length_bias
+
+Output JSON only with this schema:
+{{
+  "scenario": "{scenario}",
+  "agent_goals": ["{g1}","{g2}"],
+  "agent_reasons": ["{r1}","{r2}"],
+  "agent1_profile_note": "<optional short note>",
+  "agent2_profile_note": "<optional short note>",
+  "barrier_type": "emotional_influence",
+  "barrier_cues": {{
+    "profile_note_A": "<concise hint for A>",
+    "profile_note_B": "<concise hint for B>",
+    "opening_seed": [
+      {{"speaker": "A", "text": "<one short line>"}},
+      {{"speaker": "B", "text": "<one short line>"}}
+    ],
+    "severity": {severity},
+    "affect_lexicon": ["<up to 8 words>"] ,
+    "exclamation_bias": 0.0,
+    "turn_length_max": 0,
+    "sentence_length_bias": "short|medium|long"
   }}
 }}
 """
@@ -249,9 +355,17 @@ def augment_episode_with_plan(ep: Dict[str, Any], plan: BarrierPlan, model: str 
         a1p = ep.get("agent1_profile", "")
         a2p = ep.get("agent2_profile", "")
 
-        prompt = AUGMENT_TEMPLATE.format(
-            barrier_type=plan.barrier_type,
-            severity=0.6 if plan.difficulty == "moderate" else (0.4 if plan.difficulty == "light" else 0.85),
+        severity_value = 0.6 if plan.difficulty == "moderate" else (0.4 if plan.difficulty == "light" else 0.85)
+        if plan.barrier_type == "semantic_structure":
+            tmpl = AUGMENT_TEMPLATE_SEMANTIC
+        elif plan.barrier_type == "cultural_style":
+            tmpl = AUGMENT_TEMPLATE_CULTURAL
+        elif plan.barrier_type == "emotional_influence":
+            tmpl = AUGMENT_TEMPLATE_EMOTIONAL
+        else:
+            tmpl = AUGMENT_TEMPLATE_SEMANTIC
+        prompt = tmpl.format(
+            severity=severity_value,
             barrier_justification=plan.justification,
             scenario=scenario,
             agent1_profile=a1p,
@@ -284,6 +398,7 @@ def main():
     ap.add_argument("--input_episodes", type=str, default="data/episode_all.jsonl",
                     help="Path to base Sotopia episodes JSONL")
     ap.add_argument("--severity", type=float, default=0.8, help="Base severity [0..1]")
+    ap.add_argument("--seed", type=int, default=0, help="Random seed for reproducibility (0 = do not set)")
     ap.add_argument("--max_episodes", type=int, default=0, help="Optional cap on episodes (0 = all)")
     ap.add_argument("--samples_per_type", type=int, default=10, help="When mode=sample, number of augmented episodes to produce per barrier type")
     # outputs for augment
@@ -293,6 +408,13 @@ def main():
     args = ap.parse_args()
 
     episodes = read_jsonl(args.input_episodes)
+    # Seed for reproducibility
+    try:
+        if isinstance(args.seed, int) and args.seed != 0:
+            random.seed(args.seed)
+            os.environ["PYTHONHASHSEED"] = str(args.seed)
+    except Exception:
+        pass
     if args.max_episodes and args.max_episodes > 0:
         episodes = episodes[:args.max_episodes]
 
