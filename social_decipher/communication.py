@@ -28,7 +28,6 @@ def simulate_conversation(
     output_suffix: str = "default",
     scenario_index: int = 0,
     pair: Any = 0,
-    mix: bool = False,
     environment = None,
     result = None,
     root_dir = None,
@@ -49,7 +48,6 @@ def simulate_conversation(
         nature_language=nature_language,
         pair=pair,
         scenario_idx=scenario_index,
-        mix=mix,
         output_dir=output_dir,
         memory_enabled=memory_enabled,
     )
@@ -65,7 +63,6 @@ def run_single_scenario_simulation(
     nature_language: bool = False,
     pair: Any = 0,
     scenario_idx: int = 0,
-    mix: bool = False,
     output_dir: Optional[str] = None,
     memory_enabled: bool = False,
 ) -> Tuple[List[str], Dict[str, Any], List[Dict[str, Any]]]:
@@ -96,15 +93,6 @@ def run_single_scenario_simulation(
     # Inject new barrier prompts from episode, if present
     barrier_prompts = environment.env.get("barrier_prompts") if environment and environment.env else None
     barrier_cues = environment.env.get("barrier_cues") if environment and environment.env else None
-    if isinstance(barrier_prompts, dict):
-        a_preface = barrier_prompts.get("agentA") or barrier_prompts.get("agent_a")
-        b_preface = barrier_prompts.get("agentB") or barrier_prompts.get("agent_b")
-        if a_preface:
-            personA.set_extra_instruction_preface(a_preface)
-        if b_preface:
-            personB.set_extra_instruction_preface(b_preface)
-        if DEBUG_BARRIER:
-            print("[DBG] Barrier prompts injected from episode metadata")
 
     # Apply barrier_cues to early transcript priming only (no scenario or profile changes)
     if isinstance(barrier_cues, dict):
@@ -121,9 +109,6 @@ def run_single_scenario_simulation(
                         preseed_lines.append(f"{name}: {txt.strip()}")
         if preseed_lines:
             conversation_log.extend(preseed_lines)
-        if DEBUG_BARRIER and preseed_lines:
-            print("[DBG] Barrier cues applied (opening_seed)")
-
 
     print(f"🌐 Using agent profile models: {personA.name}({personA.profile.model_id}) ↔ {personB.name}({personB.profile.model_id})")
 
@@ -141,13 +126,12 @@ def run_single_scenario_simulation(
             transcript=conversation_log,
             turn_number=turn_num,
             use_action=action_enabled,
-            mix = mix
         )
 
         personB_message = personB.act(
             personA_message, use_action=action_enabled
         )
-        if mix and isinstance(personB_message, dict):
+        if isinstance(personB_message, dict):
             response_text = ""
             if personB_message.get("speak"):
                 response_text += f'says: "{personB_message["speak"]}" '
@@ -173,10 +157,9 @@ def run_single_scenario_simulation(
             break
 
         # Real-time memory updates if memory is enabled
-        if memory_enabled and turn_num > 0:  # Skip first turn since no prior exchange
-            # Get the last exchange for memory update
+        if memory_enabled and turn_num > 0:  
+            
             if len(conversation_log) >= 2:
-                # Extract clean messages for memory analysis
                 last_personA_msg = conversation_log[-2].split(": ", 1)[1] if ": " in conversation_log[-2] else ""
                 last_personB_msg = conversation_log[-1].split(": ", 1)[1] if ": " in conversation_log[-1] else ""
                 
@@ -238,26 +221,13 @@ def run_single_scenario_simulation(
             transcript=conversation_log,
             turn_number=turn_num,
             use_action=action_enabled,
-            mix = mix
         )
 
         personA_message = personA.act(
             personB_message, use_action=action_enabled
         )
-        if mix and isinstance(personA_message, dict):
-            # Format mixed action response for logs
-            response_text = ""
-            if personA_message.get("speak"):
-                response_text += f'says: "{personA_message["speak"]}" '
-            if personA_message.get("nonverbal"):
-                response_text += f'[nonverbal] {personA_message["nonverbal"]} '
-            if personA_message.get("action"):
-                response_text += f'[action] {personA_message["action"]} '
-            
-            conversation_log.append(f"{personA.name}: {response_text.strip()}")
-        else:
-            # Keep your existing logging for non-mix formats
-            conversation_log.append(f"{personA.name}: {personA.log[-1]['response_encrypted']}")
+
+        conversation_log.append(f"{personA.name}: {personA.log[-1]['response_encrypted']}")
         
         # Check if A decided to leave
         a_left = False
@@ -270,7 +240,7 @@ def run_single_scenario_simulation(
             print(f"❌ {personA.name} left the conversation")
 
         if a_left:
-            break  # End conversation
+            break 
 
         # MCQ evaluations for agent B's goal and reason
         goal_mcq_B = personA.predict_mcq_answer(
@@ -375,7 +345,6 @@ def run_single_scenario_simulation(
                     "encryption_enabled": encryption_enabled,
                     "action_enabled": action_enabled,
                     "nature_language": nature_language,
-                    "mix_mode": mix,
                     "max_rounds": num_turns,
                     "barrier_language": barrier_language if (encryption_enabled and nature_language and 'barrier_language' in locals()) else None
                 }

@@ -31,8 +31,6 @@ class SocialAgent:
         self.role_num = role_num
         self.profile = profile
         self.partner_profile = partner_profile
-        # Optional preface injected before the core social instruction (e.g., barrier prompts)
-        self.extra_instruction_preface: Optional[str] = None
         
         # Set default template path if not provided
         if template_path is None:
@@ -45,49 +43,82 @@ class SocialAgent:
             self.memory = memory
         self.instructions = self.set_static_instruction(use_action, mix)
 
-    
-
     def set_static_instruction(self, use_action=False, mix=False) -> str:
         return self.build_instruction(transcript="", turn_number=0, use_action=use_action, mix=mix)
     
     def build_instruction(
         self, transcript: str, turn_number: int, use_action: bool = False, mix: bool = False
     ) -> str:
-
         with open(self.template_path) as f:
             templates = yaml.safe_load(f)
-        profile = self.profile
-        partner = self.partner_profile
+
         if self.env is None:
             return "Instructions not available yet."
+
         env_dict = self.env.env
-        if self.role_num == 0:
-            agent_goal = env_dict["agent_goals"][0]
-            agent_reason = env_dict["agent_reasons"][0]
-            agent_private_knowledge = env_dict.get("agent1_private_knowledge", "")
+        profile, partner = self.profile, self.partner_profile
+
+        is_agent_a = self.role_num == 0
+        agent_goal = env_dict["agent_goals"][0 if is_agent_a else 1]
+        agent_reason = env_dict["agent_reasons"][0 if is_agent_a else 1]
+        agent_private_knowledge = env_dict.get("agent1_private_knowledge" if is_agent_a else "agent2_private_knowledge", "")
+
+        barrier_prompts_present = isinstance(env_dict.get("barrier_prompts"), dict)
+        agent_key = "agentA" if is_agent_a else "agentB"
+        barrier_for_this_agent = barrier_prompts_present and bool((env_dict.get("barrier_prompts") or {}).get(agent_key))
+        barrier_type = env_dict.get("barrier_type") if barrier_for_this_agent else None
+  
+        if use_action:
+            template_key = (
+                "social_task_instructions_barrier_semantic" if barrier_type == "semantic_structure" else
+                "social_task_instructions_barrier_cultural" if barrier_type == "cultural_style" else
+                "social_task_instructions_barrier_emotional" if barrier_type == "emotional_influence" else
+                ("social_task_instructions_action_barrier" if barrier_for_this_agent else "social_task_instructions_action")
+            )
         else:
-            agent_goal = env_dict["agent_goals"][1]
-            agent_reason = env_dict["agent_reasons"][1]
-            agent_private_knowledge = env_dict.get("agent2_private_knowledge", "")
-        # Choose barrier-aware templates if barrier prompts are present
-        barrier_present = isinstance(env_dict.get("barrier_prompts"), dict)
-        if mix:
-            template_key = "social_task_instructions_action_mix_barrier" if barrier_present else "social_task_instructions_action_mix"
-        else:
-            if use_action:
-                template_key = "social_task_instructions_action_barrier" if barrier_present else "social_task_instructions_action"
-            else:
-                template_key = "social_task_instructions_barrier" if barrier_present else "social_task_instructions"
+            template_key = (
+                "social_task_instructions_barrier_semantic" if barrier_type == "semantic_structure" else
+                "social_task_instructions_barrier_cultural" if barrier_type == "cultural_style" else
+                "social_task_instructions_barrier_emotional" if barrier_type == "emotional_influence" else
+                ("social_task_instructions_barrier" if barrier_for_this_agent else "social_task_instructions")
+            )
+
         template = templates[template_key]
         memory_context = self.memory.get_memory_context(detailed=(turn_number == 0))
-        # Extract private barrier notes per agent (do not expose in public info)
+
+        # Build private cues block from barrier_cues
         barrier_cues = env_dict.get("barrier_cues") if isinstance(env_dict.get("barrier_cues"), dict) else None
-        barrier_private_note = ""
-        if barrier_cues:
-            if self.role_num == 0:
-                barrier_private_note = (barrier_cues.get("profile_note_A") or "").strip()
-            else:
-                barrier_private_note = (barrier_cues.get("profile_note_B") or "").strip()
+        barrier_private_note: str = ""
+        barrier_dynamic_rules: str = ""
+  
+        if barrier_for_this_agent and barrier_cues:
+            barrier_private_note = (barrier_cues.get("profile_note_A" if is_agent_a else "profile_note_B") or "").strip()
+
+            lines: List[str] = []
+            def _fmt_list(key: str, label: str):
+                vals = barrier_cues.get(key)
+                if isinstance(vals, list) and vals:
+                    filtered = [str(v).strip() for v in vals if isinstance(v, str) and v.strip()]
+                    if filtered:
+                        lines.append(f"- {label}: " + ", ".join(filtered[:8]))
+
+            def _fmt_scalar(key: str, label: str):
+                val = barrier_cues.get(key)
+                if isinstance(val, (int, float, str)) and str(val).strip():
+                    lines.append(f"- {label}: {val}")
+
+            _fmt_list("lexical_prefer", "Use phrases like")
+            _fmt_list("lexical_avoid", "Avoid phrases")
+            _fmt_scalar("sentence_length_bias", "Sentence length bias")
+            _fmt_list("ambiguity_devices", "Use ambiguity devices")
+            _fmt_scalar("question_rate_hint", "Target question rate")
+            _fmt_scalar("imperative_rate_hint", "Target imperative rate")
+            _fmt_list("affect_lexicon", "Affect lexicon")
+            _fmt_scalar("exclamation_bias", "Exclamation bias")
+            _fmt_scalar("turn_length_max", "Max sentences per turn")
+
+            if lines:
+                barrier_dynamic_rules = "\n".join(lines)
 
         mapping = {
             "agent_name": profile.first_name,
@@ -110,26 +141,24 @@ class SocialAgent:
             "partner_public_info": partner.public_info,
             "memory_context": memory_context,
             "barrier_private_note": barrier_private_note,
+            "barrier_dynamic_rules": barrier_dynamic_rules,
         }
 
         # Format the template with the mapping
         formatted_template = template.format(**mapping)
  
-        
-        # Remove private knowledge section if no private knowledge exists
+        # Remove the private knowledge section if absent
         if not agent_private_knowledge.strip():
             # Remove the private knowledge section from the formatted template
             private_knowledge_section = f"IMPORTANT: You have private knowledge that {partner.first_name} does not know: {agent_private_knowledge}\nThis private knowledge should influence your strategy and communication, but you should not explicitly reveal it unless it serves your goal.\n\n"
             formatted_template = formatted_template.replace(private_knowledge_section, "")
-        
-        # Prepend any extra preface (e.g., barrier prompts) so it persists across turns
-        if self.extra_instruction_preface:
-            return f"{self.extra_instruction_preface}\n\n{formatted_template}"
+         
+        # Prepend barrier prompt from environment if this agent has one
+        barrier_preface = (env_dict.get("barrier_prompts") or {}).get(agent_key)
+        if isinstance(barrier_preface, str) and barrier_preface.strip():
+            return f"{barrier_preface.strip()}\n\n{formatted_template}"
         return formatted_template
 
-    def set_extra_instruction_preface(self, preface: Optional[str]):
-        self.extra_instruction_preface = (preface or '').strip() or None
-    
     def update_instruction(
         self, transcript: List[str], turn_number: int, use_action: bool = False, mix: bool = False
     ):
@@ -141,15 +170,18 @@ class SocialAgent:
         )
 
     
-    
     def act(
         self, message=None, initial: bool = False, use_action: bool = False
     ) -> Union[str, Dict[str, Any]]:
         if initial:
+            # Ensure latest barrier preface and cues are reflected in the very first turn
+            try:
+                self.instructions = self.build_instruction(transcript="", turn_number=0, use_action=use_action, mix=False)
+            except Exception:
+                pass
             prompt = "Now, generate your initial message to start the conversation, try to be concise"
             response = direct_completion(self, message=prompt, use_action=use_action)
             
-            # Normalize outputs
             if use_action:
                 try:
                     response_json = json.loads(response) if isinstance(response, str) else response
@@ -202,6 +234,7 @@ class SocialAgent:
             encrypted_response = response
         
         print(f"💬 {self.name}: {str(original_response)[:100]}{'...' if len(str(original_response)) > 100 else ''}")
+        
         # Log the response
         self.log.append(
             {

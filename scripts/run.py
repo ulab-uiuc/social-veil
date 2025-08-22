@@ -73,7 +73,6 @@ def parse_args() -> argparse.Namespace:
 
     return parser.parse_args()
 
-
 def load_episode_jsonl(path):
     with open(path, 'r', encoding='utf-8') as f:
         return [json.loads(line) for line in f if line.strip()]
@@ -153,14 +152,7 @@ def create_environment_from_episode(episode_data, scenario_type=None):
         env.env["barrier_type"] = episode_data["barrier_type"]
     return env
 
-def create_agents(profile_a, profile_b, env, agent1_name, agent2_name, communication_modality):
-    # Map communication modality to agent parameters
-    if communication_modality == "text_only":
-        use_action = False
-    elif communication_modality == "action_enabled":
-        use_action = True
-
-    
+def create_agents(profile_a, profile_b, env, agent1_name, agent2_name, use_action):    
     agent1 = SocialAgent(agent1_name, profile_a, profile_b, env, 0, use_action=use_action)
     agent2 = SocialAgent(agent2_name, profile_b, profile_a, env, 1, use_action=use_action)
     return agent1, agent2
