@@ -240,6 +240,7 @@ def run_experiment(episodes, experiment_config, evaluator, args, mode_tag: str):
     
     eval_results, mcq_logs = [], []
     completed = _get_completed_scenarios(results_dir) if getattr(args, "resume", False) else set()
+    
     if completed:
         print(f"   Resume enabled: detected {len(completed)} completed scenario(s) in {results_dir} → will skip them")
     
@@ -259,22 +260,27 @@ def run_experiment(episodes, experiment_config, evaluator, args, mode_tag: str):
             experiment_config["communication_modality"]
         )
         
-        simulate_conversation(
-            personA=agent1,
-            personB=agent2,
-            evaluator=evaluator,
-            max_rounds=args.max_round,
-            encryption_enabled=False,
-            action_enabled=experiment_config["use_action"],
-            nature_language=False,
-            output_suffix=f"{experiment_config['tag']}_scenario_{scenario_idx+1}",
-            scenario_index=scenario_idx,
-            pair="0",
-            environment=env,
-            result=None,
-            root_dir=results_dir,
-            memory_enabled=(experiment_config["memory_strategy"] == "on")
-        )
+        try:
+            simulate_conversation(
+                personA=agent1,
+                personB=agent2,
+                evaluator=evaluator,
+                max_rounds=args.max_round,
+                encryption_enabled=False,
+                action_enabled=experiment_config["use_action"],
+                nature_language=False,
+                output_suffix=f"{experiment_config['tag']}_scenario_{scenario_idx+1}",
+                scenario_index=scenario_idx,
+                pair="0",
+                environment=env,
+                result=None,
+                root_dir=results_dir,
+                memory_enabled=(experiment_config["memory_strategy"] == "on")
+            )
+        except Exception as e:
+            # Log and continue to next scenario so long runs can progress
+            print(f"❌ Scenario {scenario_num} failed with error: {e}")
+            continue
         
 def main():
     args = parse_args()

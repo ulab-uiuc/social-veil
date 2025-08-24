@@ -26,11 +26,10 @@ def collect_mode_stats(base_dir: str, mode: str) -> Dict[str, float]:
     dim_acc: Dict[str, List[float]] = {f"a1_{d}": [] for d in DIMS}
     dim_acc.update({f"a2_{d}": [] for d in DIMS})
     dim_acc["iq"] = []
-    # MCQ aggregates
+
     mcq_keys = [
         ("goal", "accuracy"), ("goal", "avg_confidence"),
         ("reason", "accuracy"), ("reason", "avg_confidence"),
-        ("knowledge", "accuracy"), ("knowledge", "avg_confidence"),
     ]
     mcq_acc: Dict[str, List[float]] = {}
     for who in ("a1", "a2"):
@@ -71,15 +70,12 @@ def collect_mode_stats(base_dir: str, mode: str) -> Dict[str, float]:
             # Skip unreadable files
             continue
 
-    out: Dict[str, float] = {
-        "a1_overall": float(np.mean(a1_over)) if a1_over else None,
-        "a2_overall": float(np.mean(a2_over)) if a2_over else None,
-    }
-    overall_combo = a1_over + a2_over
-    out["overall_mean"] = float(np.mean(overall_combo)) if overall_combo else None
+    out: Dict[str, float] = {}
 
     # per-dimension means and counts
     for k, v in dim_acc.items():
+        if k == "iq":
+            continue
         out[k] = float(np.mean(v)) if v else None
     out["num_scenarios"] = int(max(len(a1_over), len(a2_over)))
 
@@ -96,7 +92,7 @@ def main():
     parser.add_argument(
         "--base_dir",
         type=str,
-        default="results/exp_text_only_memoff_qwen2.5-7b-instruct_episodes_original_0818_0457",
+        default="../results/exp_text_only_memoff_4o_mini_episodes_original_0823_2230",
         help="Base results directory that contains mode_* subfolders",
     )
     parser.add_argument("--out_json", type=str, default="", help="Optional path to save the summary JSON")
@@ -129,13 +125,12 @@ def main():
         # Preferred ordering
         preferred = [
             "num_scenarios",
-            "a1_overall", "a2_overall", "overall_mean",
         ]
         # Sotopia dims
-        preferred += [f"a1_{d}" for d in DIMS] + [f"a2_{d}" for d in DIMS] + ["iq"]
+        preferred += [f"a1_{d}" for d in DIMS] + [f"a2_{d}" for d in DIMS]
         # MCQ
         for who in ("a1","a2"):
-            for t in ("goal","reason","knowledge"):
+            for t in ("goal","reason"):
                 preferred += [f"{who}_{t}_accuracy", f"{who}_{t}_avg_confidence"]
         # Final header
         header = preferred + [k for k in sorted(header_keys) if k not in preferred]

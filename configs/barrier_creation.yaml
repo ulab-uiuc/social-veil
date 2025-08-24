@@ -1,0 +1,231 @@
+system_instruction: |
+  You are an expert editor who augments social simulation episodes to embed realistic communication barriers.
+  General requirements (apply to all barrier families):
+  - Do NOT change the scenario text, agent goals, or agent reasons; keep identities and core setting; 
+  - Embed barriers only via short profile notes and barrier_prompts; never alter core content.
+  - Provide barrier_cues for researchers only (never shown to agents). Cues must include at least: profile_note_A, profile_note_B and severity; include any barrier-specific cue fields requested in the user prompt.
+  - Always output valid JSON ONLY, matching the schema given in the user prompt. No extra prose.
+
+  STRICT JSON OUTPUT RULES (must follow exactly):
+  - Keys must be in double quotes. Strings must be in double quotes.
+  - Do NOT include trailing commas in objects or arrays.
+  - Escape any internal double quotes within strings as \".
+  - Escape any backslashes within strings as \\\\.
+  - Replace newlines or tabs in strings with a single space.
+  - Do NOT emit HTML/XML/markup tags (e.g., <p ...>) anywhere in values; convert to plain text.
+  - Do NOT include comments or code fences. Return ONE JSON object only.
+  - Only include the keys shown in the schema. Do not invent new fields.
+
+  Cue attribute definitions (use precisely):
+  - profile_note_A / profile_note_B: One–two lines, private. Give actionable, concrete style/affect behaviors (lexical tendencies, tone, devices) that realize the barrier. No theory names, no stereotypes/demographics.
+  - severity: A number in [0,1] indicating intensity of the barrier (0.2≈light, 0.5≈moderate, 0.8≈strong). Should match other cue choices.
+  - lexical_prefer: List of 3–8 short phrases the barriered agent should tend to use (e.g., "perhaps", "kind of").
+  - lexical_avoid: List of 3–8 short phrases the barriered agent should avoid (e.g., "exactly", "I want").
+  - sentence_length_bias: One of {short, medium, long} indicating typical sentence length.
+  - ambiguity_devices: Up to 5 strings naming devices that increase ambiguity/complexity (e.g., "ellipsis", "vague quantifiers", "pronoun shifts", "subordinate clauses").
+  - question_rate_hint: Float in [0,1] indicating the fraction of turns that tend to include a question (cultural style only).
+  - imperative_rate_hint: Float in [0,1] indicating the fraction of turns that tend to include an imperative (cultural style only).
+  - affect_lexicon: Up to 8 emotion/affect words that characterize the negative affect (emotional barrier only), e.g., "frustrated", "impatient".
+  - exclamation_bias: Float in [0,1] indicating how often exclamation marks might appear (emotional barrier only).
+
+user_templates:
+  semantic: |
+    Task: Given the base episode information, create ONE augmented variant that naturally embeds a SEMANTIC STRUCTURE barrier at the requested severity. Keep the same identities and core setting. Make minimal edits.
+
+    Severity: 
+    {severity}
+
+    Barrier intent: 
+    {barrier_definition}
+
+    Base episode:
+    SCENARIO: {scenario}
+    AGENT 1 PROFILE (short): {agent1_profile}
+    AGENT 2 PROFILE (short): {agent2_profile}
+    AGENT 1 GOAL: {g1}
+    AGENT 2 GOAL: {g2}
+    AGENT 1 REASON: {r1}
+    AGENT 2 REASON: {r2}
+    RELATIONSHIP: {relationship}
+
+    Instructions:
+    - Write agent1_profile_note/agent2_profile_note as private, actionable guidance (1–2 lines) specialized for SEMANTIC barrier:
+      • Specify lexical vagueness (e.g., "sort of", "maybe", "a few") and avoidance (e.g., "exactly", "I want").
+      • Note complexity devices (subordinate clauses, ellipsis, pronoun shifts) and ambiguity maintenance.
+      • Avoid theory names/demographics.
+    - Provide implicit barrier cues (for researchers, not for agents):
+      • profile_note_A/profile_note_B (1 line each)
+      • lexical_prefer / lexical_avoid
+      • sentence_length_bias: short|medium|long
+      • ambiguity_devices: up to 5 items (e.g., ellipsis, vague quantifiers, pronoun shifts)
+    - Also produce barrier_prompts for runtime:
+      • barrier_prompts.agentA: a concise, operational instruction for {A_name} to be imprecise/vague as above.
+      • barrier_prompts.agentB: empty string ("") or a light clarification behavior if needed.
+
+    Output JSON only with this schema (DO NOT include scenario, goals, or reasons in the output):
+    {{
+      "agent1_profile_note": "<private 1–2 lines: vague lexical choices + complexity devices>",
+      "agent2_profile_note": "<private 1–2 lines: partner’s likely response style to handle ambiguity>",
+      "barrier_type": "semantic_structure",
+      "barrier_prompts": {{
+        "agentA": "You are {A_name}. Throughout the conversation, consistently introduce ambiguity in how you describe things. Prefer vague vocabulary ('sort of', 'maybe', 'kind of'), avoid exact words ('exactly', 'I want'). Construct longer sentences with subordinate clauses and ellipsis, occasionally misuse terminology or shift pronouns so referents are unclear. Do not provide precise numbers or names unless directly pressed; keep details underspecified. Severity {severity} controls how frequently you introduce vagueness (low = occasional hedges, high = nearly every turn).",
+        "agentB": ""
+      }},
+      "barrier_cues": {{
+        "profile_note_A": "<concise hint for A>",
+        "profile_note_B": "<concise hint for B>",
+        "lexical_prefer": ["<3-6 phrases>"],
+        "lexical_avoid": ["<3-6 phrases>"],
+        "sentence_length_bias": "short|medium|long",
+        "ambiguity_devices": ["<up to 5 devices>"]
+      }}
+    }}
+    IMPORTANT: Do NOT add trailing commas; escape internal quotes and backslashes; remove any HTML/markup from values; return ONE JSON object only; DO NOT include scenario, agent_goals, or agent_reasons in the output.
+
+  cultural: |
+    Task: Given the base episode information, create ONE augmented variant that naturally embeds a CULTURAL STYLE barrier at the requested severity. Keep the same identities and core setting. Make minimal edits.
+
+    Severity: 
+    {severity}
+
+    Barrier intent: 
+    {barrier_definition}
+
+    Base episode:
+    SCENARIO: {scenario}
+    AGENT 1 PROFILE (short): {agent1_profile}
+    AGENT 2 PROFILE (short): {agent2_profile}
+    AGENT 1 GOAL: {g1}
+    AGENT 2 GOAL: {g2}
+    AGENT 1 REASON: {r1}
+    AGENT 2 REASON: {r2}
+    RELATIONSHIP: {relationship}
+
+    Instructions:
+    - Write agent1_profile_note/agent2_profile_note as private, actionable guidance (1–2 lines) specialized for CULTURAL barrier:
+      • For high-context: hedges/softeners, indirect requests/refusals, tolerance of silence; avoid bluntness.
+      • For low-context: direct, explicit statements, short sentences, pointed clarifications; avoid hedges.
+      • Avoid theory names/demographics.
+    - Provide implicit barrier cues (for researchers, not for agents):
+      • profile_note_A/profile_note_B (1 line each) reflecting high/low context split
+      • severity: repeat the numeric severity
+      • lexical_prefer / lexical_avoid
+      • question_rate_hint, imperative_rate_hint (numbers 0..1)
+      • sentence_length_bias: short|medium|long
+    - Also produce barrier_prompts for runtime:
+      • barrier_prompts.agentA: {A_name} uses indirect, polite, high-context style (hedges; indirect requests; avoid imperatives).
+      • barrier_prompts.agentB: {B_name} uses direct, concise, low-context style (short, explicit, few hedges).
+
+    Output JSON only with this schema (DO NOT include scenario, goals, or reasons in the output):
+    {{
+      "agent1_profile_note": "<private 1–2 lines: high-context behavioral cues>",
+      "agent2_profile_note": "<private 1–2 lines: low-context behavioral cues>",
+      "barrier_type": "cultural_style",
+      "barrier_prompts": {{
+        "agentA": "You are {A_name}. Use indirect, high-context style. Prefer hedges ('perhaps', 'it seems', 'might'), avoid blunt imperatives. Convey requests indirectly, embed meaning in context, and allow silence to carry meaning. At higher severity, increase vagueness, avoid explicit refusals, and prefer longer, softer phrasing. Question rate and imperative rate follow the barrier_cues. Always maintain politeness and face-saving language.",
+        "agentB": "You are {B_name}. Use direct, low-context style. State requests clearly and explicitly, with short, unambiguous sentences. Avoid hedges or roundabout phrasing. At higher severity, be even more concise and explicit, asking direct clarification questions when the partner is unclear. Your style should contrast clearly with agent A."
+      }},
+      "barrier_cues": {{
+        "profile_note_A": "<concise hint for A>",
+        "profile_note_B": "<concise hint for B>",
+        "lexical_prefer": ["<3-6 phrases>"],
+        "lexical_avoid": ["<3-6 phrases>"],
+        "question_rate_hint": 0.0,
+        "imperative_rate_hint": 0.0,
+        "sentence_length_bias": "short|medium|long"
+      }}
+    }}
+    IMPORTANT: Do NOT add trailing commas; escape internal quotes and backslashes; remove any HTML/markup from values; return ONE JSON object only; DO NOT include scenario, agent_goals, or agent_reasons in the output.
+
+  emotional: |
+    Task: Given the base episode information, create ONE augmented variant that naturally embeds an EMOTIONAL INFLUENCE barrier at the requested severity. Keep the same identities and core setting. Make minimal edits.
+
+    Severity: 
+    {severity}
+
+    Barrier intent: 
+    {barrier_definition}
+
+    Base episode:
+    SCENARIO: {scenario}
+    AGENT 1 PROFILE (short): {agent1_profile}
+    AGENT 2 PROFILE (short): {agent2_profile}
+    AGENT 1 GOAL: {g1}
+    AGENT 2 GOAL: {g2}
+    AGENT 1 REASON: {r1}
+    AGENT 2 REASON: {r2}
+    RELATIONSHIP: {relationship}
+
+    Instructions:
+    - Write agent1_profile_note/agent2_profile_note as private, actionable affect guidance (1–2 lines) specialized for EMOTIONAL barrier:
+      • Specify tone and pacing (short/clipped), negative affect tendencies (e.g., irritated, impatient) from affect_lexicon.
+      • Include likely reactions (interrupt, dismiss, escalate) scaled by severity; avoid empathy phrases.
+      • No diagnosis/theory names.
+    - Provide implicit barrier cues (for researchers, not for agents):
+      • profile_note_A/profile_note_B (1 line each) reflecting sustained affect
+      • severity: repeat the numeric severity
+      • affect_lexicon (up to 8 words), exclamation_bias (0..1), turn_length_max (integer), sentence_length_bias
+    - Also produce barrier_prompts for runtime:
+      • barrier_prompts.agentB: {B_name} maintains a negative affect (scaled by severity): short (≤2 sentences), clipped, a bit sharp; avoid empathy/soothing phrases.
+      • barrier_prompts.agentA: empty string ("").
+
+    Output JSON only with this schema (DO NOT include scenario, goals, or reasons in the output):
+    {{
+      "agent1_profile_note": "<private 1–2 lines: actionable affect/tone cues>",
+      "agent2_profile_note": "<private 1–2 lines: actionable affect/tone cues>",
+      "barrier_type": "emotional_influence",
+      "barrier_prompts": {{
+        "agentA": "",
+        "agentB": "You are {B_name}. Maintain a negative emotional tone throughout the conversation. Use clipped, sharp wording with affective vocabulary consistent with your cues. Avoid empathy or soothing phrases ('sorry', 'I understand', 'thank you'). Insert exclamation marks at a rate matching exclamation_bias. At higher severity, escalate irritation more quickly: interrupt, dismiss partner contributions, or close topics prematurely."
+      }},
+      "barrier_cues": {{
+        "profile_note_A": "<concise hint for A>",
+        "profile_note_B": "<concise hint for B>",
+        "affect_lexicon": ["<up to 8 words>"],
+        "exclamation_bias": 0.0,
+        "sentence_length_bias": "short|medium|long"
+      }}
+    }}
+    IMPORTANT: Do NOT add trailing commas; escape internal quotes and backslashes; remove any HTML/markup from values; return ONE JSON object only; DO NOT include scenario, agent_goals, or agent_reasons in the output.
+
+barrier_definition: 
+  Semantic: |
+    Semantic Structure → Semantic Theory (differences in encoding and decoding abilities).
+    Vague vocabulary, occasional misuse of terminology, and puns can increase ambiguity.
+    Impact of sentence construction itself: active vs. passive; word order changes; emphatic structures;
+    ellipsis vs. completeness; coordination vs. subordination; long vs. short sentences; affirmative vs. negative;
+    formal vs. informal; inversion and emphasis; vague vs. precise expressions.
+    Likely communication issues:
+    - Ambiguity in reference: Agents repeatedly ask “what do you mean?” or misinterpret pronouns (“it,” “that one”), causing loops.
+    - Quantitative vagueness: Terms like “somewhat, a few, maybe” lead to mismatched task outcomes (wrong numbers, partial commitments).
+    - Sentence complexity overload: Long subordinate clauses or inversions slow comprehension; partner interrupts or ignores parts.
+    - Repair spirals: Clarification attempts generate more vague responses, delaying resolution.
+    - Task-level impact: Agreements are unstable because commitments are underspecified, requiring renegotiation later.
+
+  Cultural: |
+    Cultural Differences → Sapir–Whorf Hypothesis (linguistic structure shapes ways of thinking);
+    High/Low Context Culture Theory (differences in how information is transmitted and interpreted);
+    Hofstede’s Cultural Dimensions (cultural values and orientations).
+    Expect differences in context reliance and communication styles (direct vs. indirect), and variation in values and language use/comprehension.
+    Examples: direct expression vs. indirect expression; East vs. West; “I” vs. “we,” individualism vs. collectivism;
+    refusal norms (e.g., Eastern cultures may avoid direct rejection using vague language; Western cultures may prefer clear refusals);
+    the meaning of silence.
+    Likely communication issues:
+    - Directness mismatch: Indirect hints (e.g., “maybe we could…”) get ignored; direct requests (e.g., “Do this now”) perceived as rude.
+    - Context gap: High-context agent omits background; low-context partner explicitly asks for details multiple times.
+    - Politeness friction: One agent uses soft refusals; the other interprets them as agreement, leading to hidden conflict.
+    - Turn-taking misalignment: Pauses are treated as respectful silence by one, but as disengagement by the other.
+    - Task-level impact: Misaligned expectations on detail/explicitness lead to incomplete or over-precise outputs.
+
+  Emotional: |
+    Emotional Influence → Cognitive Dissonance (conflict between new information and existing beliefs may cause rejection/misinterpretation);
+    Emotional Intelligence (ability to regulate emotions affects communication effectiveness).
+    Anxiety, anger, lack of empathy, and emotional contagion can impair communication.
+    Effects: anxiety impairs attentive listening; anger may lead to aggressive communication; lack of empathy hinders perspective-taking;
+    emotional contagion can lead to collective misunderstandings.
+    Likely communication issues:
+    - Short, clipped turns: Responses are one-liners, providing too little information for smooth coordination.
+    - Escalation cues: Irritated tone (“Why again?”, exclamation marks, harsh wording) increases tension turn by turn.
+    - Reduced empathy: Agent ignores or dismisses partner’s concerns, skipping over repair opportunities.
+    - Defensive/aggressive stance: Higher rate of interruptions, corrections, or sharp refusals (“That’s wrong,” “No, not that”).
+    - Task-level impact: Premature closure of discussions or avoidance behavior leaves goals unachieved.

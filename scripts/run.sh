@@ -22,7 +22,7 @@ export MEMORY_STRATEGY=${MEMORY_STRATEGY:-"off"}          # off, on
 TIMESTAMP=$(date +%m%d_%H%M)
 
 # Default results dir (run.py will create subfolders for baseline/semantic/cultural/emotional)
-export RESULTS_DIR=${RESULTS_DIR:-"results/exp_${COMMUNICATION_MODALITY}_mem${MEMORY_STRATEGY}_${MODEL_NAME}_${DATA_TAG}_${TIMESTAMP}"}
+export RESULTS_DIR=${RESULTS_DIR:-"results/exp_${COMMUNICATION_MODALITY}_mem${MEMORY_STRATEGY}_${MODEL_NAME}_${DATA_TAG}"}
 
 echo "===================================="
 echo "🧪 Running Social Agent Experiment"
@@ -58,7 +58,8 @@ CUDA_VISIBLE_DEVICES=$GPU VLLM_PORT=$VLLM_PORT python scripts/run.py \
     --episodes_file $DATA_NAME \
     --communication_modality $COMMUNICATION_MODALITY \
     --memory_strategy $MEMORY_STRATEGY \
-    --results_dir $RESULTS_DIR
+    --results_dir $RESULTS_DIR \
+    --resume
 
 echo ""
 echo "✅ Experiment completed!" 
