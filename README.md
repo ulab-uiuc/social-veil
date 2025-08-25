@@ -44,6 +44,7 @@ poetry export -f requirements.txt --output requirements.txt --without-hashes
 ```
 - API keys in `configs/config.yaml` as needed:
   - `OPENAI_API_KEY` (for OpenAI models)
+  - `MISTRAL_API_KEY` (for Mistral API models)
   - `HF_API_TOKEN` (if using local/HF models via vLLM)
 
 ### 2) Configure models and data

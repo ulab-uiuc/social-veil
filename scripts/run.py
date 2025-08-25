@@ -240,7 +240,7 @@ def run_experiment(episodes, experiment_config, evaluator, args, mode_tag: str):
     
     eval_results, mcq_logs = [], []
     completed = _get_completed_scenarios(results_dir) if getattr(args, "resume", False) else set()
-    
+
     if completed:
         print(f"   Resume enabled: detected {len(completed)} completed scenario(s) in {results_dir} → will skip them")
     
@@ -312,9 +312,9 @@ def main():
         args.results_dir
     )
     
-    semantic_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_semantic.json"))
-    cultural_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_cultural.json"))
-    emotional_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_emotional.json"))
+    semantic_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_all_semantic.json"))
+    cultural_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_all_cultural.json"))
+    emotional_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_all_emotional.json"))
 
     need_generate = not (os.path.isfile(semantic_path) and os.path.isfile(cultural_path) and os.path.isfile(emotional_path))
     if need_generate:
