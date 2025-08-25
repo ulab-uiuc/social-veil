@@ -17,6 +17,13 @@ This project includes a two-agent social simulation with barrier modes (semantic
 
 ### 1) Prerequisites
 - Python 3.10+
+- Create and activate a Conda environment (recommended):
+```bash
+conda create -n socailveil python=3.10 -y
+conda activate socailveil
+python -m pip install --upgrade pip
+pip install poetry
+```
 - Dependencies installed (recommended via Poetry):
 ```bash
 poetry install
