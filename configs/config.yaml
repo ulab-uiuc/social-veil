@@ -3,7 +3,7 @@ data_dir: 'data/episodes_original.json'
 models:
   model_a: "gpt-4o-mini"
   model_b: "gpt-4o-mini"    #"/mnt/data_from_server1/models/Qwen2.5-7B"
-  gpu: 1
+  gpu: "2,3" 
   vllm_port: 6900
   chat_template: "configs/qwen2.5-7b.jinja"
   served_model_name: "qwen2.5-7b-instruct"

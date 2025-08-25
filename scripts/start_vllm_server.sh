@@ -32,6 +32,17 @@ SERVED_MODEL_NAME=$(poetry run python "$CONFIG_READER" models.served_model_name)
 MAX_MODEL_LEN=$(poetry run python "$CONFIG_READER" models.max_model_len)
 TENSOR_PARALLEL_SIZE=$(poetry run python "$CONFIG_READER" models.tensor_parallel_size)
 
+# If tensor_parallel_size not set, infer from number of GPUs listed
+if [[ -z "$TENSOR_PARALLEL_SIZE" || "$TENSOR_PARALLEL_SIZE" == "0" ]]; then
+  GPU_COUNT=$(awk -F',' '{print NF}' <<< "$VLLM_GPU")
+  if [[ -z "$GPU_COUNT" || "$GPU_COUNT" == "0" ]]; then
+    GPU_COUNT=1
+  fi
+  TENSOR_PARALLEL_SIZE=$GPU_COUNT
+fi
+
+echo "Tensor Parallel Size: $TENSOR_PARALLEL_SIZE"
+
 CUDA_VISIBLE_DEVICES=$VLLM_GPU python -m vllm.entrypoints.openai.api_server \
     --model $GLOBAL_MODEL_B \
     --port $VLLM_PORT \
