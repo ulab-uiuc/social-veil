@@ -1,4 +1,4 @@
-# Open-Source Research Project in Python: A Template
+# SocialVeil: Robustness of social agent to communication barriers
 
 [![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3109/)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://pre-commit.com/)
@@ -20,6 +20,20 @@ This project includes a two-agent social simulation with barrier modes (semantic
 - Dependencies installed (recommended via Poetry):
 ```bash
 poetry install
+```
+- Reproducible install using the lockfile (recommended for exact versions):
+```bash
+# uses poetry.lock to install exact pinned versions and removes stray packages
+poetry install --sync
+
+# if poetry.lock is missing/outdated for your pyproject.toml (no version updates)
+poetry lock --no-update && poetry install --sync
+
+# if you want to refresh to latest allowed versions (will update the lockfile)
+poetry update && poetry install --sync
+
+# optional: export for non-poetry environments (e.g., Docker)
+poetry export -f requirements.txt --output requirements.txt --without-hashes
 ```
 - API keys in `configs/config.yaml` as needed:
   - `OPENAI_API_KEY` (for OpenAI models)
