@@ -10,13 +10,7 @@ from openai import OpenAI
 
 '''
 try generate samples with:
-python barrier_creation.py --mode sample \
-  --input_episodes ../data/episode_all.jsonl \
-  --samples_per_type 5 \
-  --out_semantic ../data/episodes_semantic.json \
-  --out_cultural ../data/episodes_cultural.json \
-  --out_emotional ../data/episodes_emotional.json
-
+python barrier_creation.py --mode sample --input_episodes ../data/episode_all.jsonl --samples_per_type 5 --out_semantic ../data/episodes_semantic.json --out_cultural ../data/episodes_cultural.json --out_emotional ../data/episodes_emotional.json
 '''
 def read_jsonl(path: str, max_lines: Optional[int] = None) -> List[Dict[str, Any]]:
     rows = []
@@ -289,17 +283,16 @@ def main():
                     emotional_eps.append(new_ep)
 
     elif args.mode == "sample":
-
         target = max(1, int(args.samples_per_type))
         barrier_families = ["semantic_structure", "cultural_style", "emotional_influence"]
         for family in barrier_families:
             count = 0
-    for ep in episodes:
+            for ep in episodes:
                 if count >= target:
                     break
                 aug = augment_episode(ep, family, severity_value=args.severity, seed=args.seed)
                 if not aug:
-            continue
+                    continue
                 new_ep = _merge_augmented(ep, aug, severity=args.severity)
                 if family == "semantic_structure":
                     semantic_eps.append(new_ep)
