@@ -28,6 +28,7 @@ mistralai = "*"
 openai = "1.74.0"
 pypinyin = "*"
 pyyaml = "^6.0.2"
+setuptools = "^80.9.0"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.6.0"
