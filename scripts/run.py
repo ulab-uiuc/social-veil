@@ -202,36 +202,6 @@ def run_experiment(episodes, experiment_config, evaluator, args, mode_tag: str):
             pass
         return completed
     
-    def _load_all_existing_results(base_dir: str):
-        eval_results_all, mcq_logs_all = [], []
-        try:
-            # Aggregate in numeric order if possible
-            scenario_dirs = [d for d in os.listdir(base_dir) if d.startswith("scenario_")]
-            def _num(d):
-                try:
-                    return int(d.split("_")[1])
-                except Exception:
-                    return 10**9
-            for name in sorted(scenario_dirs, key=_num):
-                scenario_dir = os.path.join(base_dir, name)
-                eval_path = os.path.join(scenario_dir, "eval_result.json")
-                mcq_path = os.path.join(scenario_dir, "mcq_log.json")
-                if os.path.isfile(eval_path):
-                    try:
-                        with open(eval_path, "r") as f:
-                            eval_results_all.append(json.load(f))
-                    except Exception:
-                        pass
-                if os.path.isfile(mcq_path):
-                    try:
-                        with open(mcq_path, "r") as f:
-                            mcq_logs_all.append(json.load(f))
-                    except Exception:
-                        pass
-        except FileNotFoundError:
-            pass
-        return eval_results_all, mcq_logs_all
-    
     print(f"\n🧪 Running experiment: {experiment_config['tag']}")
     print(f"   Mode: {mode_tag}")
     print(f"   Communication: {experiment_config['communication_modality']}")
@@ -312,9 +282,9 @@ def main():
         args.results_dir
     )
     
-    semantic_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_all_semantic.json"))
-    cultural_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_all_cultural.json"))
-    emotional_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_all_emotional.json"))
+    semantic_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_semantic.json"))
+    cultural_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_cultural.json"))
+    emotional_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_emotional.json"))
 
     need_generate = not (os.path.isfile(semantic_path) and os.path.isfile(cultural_path) and os.path.isfile(emotional_path))
     if need_generate:

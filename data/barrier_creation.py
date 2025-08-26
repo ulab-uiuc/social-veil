@@ -32,10 +32,10 @@ def _merge_augmented(base_ep: Dict[str, Any], aug: Dict[str, Any], severity: flo
 
     new_ep["scenario"] = new_ep.get("scenario", "")
 
+    # Only modify Agent A profile with barrier note (Agent B remains unmodified)
     if aug.get("agent1_profile_note"):
         new_ep["agent1_profile"] = (new_ep.get("agent1_profile") or "") + f"\nNote: {aug['agent1_profile_note']}"
-    if aug.get("agent2_profile_note"):
-        new_ep["agent2_profile"] = (new_ep.get("agent2_profile") or "") + f"\nNote: {aug['agent2_profile_note']}"
+    
     # barrier_type and barrier_prompts are produced directly by the LLM output
     if aug.get("barrier_type"):
         new_ep["barrier_type"] = aug.get("barrier_type")

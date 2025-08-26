@@ -92,7 +92,7 @@ class SocialAgent:
         barrier_dynamic_rules: str = ""
   
         if barrier_for_this_agent and barrier_cues:
-            barrier_private_note = (barrier_cues.get("profile_note_A" if is_agent_a else "profile_note_B") or "").strip()
+            barrier_private_note = (barrier_cues.get("profile_note_A") or "").strip() if is_agent_a else ""
 
             lines: List[str] = []
             def _fmt_list(key: str, label: str):
