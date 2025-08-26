@@ -19,29 +19,36 @@ This project includes a two-agent social simulation with barrier modes (semantic
 - Python 3.10+
 - Create and activate a Conda environment (recommended):
 ```bash
-conda create -n socailveil python=3.10 -y
+conda create -n socailveil python=3.10
 conda activate socailveil
-python -m pip install --upgrade pip
+```
+
+- Install Poetry (choose one method):
+
+**Method 1 (Recommended for macOS/SSL issues):**
+```bash
 pip install poetry
 ```
+
+**Method 2 (Alternative if Method 1 doesn't work):**
+```bash
+curl -sSL https://install.python-poetry.org | python3
+```
+
 - Dependencies installed (recommended via Poetry):
 ```bash
 poetry install
 ```
-- Reproducible install using the lockfile (recommended for exact versions):
+
+- Verify installation:
 ```bash
-# uses poetry.lock to install exact pinned versions and removes stray packages
-poetry install --sync
-
-# if poetry.lock is missing/outdated for your pyproject.toml (no version updates)
-poetry lock --no-update && poetry install --sync
-
-# if you want to refresh to latest allowed versions (will update the lockfile)
-poetry update && poetry install --sync
-
-# optional: export for non-poetry environments (e.g., Docker)
-poetry export -f requirements.txt --output requirements.txt --without-hashes
+python -c "import social_decipher; print('✅ Installation successful!')"
 ```
+
+**Troubleshooting:**
+- If you encounter SSL certificate errors during Poetry installation, use Method 1 above
+- If `poetry install` fails, ensure you're in the project directory and the conda environment is activated
+
 - API keys in `configs/config.yaml` as needed:
   - `OPENAI_API_KEY` (for OpenAI models)
   - `MISTRAL_API_KEY` (for Mistral API models)
@@ -109,6 +116,26 @@ Outputs:
 - `num_scenarios`
 
 ### 7) Troubleshooting
-- vLLM: If Agent B is local/HF, start the server first (see `scripts/start_vllm_server.sh`).
-- Barrier creation parse errors: the generator retries once and logs failing episode ID + scenario snippet; run again to continue.
-- Resume not working: ensure `RESULTS_DIR` matches the previous run and `--resume` is present; a scenario is “complete” only if both required files exist.
+
+#### Installation Issues
+- **SSL Certificate Error during Poetry installation:**
+  ```
+  ssl.SSLCertVerificationError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed
+  ```
+  **Solution:** Use `pip install poetry` instead of the curl installer.
+
+- **Poetry install fails with dependency conflicts:**
+  - Ensure you're in the correct conda environment: `conda activate socailveil`
+  - Try clearing Poetry cache: `poetry cache clear pypi --all`
+  - Update Poetry: `pip install --upgrade poetry`
+
+#### Runtime Issues
+- **vLLM server issues:** If Agent B is local/HF, start the server first (see `scripts/start_vllm_server.sh`).
+- **API key errors:** Ensure your API keys are correctly set in `configs/config.yaml`.
+- **Barrier creation parse errors:** The generator retries once and logs failing episode ID + scenario snippet; run again to continue.
+- **Resume not working:** Ensure `RESULTS_DIR` matches the previous run and `--resume` is present; a scenario is "complete" only if both required files exist.
+
+#### Model Issues
+- **Model not found:** Check that model names in `configs/config.yaml` match available models.
+- **Out of memory errors:** Reduce batch size or use smaller models.
+- **Slow inference:** Consider using local models with vLLM for faster inference.
