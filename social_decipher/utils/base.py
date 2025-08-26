@@ -117,6 +117,7 @@ def direct_completion(
     print(model_id)
  
     system_message = agent.instructions
+
     if hasattr(agent, 'encryption') and agent.encryption is not None:
         system_message = "IMPORTANT: Always respond in English only. Your response will be translated later if needed.\n\n" + system_message
     

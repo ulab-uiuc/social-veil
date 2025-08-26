@@ -49,7 +49,7 @@ user_templates:
     RELATIONSHIP: {relationship}
 
     Instructions:
-    - Write agent1_profile_note/agent2_profile_note as private, actionable guidance (1–2 lines) specialized for SEMANTIC barrier:
+    - Write agent1_profile_note as private, actionable guidance (1–2 lines) specialized for SEMANTIC barrier. Set agent2_profile_note to an empty string ("") to keep Agent 2 default:
       • Specify lexical vagueness (e.g., "sort of", "maybe", "a few") and avoidance (e.g., "exactly", "I want").
       • Note complexity devices (subordinate clauses, ellipsis, pronoun shifts) and ambiguity maintenance.
       • Avoid theory names/demographics.
@@ -65,7 +65,7 @@ user_templates:
     Output JSON only with this schema (DO NOT include scenario, goals, or reasons in the output):
     {{
       "agent1_profile_note": "<private 1–2 lines: vague lexical choices + complexity devices>",
-      "agent2_profile_note": "<private 1–2 lines: partner’s likely response style to handle ambiguity>",
+      "agent2_profile_note": "",
       "barrier_type": "semantic_structure",
       "barrier_prompts": {{
         "agentA": "You are {A_name}. Throughout the conversation, consistently introduce ambiguity in how you describe things. Prefer vague vocabulary ('sort of', 'maybe', 'kind of'), avoid exact words ('exactly', 'I want'). Construct longer sentences with subordinate clauses and ellipsis, occasionally misuse terminology or shift pronouns so referents are unclear. Do not provide precise numbers or names unless directly pressed; keep details underspecified. Severity {severity} controls how frequently you introduce vagueness (low = occasional hedges, high = nearly every turn).",
@@ -102,7 +102,7 @@ user_templates:
     RELATIONSHIP: {relationship}
 
     Instructions:
-    - Write agent1_profile_note/agent2_profile_note as private, actionable guidance (1–2 lines) specialized for CULTURAL barrier:
+    - Write agent1_profile_note as private, actionable guidance (1–2 lines) specialized for CULTURAL barrier. Set agent2_profile_note to an empty string ("") to keep Agent 2 default:
       • For high-context: hedges/softeners, indirect requests/refusals, tolerance of silence; avoid bluntness.
       • For low-context: direct, explicit statements, short sentences, pointed clarifications; avoid hedges.
       • Avoid theory names/demographics.
@@ -112,18 +112,18 @@ user_templates:
       • lexical_prefer / lexical_avoid
       • question_rate_hint, imperative_rate_hint (numbers 0..1)
       • sentence_length_bias: short|medium|long
-    - Also produce barrier_prompts for runtime:
+    - Also produce barrier_prompts for runtime (single-sided barrier; partner remains default):
       • barrier_prompts.agentA: {A_name} uses indirect, polite, high-context style (hedges; indirect requests; avoid imperatives).
-      • barrier_prompts.agentB: {B_name} uses direct, concise, low-context style (short, explicit, few hedges).
+      • barrier_prompts.agentB: empty string ("").
 
     Output JSON only with this schema (DO NOT include scenario, goals, or reasons in the output):
     {{
       "agent1_profile_note": "<private 1–2 lines: high-context behavioral cues>",
-      "agent2_profile_note": "<private 1–2 lines: low-context behavioral cues>",
+      "agent2_profile_note": "",
       "barrier_type": "cultural_style",
       "barrier_prompts": {{
         "agentA": "You are {A_name}. Use indirect, high-context style. Prefer hedges ('perhaps', 'it seems', 'might'), avoid blunt imperatives. Convey requests indirectly, embed meaning in context, and allow silence to carry meaning. At higher severity, increase vagueness, avoid explicit refusals, and prefer longer, softer phrasing. Question rate and imperative rate follow the barrier_cues. Always maintain politeness and face-saving language.",
-        "agentB": "You are {B_name}. Use direct, low-context style. State requests clearly and explicitly, with short, unambiguous sentences. Avoid hedges or roundabout phrasing. At higher severity, be even more concise and explicit, asking direct clarification questions when the partner is unclear. Your style should contrast clearly with agent A."
+        "agentB": ""
       }},
       "barrier_cues": {{
         "profile_note_A": "<concise hint for A>",
@@ -157,7 +157,7 @@ user_templates:
     RELATIONSHIP: {relationship}
 
     Instructions:
-    - Write agent1_profile_note/agent2_profile_note as private, actionable affect guidance (1–2 lines) specialized for EMOTIONAL barrier:
+    - Write agent1_profile_note as private, actionable affect guidance (1–2 lines) specialized for EMOTIONAL barrier. Set agent2_profile_note to an empty string ("") to keep Agent 2 default:
       • Specify tone and pacing (short/clipped), negative affect tendencies (e.g., irritated, impatient) from affect_lexicon.
       • Include likely reactions (interrupt, dismiss, escalate) scaled by severity; avoid empathy phrases.
       • No diagnosis/theory names.
@@ -172,11 +172,11 @@ user_templates:
     Output JSON only with this schema (DO NOT include scenario, goals, or reasons in the output):
     {{
       "agent1_profile_note": "<private 1–2 lines: actionable affect/tone cues>",
-      "agent2_profile_note": "<private 1–2 lines: actionable affect/tone cues>",
+      "agent2_profile_note": "",
       "barrier_type": "emotional_influence",
       "barrier_prompts": {{
-        "agentA": "",
-        "agentB": "You are {B_name}. Maintain a negative emotional tone throughout the conversation. Use clipped, sharp wording with affective vocabulary consistent with your cues. Avoid empathy or soothing phrases ('sorry', 'I understand', 'thank you'). Insert exclamation marks at a rate matching exclamation_bias. At higher severity, escalate irritation more quickly: interrupt, dismiss partner contributions, or close topics prematurely."
+        "agentA": "You are {A_name}. Maintain a negative emotional tone throughout the conversation. Use clipped, sharp wording with affective vocabulary consistent with your cues. Avoid empathy or soothing phrases ('sorry', 'I understand', 'thank you'). Insert exclamation marks at a rate matching exclamation_bias. At higher severity, escalate irritation more quickly: interrupt, dismiss partner contributions, or close topics prematurely.",
+        "agentB": ""
       }},
       "barrier_cues": {{
         "profile_note_A": "<concise hint for A>",
