@@ -767,7 +767,8 @@ class BarrierRepresentationAnalyzer:
                         Z_vis[m] = c + s_factor * (Z[m] - c)
 
                 # Scatter by multiclass to match paper legend
-                fig, ax = plt.subplots(1, 1, figsize=(7.0, 6.2), dpi=180)
+                fig, ax = plt.subplots(1, 1, figsize=(7.4, 5.6), dpi=200)
+                ax.set_facecolor('#fbfbfb')
                 for lbl, name in label_to_name_multi.items():
                     mask = (y_multi == lbl)
                     if np.any(mask):
@@ -796,7 +797,7 @@ class BarrierRepresentationAnalyzer:
                         ax.scatter(
                             Z_vis[mask, 0], Z_vis[mask, 1],
                             c=name_to_color_multi[name], label=name,
-                            s=22, alpha=0.96, edgecolors='white', linewidths=0.35
+                            s=24, alpha=0.95, edgecolors='white', linewidths=0.6
                         )
                 # Fit binary boundary in normalized PCA-2D space and draw a dashed line
                 bin_clf = LogisticRegression(max_iter=2000)
@@ -815,18 +816,26 @@ class BarrierRepresentationAnalyzer:
                     ys = (-w[0]/w[1])*xs - b/w[1]
                     mask_line = (ys >= -1.0) & (ys <= 1.0)
                     ax.plot(xs[mask_line], ys[mask_line], linestyle='--', color='#555555', linewidth=1.6, label='Baseline–Barrier boundary')
-                ax.set_title(f'PCA-2D with Linear Boundary (Layer {layer_idx})')
-                ax.set_xlabel('PC1')
-                ax.set_ylabel('PC2')
+                ax.set_title(
+                    f'PCA-2D with Linear Boundary (Layer {layer_idx})',
+                    fontsize=18, fontweight='bold'
+                )
+                ax.set_xlabel('PC1', fontsize=13)
+                ax.set_ylabel('PC2', fontsize=13)
                 ax.grid(False)
                 for spine in ax.spines.values():
                     spine.set_visible(False)
                 # Coarse ticks at -1, 0, 1
                 ax.set_xticks([-1, 0, 1])
                 ax.set_yticks([-1, 0, 1])
+                ax.tick_params(axis='both', labelsize=11, colors='#4a4a4a')
                 # Put legend outside to avoid overlapping points
-                leg = ax.legend(frameon=True, fontsize=9, loc='upper left', bbox_to_anchor=(1.02, 1.0), borderaxespad=0.)
-                plt.tight_layout(pad=1.0, rect=[0, 0, 0.80, 1])
+                leg = ax.legend(
+                    frameon=True, fontsize=10, loc='upper left',
+                    bbox_to_anchor=(1.02, 1.0), borderaxespad=0., fancybox=True,
+                    framealpha=0.95
+                )
+                plt.tight_layout(pad=0.8, rect=[0, 0, 0.78, 1])
                 plt.savefig(f"{output_dir}/svm_pca2_layer_{layer_idx}.png", bbox_inches='tight')
                 plt.close()
             except Exception:
