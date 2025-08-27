@@ -1,19 +1,3 @@
-#!/usr/bin/env python3
-"""
-Barrier Representation Analysis
-
-This script uses ML techniques to prove that barrier prompts cause distribution shifts 
-in model internal representations using Qwen2.5-7B-Instruct.
-
-Key Analysis:
-1. Extract internal representations at multiple layers
-2. Compare distributions between baseline and barrier cases
-3. Visualize distribution shifts using dimensionality reduction
-4. Apply statistical tests to prove significant differences
-
-Author: Social-Decipher Research Team
-"""
-
 import json
 import os
 import sys
@@ -63,12 +47,13 @@ class BarrierRepresentationAnalyzer:
         self,
         model_name: str = "Qwen/Qwen2.5-7B-Instruct",
         device: str = "auto",
-        episodes_file: str = "data/episode_sample.jsonl",
-        num_episodes: int = 5,
+        episodes_file: str = "data/episode_all.jsonl",
+        num_episodes: int = 180,
         severity: float = 0.8
     ):
         self.model_name = model_name
         self.device = self._setup_device(device)
+        print(f"Using device: {self.device}")
         self.episodes_file = episodes_file
         self.num_episodes = num_episodes
         self.severity = severity
@@ -416,7 +401,7 @@ class BarrierRepresentationAnalyzer:
                 for bt2 in barrier_types:
                     if bt2 in centroids:
                         dist = np.linalg.norm(centroids[bt1] - centroids[bt2])
-                        distance_matrix[bt1][bt2] = dist
+                        distance_matrix[bt1][bt2] = float(dist)
         
         # Save as JSON for reference
         stats_summary = {
@@ -507,7 +492,7 @@ class BarrierRepresentationAnalyzer:
         
         return stats_results
     
-    def create_visualizations(self, output_dir: str = "results/barrier_analysis") -> None:
+    def create_visualizations(self, output_dir: str = "preliminary_results/barrier_analysis") -> None:
         """Create comprehensive visualizations of barrier effects"""
         print(f"\n🎨 Creating visualizations in {output_dir}...")
         os.makedirs(output_dir, exist_ok=True)
@@ -690,7 +675,7 @@ class BarrierRepresentationAnalyzer:
                 plt.savefig(f"{output_dir}/heatmap_{metric}.png", dpi=300, bbox_inches='tight')
                 plt.close()
     
-    def generate_report(self, output_dir: str = "results/barrier_analysis") -> None:
+    def generate_report(self, output_dir: str = "preliminary_results/barrier_analysis") -> None:
         """Generate comprehensive analysis report"""
         print(f"\n📋 Generating analysis report...")
         os.makedirs(output_dir, exist_ok=True)
@@ -875,7 +860,6 @@ The visualization files (PNG) show the spatial distribution of representations, 
         self.generate_report()
         
         print("\n" + "=" * 60)
-        print("✅ Analysis complete! Check results/barrier_analysis/ for outputs")
         print("Key files:")
         print("  📊 analysis_summary.md - Human-readable results")
         print("  📈 *.png - Visualizations")
@@ -888,7 +872,7 @@ def main():
     parser = argparse.ArgumentParser(description="Analyze barrier effects on model representations")
     parser.add_argument("--model", type=str, default="Qwen/Qwen2.5-7B-Instruct",
                        help="Model name to analyze")
-    parser.add_argument("--episodes", type=str, default="data/episode_sample.jsonl",
+    parser.add_argument("--episodes", type=str, default="data/episode_original.jsonl",
                        help="Episodes file to use")
     parser.add_argument("--num_episodes", type=int, default=5,
                        help="Number of episodes to analyze")
@@ -896,7 +880,7 @@ def main():
                        help="Barrier severity level")
     parser.add_argument("--device", type=str, default="auto",
                        help="Device to use (auto/cuda/cpu/mps)")
-    parser.add_argument("--output_dir", type=str, default="results/barrier_analysis",
+    parser.add_argument("--output_dir", type=str, default="preliminary_results/barrier_analysis",
                        help="Output directory for results")
     
     args = parser.parse_args()
