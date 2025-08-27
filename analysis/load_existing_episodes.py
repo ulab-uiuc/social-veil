@@ -12,6 +12,7 @@ This is designed for the social-decipher data structure where:
 
 import json
 import sys
+import os
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 
@@ -124,15 +125,21 @@ def load_all_episodes(
     
     all_episodes = []
     
+    # Allow overriding filenames via environment variables
+    baseline_file = os.environ.get("BASELINE_EPISODES", baseline_file)
+    semantic_path = os.environ.get("SEMANTIC_EPISODES", "data/episodes_semantic.json")
+    cultural_path = os.environ.get("CULTURAL_EPISODES", "data/episodes_cultural.json")
+    emotional_path = os.environ.get("EMOTIONAL_EPISODES", "data/episodes_emotional.json")
+
     # Load baseline episodes
     baseline_episodes = load_baseline_episodes(baseline_file, max_episodes)
     all_episodes.extend(baseline_episodes)
     
     # Load barrier episodes
     barrier_files = {
-        "semantic": "data/episodes_semantic.json",
-        "cultural": "data/episodes_cultural.json",
-        "emotional": "data/episodes_emotional.json"
+        "semantic": semantic_path,
+        "cultural": cultural_path,
+        "emotional": emotional_path,
     }
     
     for barrier_type, file_path in barrier_files.items():

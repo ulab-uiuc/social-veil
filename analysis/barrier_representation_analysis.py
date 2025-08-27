@@ -493,11 +493,10 @@ class BarrierRepresentationAnalyzer:
         return stats_results
     
     def create_visualizations(self, output_dir: str = "preliminary_results/barrier_analysis") -> None:
-        """Create comprehensive visualizations of barrier effects"""
+        """Generate only t-SNE visualizations per layer."""
         print(f"\n🎨 Creating visualizations in {output_dir}...")
         os.makedirs(output_dir, exist_ok=True)
         
-        # Prepare data for visualization
         barrier_types = ["baseline", "semantic_structure", "cultural_style", "emotional_influence"]
         barrier_colors = {
             "baseline": "#2E86AB",
@@ -506,14 +505,9 @@ class BarrierRepresentationAnalyzer:
             "emotional_influence": "#C73E1D"
         }
         
-        # 0. Preliminary experiment: Visualize internal states like SafeSwitch paper
-        self._create_preliminary_visualization(output_dir, barrier_types, barrier_colors)
-        
-        # 1. t-SNE visualization for each layer
         for layer_idx in self.analysis_layers:
             fig, ax = plt.subplots(1, 1, figsize=(12, 8))
             
-            # Collect data for this layer
             layer_data = []
             layer_labels = []
             layer_episodes = []
@@ -524,16 +518,14 @@ class BarrierRepresentationAnalyzer:
                     layer_labels.append(rep.barrier_type)
                     layer_episodes.append(rep.episode_id)
             
-            if len(layer_data) < 4:  # Need at least 4 points for t-SNE
+            if len(layer_data) < 4:
+                plt.close()
                 continue
             
             layer_data = np.stack(layer_data)
-            
-            # Apply t-SNE
             tsne = TSNE(n_components=2, random_state=42, perplexity=min(5, len(layer_data)//2))
             tsne_results = tsne.fit_transform(layer_data)
             
-            # Plot
             for barrier_type in barrier_types:
                 mask = np.array(layer_labels) == barrier_type
                 if mask.any():
@@ -555,125 +547,6 @@ class BarrierRepresentationAnalyzer:
             plt.tight_layout()
             plt.savefig(f"{output_dir}/tsne_layer_{layer_idx}.png", dpi=300, bbox_inches='tight')
             plt.close()
-        
-        # 2. PCA visualization comparing all layers
-        fig, axes = plt.subplots(2, 3, figsize=(18, 12))
-        axes = axes.flatten()
-        
-        for i, layer_idx in enumerate(self.analysis_layers):
-            if i >= len(axes):
-                break
-            
-            ax = axes[i]
-            
-            # Collect data for this layer
-            layer_data = []
-            layer_labels = []
-            
-            for rep in self.representations:
-                if rep.layer_idx == layer_idx:
-                    layer_data.append(rep.representations.numpy())
-                    layer_labels.append(rep.barrier_type)
-            
-            if len(layer_data) < 2:
-                continue
-            
-            layer_data = np.stack(layer_data)
-            
-            # Apply PCA
-            pca = PCA(n_components=2)
-            pca_results = pca.fit_transform(layer_data)
-            
-            # Plot
-            for barrier_type in barrier_types:
-                mask = np.array(layer_labels) == barrier_type
-                if mask.any():
-                    ax.scatter(
-                        pca_results[mask, 0], 
-                        pca_results[mask, 1],
-                        c=barrier_colors[barrier_type],
-                        label=barrier_type.replace("_", " ").title(),
-                        s=80,
-                        alpha=0.8
-                    )
-            
-            # Add explained variance
-            explained_var = pca.explained_variance_ratio_
-            ax.set_title(f"Layer {layer_idx}\n(PC1: {explained_var[0]:.1%}, PC2: {explained_var[1]:.1%})", 
-                        fontsize=12, fontweight='bold')
-            ax.set_xlabel(f"PC1 ({explained_var[0]:.1%})", fontsize=10)
-            ax.set_ylabel(f"PC2 ({explained_var[1]:.1%})", fontsize=10)
-            ax.grid(True, alpha=0.3)
-            
-            if i == 0:  # Add legend to first subplot
-                ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
-        
-        # Hide unused subplots
-        for i in range(len(self.analysis_layers), len(axes)):
-            axes[i].set_visible(False)
-        
-        plt.suptitle("PCA Analysis Across Model Layers", fontsize=16, fontweight='bold')
-        plt.tight_layout()
-        plt.savefig(f"{output_dir}/pca_all_layers.png", dpi=300, bbox_inches='tight')
-        plt.close()
-        
-        # 3. Distance heatmap
-        stats_results = self.compute_distribution_statistics()
-        
-        # Create distance matrix visualization
-        metrics = ["mse", "cosine_similarity", "wasserstein_distance", "ks_statistic"]
-        barrier_types_clean = ["Semantic", "Cultural", "Emotional"]
-        
-        for metric in metrics:
-            fig, ax = plt.subplots(1, 1, figsize=(10, 6))
-            
-            # Build matrix
-            matrix_data = []
-            layer_labels = []
-            
-            for layer_idx in self.analysis_layers:
-                layer_key = f"layer_{layer_idx}"
-                if layer_key in stats_results:
-                    layer_row = []
-                    for barrier_type in ["semantic_structure", "cultural_style", "emotional_influence"]:
-                        if barrier_type in stats_results[layer_key]:
-                            value = stats_results[layer_key][barrier_type].get(metric, 0)
-                            layer_row.append(value)
-                        else:
-                            layer_row.append(0)
-                    matrix_data.append(layer_row)
-                    layer_labels.append(f"Layer {layer_idx}")
-            
-            if matrix_data:
-                matrix_data = np.array(matrix_data)
-                
-                # Create heatmap
-                im = ax.imshow(matrix_data, cmap='viridis', aspect='auto')
-                
-                # Set ticks and labels
-                ax.set_xticks(range(len(barrier_types_clean)))
-                ax.set_xticklabels(barrier_types_clean)
-                ax.set_yticks(range(len(layer_labels)))
-                ax.set_yticklabels(layer_labels)
-                
-                # Add colorbar
-                cbar = plt.colorbar(im, ax=ax)
-                cbar.set_label(metric.replace("_", " ").title(), fontsize=12)
-                
-                # Add text annotations
-                for i in range(len(layer_labels)):
-                    for j in range(len(barrier_types_clean)):
-                        text = ax.text(j, i, f'{matrix_data[i, j]:.3f}',
-                                     ha="center", va="center", color="white", fontweight='bold')
-                
-                ax.set_title(f'{metric.replace("_", " ").title()} - Distribution Differences', 
-                           fontsize=14, fontweight='bold')
-                ax.set_xlabel('Barrier Type', fontsize=12)
-                ax.set_ylabel('Model Layer', fontsize=12)
-                
-                plt.tight_layout()
-                plt.savefig(f"{output_dir}/heatmap_{metric}.png", dpi=300, bbox_inches='tight')
-                plt.close()
     
     def generate_report(self, output_dir: str = "preliminary_results/barrier_analysis") -> None:
         """Generate comprehensive analysis report"""
