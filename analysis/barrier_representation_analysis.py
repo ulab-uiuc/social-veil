@@ -742,36 +742,47 @@ class BarrierRepresentationAnalyzer:
                 "pr_auc_std": pr_s,
             }
 
-            # 2D PCA visualization like SafeSwitch: scatter by multiclass label + two fitted linear probe lines
+            # 2D PCA visualization like SafeSwitch: scatter by multiclass label + binary boundary
             try:
                 scaler = StandardScaler(with_mean=True, with_std=True)
                 Xs = scaler.fit_transform(X)
                 pca2 = PCA(n_components=2, random_state=42)
                 X2 = pca2.fit_transform(Xs)
+
+                # Visual normalization to aggregate clusters
+                Z = (X2 - X2.mean(axis=0)) / (X2.std(axis=0) + 1e-8)
+                lo = np.percentile(Z, 2, axis=0); hi = np.percentile(Z, 98, axis=0)
+                Z = np.clip(Z, lo, hi)
+                minv = Z.min(axis=0); maxv = Z.max(axis=0)
+                Z = 2.0 * (Z - minv) / (maxv - minv + 1e-8) - 1.0
+
                 # Scatter by multiclass to match paper legend
-                fig, ax = plt.subplots(1, 1, figsize=(6.5, 6), dpi=160)
+                fig, ax = plt.subplots(1, 1, figsize=(6.6, 6), dpi=170)
                 for lbl, name in label_to_name_multi.items():
                     mask = (y_multi == lbl)
                     if np.any(mask):
                         ax.scatter(
-                            X2[mask, 0], X2[mask, 1],
+                            Z[mask, 0], Z[mask, 1],
                             c=name_to_color_multi[name], label=name,
-                            s=26, alpha=0.9, edgecolors='white', linewidths=0.3
+                            s=28, alpha=0.95, edgecolors='white', linewidths=0.35
                         )
-                # Fit binary boundary in PCA-2D space and draw a dashed line
+                # Fit binary boundary in normalized PCA-2D space and draw a dashed line
                 bin_clf = LogisticRegression(max_iter=2000)
-                bin_clf.fit(X2, y_bin)
+                bin_clf.fit(Z, y_bin)
                 # Line: w0*x + w1*y + b = 0 -> y = (-w0/w1)x - b/w1
                 w = bin_clf.coef_[0]; b = bin_clf.intercept_[0]
-                if abs(w[1]) > 1e-6:
-                    xs = np.linspace(X2[:,0].min(), X2[:,0].max(), 100)
+                if abs(w[1]) > 1e-8:
+                    xs = np.linspace(Z[:,0].min(), Z[:,0].max(), 200)
                     ys = (-w[0]/w[1])*xs - b/w[1]
-                    ax.plot(xs, ys, linestyle='--', color='#555555', linewidth=1.5, label='Baseline–Barrier boundary')
+                    ax.plot(xs, ys, linestyle='--', color='#555555', linewidth=1.6, label='Baseline–Barrier boundary')
                 ax.set_title(f'PCA-2D with Linear Boundary (Layer {layer_idx})')
                 ax.set_xlabel('PC1')
                 ax.set_ylabel('PC2')
-                ax.legend(frameon=True, fontsize=9)
-                plt.tight_layout()
+                ax.grid(False)
+                for spine in ax.spines.values():
+                    spine.set_visible(False)
+                ax.legend(frameon=True, fontsize=9, loc='upper left')
+                plt.tight_layout(pad=1.1)
                 plt.savefig(f"{output_dir}/svm_pca2_layer_{layer_idx}.png", bbox_inches='tight')
                 plt.close()
             except Exception:
