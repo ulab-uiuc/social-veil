@@ -804,16 +804,16 @@ class BarrierRepresentationAnalyzer:
                 # Line: w0*x + w1*y + b = 0 -> y = (-w0/w1)x - b/w1
                 w = bin_clf.coef_[0]; b = bin_clf.intercept_[0]
                 # Fix symmetric limits for compact, comparable framing
-                ax.set_xlim(-1.1, 1.1)
-                ax.set_ylim(-1.1, 1.1)
+                ax.set_xlim(-1.0, 1.0)
+                ax.set_ylim(-1.0, 1.0)
                 try:
                     ax.set_aspect('equal', adjustable='box')
                 except Exception:
                     pass
                 if abs(w[1]) > 1e-8:
-                    xs = np.linspace(-1.1, 1.1, 400)
+                    xs = np.linspace(-1.0, 1.0, 400)
                     ys = (-w[0]/w[1])*xs - b/w[1]
-                    mask_line = (ys >= -1.1) & (ys <= 1.1)
+                    mask_line = (ys >= -1.0) & (ys <= 1.0)
                     ax.plot(xs[mask_line], ys[mask_line], linestyle='--', color='#555555', linewidth=1.6, label='Baseline–Barrier boundary')
                 ax.set_title(f'PCA-2D with Linear Boundary (Layer {layer_idx})')
                 ax.set_xlabel('PC1')
@@ -821,6 +821,9 @@ class BarrierRepresentationAnalyzer:
                 ax.grid(False)
                 for spine in ax.spines.values():
                     spine.set_visible(False)
+                # Coarse ticks at -1, 0, 1
+                ax.set_xticks([-1, 0, 1])
+                ax.set_yticks([-1, 0, 1])
                 # Put legend outside to avoid overlapping points
                 leg = ax.legend(frameon=True, fontsize=9, loc='upper left', bbox_to_anchor=(1.02, 1.0), borderaxespad=0.)
                 plt.tight_layout(pad=1.0, rect=[0, 0, 0.80, 1])
