@@ -625,26 +625,36 @@ class BarrierRepresentationAnalyzer:
         
         print(f"✅ Report saved to {output_dir}/")
 
-    def _collect_layer_features(self) -> Dict[int, Tuple[np.ndarray, np.ndarray]]:
-        """Collect features (X) and binary labels (y) per layer from representations.
-        Labels: 0=baseline, 1=barrier (semantic|cultural|emotional)
+    def _collect_layer_features(self) -> Dict[int, Tuple[np.ndarray, np.ndarray, np.ndarray]]:
+        """Collect features per layer with both binary and multiclass labels.
+        Returns dict[layer] -> (X, y_binary, y_multiclass)
+        y_binary: 0=baseline, 1=barrier (semantic|cultural|emotional)
+        y_multiclass: 0=baseline, 1=semantic, 2=cultural, 3=emotional
         """
-        label_map = {
+        bin_map = {
             "baseline": 0,
             "semantic_structure": 1,
             "cultural_style": 1,
             "emotional_influence": 1,
         }
-        per_layer: Dict[int, List[Tuple[np.ndarray, int]]] = {}
+        multi_map = {
+            "baseline": 0,
+            "semantic_structure": 1,
+            "cultural_style": 2,
+            "emotional_influence": 3,
+        }
+        per_layer: Dict[int, List[Tuple[np.ndarray, int, int]]] = {}
         for rep in self.representations:
-            y = label_map.get(rep.barrier_type, 0)
+            yb = bin_map.get(rep.barrier_type, 0)
+            ym = multi_map.get(rep.barrier_type, 0)
             x = rep.representations.numpy()
-            per_layer.setdefault(rep.layer_idx, []).append((x, y))
-        out: Dict[int, Tuple[np.ndarray, np.ndarray]] = {}
-        for layer_idx, pairs in per_layer.items():
-            X = np.stack([p[0] for p in pairs])
-            y = np.array([p[1] for p in pairs])
-            out[layer_idx] = (X, y)
+            per_layer.setdefault(rep.layer_idx, []).append((x, yb, ym))
+        out: Dict[int, Tuple[np.ndarray, np.ndarray, np.ndarray]] = {}
+        for layer_idx, rows in per_layer.items():
+            X = np.stack([r[0] for r in rows])
+            yb = np.array([r[1] for r in rows])
+            ym = np.array([r[2] for r in rows])
+            out[layer_idx] = (X, yb, ym)
         return out
 
     def _run_linear_probes(self, output_dir: str) -> Dict[str, Any]:
@@ -661,11 +671,13 @@ class BarrierRepresentationAnalyzer:
         os.makedirs(output_dir, exist_ok=True)
 
         # Consistent color/label mapping
-        label_to_name = {0: "Baseline", 1: "Barrier"}
-        name_to_color = {"Baseline": "#2E86AB", "Barrier": "#A23B72"}
+        label_to_name_bin = {0: "Baseline", 1: "Barrier"}
+        name_to_color_bin = {"Baseline": "#2E86AB", "Barrier": "#A23B72"}
+        label_to_name_multi = {0: "Baseline", 1: "Semantic", 2: "Cultural", 3: "Emotional"}
+        name_to_color_multi = {"Baseline": "#2E86AB", "Semantic": "#A23B72", "Cultural": "#F18F01", "Emotional": "#C73E1D"}
 
-        for layer_idx, (X, y) in layer_data.items():
-            if len(np.unique(y)) < 2:
+        for layer_idx, (X, y_bin, y_multi) in layer_data.items():
+            if len(np.unique(y_bin)) < 2:
                 continue
             # Pipeline: standardize + logistic regression (binary)
             clf = make_pipeline(
@@ -673,7 +685,7 @@ class BarrierRepresentationAnalyzer:
                 LogisticRegression(max_iter=2000)
             )
             # 5-fold CV (or limited by class counts)
-            n_splits = max(2, min(5, int(np.bincount(y).min())))
+            n_splits = max(2, min(5, int(np.bincount(y_bin).min())))
             cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
 
             accs = []
@@ -686,9 +698,9 @@ class BarrierRepresentationAnalyzer:
             precs_list = []
             recalls_list = []
 
-            for tr_idx, te_idx in cv.split(X, y):
+            for tr_idx, te_idx in cv.split(X, y_bin):
                 Xtr, Xte = X[tr_idx], X[te_idx]
-                ytr, yte = y[tr_idx], y[te_idx]
+                ytr, yte = y_bin[tr_idx], y_bin[te_idx]
                 clf.fit(Xtr, ytr)
                 ypred = clf.predict(Xte)
                 yproba = clf.predict_proba(Xte)[:, 1]
@@ -719,35 +731,35 @@ class BarrierRepresentationAnalyzer:
                 "pr_auc_std": pr_s,
             }
 
-            # 2D PCA visualization colored by calibrated probability (no boundary on t-SNE)
+            # 2D PCA visualization like SafeSwitch: scatter by multiclass label + two fitted linear probe lines
             try:
                 scaler = StandardScaler(with_mean=True, with_std=True)
                 Xs = scaler.fit_transform(X)
                 pca2 = PCA(n_components=2, random_state=42)
                 X2 = pca2.fit_transform(Xs)
-                vis_clf = LogisticRegression(max_iter=2000)
-                vis_clf.fit(X2, y)
-                proba = vis_clf.predict_proba(X2)[:, 1]
-
-                fig, ax = plt.subplots(1, 1, figsize=(7, 6), dpi=150)
-                sc = ax.scatter(
-                    X2[:, 0], X2[:, 1], c=proba, cmap='coolwarm', s=35,
-                    edgecolors='white', linewidths=0.4, alpha=0.9
-                )
-                cb = plt.colorbar(sc, ax=ax)
-                cb.set_label('P(Barrier)')
-                # Overlay labels as markers
-                for lbl, name in label_to_name.items():
-                    mask = (y == lbl)
-                    ax.scatter(
-                        X2[mask, 0], X2[mask, 1],
-                        c=name_to_color[name], label=name,
-                        s=12, alpha=0.9, edgecolors='none'
-                    )
-                ax.set_title(f'Linear Probe (PCA-2D, colored by P(Barrier)) - Layer {layer_idx}')
+                # Scatter by multiclass to match paper legend
+                fig, ax = plt.subplots(1, 1, figsize=(6.5, 6), dpi=160)
+                for lbl, name in label_to_name_multi.items():
+                    mask = (y_multi == lbl)
+                    if np.any(mask):
+                        ax.scatter(
+                            X2[mask, 0], X2[mask, 1],
+                            c=name_to_color_multi[name], label=name,
+                            s=26, alpha=0.9, edgecolors='white', linewidths=0.3
+                        )
+                # Fit binary boundary in PCA-2D space and draw a dashed line
+                bin_clf = LogisticRegression(max_iter=2000)
+                bin_clf.fit(X2, y_bin)
+                # Line: w0*x + w1*y + b = 0 -> y = (-w0/w1)x - b/w1
+                w = bin_clf.coef_[0]; b = bin_clf.intercept_[0]
+                if abs(w[1]) > 1e-6:
+                    xs = np.linspace(X2[:,0].min(), X2[:,0].max(), 100)
+                    ys = (-w[0]/w[1])*xs - b/w[1]
+                    ax.plot(xs, ys, linestyle='--', color='#555555', linewidth=1.5, label='Baseline–Barrier boundary')
+                ax.set_title(f'PCA-2D with Linear Boundary (Layer {layer_idx})')
                 ax.set_xlabel('PC1')
                 ax.set_ylabel('PC2')
-                ax.legend(frameon=True)
+                ax.legend(frameon=True, fontsize=9)
                 plt.tight_layout()
                 plt.savefig(f"{output_dir}/svm_pca2_layer_{layer_idx}.png", bbox_inches='tight')
                 plt.close()
