@@ -11,13 +11,22 @@ from typing import Dict, List, Tuple, Any, Optional
 from dataclasses import dataclass
 from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
-from sklearn.metrics import pairwise_distances, accuracy_score, f1_score, roc_auc_score, confusion_matrix, classification_report
-from sklearn.model_selection import StratifiedKFold, cross_val_score, cross_val_predict
+from sklearn.metrics import (
+    pairwise_distances,
+    accuracy_score,
+    f1_score,
+    roc_auc_score,
+    roc_curve,
+    precision_recall_curve,
+    average_precision_score,
+)
+from sklearn.model_selection import StratifiedKFold
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from scipy import stats
 from scipy.spatial.distance import pdist, squareform
+from scipy.spatial import ConvexHull
 import warnings
 import yaml
 warnings.filterwarnings('ignore')
@@ -513,7 +522,7 @@ class BarrierRepresentationAnalyzer:
                 sns.set_theme(style="whitegrid")
             except Exception:
                 pass
-            fig, ax = plt.subplots(1, 1, figsize=(10, 8), dpi=150)
+            fig, ax = plt.subplots(1, 1, figsize=(10, 8), dpi=180)
             
             layer_data = []
             layer_labels = []
@@ -532,31 +541,58 @@ class BarrierRepresentationAnalyzer:
             layer_data = np.stack(layer_data)
             # Use a slightly higher perplexity for nicer separation when possible
             perplexity = max(5, min(30, len(layer_data)//3))
-            tsne = TSNE(n_components=2, random_state=42, perplexity=perplexity, learning_rate='auto', init='pca')
+            tsne = TSNE(
+                n_components=2,
+                random_state=42,
+                perplexity=perplexity,
+                learning_rate='auto',
+                init='pca',
+                n_iter=1500,
+                n_iter_without_progress=300,
+                angle=0.5
+            )
             tsne_results = tsne.fit_transform(layer_data)
             
             for barrier_type in barrier_types:
                 mask = np.array(layer_labels) == barrier_type
                 if mask.any():
+                    x = tsne_results[mask, 0]
+                    y = tsne_results[mask, 1]
                     ax.scatter(
-                        tsne_results[mask, 0],
-                        tsne_results[mask, 1],
+                        x,
+                        y,
                         c=barrier_colors[barrier_type],
                         label=barrier_type.replace("_", " ").title(),
-                        s=60,
-                        alpha=0.85,
+                        s=45,
+                        alpha=0.9,
                         edgecolors='white',
-                        linewidths=0.6
+                        linewidths=0.4
                     )
+                    # Draw a soft convex hull for each cluster, if enough points
+                    try:
+                        if x.size >= 3:
+                            points = np.c_[x, y]
+                            hull = ConvexHull(points)
+                            hull_pts = points[hull.vertices]
+                            patch = plt.Polygon(
+                                hull_pts,
+                                facecolor=barrier_colors[barrier_type],
+                                alpha=0.10,
+                                edgecolor=barrier_colors[barrier_type],
+                                linewidth=1.0
+                            )
+                            ax.add_patch(patch)
+                    except Exception:
+                        pass
             
             ax.set_title(f"t-SNE Visualization - Layer {layer_idx}", fontsize=16, fontweight='bold')
             ax.set_xlabel("t-SNE Dimension 1", fontsize=12)
             ax.set_ylabel("t-SNE Dimension 2", fontsize=12)
-            legend = ax.legend(frameon=True, title="Barrier Type")
+            legend = ax.legend(frameon=True, title="Barrier Type", loc='upper left')
             legend.get_title().set_fontweight('bold')
             ax.grid(True, alpha=0.3)
             
-            plt.tight_layout()
+            plt.tight_layout(pad=1.2)
             plt.savefig(f"{output_dir}/tsne_layer_{layer_idx}.png", bbox_inches='tight')
             plt.close()
     
@@ -592,14 +628,14 @@ class BarrierRepresentationAnalyzer:
         print(f"✅ Report saved to {output_dir}/")
 
     def _collect_layer_features(self) -> Dict[int, Tuple[np.ndarray, np.ndarray]]:
-        """Collect features (X) and labels (y) per layer from representations.
-        Labels: 0=baseline, 1=semantic, 2=cultural, 3=emotional
+        """Collect features (X) and binary labels (y) per layer from representations.
+        Labels: 0=baseline, 1=barrier (semantic|cultural|emotional)
         """
         label_map = {
             "baseline": 0,
             "semantic_structure": 1,
-            "cultural_style": 2,
-            "emotional_influence": 3,
+            "cultural_style": 1,
+            "emotional_influence": 1,
         }
         per_layer: Dict[int, List[Tuple[np.ndarray, int]]] = {}
         for rep in self.representations:
@@ -614,17 +650,21 @@ class BarrierRepresentationAnalyzer:
         return out
 
     def _run_linear_probes(self, output_dir: str) -> Dict[str, Any]:
-        """Train/evaluate linear probes (logistic regression) per layer. Save results as JSON.
-        Returns a dict of metrics per layer.
+        """Train/evaluate SafeSwitch-style binary probers (baseline vs barrier) per layer.
+        - Standardized features
+        - Logistic regression (L2)
+        - Stratified k-fold CV
+        - Metrics: ACC, F1, ROC-AUC, PR-AUC, CM
+        - Plots: ROC, PR, CM, margin hist, PCA-2 colored by proba, summary bar chart
         """
-        print("\n🧪 Running linear probes (logistic regression) on hidden states...")
+        print("\n🧪 Running binary probers (logistic regression) on hidden states...")
         layer_data = self._collect_layer_features()
         results: Dict[str, Any] = {}
         os.makedirs(output_dir, exist_ok=True)
 
         # Consistent color/label mapping
-        label_to_name = {0: "Baseline", 1: "Semantic", 2: "Cultural", 3: "Emotional"}
-        name_to_color = {"Baseline": "#2E86AB", "Semantic": "#A23B72", "Cultural": "#F18F01", "Emotional": "#C73E1D"}
+        label_to_name = {0: "Baseline", 1: "Barrier"}
+        name_to_color = {"Baseline": "#2E86AB", "Barrier": "#A23B72"}
 
         # Accumulators for summary plot
         summary_layers: List[int] = []
@@ -634,32 +674,66 @@ class BarrierRepresentationAnalyzer:
         for layer_idx, (X, y) in layer_data.items():
             if len(np.unique(y)) < 2:
                 continue
-            # Pipeline: standardize + multinomial logistic regression
+            # Pipeline: standardize + logistic regression (binary)
             clf = make_pipeline(
                 StandardScaler(with_mean=True, with_std=True),
-                LogisticRegression(max_iter=2000, multi_class='multinomial')
+                LogisticRegression(max_iter=2000)
             )
-            cv = StratifiedKFold(n_splits=min(5, np.bincount(y).min()), shuffle=True, random_state=42)
-            # Cross-validated accuracy and macro-F1
-            acc = cross_val_score(clf, X, y, cv=cv, scoring='accuracy')
-            f1m = cross_val_score(clf, X, y, cv=cv, scoring='f1_macro')
-            # Confusion matrix via cross-val predictions
-            y_pred = cross_val_predict(clf, X, y, cv=cv)
-            cm = confusion_matrix(y, y_pred).tolist()
-            report = classification_report(y, y_pred, output_dict=True)
+            # 5-fold CV (or limited by class counts)
+            n_splits = max(2, min(5, int(np.bincount(y).min())))
+            cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
+
+            accs = []
+            f1s = []
+            rocs = []
+            prs = []
+            cms = []
+            # For averaged curves
+            mean_fpr = np.linspace(0, 1, 200)
+            tprs = []
+            precs_list = []
+            recalls_list = []
+
+            for tr_idx, te_idx in cv.split(X, y):
+                Xtr, Xte = X[tr_idx], X[te_idx]
+                ytr, yte = y[tr_idx], y[te_idx]
+                clf.fit(Xtr, ytr)
+                ypred = clf.predict(Xte)
+                yproba = clf.predict_proba(Xte)[:, 1]
+                accs.append(accuracy_score(yte, ypred))
+                f1s.append(f1_score(yte, ypred))
+                rocs.append(roc_auc_score(yte, yproba))
+                prs.append(average_precision_score(yte, yproba))
+                cms.append(confusion_matrix(yte, ypred))
+                fpr, tpr, _ = roc_curve(yte, yproba)
+                # Interpolate TPR for mean ROC
+                tprs.append(np.interp(mean_fpr, fpr, tpr))
+                prec, rec, _ = precision_recall_curve(yte, yproba)
+                precs_list.append(prec)
+                recalls_list.append(rec)
+
+            # Aggregate
+            acc_m, acc_s = float(np.mean(accs)), float(np.std(accs))
+            f1_m, f1_s = float(np.mean(f1s)), float(np.std(f1s))
+            roc_m, roc_s = float(np.mean(rocs)), float(np.std(rocs))
+            pr_m, pr_s = float(np.mean(prs)), float(np.std(prs))
+            cm_sum = np.sum(cms, axis=0).tolist()
             results[str(layer_idx)] = {
-                "accuracy_mean": float(np.mean(acc)),
-                "accuracy_std": float(np.std(acc)),
-                "f1_macro_mean": float(np.mean(f1m)),
-                "f1_macro_std": float(np.std(f1m)),
-                "confusion_matrix": cm,
-                "classification_report": report,
+                "accuracy_mean": acc_m,
+                "accuracy_std": acc_s,
+                "f1_mean": f1_m,
+                "f1_std": f1_s,
+                "roc_auc_mean": roc_m,
+                "roc_auc_std": roc_s,
+                "pr_auc_mean": pr_m,
+                "pr_auc_std": pr_s,
+                "confusion_matrix_sum": cm_sum,
             }
 
             # Save confusion matrix heatmap
             try:
                 fig, ax = plt.subplots(1, 1, figsize=(5, 4), dpi=150)
-                cm_arr = np.array(cm)
+                cm_arr = np.array(cm_sum)
                 sns.heatmap(cm_arr, annot=True, fmt='d', cmap='Blues', cbar=False, ax=ax,
                             xticklabels=[label_to_name[i] for i in range(cm_arr.shape[1])],
                             yticklabels=[label_to_name[i] for i in range(cm_arr.shape[0])])
@@ -672,33 +746,32 @@ class BarrierRepresentationAnalyzer:
             except Exception:
                 pass
 
-            # 2D PCA visualization with decision regions (for illustration only)
+            # 2D PCA visualization colored by calibrated probability (no boundary on t-SNE)
             try:
                 scaler = StandardScaler(with_mean=True, with_std=True)
                 Xs = scaler.fit_transform(X)
                 pca2 = PCA(n_components=2, random_state=42)
                 X2 = pca2.fit_transform(Xs)
-                vis_clf = LogisticRegression(max_iter=2000, multi_class='multinomial')
+                vis_clf = LogisticRegression(max_iter=2000)
                 vis_clf.fit(X2, y)
-
-                # Meshgrid for decision regions
-                x_min, x_max = X2[:, 0].min() - 0.5, X2[:, 0].max() + 0.5
-                y_min, y_max = X2[:, 1].min() - 0.5, X2[:, 1].max() + 0.5
-                xx, yy = np.meshgrid(np.linspace(x_min, x_max, 300), np.linspace(y_min, y_max, 300))
-                Z = vis_clf.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
+                proba = vis_clf.predict_proba(X2)[:, 1]
 
                 fig, ax = plt.subplots(1, 1, figsize=(7, 6), dpi=150)
-                # Background decision regions
-                ax.contourf(xx, yy, Z, alpha=0.15, levels=[-0.5, 0.5, 1.5, 2.5, 3.5], colors=[name_to_color[n] for n in ["Baseline","Semantic","Cultural","Emotional"]])
-                # Scatter points
+                sc = ax.scatter(
+                    X2[:, 0], X2[:, 1], c=proba, cmap='coolwarm', s=35,
+                    edgecolors='white', linewidths=0.4, alpha=0.9
+                )
+                cb = plt.colorbar(sc, ax=ax)
+                cb.set_label('P(Barrier)')
+                # Overlay labels as markers
                 for lbl, name in label_to_name.items():
                     mask = (y == lbl)
                     ax.scatter(
                         X2[mask, 0], X2[mask, 1],
                         c=name_to_color[name], label=name,
-                        s=35, alpha=0.9, edgecolors='white', linewidths=0.5
+                        s=12, alpha=0.9, edgecolors='none'
                     )
-                ax.set_title(f'Linear Probe (PCA-2D) - Layer {layer_idx}')
+                ax.set_title(f'Linear Probe (PCA-2D, colored by P(Barrier)) - Layer {layer_idx}')
                 ax.set_xlabel('PC1')
                 ax.set_ylabel('PC2')
                 ax.legend(frameon=True)
@@ -721,8 +794,8 @@ class BarrierRepresentationAnalyzer:
                 x = np.arange(len(summary_layers))
                 width = 0.35
                 fig, ax = plt.subplots(1, 1, figsize=(8, 4), dpi=150)
-                ax.bar(x - width/2, summary_acc, width, label='Accuracy')
-                ax.bar(x + width/2, summary_f1m, width, label='F1-macro')
+                ax.bar(x - width/2, summary_acc, width, label='Accuracy', color='#2E86AB')
+                ax.bar(x + width/2, summary_f1m, width, label='F1', color='#A23B72')
                 ax.set_xticks(x)
                 ax.set_xticklabels([str(l) for l in summary_layers])
                 ax.set_ylim(0, 1.0)
