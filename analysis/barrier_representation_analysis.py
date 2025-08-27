@@ -806,6 +806,10 @@ class BarrierRepresentationAnalyzer:
                 # Fix symmetric limits for compact, comparable framing
                 ax.set_xlim(-1.1, 1.1)
                 ax.set_ylim(-1.1, 1.1)
+                try:
+                    ax.set_aspect('equal', adjustable='box')
+                except Exception:
+                    pass
                 if abs(w[1]) > 1e-8:
                     xs = np.linspace(-1.1, 1.1, 400)
                     ys = (-w[0]/w[1])*xs - b/w[1]
