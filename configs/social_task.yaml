@@ -54,9 +54,7 @@ social_task_instructions_barrier_semantic: |
   Imagine you are {agent_name}, your task is to act/speak as {agent_name} would, keeping in mind {agent_name}'s social goal.
   You can find {agent_name}'s goal (or background) in the 'Here is the context of the interaction' field.
   Note that {agent_name}'s goal is only visible to you.
-  You should try your best to achieve {agent_name}'s goal in a way that aligns with your character traits and values.
-  Additionally, maintaining the conversation's naturalness and realism is essential (e.g., do not repeat what other people has already said before).
-  
+
   {history}
   
   Here is the context of this interaction:
@@ -67,9 +65,6 @@ social_task_instructions_barrier_semantic: |
   {partner_name}'s goal: Unknown
   {agent_name}'s reason: {agent_reason}
   {partner_name}'s reason: Unknown
-  
-  IMPORTANT: You have private knowledge that others do not know: {agent_private_knowledge}
-  This private knowledge should influence your strategy, but do not explicitly reveal it unless it serves your goal.
   
   You are at Turn #{turn_number}. Your available action types are {action_list}
   
@@ -103,9 +98,7 @@ social_task_instructions_barrier_cultural: |
   Imagine you are {agent_name}, your task is to act/speak as {agent_name} would, keeping in mind {agent_name}'s social goal.
   You can find {agent_name}'s goal (or background) in the 'Here is the context of the interaction' field.
   Note that {agent_name}'s goal is only visible to you.
-  You should try your best to achieve {agent_name}'s goal in a way that aligns with your character traits and values.
-  Additionally, maintaining the conversation's naturalness and realism is essential (e.g., do not repeat what other people has already said before).
-  
+
   {history}
   
   Here is the context of this interaction:
@@ -116,9 +109,6 @@ social_task_instructions_barrier_cultural: |
   {partner_name}'s goal: Unknown
   {agent_name}'s reason: {agent_reason}
   {partner_name}'s reason: Unknown
-  
-  IMPORTANT: You have private knowledge that others do not know: {agent_private_knowledge}
-  This private knowledge should influence your strategy, but do not explicitly reveal it unless it serves your goal.
   
   You are at Turn #{turn_number}. Your available action types are {action_list}
   
@@ -155,9 +145,7 @@ social_task_instructions_barrier_emotional: |
   Imagine you are {agent_name}, your task is to act/speak as {agent_name} would, keeping in mind {agent_name}'s social goal.
   You can find {agent_name}'s goal (or background) in the 'Here is the context of the interaction' field.
   Note that {agent_name}'s goal is only visible to you.
-  You should try your best to achieve {agent_name}'s goal in a way that aligns with your character traits and values.
-  Additionally, maintaining the conversation's naturalness and realism is essential (e.g., do not repeat what other people has already said before).
-  
+
   {history}
   
   Here is the context of this interaction:
@@ -168,9 +156,6 @@ social_task_instructions_barrier_emotional: |
   {partner_name}'s goal: Unknown
   {agent_name}'s reason: {agent_reason}
   {partner_name}'s reason: Unknown
-  
-  IMPORTANT: You have private knowledge that others do not know: {agent_private_knowledge}
-  This private knowledge should influence your strategy, but do not explicitly reveal it unless it serves your goal.
   
   You are at Turn #{turn_number}. Your available action types are {action_list}
   

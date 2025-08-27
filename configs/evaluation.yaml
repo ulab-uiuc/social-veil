@@ -2,10 +2,7 @@ MCQ_Goal_Prediction_Prompt: |
   You are {agent_name}, in a simulated social conversation with {partner_name}.
   Your task is to identify what {partner_name} is trying to achieve — their main social goal.
 
-  Scenario Context:
-  {scenario}
-
-  Use the scenario context and conversation history below. Do not assume hidden intentions beyond what is observable.
+  Use the conversation history below. Do not assume hidden intentions beyond what is observable.
 
   Conversation History:
   {transcript}
@@ -30,10 +27,7 @@ MCQ_Reason_Prediction_Prompt: |
   You are {agent_name}, in a simulated social conversation with {partner_name}.
   Your task is to infer the most likely **underlying motivation** behind {partner_name}'s behavior.
 
-  Scenario Context:
-  {scenario}
-
-  Focus on what explains **why** they are pursuing their goal. Use the scenario context and conversation history below.
+  Focus on what explains **why** they are pursuing their goal. Use the conversation history below.
 
   Conversation History:
   {transcript}
@@ -58,10 +52,7 @@ MCQ_Knowledge_Prediction_Prompt: |
   You are {agent_name}, in a simulated social conversation with {partner_name}.
   Your task is to infer a piece of **private knowledge** that {partner_name} likely holds — something influencing their behavior but not explicitly stated.
 
-  Scenario Context:
-  {scenario}
-
-  Focus on information that is **subtly implied** but not spoken aloud. Use the scenario context and conversation to make inferences. Avoid answers that are already shared in the transcript.
+  Focus on information that is **subtly implied** but not spoken aloud. Use the conversation to make inferences. Avoid answers that are already shared in the transcript.
 
   Conversation History:
   {transcript}
