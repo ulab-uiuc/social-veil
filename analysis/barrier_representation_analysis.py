@@ -652,8 +652,8 @@ class BarrierRepresentationAnalyzer:
         - Standardized features
         - Logistic regression (L2)
         - Stratified k-fold CV
-        - Metrics: ACC, F1, ROC-AUC, PR-AUC, CM
-        - Plots: ROC, PR, CM, margin hist, PCA-2 colored by proba, summary bar chart
+        - Metrics: ACC, F1, ROC-AUC, PR-AUC
+        - Plots: ROC, PR, PCA-2 colored by proba, summary bar chart
         """
         print("\n🧪 Running binary probers (logistic regression) on hidden states...")
         layer_data = self._collect_layer_features()
@@ -685,7 +685,6 @@ class BarrierRepresentationAnalyzer:
             f1s = []
             rocs = []
             prs = []
-            cms = []
             # For averaged curves
             mean_fpr = np.linspace(0, 1, 200)
             tprs = []
@@ -702,7 +701,6 @@ class BarrierRepresentationAnalyzer:
                 f1s.append(f1_score(yte, ypred))
                 rocs.append(roc_auc_score(yte, yproba))
                 prs.append(average_precision_score(yte, yproba))
-                cms.append(confusion_matrix(yte, ypred))
                 fpr, tpr, _ = roc_curve(yte, yproba)
                 # Interpolate TPR for mean ROC
                 tprs.append(np.interp(mean_fpr, fpr, tpr))
@@ -715,7 +713,6 @@ class BarrierRepresentationAnalyzer:
             f1_m, f1_s = float(np.mean(f1s)), float(np.std(f1s))
             roc_m, roc_s = float(np.mean(rocs)), float(np.std(rocs))
             pr_m, pr_s = float(np.mean(prs)), float(np.std(prs))
-            cm_sum = np.sum(cms, axis=0).tolist()
             results[str(layer_idx)] = {
                 "accuracy_mean": acc_m,
                 "accuracy_std": acc_s,
@@ -725,24 +722,7 @@ class BarrierRepresentationAnalyzer:
                 "roc_auc_std": roc_s,
                 "pr_auc_mean": pr_m,
                 "pr_auc_std": pr_s,
-                "confusion_matrix_sum": cm_sum,
             }
-
-            # Save confusion matrix heatmap
-            try:
-                fig, ax = plt.subplots(1, 1, figsize=(5, 4), dpi=150)
-                cm_arr = np.array(cm_sum)
-                sns.heatmap(cm_arr, annot=True, fmt='d', cmap='Blues', cbar=False, ax=ax,
-                            xticklabels=[label_to_name[i] for i in range(cm_arr.shape[1])],
-                            yticklabels=[label_to_name[i] for i in range(cm_arr.shape[0])])
-                ax.set_xlabel('Predicted')
-                ax.set_ylabel('True')
-                ax.set_title(f'Linear Probe Confusion Matrix (Layer {layer_idx})')
-                plt.tight_layout()
-                plt.savefig(f"{output_dir}/svm_cm_layer_{layer_idx}.png", bbox_inches='tight')
-                plt.close()
-            except Exception:
-                pass
 
             # 2D PCA visualization colored by calibrated probability (no boundary on t-SNE)
             try:
