@@ -11,7 +11,11 @@ from typing import Dict, List, Tuple, Any, Optional
 from dataclasses import dataclass
 from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
-from sklearn.metrics import pairwise_distances
+from sklearn.metrics import pairwise_distances, accuracy_score, f1_score, roc_auc_score, confusion_matrix, classification_report
+from sklearn.model_selection import StratifiedKFold, cross_val_score, cross_val_predict
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
 from scipy import stats
 from scipy.spatial.distance import pdist, squareform
 import warnings
@@ -492,7 +496,7 @@ class BarrierRepresentationAnalyzer:
         return stats_results
     
     def create_visualizations(self, output_dir: str = "preliminary_results/barrier_analysis") -> None:
-        """Generate only t-SNE visualizations per layer."""
+        """Generate only t-SNE visualizations per layer with improved styling."""
         print(f"\n🎨 Creating visualizations in {output_dir}...")
         os.makedirs(output_dir, exist_ok=True)
         
@@ -505,7 +509,8 @@ class BarrierRepresentationAnalyzer:
         }
         
         for layer_idx in self.analysis_layers:
-            fig, ax = plt.subplots(1, 1, figsize=(12, 8))
+            plt.style.use('seaborn-whitegrid')
+            fig, ax = plt.subplots(1, 1, figsize=(10, 8), dpi=150)
             
             layer_data = []
             layer_labels = []
@@ -522,29 +527,34 @@ class BarrierRepresentationAnalyzer:
                 continue
             
             layer_data = np.stack(layer_data)
-            tsne = TSNE(n_components=2, random_state=42, perplexity=min(5, len(layer_data)//2))
+            # Use a slightly higher perplexity for nicer separation when possible
+            perplexity = max(5, min(30, len(layer_data)//3))
+            tsne = TSNE(n_components=2, random_state=42, perplexity=perplexity, learning_rate='auto', init='pca')
             tsne_results = tsne.fit_transform(layer_data)
             
             for barrier_type in barrier_types:
                 mask = np.array(layer_labels) == barrier_type
                 if mask.any():
                     ax.scatter(
-                        tsne_results[mask, 0], 
+                        tsne_results[mask, 0],
                         tsne_results[mask, 1],
                         c=barrier_colors[barrier_type],
                         label=barrier_type.replace("_", " ").title(),
-                        s=100,
-                        alpha=0.8
+                        s=60,
+                        alpha=0.85,
+                        edgecolors='white',
+                        linewidths=0.6
                     )
             
             ax.set_title(f"t-SNE Visualization - Layer {layer_idx}", fontsize=16, fontweight='bold')
             ax.set_xlabel("t-SNE Dimension 1", fontsize=12)
             ax.set_ylabel("t-SNE Dimension 2", fontsize=12)
-            ax.legend()
+            legend = ax.legend(frameon=True, title="Barrier Type")
+            legend.get_title().set_fontweight('bold')
             ax.grid(True, alpha=0.3)
             
             plt.tight_layout()
-            plt.savefig(f"{output_dir}/tsne_layer_{layer_idx}.png", dpi=300, bbox_inches='tight')
+            plt.savefig(f"{output_dir}/tsne_layer_{layer_idx}.png", bbox_inches='tight')
             plt.close()
     
     def generate_report(self, output_dir: str = "preliminary_results/barrier_analysis") -> None:
@@ -554,17 +564,18 @@ class BarrierRepresentationAnalyzer:
         
         # Compute statistics
         stats_results = self.compute_distribution_statistics()
+        svm_results = self._run_linear_probes(output_dir)
         
         # Create report
         report = {
             "analysis_metadata": {
                 "model": self.model_name,
-                "num_episodes": self.num_episodes,
                 "severity": self.severity,
                 "analysis_layers": self.analysis_layers,
                 "total_representations": len(self.representations)
             },
             "statistical_results": stats_results,
+            "svm_probe_results": svm_results,
             "summary": self._create_summary(stats_results)
         }
         
@@ -576,6 +587,67 @@ class BarrierRepresentationAnalyzer:
         self._create_markdown_report(report, f"{output_dir}/analysis_summary.md")
         
         print(f"✅ Report saved to {output_dir}/")
+
+    def _collect_layer_features(self) -> Dict[int, Tuple[np.ndarray, np.ndarray]]:
+        """Collect features (X) and labels (y) per layer from representations.
+        Labels: 0=baseline, 1=semantic, 2=cultural, 3=emotional
+        """
+        label_map = {
+            "baseline": 0,
+            "semantic_structure": 1,
+            "cultural_style": 2,
+            "emotional_influence": 3,
+        }
+        per_layer: Dict[int, List[Tuple[np.ndarray, int]]] = {}
+        for rep in self.representations:
+            y = label_map.get(rep.barrier_type, 0)
+            x = rep.representations.numpy()
+            per_layer.setdefault(rep.layer_idx, []).append((x, y))
+        out: Dict[int, Tuple[np.ndarray, np.ndarray]] = {}
+        for layer_idx, pairs in per_layer.items():
+            X = np.stack([p[0] for p in pairs])
+            y = np.array([p[1] for p in pairs])
+            out[layer_idx] = (X, y)
+        return out
+
+    def _run_linear_probes(self, output_dir: str) -> Dict[str, Any]:
+        """Train/evaluate linear probes (logistic regression) per layer. Save results as JSON.
+        Returns a dict of metrics per layer.
+        """
+        print("\n🧪 Running linear probes (logistic regression) on hidden states...")
+        layer_data = self._collect_layer_features()
+        results: Dict[str, Any] = {}
+        os.makedirs(output_dir, exist_ok=True)
+
+        for layer_idx, (X, y) in layer_data.items():
+            if len(np.unique(y)) < 2:
+                continue
+            # Pipeline: standardize + multinomial logistic regression
+            clf = make_pipeline(
+                StandardScaler(with_mean=True, with_std=True),
+                LogisticRegression(max_iter=2000, multi_class='multinomial')
+            )
+            cv = StratifiedKFold(n_splits=min(5, np.bincount(y).min()), shuffle=True, random_state=42)
+            # Cross-validated accuracy and macro-F1
+            acc = cross_val_score(clf, X, y, cv=cv, scoring='accuracy')
+            f1m = cross_val_score(clf, X, y, cv=cv, scoring='f1_macro')
+            # Confusion matrix via cross-val predictions
+            y_pred = cross_val_predict(clf, X, y, cv=cv)
+            cm = confusion_matrix(y, y_pred).tolist()
+            report = classification_report(y, y_pred, output_dict=True)
+            results[str(layer_idx)] = {
+                "accuracy_mean": float(np.mean(acc)),
+                "accuracy_std": float(np.std(acc)),
+                "f1_macro_mean": float(np.mean(f1m)),
+                "f1_macro_std": float(np.std(f1m)),
+                "confusion_matrix": cm,
+                "classification_report": report,
+            }
+
+        with open(f"{output_dir}/svm_probe_results.json", 'w') as f:
+            json.dump(results, f, indent=2)
+        print("✅ Linear probe results saved to svm_probe_results.json")
+        return results
     
     def _create_summary(self, stats_results: Dict[str, Any]) -> Dict[str, Any]:
         """Create high-level summary of results"""
@@ -645,7 +717,7 @@ class BarrierRepresentationAnalyzer:
 
 ## Analysis Configuration
 - **Model**: {metadata["model"]}
-- **Episodes Analyzed**: {metadata["num_episodes"]}
+# (All episodes in the provided files are analyzed)
 - **Barrier Severity**: {metadata["severity"]}
 - **Layers Analyzed**: {metadata["analysis_layers"]}
 - **Total Representations**: {metadata["total_representations"]}
@@ -746,8 +818,6 @@ def main():
                        help="Model name to analyze")
     parser.add_argument("--episodes", type=str, default="data/episode_original.jsonl",
                        help="Episodes file to use")
-    parser.add_argument("--num_episodes", type=int, default=5,
-                       help="Number of episodes to analyze")
     parser.add_argument("--severity", type=float, default=0.8,
                        help="Barrier severity level")
     parser.add_argument("--device", type=str, default="auto",
@@ -762,7 +832,6 @@ def main():
         model_name=args.model,
         device=args.device,
         episodes_file=args.episodes,
-        num_episodes=args.num_episodes,
         severity=args.severity
     )
     
