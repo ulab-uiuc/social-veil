@@ -59,9 +59,6 @@ def run_single_scenario_simulation(
     output_dir: Optional[str] = None,
 ) -> Tuple[List[str], Dict[str, Any], List[Dict[str, Any]]]:
   
-    # Optional debugging
-    DEBUG_BARRIER = os.environ.get("BARRIER_DEBUG", "0") == "1"
-
     # Set environment for agents
     personA.env = environment
     personB.env = environment

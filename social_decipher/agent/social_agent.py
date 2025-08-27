@@ -168,19 +168,17 @@ class SocialAgent:
             transcript=transcript_text, turn_number=turn_number, mix=mix
         )
 
-    
     def act(
         self, message=None, initial: bool = False
     ) -> Union[str, Dict[str, Any]]:
         if initial:
             # Ensure latest barrier preface and cues are reflected in the very first turn
-            try:
-                self.instructions = self.build_instruction(transcript="", turn_number=0, mix=False)
-            except Exception:
-                pass
+     
+            self.instructions = self.build_instruction(transcript="", turn_number=0, mix=False)
             prompt = "Now, generate your initial message to start the conversation, try to be concise"
             response = direct_completion(self, message=prompt)
             
+            print(f"💬 {self.name}: {response}")
             try:
                 response_json = json.loads(response) if isinstance(response, str) else response
             except (json.JSONDecodeError, KeyError) as e:
@@ -219,7 +217,7 @@ class SocialAgent:
             response_json = response
         original_response = json.loads(json.dumps(response_json))
         
-        print(f"💬 {self.name}: {str(original_response)[:100]}{'...' if len(str(original_response)) > 100 else ''}")
+        print(f"💬 {self.name}: {str(original_response)}")
         
         # Log the response
         self.log.append(
@@ -287,6 +285,7 @@ class SocialAgent:
         )
         # Generate response using direct completion, but extract text from JSON if needed
         response = direct_completion(self, prompt).strip()
+        
         # If the response is JSON (due to action mode), extract the argument
         if response.startswith('{') and response.endswith('}'):
             try:
@@ -302,30 +301,15 @@ class SocialAgent:
         reasoning = ""
         
         try:
-            # Try parsing as nested JSON first (Format 2)
-            if response.strip().startswith('{') and response.strip().endswith('}'):
-                import json
-                nested_json = json.loads(response.strip())
-                if isinstance(nested_json, dict):
-                    selected = str(nested_json.get('Selected', '')).upper()
-                    confidence = float(nested_json.get('Confidence', 0.0))
-                    reasoning = str(nested_json.get('Reasoning', ''))
-            else:
-                # Parse as text format (Format 1)
-                for line in response.split("\n"):
-                    if line.lower().startswith("selected:"):
-                        selected = line.split(":")[1].strip().upper()
-                    elif line.lower().startswith("confidence:"):
-                        confidence = float(line.split(":")[1].strip())
-                    elif line.lower().startswith("reasoning:"):
-                        reasoning = line.split(":", 1)[1].strip() if ":" in line else ""
+            for line in response.split("\n"):
+                if line.lower().startswith("selected:"):
+                    selected = line.split(":")[1].strip().upper()
+                elif line.lower().startswith("confidence:"):
+                    confidence = float(line.split(":")[1].strip())
+                elif line.lower().startswith("reasoning:"):
+                    reasoning = line.split(":", 1)[1].strip() if ":" in line else ""
         except Exception as e:
             print(f"❌ Error parsing MCQ response from {self.name}: {e}")
-            print(f"   Raw response: {response[:100]}...")
-            # Fallback values
-            selected = "A"
-            confidence = 0.0
-            reasoning = "Parsing error"
         
         # Clamp confidence to 0-1 range
         confidence = max(0.0, min(confidence, 1.0))

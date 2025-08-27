@@ -110,12 +110,13 @@ def get_anthropic_client():
 
 def direct_completion(
     agent=None, 
-    message=None
+    message=None,
 ):
     model_id = agent.profile.model_id
     print(model_id)
  
     system_message = agent.instructions
+
     # Check if it's a local model (contains path or specific local model names)
     if "/" in model_id or "qwen" in model_id.lower() or "llama" in model_id.lower():
         return local_model_completion(model_id, system_message, message)
@@ -130,18 +131,12 @@ def direct_completion(
 
 def openai_completion(model_id, system_message, message):
     client = get_openai_client()
-    try:
-        prompt = f"Generate a response as a JSON object with 'action_type' and 'argument' fields. The message is: {message}"
-        
-        # print("##########################")
-        # print(system_message)
-        # print("##########################")
-    
+    try:    
         response = client.chat.completions.create(
             model=model_id,
             messages=[
                 {"role": "system", "content": system_message},
-                {"role": "user", "content": prompt},
+                {"role": "user", "content": message},
             ],
             temperature=0.3,
         )
@@ -175,12 +170,10 @@ def anthropic_completion(model_id, system_message, message):
     client = get_anthropic_client()
 
     try:
-        prompt = f"Generate a response as a JSON object with 'action_type' and 'argument' fields. The message is: {message}"
-
         response = client.messages.create(
             model=model_id,
             system=system_message,
-            messages=[{"role": "user", "content": prompt}],
+            messages=[{"role": "user", "content": message}],
             temperature=0.3,
         )
         content = response.content[0].text
@@ -250,17 +243,14 @@ def mistral_completion(model_id, system_message, message, max_retries=30):
     # If we've exhausted all retries (extremely unlikely with max_retries=30)
     # We'll try one last time with a significantly longer wait
     print(f"[WARNING] Still encountering errors after {max_retries} retries. Waiting 5 minutes for final attempt...")
-    time.sleep(300)  # 5 minute wait
+    time.sleep(300)  
     
-    # One final attempt
     try:
         client = Mistral(api_key=api_key)
         
-        user_prompt = f"Generate a response as a JSON object with 'action_type' and 'argument' fields. The message is: {message}"
-
         messages = [
             {"role": "system", "content": system_message},
-            {"role": "user", "content": user_prompt},
+            {"role": "user", "content": message},
         ]
 
         response = client.chat.complete(
@@ -275,6 +265,7 @@ def mistral_completion(model_id, system_message, message, max_retries=30):
             content = json.dumps({"action_type": "speak", "argument": content})
 
         return content
+    
     except Exception as final_e:
         # If even the final attempt fails, throw an exception to avoid silent failure
         raise RuntimeError(f"Mistral API repeatedly failed after exhausting all retries: {str(final_e)}")      
