@@ -664,11 +664,6 @@ class BarrierRepresentationAnalyzer:
         label_to_name = {0: "Baseline", 1: "Barrier"}
         name_to_color = {"Baseline": "#2E86AB", "Barrier": "#A23B72"}
 
-        # Accumulators for summary plot
-        summary_layers: List[int] = []
-        summary_acc: List[float] = []
-        summary_f1m: List[float] = []
-
         for layer_idx, (X, y) in layer_data.items():
             if len(np.unique(y)) < 2:
                 continue
@@ -759,34 +754,11 @@ class BarrierRepresentationAnalyzer:
             except Exception:
                 pass
 
-            summary_layers.append(layer_idx)
-            summary_acc.append(float(np.mean(acc)))
-            summary_f1m.append(float(np.mean(f1m)))
-
         with open(f"{output_dir}/svm_probe_results.json", 'w') as f:
             json.dump(results, f, indent=2)
         print("✅ Linear probe results saved to svm_probe_results.json")
         # Summary bar chart across layers
-        try:
-            if summary_layers:
-                x = np.arange(len(summary_layers))
-                width = 0.35
-                fig, ax = plt.subplots(1, 1, figsize=(8, 4), dpi=150)
-                ax.bar(x - width/2, summary_acc, width, label='Accuracy', color='#2E86AB')
-                ax.bar(x + width/2, summary_f1m, width, label='F1', color='#A23B72')
-                ax.set_xticks(x)
-                ax.set_xticklabels([str(l) for l in summary_layers])
-                ax.set_ylim(0, 1.0)
-                ax.set_xlabel('Layer index')
-                ax.set_ylabel('Score')
-                ax.set_title('Linear Probe Performance by Layer')
-                ax.legend()
-                plt.tight_layout()
-                plt.savefig(f"{output_dir}/svm_metrics_summary.png", bbox_inches='tight')
-                plt.close()
-        except Exception:
-            pass
-
+ 
         return results
     
     def _create_summary(self, stats_results: Dict[str, Any]) -> Dict[str, Any]:
