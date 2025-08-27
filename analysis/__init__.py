@@ -18,6 +18,5 @@ __version__ = "1.0.0"
 __author__ = "Social-Decipher Research Team"
 
 from .barrier_representation_analysis import BarrierRepresentationAnalyzer
-from .simple_barrier_test import SimpleBarrierTest
 
-__all__ = ['BarrierRepresentationAnalyzer', 'SimpleBarrierTest']
+__all__ = ['BarrierRepresentationAnalyzer']

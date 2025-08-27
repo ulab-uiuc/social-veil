@@ -31,6 +31,7 @@ from sklearn.metrics import pairwise_distances
 from scipy import stats
 from scipy.spatial.distance import pdist, squareform
 import warnings
+import yaml
 warnings.filterwarnings('ignore')
 
 # Add project root to path
@@ -43,7 +44,6 @@ import torch.nn.functional as F
 # Import project modules
 from social_decipher.agent.agent_profile import AgentProfile
 from social_decipher.environment.episode_loader import EpisodeLoader
-from data.barrier_creation import augment_episode
 
 @dataclass
 class RepresentationData:
@@ -89,7 +89,6 @@ class BarrierRepresentationAnalyzer:
         # Analysis layers (sample key layers from the model)
         total_layers = len(self.model.model.layers)
         self.analysis_layers = [
-            0,  # Input layer
             total_layers // 4,  # Early layer
             total_layers // 2,  # Middle layer  
             3 * total_layers // 4,  # Late layer
@@ -113,53 +112,23 @@ class BarrierRepresentationAnalyzer:
         return device
     
     def load_and_augment_episodes(self) -> List[Dict[str, Any]]:
-        """Load episodes and create barrier variants"""
-        print(f"📂 Loading episodes from {self.episodes_file}...")
+        """Load episodes from existing barrier files"""
+        from analysis.load_existing_episodes import load_all_episodes
         
-        # Load base episodes
-        base_episodes = []
-        if Path(self.episodes_file).exists():
-            with open(self.episodes_file, 'r') as f:
-                for i, line in enumerate(f):
-                    if i >= self.num_episodes:
-                        break
-                    base_episodes.append(json.loads(line.strip()))
-        else:
-            print(f"❌ Episodes file not found: {self.episodes_file}")
-            return []
+        print(f"📂 Loading episodes from existing barrier files...")
         
-        print(f"✅ Loaded {len(base_episodes)} base episodes")
+        # Use the dedicated episode loader
+        all_episodes = load_all_episodes(
+            baseline_file=self.episodes_file,
+            max_episodes=self.num_episodes
+        )
         
-        # Create augmented variants
-        all_episodes = []
-        for ep in base_episodes:
-            # Baseline version
-            baseline_ep = ep.copy()
-            baseline_ep["barrier_type"] = "baseline"
-            all_episodes.append(baseline_ep)
-            
-            # Create barrier variants
-            for barrier_family in ["semantic_structure", "cultural_style", "emotional_influence"]:
-                print(f"  🔄 Creating {barrier_family} variant for episode {ep.get('episode_id', 'unknown')}")
-                
-                try:
-                    augmented = augment_episode(ep, barrier_family, self.severity)
-                    if augmented:
-                        # Merge with base episode
-                        barrier_ep = ep.copy()
-                        barrier_ep.update(augmented)
-                        barrier_ep["barrier_type"] = barrier_family
-                        barrier_ep["severity"] = self.severity
-                        all_episodes.append(barrier_ep)
-                except Exception as e:
-                    print(f"    ⚠️ Failed to create {barrier_family} variant: {e}")
-                    continue
-        
-        print(f"🎯 Generated {len(all_episodes)} total episodes (baseline + barriers)")
         return all_episodes
     
     def create_agent_prompt(self, episode: Dict[str, Any]) -> str:
-        """Create the agent prompt that would be used in conversation"""
+        config_path = Path(__file__).parent.parent / "configs" / "social_task.yaml"
+        with open(config_path, 'r') as f:
+            templates = yaml.safe_load(f)
         
         # Extract episode info
         scenario = episode.get("scenario", "")
@@ -168,37 +137,99 @@ class BarrierRepresentationAnalyzer:
         agent_reasons = episode.get("agent_reasons", ["", ""])
         agent1_reason = agent_reasons[0] if len(agent_reasons) > 0 else ""
         
-        # Create basic instruction
-        base_instruction = f"""Imagine you are Agent A, your task is to act/speak as Agent A would, keeping in mind Agent A's social goal.
-
-Here is the context of this interaction:
-Scenario: {scenario}
-Agent A's goal: {agent1_goal}
-Agent A's reason: {agent1_reason}
-
-You are at Turn #1. Your available action types are: speak, non-verbal communication, action, none, leave"""
-
-        # Add barrier-specific modifications
+        # Extract agent profiles if available
+        agent_profiles = episode.get("agent_profiles", [{}, {}])
+        agent1_profile = agent_profiles[0] if len(agent_profiles) > 0 else {}
+        agent2_profile = agent_profiles[1] if len(agent_profiles) > 1 else {}
+        
+        # Prepare template data
+        template_data = {
+            "agent_name": agent1_profile.get("first_name", "Agent") + " " + agent1_profile.get("last_name", "A"),
+            "partner_name": agent2_profile.get("first_name", "Agent") + " " + agent2_profile.get("last_name", "B"),
+            "scenario": scenario,
+            "agent_age": agent1_profile.get("age", "30"),
+            "agent_gender": agent1_profile.get("gender", "person"),
+            "agent_occupation": agent1_profile.get("occupation", "professional"),
+            "agent_public_info": agent1_profile.get("public_info", "friendly person"),
+            "partner_age": agent2_profile.get("age", "30"),
+            "partner_gender": agent2_profile.get("gender", "person"),
+            "partner_occupation": agent2_profile.get("occupation", "professional"),
+            "partner_public_info": agent2_profile.get("public_info", "friendly person"),
+            "agent_goal": agent1_goal,
+            "agent_reason": agent1_reason,
+            "agent_private_knowledge": episode.get("agent1_private_knowledge", ""),
+            "turn_number": 1,
+            "history": "",
+            "action_list": templates.get("action_list", "")
+        }
+        
         barrier_type = episode.get("barrier_type", "baseline")
         
-        if barrier_type == "semantic_structure":
-            barrier_prompt = episode.get("barrier_prompts", {}).get("agentA", "")
-            if barrier_prompt:
-                base_instruction += f"\n\nBARRIER MODE DIRECTIVES (high priority):\n{barrier_prompt}"
-                
+        if barrier_type == "baseline":
+            prompt = templates["social_task_instructions"].format(**template_data)
+            
+        elif barrier_type == "semantic_structure":
+            barrier_data = template_data.copy()
+            barrier_data.update({
+                "barrier_private_note": episode.get("barrier_cues", {}).get("profile_note_A", "Use vague, ambiguous language"),
+                "barrier_prompt": episode.get("barrier_prompts", {}).get("agentA", ""),
+                "barrier_dynamic_rules": self._format_barrier_dynamic_rules(episode.get("barrier_cues", {}))
+            })
+            prompt = templates["social_task_instructions_barrier_semantic"].format(**barrier_data)
+            
         elif barrier_type == "cultural_style":
-            barrier_prompt = episode.get("barrier_prompts", {}).get("agentA", "")
-            if barrier_prompt:
-                base_instruction += f"\n\nBARRIER MODE DIRECTIVES (high priority):\n{barrier_prompt}"
-                
+            barrier_data = template_data.copy()
+            barrier_data.update({
+                "barrier_private_note": episode.get("barrier_cues", {}).get("profile_note_A", "Use indirect, high-context communication"),
+                "barrier_prompt": episode.get("barrier_prompts", {}).get("agentA", ""),
+                "barrier_dynamic_rules": self._format_barrier_dynamic_rules(episode.get("barrier_cues", {}))
+            })
+            prompt = templates["social_task_instructions_barrier_cultural"].format(**barrier_data)
+            
         elif barrier_type == "emotional_influence":
-            barrier_prompt = episode.get("barrier_prompts", {}).get("agentA", "")
-            if barrier_prompt:
-                base_instruction += f"\n\nBARRIER MODE DIRECTIVES (high priority):\n{barrier_prompt}"
+            barrier_data = template_data.copy()
+            barrier_data.update({
+                "barrier_private_note": episode.get("barrier_cues", {}).get("profile_note_A", "Maintain negative emotional tone"),
+                "barrier_prompt": episode.get("barrier_prompts", {}).get("agentA", ""),
+                "barrier_dynamic_rules": self._format_barrier_dynamic_rules(episode.get("barrier_cues", {}))
+            })
+            prompt = templates["social_task_instructions_barrier_emotional"].format(**barrier_data)
         
-        base_instruction += '\n\nPlease only generate a JSON string including the action type and the argument.\nYour action should follow the given format:\n{"action_type": <action_type>, "argument": <action_argument>}'
+        return prompt
+    
+    def _format_barrier_dynamic_rules(self, barrier_cues: Dict[str, Any]) -> str:
+        if not isinstance(barrier_cues, dict):
+            return ""
         
-        return base_instruction
+        lines: List[str] = []
+        
+        def _fmt_list(key: str, label: str):
+            vals = barrier_cues.get(key)
+            if isinstance(vals, list) and vals:
+                filtered = [str(v).strip() for v in vals if isinstance(v, str) and v.strip()]
+                if filtered:
+                    lines.append(f"- {label}: " + ", ".join(filtered[:8]))
+
+        def _fmt_scalar(key: str, label: str):
+            val = barrier_cues.get(key)
+            if isinstance(val, (int, float, str)) and str(val).strip():
+                lines.append(f"- {label}: {val}")
+
+        # Use the exact same order and formatting as social_agent.py
+        _fmt_list("lexical_prefer", "Use phrases like")
+        _fmt_list("lexical_avoid", "Avoid phrases")
+        _fmt_scalar("sentence_length_bias", "Sentence length bias")
+        _fmt_list("ambiguity_devices", "Use ambiguity devices")
+        _fmt_scalar("question_rate_hint", "Target question rate")
+        _fmt_scalar("imperative_rate_hint", "Target imperative rate")
+        _fmt_list("affect_lexicon", "Affect lexicon")
+        _fmt_scalar("exclamation_bias", "Exclamation bias")
+        _fmt_scalar("turn_length_max", "Max sentences per turn")
+
+        if lines:
+            return "\n".join(lines)
+        else:
+            return ""
     
     def extract_representations(self, episodes: List[Dict[str, Any]]) -> None:
         """Extract internal representations for all episodes"""
@@ -252,6 +283,153 @@ You are at Turn #1. Your available action types are: speak, non-verbal communica
                         self.representations.append(rep_data)
         
         print(f"✅ Extracted {len(self.representations)} representations")
+    
+    def _create_preliminary_visualization(self, output_dir: str, barrier_types: List[str], barrier_colors: Dict[str, str]) -> None:
+        """
+        Create preliminary visualization inspired by SafeSwitch paper.
+        Visualizes model internal states for different barrier prompts using 2D PCA.
+        Similar to Figures 15-17 in SafeSwitch paper showing clustering of different query types.
+        """
+        print("  📊 Creating preliminary visualization (SafeSwitch-style)...")
+        
+        # Focus on middle layer for preliminary analysis (most informative)
+        middle_layer = self.analysis_layers[len(self.analysis_layers) // 2]
+        
+        # Collect data for the middle layer
+        layer_data = []
+        layer_labels = []
+        layer_episodes = []
+        
+        for rep in self.representations:
+            if rep.layer_idx == middle_layer:
+                layer_data.append(rep.representations.numpy())
+                layer_labels.append(rep.barrier_type)
+                layer_episodes.append(rep.episode_id)
+        
+        if len(layer_data) < 4:
+            print("    ⚠️ Not enough data points for preliminary visualization")
+            return
+        
+        layer_data = np.stack(layer_data)
+        print(f"    📈 Analyzing {len(layer_data)} data points from layer {middle_layer}")
+        
+        # Apply PCA (2D like SafeSwitch paper)
+        pca = PCA(n_components=2)
+        pca_results = pca.fit_transform(layer_data)
+        
+        # Create the preliminary plot (matching SafeSwitch style)
+        fig, ax = plt.subplots(1, 1, figsize=(12, 10))
+        
+        # Plot each barrier type with clear separation
+        for barrier_type in barrier_types:
+            mask = np.array(layer_labels) == barrier_type
+            if mask.any():
+                x_coords = pca_results[mask, 0]
+                y_coords = pca_results[mask, 1]
+                
+                ax.scatter(
+                    x_coords, y_coords,
+                    c=barrier_colors[barrier_type],
+                    label=f"{barrier_type.replace('_', ' ').title()}",
+                    s=120,
+                    alpha=0.8,
+                    edgecolors='white',
+                    linewidth=1.5
+                )
+                
+                # Add text annotations for some points to show episode IDs
+                for i, (x, y) in enumerate(zip(x_coords, y_coords)):
+                    if i < 2:  # Annotate first 2 points per type
+                        episode_ids = [ep for ep, label in zip(layer_episodes, layer_labels) if label == barrier_type]
+                        if i < len(episode_ids):
+                            ax.annotate(
+                                episode_ids[i][:10] + "...",  # Truncate long IDs
+                                (x, y),
+                                xytext=(5, 5),
+                                textcoords='offset points',
+                                fontsize=8,
+                                alpha=0.7
+                            )
+        
+        # Formatting to match SafeSwitch paper style
+        explained_var = pca.explained_variance_ratio_
+        ax.set_xlabel(f'PC1 ({explained_var[0]:.1%} variance)', fontsize=14, fontweight='bold')
+        ax.set_ylabel(f'PC2 ({explained_var[1]:.1%} variance)', fontsize=14, fontweight='bold')
+        ax.set_title(
+            f'Visualization of {self.model_name.split("/")[-1]}\'s Hidden States\n'
+            f'Using 2-Dimensional PCA (Layer {middle_layer})',
+            fontsize=16, 
+            fontweight='bold',
+            pad=20
+        )
+        
+        # Enhanced legend
+        legend = ax.legend(
+            title="Barrier Type",
+            title_fontsize=12,
+            fontsize=11,
+            loc='upper right',
+            frameon=True,
+            fancybox=True,
+            shadow=True
+        )
+        legend.get_title().set_fontweight('bold')
+        
+        # Grid and styling
+        ax.grid(True, alpha=0.3, linestyle='--')
+        ax.set_facecolor('#fafafa')
+        
+        # Add explanation text
+        textstr = (
+            f'Total variance explained: {sum(explained_var):.1%}\n'
+            f'Data points: {len(layer_data)} episodes\n'
+            f'Model layer: {middle_layer}/{len(self.model.model.layers)-1}'
+        )
+        props = dict(boxstyle='round', facecolor='wheat', alpha=0.8)
+        ax.text(0.02, 0.98, textstr, transform=ax.transAxes, fontsize=10,
+                verticalalignment='top', bbox=props)
+        
+        plt.tight_layout()
+        plt.savefig(f"{output_dir}/preliminary_internal_states_pca.png", dpi=300, bbox_inches='tight')
+        plt.close()
+        
+        # Also create a summary statistics table like in SafeSwitch
+        self._create_preliminary_stats_table(layer_data, layer_labels, barrier_types, output_dir)
+        
+        print(f"    ✅ Preliminary visualization saved to preliminary_internal_states_pca.png")
+    
+    def _create_preliminary_stats_table(self, data: np.ndarray, labels: List[str], barrier_types: List[str], output_dir: str) -> None:
+        """Create summary statistics table for preliminary analysis"""
+        
+        # Compute centroid distances (like SafeSwitch paper analysis)
+        centroids = {}
+        for barrier_type in barrier_types:
+            mask = np.array(labels) == barrier_type
+            if mask.any():
+                centroids[barrier_type] = data[mask].mean(axis=0)
+        
+        # Compute pairwise distances between centroids
+        distance_matrix = {}
+        for bt1 in barrier_types:
+            if bt1 in centroids:
+                distance_matrix[bt1] = {}
+                for bt2 in barrier_types:
+                    if bt2 in centroids:
+                        dist = np.linalg.norm(centroids[bt1] - centroids[bt2])
+                        distance_matrix[bt1][bt2] = dist
+        
+        # Save as JSON for reference
+        stats_summary = {
+            "model": self.model_name,
+            "analysis_type": "preliminary_internal_states",
+            "centroid_distances": distance_matrix,
+            "data_points_per_type": {bt: sum(1 for l in labels if l == bt) for bt in barrier_types}
+        }
+        
+        with open(f"{output_dir}/preliminary_stats.json", 'w') as f:
+            json.dump(stats_summary, f, indent=2)
+        
+        print(f"    📊 Preliminary statistics saved to preliminary_stats.json")
     
     def compute_distribution_statistics(self) -> Dict[str, Any]:
         """Compute statistical measures of distribution differences"""
@@ -342,6 +520,9 @@ You are at Turn #1. Your available action types are: speak, non-verbal communica
             "cultural_style": "#F18F01",
             "emotional_influence": "#C73E1D"
         }
+        
+        # 0. Preliminary experiment: Visualize internal states like SafeSwitch paper
+        self._create_preliminary_visualization(output_dir, barrier_types, barrier_colors)
         
         # 1. t-SNE visualization for each layer
         for layer_idx in self.analysis_layers:

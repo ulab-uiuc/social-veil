@@ -46,52 +46,65 @@ class SimpleBarrierTest:
         self.model.eval()
     
     def create_test_prompts(self):
-        """Create test prompts with and without barriers"""
+        """Create test prompts using actual templates from social_task.yaml"""
+        import yaml
         
-        base_scenario = "You are at a coffee shop and want to ask someone if you can share their table."
-        base_goal = "Get permission to sit at the shared table and start a friendly conversation."
+        # Load the actual social task templates
+        config_path = Path(__file__).parent.parent / "configs" / "social_task.yaml"
+        with open(config_path, 'r') as f:
+            templates = yaml.safe_load(f)
         
-        # Baseline prompt
-        baseline_prompt = f"""You are Agent A. Here is your task:
-
-Scenario: {base_scenario}
-Your goal: {base_goal}
-
-Please respond naturally to achieve your goal.
-Your response should be in JSON format: {{"action_type": "speak", "argument": "your message"}}"""
-
-        # Semantic barrier prompt
-        semantic_prompt = f"""You are Agent A. Here is your task:
-
-Scenario: {base_scenario}
-Your goal: {base_goal}
-
-BARRIER INSTRUCTIONS: Throughout the conversation, consistently introduce ambiguity in how you describe things. Prefer vague vocabulary ('sort of', 'maybe', 'kind of'), avoid exact words ('exactly', 'I want'). Construct longer sentences with subordinate clauses, occasionally misuse terminology so referents are unclear. Do not provide precise details unless directly pressed.
-
-Please respond naturally to achieve your goal.
-Your response should be in JSON format: {{"action_type": "speak", "argument": "your message"}}"""
-
-        # Cultural barrier prompt  
-        cultural_prompt = f"""You are Agent A. Here is your task:
-
-Scenario: {base_scenario}
-Your goal: {base_goal}
-
-BARRIER INSTRUCTIONS: Use indirect, high-context style. Prefer hedges ('perhaps', 'it seems', 'might'), avoid blunt imperatives. Convey requests indirectly, embed meaning in context, and allow silence to carry meaning. Maintain politeness and face-saving language.
-
-Please respond naturally to achieve your goal.
-Your response should be in JSON format: {{"action_type": "speak", "argument": "your message"}}"""
-
-        # Emotional barrier prompt
-        emotional_prompt = f"""You are Agent A. Here is your task:
-
-Scenario: {base_scenario}  
-Your goal: {base_goal}
-
-BARRIER INSTRUCTIONS: Maintain a negative emotional tone throughout. Use clipped, sharp wording. Avoid empathy or soothing phrases ('sorry', 'I understand', 'thank you'). Keep responses short and somewhat impatient.
-
-Please respond naturally to achieve your goal.
-Your response should be in JSON format: {{"action_type": "speak", "argument": "your message"}}"""
+        # Test scenario and agent info
+        test_data = {
+            "agent_name": "Alex",
+            "partner_name": "Jamie", 
+            "scenario": "You are at a coffee shop and want to ask someone if you can share their table.",
+            "agent_age": "28",
+            "agent_gender": "person",
+            "agent_occupation": "software developer",
+            "agent_public_info": "friendly and polite",
+            "partner_age": "30", 
+            "partner_gender": "person",
+            "partner_occupation": "teacher",
+            "partner_public_info": "busy with work",
+            "agent_goal": "Get permission to sit at the shared table and start a friendly conversation.",
+            "agent_reason": "You need a place to sit and work on your laptop.",
+            "agent_private_knowledge": "You noticed the person looks stressed about their work.",
+            "turn_number": 1,
+            "history": "",
+            "action_list": templates.get("action_list", "")
+        }
+        
+        # Create baseline prompt using actual template
+        baseline_prompt = templates["social_task_instructions"].format(**test_data)
+        
+        # Create barrier prompts using actual barrier templates
+        # For barrier prompts, we need to add barrier-specific fields
+        barrier_data = test_data.copy()
+        
+        # Semantic barrier
+        barrier_data.update({
+            "barrier_private_note": "Use vague, ambiguous language",
+            "barrier_prompt": "Throughout the conversation, consistently introduce ambiguity in how you describe things. Prefer vague vocabulary ('sort of', 'maybe', 'kind of'), avoid exact words ('exactly', 'I want').",
+            "barrier_dynamic_rules": "- Use phrases like: perhaps, kind of, roughly\n- Avoid phrases: exactly, I want, specifically\n- Sentence length bias: medium"
+        })
+        semantic_prompt = templates["social_task_instructions_barrier_semantic"].format(**barrier_data)
+        
+        # Cultural barrier
+        barrier_data.update({
+            "barrier_private_note": "Use indirect, high-context communication style",
+            "barrier_prompt": "Use indirect, high-context style. Prefer hedges ('perhaps', 'it seems', 'might'), avoid blunt imperatives. Convey requests indirectly, embed meaning in context.",
+            "barrier_dynamic_rules": "- Use phrases like: perhaps, it seems, might\n- Avoid phrases: do this, I need, give me\n- Question rate hint: 0.3\n- Imperative rate hint: 0.1"
+        })
+        cultural_prompt = templates["social_task_instructions_barrier_cultural"].format(**barrier_data)
+        
+        # Emotional barrier
+        barrier_data.update({
+            "barrier_private_note": "Maintain negative emotional tone, be clipped and sharp", 
+            "barrier_prompt": "Maintain a negative emotional tone throughout. Use clipped, sharp wording. Avoid empathy or soothing phrases ('sorry', 'I understand', 'thank you').",
+            "barrier_dynamic_rules": "- Affect lexicon: frustrated, impatient, annoyed, terse\n- Exclamation bias: 0.2\n- Sentence length bias: short"
+        })
+        emotional_prompt = templates["social_task_instructions_barrier_emotional"].format(**barrier_data)
 
         return {
             "baseline": baseline_prompt,

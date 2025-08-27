@@ -2,8 +2,8 @@
 """
 Run Barrier Analysis
 
-Simple script to run barrier representation analysis with sensible defaults.
-Uses a smaller number of episodes and focuses on key visualizations.
+Script to run barrier representation analysis using real prompts from social_task.yaml.
+Analyzes how different barrier types affect model internal representations.
 """
 
 import sys
@@ -15,25 +15,7 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 from analysis.barrier_representation_analysis import BarrierRepresentationAnalyzer
-from analysis.simple_barrier_test import SimpleBarrierTest
 from analysis.utils import check_dependencies
-
-def run_simple_test():
-    """Run the simple barrier test"""
-    print("🔬 Quick Barrier Representation Test")
-    print("=" * 50)
-    
-    # Check dependencies
-    missing = check_dependencies()
-    if missing:
-        return
-    
-    # Run simple test
-    tester = SimpleBarrierTest()
-    results = tester.run_test()
-    
-    print("\n🎯 Simple test complete!")
-    return results
 
 def run_full_analysis(
     model_name: str = "Qwen/Qwen2.5-7B-Instruct",
@@ -74,13 +56,11 @@ def run_full_analysis(
 
 def main():
     """Main entry point"""
-    parser = argparse.ArgumentParser(description="Run barrier representation analysis")
-    parser.add_argument("--mode", choices=["simple", "full"], default="simple",
-                       help="Analysis mode: simple test or full analysis")
+    parser = argparse.ArgumentParser(description="Run barrier representation analysis using real social_task.yaml prompts")
     parser.add_argument("--model", type=str, default="Qwen/Qwen2.5-7B-Instruct",
                        help="Model name to analyze")
     parser.add_argument("--episodes", type=str, default="data/episode_sample.jsonl",
-                       help="Episodes file to use")
+                       help="Baseline episodes file to use (barrier episodes loaded automatically)")
     parser.add_argument("--num_episodes", type=int, default=3,
                        help="Number of episodes to analyze")
     parser.add_argument("--severity", type=float, default=0.8,
@@ -88,24 +68,22 @@ def main():
     
     args = parser.parse_args()
     
-    if args.mode == "simple":
-        run_simple_test()
-    else:
-        run_full_analysis(
-            model_name=args.model,
-            episodes_file=args.episodes,
-            num_episodes=args.num_episodes,
-            severity=args.severity
-        )
+    run_full_analysis(
+        model_name=args.model,
+        episodes_file=args.episodes,
+        num_episodes=args.num_episodes,
+        severity=args.severity
+    )
     
     print("\n💡 Analysis Tips:")
-    print("  1. Check analysis results in results/ directory")
-    print("  2. Look at visualizations to see cluster separation")
-    print("  3. Examine statistical metrics for significance")
+    print("  1. Check preliminary_internal_states_pca.png for SafeSwitch-style visualization")
+    print("  2. Review analysis_summary.md for statistical results")
+    print("  3. Look at visualizations to see cluster separation")
     print("  4. If no significant effects, try:")
     print("     - Increasing severity (0.9+)")
     print("     - Using more episodes (5-10)")
     print("     - Different model or layers")
+    print("\n📂 All prompts use actual templates from configs/social_task.yaml")
 
 if __name__ == "__main__":
     main()
