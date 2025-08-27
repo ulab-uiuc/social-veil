@@ -622,6 +622,15 @@ class BarrierRepresentationAnalyzer:
         results: Dict[str, Any] = {}
         os.makedirs(output_dir, exist_ok=True)
 
+        # Consistent color/label mapping
+        label_to_name = {0: "Baseline", 1: "Semantic", 2: "Cultural", 3: "Emotional"}
+        name_to_color = {"Baseline": "#2E86AB", "Semantic": "#A23B72", "Cultural": "#F18F01", "Emotional": "#C73E1D"}
+
+        # Accumulators for summary plot
+        summary_layers: List[int] = []
+        summary_acc: List[float] = []
+        summary_f1m: List[float] = []
+
         for layer_idx, (X, y) in layer_data.items():
             if len(np.unique(y)) < 2:
                 continue
@@ -647,9 +656,86 @@ class BarrierRepresentationAnalyzer:
                 "classification_report": report,
             }
 
+            # Save confusion matrix heatmap
+            try:
+                fig, ax = plt.subplots(1, 1, figsize=(5, 4), dpi=150)
+                cm_arr = np.array(cm)
+                sns.heatmap(cm_arr, annot=True, fmt='d', cmap='Blues', cbar=False, ax=ax,
+                            xticklabels=[label_to_name[i] for i in range(cm_arr.shape[1])],
+                            yticklabels=[label_to_name[i] for i in range(cm_arr.shape[0])])
+                ax.set_xlabel('Predicted')
+                ax.set_ylabel('True')
+                ax.set_title(f'Linear Probe Confusion Matrix (Layer {layer_idx})')
+                plt.tight_layout()
+                plt.savefig(f"{output_dir}/svm_cm_layer_{layer_idx}.png", bbox_inches='tight')
+                plt.close()
+            except Exception:
+                pass
+
+            # 2D PCA visualization with decision regions (for illustration only)
+            try:
+                scaler = StandardScaler(with_mean=True, with_std=True)
+                Xs = scaler.fit_transform(X)
+                pca2 = PCA(n_components=2, random_state=42)
+                X2 = pca2.fit_transform(Xs)
+                vis_clf = LogisticRegression(max_iter=2000, multi_class='multinomial')
+                vis_clf.fit(X2, y)
+
+                # Meshgrid for decision regions
+                x_min, x_max = X2[:, 0].min() - 0.5, X2[:, 0].max() + 0.5
+                y_min, y_max = X2[:, 1].min() - 0.5, X2[:, 1].max() + 0.5
+                xx, yy = np.meshgrid(np.linspace(x_min, x_max, 300), np.linspace(y_min, y_max, 300))
+                Z = vis_clf.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
+
+                fig, ax = plt.subplots(1, 1, figsize=(7, 6), dpi=150)
+                # Background decision regions
+                ax.contourf(xx, yy, Z, alpha=0.15, levels=[-0.5, 0.5, 1.5, 2.5, 3.5], colors=[name_to_color[n] for n in ["Baseline","Semantic","Cultural","Emotional"]])
+                # Scatter points
+                for lbl, name in label_to_name.items():
+                    mask = (y == lbl)
+                    ax.scatter(
+                        X2[mask, 0], X2[mask, 1],
+                        c=name_to_color[name], label=name,
+                        s=35, alpha=0.9, edgecolors='white', linewidths=0.5
+                    )
+                ax.set_title(f'Linear Probe (PCA-2D) - Layer {layer_idx}')
+                ax.set_xlabel('PC1')
+                ax.set_ylabel('PC2')
+                ax.legend(frameon=True)
+                plt.tight_layout()
+                plt.savefig(f"{output_dir}/svm_pca2_layer_{layer_idx}.png", bbox_inches='tight')
+                plt.close()
+            except Exception:
+                pass
+
+            summary_layers.append(layer_idx)
+            summary_acc.append(float(np.mean(acc)))
+            summary_f1m.append(float(np.mean(f1m)))
+
         with open(f"{output_dir}/svm_probe_results.json", 'w') as f:
             json.dump(results, f, indent=2)
         print("✅ Linear probe results saved to svm_probe_results.json")
+        # Summary bar chart across layers
+        try:
+            if summary_layers:
+                x = np.arange(len(summary_layers))
+                width = 0.35
+                fig, ax = plt.subplots(1, 1, figsize=(8, 4), dpi=150)
+                ax.bar(x - width/2, summary_acc, width, label='Accuracy')
+                ax.bar(x + width/2, summary_f1m, width, label='F1-macro')
+                ax.set_xticks(x)
+                ax.set_xticklabels([str(l) for l in summary_layers])
+                ax.set_ylim(0, 1.0)
+                ax.set_xlabel('Layer index')
+                ax.set_ylabel('Score')
+                ax.set_title('Linear Probe Performance by Layer')
+                ax.legend()
+                plt.tight_layout()
+                plt.savefig(f"{output_dir}/svm_metrics_summary.png", bbox_inches='tight')
+                plt.close()
+        except Exception:
+            pass
+
         return results
     
     def _create_summary(self, stats_results: Dict[str, Any]) -> Dict[str, Any]:
