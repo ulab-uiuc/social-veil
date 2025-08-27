@@ -758,7 +758,7 @@ class BarrierRepresentationAnalyzer:
                 Z = 2.0 * (Z - minv) / (maxv - minv + 1e-8) - 1.0
 
                 # Optional per-class squeezing toward centroid for tighter clusters (purely visual)
-                s_factor = 0.4  # 0..1, smaller = tighter clusters (denser look)
+                s_factor = 0.5  # 0..1, smaller = tighter clusters (denser look)
                 Z_vis = Z.copy()
                 for lbl in np.unique(y_multi):
                     m = (y_multi == lbl)
@@ -767,18 +767,16 @@ class BarrierRepresentationAnalyzer:
                         Z_vis[m] = c + s_factor * (Z[m] - c)
 
                 # Scatter by multiclass to match paper legend
-                fig, ax = plt.subplots(1, 1, figsize=(7.4, 5.6), dpi=200)
+                fig, ax = plt.subplots(1, 1, figsize=(6.2, 6.2), dpi=200)
                 ax.set_facecolor('#fbfbfb')
                 for lbl, name in label_to_name_multi.items():
                     mask = (y_multi == lbl)
                     if np.any(mask):
                         # Light KDE fill to boost perceived density
                         try:
-                            sns.kdeplot(
-                                x=Z_vis[mask, 0], y=Z_vis[mask, 1],
-                                levels=5, fill=True, alpha=0.08,
-                                color=name_to_color_multi[name], linewidths=0
-                            )
+                            sns.kdeplot(x=Z_vis[mask, 0], y=Z_vis[mask, 1],
+                                        levels=3, fill=True, alpha=0.05,
+                                        color=name_to_color_multi[name], linewidths=0)
                         except Exception:
                             pass
                         # Translucent covariance ellipse to increase perceived density
@@ -790,14 +788,14 @@ class BarrierRepresentationAnalyzer:
                             order = eigvals.argsort()[::-1]
                             eigvals, eigvecs = eigvals[order], eigvecs[:, order]
                             angle = np.degrees(np.arctan2(*eigvecs[:,0][::-1]))
-                            width, height = 3.2*np.sqrt(eigvals + 1e-8)
+                            width, height = 2.2*np.sqrt(eigvals + 1e-8)
                             ell = Ellipse(xy=mu, width=width, height=height, angle=angle,
-                                          facecolor=name_to_color_multi[name], edgecolor='none', alpha=0.12)
+                                          facecolor=name_to_color_multi[name], edgecolor='none', alpha=0.08)
                             ax.add_patch(ell)
                         ax.scatter(
                             Z_vis[mask, 0], Z_vis[mask, 1],
                             c=name_to_color_multi[name], label=name,
-                            s=24, alpha=0.95, edgecolors='white', linewidths=0.6
+                            s=28, alpha=0.95, edgecolors='white', linewidths=0.7
                         )
                 # Fit binary boundary in normalized PCA-2D space and draw a dashed line
                 bin_clf = LogisticRegression(max_iter=2000)
@@ -816,12 +814,9 @@ class BarrierRepresentationAnalyzer:
                     ys = (-w[0]/w[1])*xs - b/w[1]
                     mask_line = (ys >= -1.0) & (ys <= 1.0)
                     ax.plot(xs[mask_line], ys[mask_line], linestyle='--', color='#555555', linewidth=1.6, label='Baseline–Barrier boundary')
-                ax.set_title(
-                    f'PCA-2D with Linear Boundary (Layer {layer_idx})',
-                    fontsize=18, fontweight='bold'
-                )
-                ax.set_xlabel('PC1', fontsize=13)
-                ax.set_ylabel('PC2', fontsize=13)
+                ax.set_title(f'PCA-2D with Linear Boundary (Layer {layer_idx})', fontsize=16, fontweight='bold')
+                ax.set_xlabel('PC1', fontsize=12)
+                ax.set_ylabel('PC2', fontsize=12)
                 ax.grid(False)
                 for spine in ax.spines.values():
                     spine.set_visible(False)
@@ -830,12 +825,10 @@ class BarrierRepresentationAnalyzer:
                 ax.set_yticks([-1, 0, 1])
                 ax.tick_params(axis='both', labelsize=11, colors='#4a4a4a')
                 # Put legend outside to avoid overlapping points
-                leg = ax.legend(
-                    frameon=True, fontsize=10, loc='upper left',
-                    bbox_to_anchor=(1.02, 1.0), borderaxespad=0., fancybox=True,
-                    framealpha=0.95
-                )
-                plt.tight_layout(pad=0.8, rect=[0, 0, 0.78, 1])
+                leg = ax.legend(frameon=True, fontsize=10, loc='upper left',
+                                bbox_to_anchor=(1.02, 1.0), borderaxespad=0., fancybox=True,
+                                framealpha=0.95)
+                plt.tight_layout(pad=0.7, rect=[0, 0, 0.76, 1])
                 plt.savefig(f"{output_dir}/svm_pca2_layer_{layer_idx}.png", bbox_inches='tight')
                 plt.close()
             except Exception:
