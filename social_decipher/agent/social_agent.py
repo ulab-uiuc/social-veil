@@ -8,7 +8,6 @@ from rich import print
 from social_decipher.environment.env_profile import EnvironmentProfile
 from social_decipher.utils.base import direct_completion
 
-from .agent_memory import AgentMemory
 from .agent_profile import AgentProfile
 
 
@@ -20,8 +19,6 @@ class SocialAgent:
         partner_profile: AgentProfile,
         env: EnvironmentProfile,
         role_num: int,
-        use_action: bool = False,
-        memory: Optional[AgentMemory] = None,
         mix: bool = False,
         template_path: str = None,
     ):
@@ -37,17 +34,13 @@ class SocialAgent:
             template_path = os.path.join(os.path.dirname(__file__), "..", "..", "configs", "social_task.yaml")
             
         self.template_path = template_path
-        if memory is None:
-            self.memory = AgentMemory(name, partner_profile.first_name)
-        else:
-            self.memory = memory
-        self.instructions = self.set_static_instruction(use_action, mix)
+        self.instructions = self.set_static_instruction(mix)
 
-    def set_static_instruction(self, use_action=False, mix=False) -> str:
-        return self.build_instruction(transcript="", turn_number=0, use_action=use_action, mix=mix)
+    def set_static_instruction(self, mix=False) -> str:
+        return self.build_instruction(transcript="", turn_number=0, mix=mix)
     
     def build_instruction(
-        self, transcript: str, turn_number: int, use_action: bool = False, mix: bool = False
+        self, transcript: str, turn_number: int, mix: bool = False
     ) -> str:
         with open(self.template_path) as f:
             templates = yaml.safe_load(f)
@@ -68,23 +61,15 @@ class SocialAgent:
         barrier_for_this_agent = barrier_prompts_present and bool((env_dict.get("barrier_prompts") or {}).get(agent_key))
         barrier_type = env_dict.get("barrier_type") if barrier_for_this_agent else None
   
-        if use_action:
-            template_key = (
-                "social_task_instructions_barrier_semantic" if barrier_type == "semantic_structure" else
-                "social_task_instructions_barrier_cultural" if barrier_type == "cultural_style" else
-                "social_task_instructions_barrier_emotional" if barrier_type == "emotional_influence" else
-                ("social_task_instructions_action_barrier" if barrier_for_this_agent else "social_task_instructions_action")
-            )
-        else:
-            template_key = (
-                "social_task_instructions_barrier_semantic" if barrier_type == "semantic_structure" else
-                "social_task_instructions_barrier_cultural" if barrier_type == "cultural_style" else
-                "social_task_instructions_barrier_emotional" if barrier_type == "emotional_influence" else
-                ("social_task_instructions_barrier" if barrier_for_this_agent else "social_task_instructions")
-            )
+
+        template_key = (
+            "social_task_instructions_barrier_semantic" if barrier_type == "semantic_structure" else
+            "social_task_instructions_barrier_cultural" if barrier_type == "cultural_style" else
+            "social_task_instructions_barrier_emotional" if barrier_type == "emotional_influence" else
+            ("social_task_instructions_barrier" if barrier_for_this_agent else "social_task_instructions")
+        )
 
         template = templates[template_key]
-        memory_context = self.memory.get_memory_context(detailed=(turn_number == 0))
 
         # Build private cues block from barrier_cues
         barrier_cues = env_dict.get("barrier_cues") if isinstance(env_dict.get("barrier_cues"), dict) else None
@@ -139,7 +124,9 @@ class SocialAgent:
             "partner_gender": partner.gender,
             "partner_occupation": partner.occupation,
             "partner_public_info": partner.public_info,
-            "memory_context": memory_context,
+            "action_list": templates.get("action_list", ""),
+            "barrier_prompt": (env_dict.get("barrier_prompts") or {}).get(agent_key, ""),
+
             "barrier_private_note": barrier_private_note,
             "barrier_dynamic_rules": barrier_dynamic_rules,
         }
@@ -153,85 +140,84 @@ class SocialAgent:
             private_knowledge_section = f"IMPORTANT: You have private knowledge that {partner.first_name} does not know: {agent_private_knowledge}\nThis private knowledge should influence your strategy and communication, but you should not explicitly reveal it unless it serves your goal.\n\n"
             formatted_template = formatted_template.replace(private_knowledge_section, "")
          
-        # Prepend barrier prompt from environment if this agent has one
+        # Get barrier prompt from environment if this agent has one
         barrier_preface = (env_dict.get("barrier_prompts") or {}).get(agent_key)
-        if isinstance(barrier_preface, str) and barrier_preface.strip():
+        
+        # If we're using a barrier template and have a barrier prompt, integrate it
+        if (isinstance(barrier_preface, str) and barrier_preface.strip() and 
+            template_key.startswith("social_task_instructions_barrier_")):
+            # For barrier templates, add the prompt as additional context in the barrier directives section
+            barrier_integration = f"\n  - Additional barrier context: {barrier_preface.strip()}"
+            formatted_template = formatted_template.replace(
+                "BARRIER MODE DIRECTIVES (high priority):",
+                f"BARRIER MODE DIRECTIVES (high priority):{barrier_integration}"
+            )
+        elif isinstance(barrier_preface, str) and barrier_preface.strip():
+            # For non-barrier templates, prepend as before
             return f"{barrier_preface.strip()}\n\n{formatted_template}"
+            
         return formatted_template
 
     def update_instruction(
-        self, transcript: List[str], turn_number: int, use_action: bool = False, mix: bool = False
+        self, transcript: List[str], turn_number: int, mix: bool = False
     ):
         short_transcript = transcript[-6:] if len(transcript) > 6 else transcript
         transcript_text = "\n".join(short_transcript)
         
         self.instructions = self.build_instruction(
-            transcript=transcript_text, turn_number=turn_number, use_action=use_action, mix=mix
+            transcript=transcript_text, turn_number=turn_number, mix=mix
         )
 
     
     def act(
-        self, message=None, initial: bool = False, use_action: bool = False
+        self, message=None, initial: bool = False
     ) -> Union[str, Dict[str, Any]]:
         if initial:
             # Ensure latest barrier preface and cues are reflected in the very first turn
             try:
-                self.instructions = self.build_instruction(transcript="", turn_number=0, use_action=use_action, mix=False)
+                self.instructions = self.build_instruction(transcript="", turn_number=0, mix=False)
             except Exception:
                 pass
             prompt = "Now, generate your initial message to start the conversation, try to be concise"
-            response = direct_completion(self, message=prompt, use_action=use_action)
+            response = direct_completion(self, message=prompt)
             
-            if use_action:
-                try:
-                    response_json = json.loads(response) if isinstance(response, str) else response
-                except (json.JSONDecodeError, KeyError) as e:
-                    print(f"❌ Error processing action response: {e}")
-                    response_json = response
-                original_response = json.loads(json.dumps(response_json))
-                encrypted_response = json.loads(json.dumps(response_json))
-            else:
-                original_response = response
-                encrypted_response = response
-
-            # Log the response
-            self.log.append(
-                {
-                    "initial": True,
-                    "response_raw": original_response,
-                    "response_encrypted": encrypted_response,
-                }
-            )
-            return encrypted_response
-        
-        received = message
-
-        if use_action:
-            # Extract argument from message for action-based communication
-            if isinstance(message, dict) and "action_type" in message:
-                action_type = message.get("action_type", "")
-                argument = message.get("argument", "")
-                partner_name = self.partner_profile.first_name
-                if action_type == "speak":
-                    response = direct_completion(self, message=argument)
-                elif action_type in ["non-verbal communication", "action"]:
-                    response = direct_completion(self, message=f"{partner_name} {argument}")
-                else:
-                    response = direct_completion(self, message=str(message))
-            else:
-                response = direct_completion(self, message=str(message))
             try:
                 response_json = json.loads(response) if isinstance(response, str) else response
             except (json.JSONDecodeError, KeyError) as e:
                 print(f"❌ Error processing action response: {e}")
                 response_json = response
             original_response = json.loads(json.dumps(response_json))
-            encrypted_response = json.loads(json.dumps(response_json))
+
+            # Log the response
+            self.log.append(
+                {
+                    "initial": True,
+                    "response_raw": original_response,
+                }
+            )
+            return original_response
+        
+        received = message
+
+        # Extract argument from message for action-based communication
+        if isinstance(message, dict) and "action_type" in message:
+            action_type = message.get("action_type", "")
+            argument = message.get("argument", "")
+            partner_name = self.partner_profile.first_name
+            if action_type == "speak":
+                response = direct_completion(self, message=argument)
+            elif action_type in ["non-verbal communication", "action"]:
+                response = direct_completion(self, message=f"{partner_name} {argument}")
+            else:
+                response = direct_completion(self, message=str(message))
         else:
-            # Handle text-based communication
-            response = direct_completion(self, message=message)
-            original_response = response
-            encrypted_response = response
+            response = direct_completion(self, message=str(message))
+        try:
+            response_json = json.loads(response) if isinstance(response, str) else response
+        except (json.JSONDecodeError, KeyError) as e:
+            print(f"❌ Error processing action response: {e}")
+            response_json = response
+        original_response = json.loads(json.dumps(response_json))
         
         print(f"💬 {self.name}: {str(original_response)[:100]}{'...' if len(str(original_response)) > 100 else ''}")
         
@@ -240,11 +226,10 @@ class SocialAgent:
             {
                 "received_raw": received,
                 "response_raw": original_response,
-                "response_encrypted": encrypted_response,
             }
         )
         
-        return encrypted_response
+        return original_response
 
 
     def predict_mcq_answer(
@@ -300,24 +285,47 @@ class SocialAgent:
             agent_reason=agent_reason,
             scenario=self.env.env.get("scenario", "") if self.env and hasattr(self.env, "env") else "",
         )
-
-        # Generate response using direct completion
-        response = direct_completion(self, prompt, use_action=False).strip()
+        # Generate response using direct completion, but extract text from JSON if needed
+        response = direct_completion(self, prompt).strip()
+        # If the response is JSON (due to action mode), extract the argument
+        if response.startswith('{') and response.endswith('}'):
+            try:
+                import json
+                response_json = json.loads(response)
+                if isinstance(response_json, dict) and 'argument' in response_json:
+                    response = response_json['argument']
+            except json.JSONDecodeError:
+                pass  # Keep original response if JSON parsing fails
     
         selected = None
         confidence = 0.0
         reasoning = ""
         
         try:
-            for line in response.split("\n"):
-                if line.lower().startswith("selected:"):
-                    selected = line.split(":")[1].strip().upper()
-                elif line.lower().startswith("confidence:"):
-                    confidence = float(line.split(":")[1].strip())
-                elif line.lower().startswith("reasoning:"):
-                    reasoning = line.split(":", 1)[1].strip() if ":" in line else ""
+            # Try parsing as nested JSON first (Format 2)
+            if response.strip().startswith('{') and response.strip().endswith('}'):
+                import json
+                nested_json = json.loads(response.strip())
+                if isinstance(nested_json, dict):
+                    selected = str(nested_json.get('Selected', '')).upper()
+                    confidence = float(nested_json.get('Confidence', 0.0))
+                    reasoning = str(nested_json.get('Reasoning', ''))
+            else:
+                # Parse as text format (Format 1)
+                for line in response.split("\n"):
+                    if line.lower().startswith("selected:"):
+                        selected = line.split(":")[1].strip().upper()
+                    elif line.lower().startswith("confidence:"):
+                        confidence = float(line.split(":")[1].strip())
+                    elif line.lower().startswith("reasoning:"):
+                        reasoning = line.split(":", 1)[1].strip() if ":" in line else ""
         except Exception as e:
             print(f"❌ Error parsing MCQ response from {self.name}: {e}")
+            print(f"   Raw response: {response[:100]}...")
+            # Fallback values
+            selected = "A"
+            confidence = 0.0
+            reasoning = "Parsing error"
         
         # Clamp confidence to 0-1 range
         confidence = max(0.0, min(confidence, 1.0))
@@ -344,10 +352,4 @@ class SocialAgent:
             "options": mcqa["options"],
         }
     
-    def reset_memory_for_scenario(self):
-        """Reset memory for independent scenario simulation"""
-        self.memory.reset_for_new_scenario()
-    
-    def update_memory_from_exchange(self, agent_message: str, partner_response: str, turn_number: int):
-        """Update memory from a single exchange within the current conversation"""
-        self.memory.update_from_exchange(agent_message, partner_response, turn_number)
+

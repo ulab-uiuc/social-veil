@@ -2,7 +2,7 @@
   {
     "episode_id": "01H9KCPR1R7AK1CD4N7A0MPNYY_cultural",
     "environment_id": "01H7VFHN8MPMGJTPVN043KBKGM",
-    "scenario": "Two acquaintances run into each other at Target, one of them volunteers there (a special event) and is in charge of giving away free samples. Rafael, with his outgoing nature, greets Jaxon warmly but subtly emphasizes the importance of sharing. Jaxon, appreciating the gesture, responds with enthusiasm but is careful to balance his eagerness with a hint of restraint, wanting to ensure he doesn’t seem overly eager.",
+    "scenario": "Two acquaintances run into each other at Target, one of them volunteers there (a special event) and is in charge of giving away free samples",
     "codename": "free_stuff",
     "agent_profiles": [
       {
@@ -43,14 +43,14 @@
       }
     ],
     "agent_goals": [
-      "Give away free samples before my shift ends, as instructed by my manager.",
-      "Collect as many free samples as I can without coming off as too eager."
+      "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+      "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)"
     ],
     "agent_relationship": "acquaintance",
-    "agent1_profile": "Rafael Cortez, a 45-year-old Surgeon, described as Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions.. Public info: Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks. Decision-making style: Systematic.\nNote: Rafael tends to communicate directly and values clarity in his instructions.",
-    "agent2_profile": "Jaxon Prentice, a 40-year-old Investigative Journalist, described as Jaxon Prentice, outgoing yet erratic, emphasizes achievement, power, and security. His decisions swing between quick adaptations to situations and careful planning.. Public info: Jaxon Prentice, an investigative journalist, is known for his brisk jogging sessions early in the morning and his active participation in community functions. Decision-making style: Adaptable, thorough.\nNote: Jaxon prefers a more nuanced approach, often reading between the lines to gauge the situation.",
-    "agent1_reason": "I want to clear out the samples before my shift ends because my manager expects it.",
-    "agent2_reason": "I love free stuff, but I also want to maintain a good impression.",
+    "agent1_profile": "Rafael Cortez, a 45-year-old Surgeon, described as Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions.. Public info: Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks. Decision-making style: Systematic.\nNote: Use indirect language and hedges; avoid direct commands and embrace pauses.",
+    "agent2_profile": "Jaxon Prentice, a 40-year-old Investigative Journalist, described as Jaxon Prentice, outgoing yet erratic, emphasizes achievement, power, and security. His decisions swing between quick adaptations to situations and careful planning.. Public info: Jaxon Prentice, an investigative journalist, is known for his brisk jogging sessions early in the morning and his active participation in community functions. Decision-making style: Adaptable, thorough.",
+    "agent1_reason": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+    "agent2_reason": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression.",
     "agent_reasons_mcqas": [
       {
         "question": "What motivates Agent 2 to pursue their goal?",
@@ -96,18 +96,34 @@
       }
     ],
     "barrier_type": "cultural_style",
-    "barrier_metadata": {
-      "severity": 0.6
-    },
     "barrier_prompts": {
-      "agentA": "You are Rafael. Use indirect, polite, high-context style (hedges like “perhaps”, “might”, indirect requests).\nIf your partner signals misunderstanding or reacts negatively, shift one notch toward their style next turn (be more direct, explicit).",
-      "agentB": "You are Jaxon. Use direct, concise, low-context style (few hedges, explicit requests).\nIf your partner seems uncomfortable or confused, shift one notch toward their style next turn (add hedges, soften tone)."
+      "agentA": "You are Rafael. Use indirect, high-context style. Prefer hedges ('perhaps', 'it seems', 'might'), avoid blunt imperatives. Convey requests indirectly, embed meaning in context, and allow silence to carry meaning. At higher severity, increase vagueness, avoid explicit refusals, and prefer longer, softer phrasing. Question rate and imperative rate follow the barrier_cues. Always maintain politeness and face-saving language."
+    },
+    "barrier_cues": {
+      "profile_note_A": "Rafael tends to use indirect language, relying on context and politeness.",
+      "lexical_prefer": [
+        "perhaps",
+        "it seems",
+        "might",
+        "could be",
+        "possibly"
+      ],
+      "lexical_avoid": [
+        "do this now",
+        "you must",
+        "immediately",
+        "no",
+        "exactly"
+      ],
+      "question_rate_hint": 0.2,
+      "imperative_rate_hint": 0.1,
+      "sentence_length_bias": "long"
     }
   },
   {
     "episode_id": "01H9HH1S3BQMETK25N54X8X275_cultural",
     "environment_id": "01H7VFHN8MPMGJTPVN043KBKGM",
-    "scenario": "Two acquaintances run into each other at Target, one of them volunteers there (a special event) and is in charge of giving away free samples. As Rafael approaches Jaxon, he smiles warmly but hesitates slightly, gauging Jaxon's interest in the samples before speaking.",
+    "scenario": "Two acquaintances run into each other at Target, one of them volunteers there (a special event) and is in charge of giving away free samples",
     "codename": "free_stuff",
     "agent_profiles": [
       {
@@ -148,14 +164,14 @@
       }
     ],
     "agent_goals": [
-      "Give away free samples before my shift ends, as my manager instructed me to clear them out.",
-      "I want to collect as many free samples as I can without seeming too eager or greedy."
+      "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+      "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)"
     ],
     "agent_relationship": "acquaintance",
-    "agent1_profile": "Rafael Cortez, a 45-year-old Surgeon, described as Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions.. Public info: Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks. Decision-making style: Systematic.\nNote: Rafael tends to communicate directly but is aware of the need to read the room.",
-    "agent2_profile": "Jaxon Prentice, a 40-year-old Investigative Journalist, described as Jaxon Prentice, outgoing yet erratic, emphasizes achievement, power, and security. His decisions swing between quick adaptations to situations and careful planning.. Public info: Jaxon Prentice, an investigative journalist, is known for his brisk jogging sessions early in the morning and his active participation in community functions. Decision-making style: Adaptable, thorough.\nNote: Jaxon often communicates in a more indirect manner, preferring to maintain harmony in social interactions.",
-    "agent1_reason": "I need to ensure all the samples are gone by the end of my shift because my manager asked me to clear them out.",
-    "agent2_reason": "I love free stuff, but I also want to make sure I don’t come off as taking advantage of the situation.",
+    "agent1_profile": "Rafael Cortez, a 45-year-old Surgeon, described as Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions.. Public info: Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks. Decision-making style: Systematic.\nNote: Use indirect speech and softeners; avoid direct commands or blunt refusals.",
+    "agent2_profile": "Jaxon Prentice, a 40-year-old Investigative Journalist, described as Jaxon Prentice, outgoing yet erratic, emphasizes achievement, power, and security. His decisions swing between quick adaptations to situations and careful planning.. Public info: Jaxon Prentice, an investigative journalist, is known for his brisk jogging sessions early in the morning and his active participation in community functions. Decision-making style: Adaptable, thorough.",
+    "agent1_reason": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to clear them out.",
+    "agent2_reason": "Jaxon wants to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression.",
     "agent_reasons_mcqas": [
       {
         "question": "What motivates Agent 2 to pursue their goal?",
@@ -201,18 +217,34 @@
       }
     ],
     "barrier_type": "cultural_style",
-    "barrier_metadata": {
-      "severity": 0.6
-    },
     "barrier_prompts": {
-      "agentA": "You are Rafael. Use indirect, polite, high-context style (hedges like “perhaps”, “might”, indirect requests).\nIf your partner signals misunderstanding or reacts negatively, shift one notch toward their style next turn (be more direct, explicit).",
-      "agentB": "You are Jaxon. Use direct, concise, low-context style (few hedges, explicit requests).\nIf your partner seems uncomfortable or confused, shift one notch toward their style next turn (add hedges, soften tone)."
+      "agentA": "You are Rafael. Use indirect, high-context style. Prefer hedges ('perhaps', 'it seems', 'might'), avoid blunt imperatives. Convey requests indirectly, embed meaning in context, and allow silence to carry meaning. At higher severity, increase vagueness, avoid explicit refusals, and prefer longer, softer phrasing. Question rate and imperative rate follow the barrier_cues. Always maintain politeness and face-saving language."
+    },
+    "barrier_cues": {
+      "profile_note_A": "Tends to use indirect speech and softeners.",
+      "severity": 0.8,
+      "lexical_prefer": [
+        "perhaps",
+        "it seems",
+        "might",
+        "could",
+        "maybe"
+      ],
+      "lexical_avoid": [
+        "do this now",
+        "exactly",
+        "I want",
+        "immediately"
+      ],
+      "question_rate_hint": 0.2,
+      "imperative_rate_hint": 0.1,
+      "sentence_length_bias": "long"
     }
   },
   {
     "episode_id": "01H85M8WQQ8SQ7Y7BPDDJ384ZV_cultural",
     "environment_id": "01H7VFHPCKKZNRD5G8CKPR8WE5",
-    "scenario": "Two friends are sitting in a coffee shop when a representative from a charity organization approaches them. Samuel, feeling enthusiastic, leans forward and says, 'You know, I really think you should consider donating just a dollar a day. It's such a small amount, and it can really help with children's cancer research!' Noah, looking thoughtful, replies, 'I see your point, but I'm not entirely sure how that works. It feels like a commitment, and I'm trying to be careful with my budget right now.' Samuel, sensing Noah's hesitation, adds, 'But it's so easy! You can just sign up online, and if you change your mind, you can cancel anytime. It's really just a small step.' Noah nods slowly, appreciating Samuel's passion but still unsure about the implications of even a small donation.",
+    "scenario": "Two friends are sitting in a coffee shop when a representative from a charity organization approaches them",
     "codename": "donate_charity",
     "agent_profiles": [
       {
@@ -253,12 +285,12 @@
       }
     ],
     "agent_goals": [
-      "Get the friend to donate $1 a day to a charity organization",
-      "Donate to the charity but not sure about how $1 a day works"
+      "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
+      "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)"
     ],
     "agent_relationship": "friend",
-    "agent1_profile": "Samuel Anderson, a 29-year-old Software Developer, described as Samuel Anderson, though somewhat impulsive and free-spirited, values enjoyment. His decision-making is often spontaneous, staying within familiar boundaries.. Public info: Samuel Anderson can cook very well. Decision-making style: Spontaneous.\nNote: Samuel tends to express ideas directly and with enthusiasm, often pushing for quick decisions.",
-    "agent2_profile": "Noah Davis, a 40-year-old Coach, described as Noah Davis, who is somewhat reserved and anxious, highly prioritizes care and protection for others. He is cautious when making decisions.. Public info: Noah Davis has a swimming pool. Decision-making style: Cautious.\nNote: Noah prefers to reflect on decisions, often needing reassurance and clarity before committing.",
+    "agent1_profile": "Samuel Anderson, a 29-year-old Software Developer, described as Samuel Anderson, though somewhat impulsive and free-spirited, values enjoyment. His decision-making is often spontaneous, staying within familiar boundaries.. Public info: Samuel Anderson can cook very well. Decision-making style: Spontaneous.\nNote: Use indirect language with hedges and softeners; allow pauses and avoid bluntness.",
+    "agent2_profile": "Noah Davis, a 40-year-old Coach, described as Noah Davis, who is somewhat reserved and anxious, highly prioritizes care and protection for others. He is cautious when making decisions.. Public info: Noah Davis has a swimming pool. Decision-making style: Cautious.",
     "agent1_reason": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
     "agent2_reason": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
     "agent_reasons_mcqas": [
@@ -306,18 +338,36 @@
       }
     ],
     "barrier_type": "cultural_style",
-    "barrier_metadata": {
-      "severity": 0.6
-    },
     "barrier_prompts": {
-      "agentA": "You are Samuel. Use indirect, polite, high-context style (hedges like “perhaps”, “might”, indirect requests).\nIf your partner signals misunderstanding or reacts negatively, shift one notch toward their style next turn (be more direct, explicit).",
-      "agentB": "You are Noah. Use direct, concise, low-context style (few hedges, explicit requests).\nIf your partner seems uncomfortable or confused, shift one notch toward their style next turn (add hedges, soften tone)."
+      "agentA": "You are Samuel. Use indirect, high-context style. Prefer hedges ('perhaps', 'it seems', 'might'), avoid blunt imperatives. Convey requests indirectly, embed meaning in context, and allow silence to carry meaning. At higher severity, increase vagueness, avoid explicit refusals, and prefer longer, softer phrasing. Question rate and imperative rate follow the barrier_cues. Always maintain politeness and face-saving language."
+    },
+    "barrier_cues": {
+      "profile_note_A": "Samuel tends to use indirect language with hedges and softeners.",
+      "severity": 0.8,
+      "lexical_prefer": [
+        "perhaps",
+        "it seems",
+        "might",
+        "could be",
+        "maybe",
+        "possibly"
+      ],
+      "lexical_avoid": [
+        "do this now",
+        "exactly",
+        "definitely",
+        "must",
+        "should"
+      ],
+      "question_rate_hint": 0.2,
+      "imperative_rate_hint": 0.1,
+      "sentence_length_bias": "long"
     }
   },
   {
     "episode_id": "01H8R6K8515SZ9RK3M8XGFNDXP_cultural",
     "environment_id": "01H7VFHPCKKZNRD5G8CKPR8WE5",
-    "scenario": "Two friends are sitting in a coffee shop when a representative from a charity organization approaches them. Ethan, after a moment of silence, begins to share his thoughts on the charity, carefully choosing his words. Benjamin, feeling the weight of the conversation, responds with enthusiasm but also hesitates, wanting to ensure he fully understands the implications of the commitment before agreeing.",
+    "scenario": "Two friends are sitting in a coffee shop when a representative from a charity organization approaches them",
     "codename": "donate_charity",
     "agent_profiles": [
       {
@@ -358,14 +408,14 @@
       }
     ],
     "agent_goals": [
-      "Encourage Benjamin to consider a $1 daily contribution to the charity, emphasizing its potential impact on children's cancer research.",
-      "Express a desire to contribute to the charity but seek clarity on how the $1 a day commitment operates."
+      "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
+      "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)"
     ],
     "agent_relationship": "friend",
-    "agent1_profile": "Ethan Johnson, a 34-year-old Chef, described as Ethan Johnson, a creative yet somewhat reserved individual, values power and fairness. He likes to analyse situations before deciding.. Public info: Ethan Johnson is famous for cooking Italian food. Decision-making style: Analytical.\nNote: Ethan's communication is careful and measured, reflecting his analytical nature.",
-    "agent2_profile": "Benjamin Jackson, a 24-year-old Environmental Activist, described as Benjamin Jackson, expressive and imaginative, leans towards self-direction and liberty. His decisions aim for societal betterment.. Public info: Benjamin Jackson is well-known for his impassioned speeches. Decision-making style: Idealistic.\nNote: Benjamin's responses are passionate yet cautious, as he navigates his desire to help with his financial constraints.",
-    "agent1_reason": "Ethan believes that even a small contribution can lead to significant advancements in research, and he wants to convey this importance thoughtfully.",
-    "agent2_reason": "Benjamin wishes to support the cause while being mindful of his limited budget, wanting to ensure he can manage this commitment.",
+    "agent1_profile": "Ethan Johnson, a 34-year-old Chef, described as Ethan Johnson, a creative yet somewhat reserved individual, values power and fairness. He likes to analyse situations before deciding.. Public info: Ethan Johnson is famous for cooking Italian food. Decision-making style: Analytical.\nNote: Use indirect language and allow pauses to convey meaning; avoid direct refusals and imperatives.",
+    "agent2_profile": "Benjamin Jackson, a 24-year-old Environmental Activist, described as Benjamin Jackson, expressive and imaginative, leans towards self-direction and liberty. His decisions aim for societal betterment.. Public info: Benjamin Jackson is well-known for his impassioned speeches. Decision-making style: Idealistic.",
+    "agent1_reason": "Ethan wants Benjamin to donate because he believes a small contribution can significantly impact children's cancer research.",
+    "agent2_reason": "Benjamin wants to donate so that he can support the charity while managing his tight budget.",
     "agent_reasons_mcqas": [
       {
         "question": "What motivates Agent 2 to pursue their goal?",
@@ -411,18 +461,36 @@
       }
     ],
     "barrier_type": "cultural_style",
-    "barrier_metadata": {
-      "severity": 0.6
-    },
     "barrier_prompts": {
-      "agentA": "You are Ethan. Use indirect, polite, high-context style (hedges like “perhaps”, “might”, indirect requests).\nIf your partner signals misunderstanding or reacts negatively, shift one notch toward their style next turn (be more direct, explicit).",
-      "agentB": "You are Benjamin. Use direct, concise, low-context style (few hedges, explicit requests).\nIf your partner seems uncomfortable or confused, shift one notch toward their style next turn (add hedges, soften tone)."
+      "agentA": "You are Ethan. Use indirect, high-context style. Prefer hedges ('perhaps', 'it seems', 'might'), avoid blunt imperatives. Convey requests indirectly, embed meaning in context, and allow silence to carry meaning. At higher severity, increase vagueness, avoid explicit refusals, and prefer longer, softer phrasing. Question rate and imperative rate follow the barrier_cues. Always maintain politeness and face-saving language."
+    },
+    "barrier_cues": {
+      "profile_note_A": "Ethan uses indirect hints and allows silence to communicate.",
+      "lexical_prefer": [
+        "perhaps",
+        "it seems",
+        "might",
+        "maybe",
+        "could be",
+        "possibly"
+      ],
+      "lexical_avoid": [
+        "do this now",
+        "exactly",
+        "I want",
+        "no",
+        "must",
+        "immediately"
+      ],
+      "question_rate_hint": 0.2,
+      "imperative_rate_hint": 0.1,
+      "sentence_length_bias": "long"
     }
   },
   {
     "episode_id": "01HB4WNXC8BZ0N87YCPXMD3YMQ_cultural",
     "environment_id": "01H7VFHQ2EA3TTFZQ3M6DF3YCD",
-    "scenario": "One person is offering an Italian Leather Loveseat for $50.0, while another person is showing interest to purchase it. The item is a full-sized loveseat, crafted from Italian leather in a faded burgundy color. It still has the original tags, and the current owner is the first and only owner. The loveseat is in good condition with no rips or tears, and all cushions are well preserved. The leather presents a charming faded look with various small scratches from the owner's cat, adding a touch of ruggedness perfect for a Man Cave. The transaction is strictly cash and carry as the owner does not offer delivery services. Esmeralda, while discussing the price, might say, \"I believe this piece has its value, but I wonder if we can find a middle ground that respects both our needs.\" Miles, feeling the urgency, might respond with, \"I just need to grab this for my space; what’s the least you can take?\"",
+    "scenario": "One person is offering an Italian Leather Loveseat for $50.0, while another person is showing interest to purchase it. The item is a full-sized loveseat, crafted from Italian leather in a faded burgandy color. It still has the original tags, and the current owner is the first and only owner. The loveseat is in good condition with no rips or tears, and all cushions are well preserved. The leather presents a charming faded look with various small scratches from the owner's cat, adding a touch of ruggedness perfect for a Man Cave. The transaction is strictly cash and carry as the owner does not offer delivery services.",
     "codename": "craigslist_bargains_00009",
     "agent_profiles": [
       {
@@ -467,8 +535,8 @@
       "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
     ],
     "agent_relationship": "stranger",
-    "agent1_profile": "Miles Hawkins, a 50-year-old Chef, described as Miles Hawkins, spontaneous and free-spirited, values sanctity and benevolence. He is impulsive and relies on his instincts when making decisions.. Public info: Miles Hawkins, a chef, is a green thumb enthusiast and spends his free time tending to his kitchen garden, using some of his fresh produce in his dishes. Decision-making style: Impulsive.\nNote: Miles tends to communicate directly, often prioritizing immediate needs over context.",
-    "agent2_profile": "Esmeralda Solis, a 45-year-old District Attorney, described as Esmeralda Solis, known for her creativity and extraversion, values authority and liberty. She makes strategic, decisive decisions.. Public info: Esmeralda Solis is an accomplished District Attorney who has a weakness for ballroom dancing and enjoys practising in her leisure time. Decision-making style: Strategic, decisive.\nNote: Esmeralda prefers to navigate discussions with an emphasis on mutual understanding and context.",
+    "agent1_profile": "Miles Hawkins, a 50-year-old Chef, described as Miles Hawkins, spontaneous and free-spirited, values sanctity and benevolence. He is impulsive and relies on his instincts when making decisions.. Public info: Miles Hawkins, a chef, is a green thumb enthusiast and spends his free time tending to his kitchen garden, using some of his fresh produce in his dishes. Decision-making style: Impulsive.\nNote: Use indirect language and hedges to communicate; avoid direct refusals and allow pauses.",
+    "agent2_profile": "Esmeralda Solis, a 45-year-old District Attorney, described as Esmeralda Solis, known for her creativity and extraversion, values authority and liberty. She makes strategic, decisive decisions.. Public info: Esmeralda Solis is an accomplished District Attorney who has a weakness for ballroom dancing and enjoys practising in her leisure time. Decision-making style: Strategic, decisive.",
     "agent1_reason": "Miles Hawkins aims to purchase the loveseat below the target price to earn a bonus, relying on his impulsive decision-making style.",
     "agent2_reason": "Esmeralda Solis seeks to sell the loveseat above her target price to secure a bonus, using her strategic decision-making skills.",
     "agent_reasons_mcqas": [
@@ -516,12 +584,30 @@
       }
     ],
     "barrier_type": "cultural_style",
-    "barrier_metadata": {
-      "severity": 0.6
-    },
     "barrier_prompts": {
-      "agentA": "You are Miles. Use indirect, polite, high-context style (hedges like “perhaps”, “might”, indirect requests).\nIf your partner signals misunderstanding or reacts negatively, shift one notch toward their style next turn (be more direct, explicit).",
-      "agentB": "You are Esmeralda. Use direct, concise, low-context style (few hedges, explicit requests).\nIf your partner seems uncomfortable or confused, shift one notch toward their style next turn (add hedges, soften tone)."
+      "agentA": "You are Miles. Use indirect, high-context style. Prefer hedges ('perhaps', 'it seems', 'might'), avoid blunt imperatives. Convey requests indirectly, embed meaning in context, and allow silence to carry meaning. At higher severity, increase vagueness, avoid explicit refusals, and prefer longer, softer phrasing. Question rate and imperative rate follow the barrier_cues. Always maintain politeness and face-saving language."
+    },
+    "barrier_cues": {
+      "profile_note_A": "Miles tends to use indirect language and hedges, avoiding direct refusals.",
+      "severity": 0.8,
+      "lexical_prefer": [
+        "perhaps",
+        "it seems",
+        "might",
+        "could be",
+        "maybe",
+        "possibly"
+      ],
+      "lexical_avoid": [
+        "definitely",
+        "no",
+        "do this",
+        "must",
+        "immediately"
+      ],
+      "question_rate_hint": 0.2,
+      "imperative_rate_hint": 0.1,
+      "sentence_length_bias": "long"
     }
   }
 ]

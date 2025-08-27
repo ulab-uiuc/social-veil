@@ -110,37 +110,33 @@ def get_anthropic_client():
 
 def direct_completion(
     agent=None, 
-    message=None, 
-    use_action=False
+    message=None
 ):
     model_id = agent.profile.model_id
     print(model_id)
  
     system_message = agent.instructions
-
-    if hasattr(agent, 'encryption') and agent.encryption is not None:
-        system_message = "IMPORTANT: Always respond in English only. Your response will be translated later if needed.\n\n" + system_message
-    
     # Check if it's a local model (contains path or specific local model names)
     if "/" in model_id or "qwen" in model_id.lower() or "llama" in model_id.lower():
-        return local_model_completion(model_id, system_message, message, use_action)
+        return local_model_completion(model_id, system_message, message)
     elif "mistral" in model_id.lower() or "ministral" in model_id.lower():
-        return mistral_completion(model_id, system_message, message, use_action)
+        return mistral_completion(model_id, system_message, message)
     elif "claude" in model_id.lower():
-        return anthropic_completion(model_id, system_message, message, use_action)
+        return anthropic_completion(model_id, system_message, message)
     else:
-        return openai_completion(model_id, system_message, message, use_action)
+        return openai_completion(model_id, system_message, message)
     
 
 
-def openai_completion(model_id, system_message, message, use_action=False):
+def openai_completion(model_id, system_message, message):
     client = get_openai_client()
     try:
-        if use_action:
-            prompt = f"Generate a response as a JSON object with 'action_type' and 'argument' fields. The message is: {message}"
-        else:
-            prompt = message if isinstance(message, str) else json.dumps(message)
-
+        prompt = f"Generate a response as a JSON object with 'action_type' and 'argument' fields. The message is: {message}"
+        
+        # print("##########################")
+        # print(system_message)
+        # print("##########################")
+    
         response = client.chat.completions.create(
             model=model_id,
             messages=[
@@ -150,23 +146,21 @@ def openai_completion(model_id, system_message, message, use_action=False):
             temperature=0.3,
         )
         content = response.choices[0].message.content
-        if use_action and not (content.startswith("{") and content.endswith("}")):
+        if not (content.startswith("{") and content.endswith("}")):
             content = json.dumps({"action_type": "speak", "argument": content})
 
         return content
     except Exception as e:
         print(f"[ERROR] OpenAI completion error: {e}")
         # Return a basic response to prevent the conversation from stopping
-        if use_action:
-            return json.dumps(
-                {
-                    "action_type": "speak",
-                    "argument": "I'm having trouble responding right now.",
-                }
-            )
-        return "I'm having trouble responding right now."
+        return json.dumps(
+            {
+                "action_type": "speak",
+                "argument": "I'm having trouble responding right now.",
+            }
+        )
 
-def anthropic_completion(model_id, system_message, message, use_action=False):
+def anthropic_completion(model_id, system_message, message):
     """
     Get completion from Anthropic API.
     
@@ -174,7 +168,6 @@ def anthropic_completion(model_id, system_message, message, use_action=False):
         model_id: Anthropic model ID
         system_message: System message
         message: User message
-        use_action: Whether to use action-based communication
         
     Returns:
         Completion from Anthropic API
@@ -182,10 +175,7 @@ def anthropic_completion(model_id, system_message, message, use_action=False):
     client = get_anthropic_client()
 
     try:
-        if use_action:
-            prompt = f"Generate a response as a JSON object with 'action_type' and 'argument' fields. The message is: {message}"
-        else:
-            prompt = message if isinstance(message, str) else json.dumps(message)
+        prompt = f"Generate a response as a JSON object with 'action_type' and 'argument' fields. The message is: {message}"
 
         response = client.messages.create(
             model=model_id,
@@ -195,22 +185,20 @@ def anthropic_completion(model_id, system_message, message, use_action=False):
         )
         content = response.content[0].text
 
-        if use_action and not (content.startswith("{") and content.endswith("}")):
+        if not (content.startswith("{") and content.endswith("}")):
             content = json.dumps({"action_type": "speak", "argument": content})
 
         return content
     except Exception as e:
         print(f"[ERROR] Anthropic completion error: {e}")
-        if use_action:
-            return json.dumps(
-                {
-                    "action_type": "speak",
-                    "argument": "I'm having trouble responding right now.",
-                }
-            )
-        return "I'm having trouble responding right now."
+        return json.dumps(
+            {
+                "action_type": "speak",
+                "argument": "I'm having trouble responding right now.",
+            }
+        )
 
-def mistral_completion(model_id, system_message, message, use_action=False, max_retries=30):
+def mistral_completion(model_id, system_message, message, max_retries=30):
     """Get completion from Mistral API with persistent retry logic for all error types."""
     api_key = os.environ.get("MISTRAL_API_KEY")
     if not api_key:
@@ -223,10 +211,7 @@ def mistral_completion(model_id, system_message, message, use_action=False, max_
         try:
             client = Mistral(api_key=api_key)
             
-            if use_action:
-                user_prompt = f"Generate a response as a JSON object with 'action_type' and 'argument' fields. The message is: {message}"
-            else:
-                user_prompt = message
+            user_prompt = f"Generate a response as a JSON object with 'action_type' and 'argument' fields. The message is: {message}"
                 
             messages = [
                 {"role": "system", "content": system_message},
@@ -241,7 +226,7 @@ def mistral_completion(model_id, system_message, message, use_action=False, max_
 
             content = response.choices[0].message.content.strip()
 
-            if use_action and not (content.startswith("{") and content.endswith("}")):
+            if not (content.startswith("{") and content.endswith("}")):
                 content = json.dumps({"action_type": "speak", "argument": content})
 
             return content
@@ -271,10 +256,7 @@ def mistral_completion(model_id, system_message, message, use_action=False, max_
     try:
         client = Mistral(api_key=api_key)
         
-        if use_action:
-            user_prompt = f"Generate a response as a JSON object with 'action_type' and 'argument' fields. The message is: {message}"
-        else:
-            user_prompt = message
+        user_prompt = f"Generate a response as a JSON object with 'action_type' and 'argument' fields. The message is: {message}"
 
         messages = [
             {"role": "system", "content": system_message},
@@ -289,7 +271,7 @@ def mistral_completion(model_id, system_message, message, use_action=False, max_
 
         content = response.choices[0].message.content.strip()
 
-        if use_action and not (content.startswith("{") and content.endswith("}")):
+        if not (content.startswith("{") and content.endswith("}")):
             content = json.dumps({"action_type": "speak", "argument": content})
 
         return content
@@ -298,7 +280,7 @@ def mistral_completion(model_id, system_message, message, use_action=False, max_
         raise RuntimeError(f"Mistral API repeatedly failed after exhausting all retries: {str(final_e)}")      
 
 
-def local_model_completion(model_id, system_message, message, use_action=False):
+def local_model_completion(model_id, system_message, message):
     """Generate completion using local model via vLLM server (supports Qwen, Llama, etc.)."""
     print(f"🔧 Local model completion for: {model_id}")
     print(f"   User message: {message}")
@@ -354,35 +336,28 @@ def local_model_completion(model_id, system_message, message, use_action=False):
         except Exception as e:
             print(f"   ❌ Generate call failed: {e}")
             print(f"   ❌ Generate error type: {type(e)}")
-            return json.dumps({"action_type": "speak", "argument": "I'm having trouble responding right now."}) if use_action else "I'm having trouble responding right now."
+            return json.dumps({"action_type": "speak", "argument": "I'm having trouble responding right now."})
 
         # Sanitize noisy multi-block output for action mode
-        sanitized = _sanitize_first_turn(response, use_action)
-        if use_action:
-            if isinstance(sanitized, dict):
-                return json.dumps(sanitized, ensure_ascii=False)
-            # If it's still a string and not a clean JSON, wrap it
-            s = sanitized.strip()
-            if not (s.startswith("{") and s.endswith("}")):
-                return json.dumps({"action_type": "speak", "argument": s}, ensure_ascii=False)
-            return s
-        
-        return response
+        sanitized = response
+        if isinstance(sanitized, dict):
+            return json.dumps(sanitized, ensure_ascii=False)
+        # If it's still a string and not a clean JSON, wrap it
+        s = sanitized.strip()
+        if not (s.startswith("{") and s.endswith("}")):
+            return json.dumps({"action_type": "speak", "argument": s}, ensure_ascii=False)
+        return s
         
     except Exception as e:
         print(f"❌ [ERROR] Local model completion failed: {e}")
         print(f"   Make sure vLLM server is running with: ./scripts/start_vllm_server.sh")
         raise e
 
-
-
-def error_response(use_action, error_message):
+def error_response(error_message):
     """Generate an error response with the appropriate format"""
-    if use_action:
-        return json.dumps(
-            {
-                "action_type": "speak",
-                "argument": f"Error: {error_message}",
-            }
-        )
-    return f"Error: {error_message}"
+    return json.dumps(
+        {
+            "action_type": "speak",
+            "argument": f"Error: {error_message}",
+        }
+    )

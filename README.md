@@ -84,8 +84,8 @@ python scripts/run.py \
   --model_b gpt-4o \
   --episodes_file data/episode_all.jsonl \
   --communication_modality text_only \
-  --memory_strategy off \
-  --results_dir results/exp_text_only_memoff_gpt-4o_episode_all \
+
+  --results_dir results/exp_text_only_gpt-4o_episode_all \
   --resume
 ```
 

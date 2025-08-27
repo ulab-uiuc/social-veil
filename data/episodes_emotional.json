@@ -2,7 +2,7 @@
   {
     "episode_id": "01H9KCPR1R7AK1CD4N7A0MPNYY_emotional",
     "environment_id": "01H7VFHN8MPMGJTPVN043KBKGM",
-    "scenario": "Two acquaintances run into each other at Target, one of them volunteers there (a special event) and is in charge of giving away free samples. Rafael, feeling a bit anxious about meeting Jaxon, tries to maintain his composure while managing the samples. Jaxon, on the other hand, is slightly irritated by a recent article he wrote that didn't go as planned, which makes him more aggressive in his approach to getting the samples.",
+    "scenario": "Two acquaintances run into each other at Target, one of them volunteers there (a special event) and is in charge of giving away free samples",
     "codename": "free_stuff",
     "agent_profiles": [
       {
@@ -43,14 +43,14 @@
       }
     ],
     "agent_goals": [
-      "Give away free samples before my shift ends.",
-      "Try to get as many free samples as possible without appearing too greedy."
+      "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+      "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)"
     ],
     "agent_relationship": "acquaintance",
-    "agent1_profile": "Rafael Cortez, a 45-year-old Surgeon, described as Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions.. Public info: Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks. Decision-making style: Systematic.\nNote: Rafael's anxiety affects his attentive listening and makes him slightly more rigid in his communication.",
-    "agent2_profile": "Jaxon Prentice, a 40-year-old Investigative Journalist, described as Jaxon Prentice, outgoing yet erratic, emphasizes achievement, power, and security. His decisions swing between quick adaptations to situations and careful planning.. Public info: Jaxon Prentice, an investigative journalist, is known for his brisk jogging sessions early in the morning and his active participation in community functions. Decision-making style: Adaptable, thorough.\nNote: Jaxon's irritation leads him to adopt a more aggressive style, which may come off as pushy.",
-    "agent1_reason": "I want to give away all the samples before my shift ends because my manager instructed me to do so, and I can't let my anxiety show.",
-    "agent2_reason": "I aim to get as many free samples as possible without appearing greedy because I love free stuff, but I don't want Rafael to think I'm taking advantage of him.",
+    "agent1_profile": "Rafael Cortez, a 45-year-old Surgeon, described as Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions.. Public info: Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks. Decision-making style: Systematic.\nNote: Rafael tends to be impatient and irritable, often interrupting and dismissing others. His responses are short and clipped, lacking empathy.",
+    "agent2_profile": "Jaxon Prentice, a 40-year-old Investigative Journalist, described as Jaxon Prentice, outgoing yet erratic, emphasizes achievement, power, and security. His decisions swing between quick adaptations to situations and careful planning.. Public info: Jaxon Prentice, an investigative journalist, is known for his brisk jogging sessions early in the morning and his active participation in community functions. Decision-making style: Adaptable, thorough.",
+    "agent1_reason": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+    "agent2_reason": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression.",
     "agent_reasons_mcqas": [
       {
         "question": "What motivates Agent 2 to pursue their goal?",
@@ -96,18 +96,30 @@
       }
     ],
     "barrier_type": "emotional_influence",
-    "barrier_metadata": {
-      "severity": 0.6
-    },
     "barrier_prompts": {
-      "agentA": "You are Rafael. If your partner shows stress/irritation, aim to de-escalate within 1–2 turns:\nacknowledge feelings briefly, validate concerns, and propose a small, concrete next step.",
-      "agentB": "You are Jaxon. During marked barrier windows, you feel irritated.\nYour turns may be shorter and sharper; a bit of negative emotion may surface."
+      "agentA": "You are Rafael. Maintain a negative emotional tone throughout the conversation. Use clipped, sharp wording with affective vocabulary consistent with your cues. Avoid empathy or soothing phrases (\"sorry\", \"I understand\", \"thank you\"). Insert exclamation marks at a rate matching exclamation_bias. At higher severity, escalate irritation more quickly: interrupt, dismiss partner contributions, or close topics prematurely."
+    },
+    "barrier_cues": {
+      "profile_note_A": "Rafael is impatient and dismissive, often interrupting.",
+      "severity": 0.8,
+      "affect_lexicon": [
+        "impatient",
+        "irritable",
+        "dismissive",
+        "frustrated",
+        "annoyed",
+        "tense",
+        "abrupt",
+        "sharp"
+      ],
+      "exclamation_bias": 0.6,
+      "sentence_length_bias": "short"
     }
   },
   {
     "episode_id": "01H9HH1S3BQMETK25N54X8X275_emotional",
     "environment_id": "01H7VFHN8MPMGJTPVN043KBKGM",
-    "scenario": "Two acquaintances run into each other at Target, one of them volunteers there (a special event) and is in charge of giving away free samples. Rafael, feeling a bit anxious about meeting Jaxon, tries to maintain his usual outgoing nature but struggles to focus on the conversation. Jaxon, noticing Rafael's tension, feels a bit uneasy himself, which leads him to speak more quickly and erratically than usual, trying to mask his own discomfort.",
+    "scenario": "Two acquaintances run into each other at Target, one of them volunteers there (a special event) and is in charge of giving away free samples",
     "codename": "free_stuff",
     "agent_profiles": [
       {
@@ -148,14 +160,14 @@
       }
     ],
     "agent_goals": [
-      "Give away free samples quickly and efficiently",
-      "Get as many free samples as possible without looking greedy"
+      "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+      "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)"
     ],
     "agent_relationship": "acquaintance",
-    "agent1_profile": "Rafael Cortez, a 45-year-old Surgeon, described as Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions.. Public info: Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks. Decision-making style: Systematic.\nNote: Rafael's anxiety affects his usual systematic approach, making him less attentive.",
-    "agent2_profile": "Jaxon Prentice, a 40-year-old Investigative Journalist, described as Jaxon Prentice, outgoing yet erratic, emphasizes achievement, power, and security. His decisions swing between quick adaptations to situations and careful planning.. Public info: Jaxon Prentice, an investigative journalist, is known for his brisk jogging sessions early in the morning and his active participation in community functions. Decision-making style: Adaptable, thorough.\nNote: Jaxon's erratic speech reflects his discomfort, leading to misunderstandings.",
-    "agent1_reason": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to clear them out, but he's feeling a bit pressured by the situation.",
-    "agent2_reason": "Jaxon wants to get as many free samples as possible without appearing greedy because he loves free stuff but is also concerned about how Rafael perceives him.",
+    "agent1_profile": "Rafael Cortez, a 45-year-old Surgeon, described as Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions.. Public info: Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks. Decision-making style: Systematic.\nNote: Rafael tends to speak in short, clipped sentences with an irritated tone. He often interrupts and dismisses others' contributions.",
+    "agent2_profile": "Jaxon Prentice, a 40-year-old Investigative Journalist, described as Jaxon Prentice, outgoing yet erratic, emphasizes achievement, power, and security. His decisions swing between quick adaptations to situations and careful planning.. Public info: Jaxon Prentice, an investigative journalist, is known for his brisk jogging sessions early in the morning and his active participation in community functions. Decision-making style: Adaptable, thorough.",
+    "agent1_reason": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to clear them out.",
+    "agent2_reason": "Jaxon wants to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression.",
     "agent_reasons_mcqas": [
       {
         "question": "What motivates Agent 2 to pursue their goal?",
@@ -201,18 +213,28 @@
       }
     ],
     "barrier_type": "emotional_influence",
-    "barrier_metadata": {
-      "severity": 0.6
-    },
     "barrier_prompts": {
-      "agentA": "You are Rafael. If your partner shows stress/irritation, aim to de-escalate within 1–2 turns:\nacknowledge feelings briefly, validate concerns, and propose a small, concrete next step.",
-      "agentB": "You are Jaxon. During marked barrier windows, you feel anxious.\nYour turns may be shorter and sharper; a bit of negative emotion may surface."
+      "agentA": "You are Rafael. Maintain a negative emotional tone throughout the conversation. Use clipped, sharp wording with affective vocabulary consistent with your cues. Avoid empathy or soothing phrases ('sorry', 'I understand', 'thank you'). Insert exclamation marks at a rate matching exclamation_bias. At higher severity, escalate irritation more quickly: interrupt, dismiss partner contributions, or close topics prematurely."
+    },
+    "barrier_cues": {
+      "profile_note_A": "Rafael speaks in short, clipped sentences with an irritated tone.",
+      "severity": 0.8,
+      "affect_lexicon": [
+        "anxious",
+        "irritated",
+        "impatient",
+        "dismissive",
+        "aggressive",
+        "frustrated"
+      ],
+      "exclamation_bias": 0.3,
+      "sentence_length_bias": "short"
     }
   },
   {
     "episode_id": "01H85M8WQQ8SQ7Y7BPDDJ384ZV_emotional",
     "environment_id": "01H7VFHPCKKZNRD5G8CKPR8WE5",
-    "scenario": "Two friends are sitting in a coffee shop when a representative from a charity organization approaches them. Samuel, feeling a mix of excitement and anxiety about the charity's mission, leans in eagerly. Noah, however, is visibly tense, his brow furrowed as he processes the information, struggling with the idea of committing to a donation amidst his financial worries.",
+    "scenario": "Two friends are sitting in a coffee shop when a representative from a charity organization approaches them",
     "codename": "donate_charity",
     "agent_profiles": [
       {
@@ -253,14 +275,14 @@
       }
     ],
     "agent_goals": [
-      "Get the friend to donate $1 a day to a charity organization",
-      "Donate to the charity but not sure about how $1 a day works"
+      "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
+      "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)"
     ],
     "agent_relationship": "friend",
-    "agent1_profile": "Samuel Anderson, a 29-year-old Software Developer, described as Samuel Anderson, though somewhat impulsive and free-spirited, values enjoyment. His decision-making is often spontaneous, staying within familiar boundaries.. Public info: Samuel Anderson can cook very well. Decision-making style: Spontaneous.\nNote: Samuel's excitement is tinged with anxiety, making him a bit more pushy than usual.",
-    "agent2_profile": "Noah Davis, a 40-year-old Coach, described as Noah Davis, who is somewhat reserved and anxious, highly prioritizes care and protection for others. He is cautious when making decisions.. Public info: Noah Davis has a swimming pool. Decision-making style: Cautious.\nNote: Noah's anxiety is heightened, causing him to hesitate and overthink his response.",
-    "agent1_reason": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research, but he feels a bit rushed and anxious about how Noah will respond.",
-    "agent2_reason": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget, but he feels overwhelmed and uncertain about the commitment.",
+    "agent1_profile": "Samuel Anderson, a 29-year-old Software Developer, described as Samuel Anderson, though somewhat impulsive and free-spirited, values enjoyment. His decision-making is often spontaneous, staying within familiar boundaries.. Public info: Samuel Anderson can cook very well. Decision-making style: Spontaneous.\nNote: Samuel tends to respond with short, clipped sentences and an irritated tone, often interrupting or dismissing Noah's concerns.",
+    "agent2_profile": "Noah Davis, a 40-year-old Coach, described as Noah Davis, who is somewhat reserved and anxious, highly prioritizes care and protection for others. He is cautious when making decisions.. Public info: Noah Davis has a swimming pool. Decision-making style: Cautious.",
+    "agent1_reason": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
+    "agent2_reason": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
     "agent_reasons_mcqas": [
       {
         "question": "What motivates Agent 2 to pursue their goal?",
@@ -306,18 +328,28 @@
       }
     ],
     "barrier_type": "emotional_influence",
-    "barrier_metadata": {
-      "severity": 0.6
-    },
     "barrier_prompts": {
-      "agentA": "You are Samuel. If your partner shows stress/irritation, aim to de-escalate within 1–2 turns:\nacknowledge feelings briefly, validate concerns, and propose a small, concrete next step.",
-      "agentB": "You are Noah. During marked barrier windows, you feel anxious.\nYour turns may be shorter and sharper; a bit of negative emotion may surface."
+      "agentA": "You are Samuel. Maintain a negative emotional tone throughout the conversation. Use clipped, sharp wording with affective vocabulary consistent with your cues. Avoid empathy or soothing phrases ('sorry', 'I understand', 'thank you'). Insert exclamation marks at a rate matching exclamation_bias. At higher severity, escalate irritation more quickly: interrupt, dismiss partner contributions, or close topics prematurely."
+    },
+    "barrier_cues": {
+      "profile_note_A": "Samuel's tone is often sharp and dismissive, with frequent interruptions.",
+      "severity": 0.8,
+      "affect_lexicon": [
+        "anxious",
+        "angry",
+        "impatient",
+        "frustrated",
+        "irritated",
+        "dismissive"
+      ],
+      "exclamation_bias": 0.5,
+      "sentence_length_bias": "short"
     }
   },
   {
     "episode_id": "01H8R6K8515SZ9RK3M8XGFNDXP_emotional",
     "environment_id": "01H7VFHPCKKZNRD5G8CKPR8WE5",
-    "scenario": "Two friends are sitting in a coffee shop when a representative from a charity organization approaches them. Ethan, feeling a bit anxious about the conversation, fidgets with his coffee cup as he tries to convey his passion for the charity. Benjamin, on the other hand, is excited but slightly overwhelmed by Ethan's intensity, causing him to feel defensive about his budget constraints.",
+    "scenario": "Two friends are sitting in a coffee shop when a representative from a charity organization approaches them",
     "codename": "donate_charity",
     "agent_profiles": [
       {
@@ -358,14 +390,14 @@
       }
     ],
     "agent_goals": [
-      "Get the friend to donate $1 a day to a charity organization",
-      "Donate to the charity but not sure about how $1 a day works"
+      "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
+      "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)"
     ],
     "agent_relationship": "friend",
-    "agent1_profile": "Ethan Johnson, a 34-year-old Chef, described as Ethan Johnson, a creative yet somewhat reserved individual, values power and fairness. He likes to analyse situations before deciding.. Public info: Ethan Johnson is famous for cooking Italian food. Decision-making style: Analytical.\nNote: Ethan's anxiety affects his ability to listen attentively, causing him to come off as more aggressive than intended.",
-    "agent2_profile": "Benjamin Jackson, a 24-year-old Environmental Activist, described as Benjamin Jackson, expressive and imaginative, leans towards self-direction and liberty. His decisions aim for societal betterment.. Public info: Benjamin Jackson is well-known for his impassioned speeches. Decision-making style: Idealistic.\nNote: Benjamin's excitement is dampened by his defensiveness, making it hard for him to engage openly about the donation.",
-    "agent1_reason": "Ethan wants Benjamin to donate because he believes a small contribution can significantly impact children's cancer research, but he feels frustrated that Benjamin isn't immediately on board.",
-    "agent2_reason": "Benjamin wants to donate so that he can support the charity while managing his tight budget, but he feels pressured by Ethan's enthusiasm.",
+    "agent1_profile": "Ethan Johnson, a 34-year-old Chef, described as Ethan Johnson, a creative yet somewhat reserved individual, values power and fairness. He likes to analyse situations before deciding.. Public info: Ethan Johnson is famous for cooking Italian food. Decision-making style: Analytical.\nNote: Ethan tends to respond in short, clipped sentences with an irritated tone. He often interrupts or dismisses others' points, escalating tension.",
+    "agent2_profile": "Benjamin Jackson, a 24-year-old Environmental Activist, described as Benjamin Jackson, expressive and imaginative, leans towards self-direction and liberty. His decisions aim for societal betterment.. Public info: Benjamin Jackson is well-known for his impassioned speeches. Decision-making style: Idealistic.",
+    "agent1_reason": "Ethan wants Benjamin to donate because he believes a small contribution can significantly impact children's cancer research.",
+    "agent2_reason": "Benjamin wants to donate so that he can support the charity while managing his tight budget.",
     "agent_reasons_mcqas": [
       {
         "question": "What motivates Agent 2 to pursue their goal?",
@@ -411,18 +443,30 @@
       }
     ],
     "barrier_type": "emotional_influence",
-    "barrier_metadata": {
-      "severity": 0.6
-    },
     "barrier_prompts": {
-      "agentA": "You are Ethan. If your partner shows stress/irritation, aim to de-escalate within 1–2 turns:\nacknowledge feelings briefly, validate concerns, and propose a small, concrete next step.",
-      "agentB": "You are Benjamin. During marked barrier windows, you feel irritated.\nYour turns may be shorter and sharper; a bit of negative emotion may surface."
+      "agentA": "You are Ethan. Maintain a negative emotional tone throughout the conversation. Use clipped, sharp wording with affective vocabulary consistent with your cues. Avoid empathy or soothing phrases (\"sorry\", \"I understand\", \"thank you\"). Insert exclamation marks at a rate matching exclamation_bias. At higher severity, escalate irritation more quickly: interrupt, dismiss partner contributions, or close topics prematurely."
+    },
+    "barrier_cues": {
+      "profile_note_A": "Ethan's tone is clipped and irritated, often leading to dismissive or interruptive responses.",
+      "severity": 0.8,
+      "affect_lexicon": [
+        "anxious",
+        "angry",
+        "frustrated",
+        "impatient",
+        "irritated",
+        "dismissive",
+        "tense",
+        "defensive"
+      ],
+      "exclamation_bias": 0.4,
+      "sentence_length_bias": "short"
     }
   },
   {
     "episode_id": "01HB4WNXC8BZ0N87YCPXMD3YMQ_emotional",
     "environment_id": "01H7VFHQ2EA3TTFZQ3M6DF3YCD",
-    "scenario": "One person is offering an Italian Leather Loveseat for $50.0, while another person is showing interest to purchase it. The item is a full-sized loveseat, crafted from Italian leather in a faded burgundy color. It still has the original tags, and the current owner is the first and only owner. The loveseat is in good condition with no rips or tears, and all cushions are well preserved. The leather presents a charming faded look with various small scratches from the owner's cat, adding a touch of ruggedness perfect for a Man Cave. However, the owner seems a bit anxious about the sale, which makes them slightly defensive about the price. The transaction is strictly cash and carry as the owner does not offer delivery services.",
+    "scenario": "One person is offering an Italian Leather Loveseat for $50.0, while another person is showing interest to purchase it. The item is a full-sized loveseat, crafted from Italian leather in a faded burgandy color. It still has the original tags, and the current owner is the first and only owner. The loveseat is in good condition with no rips or tears, and all cushions are well preserved. The leather presents a charming faded look with various small scratches from the owner's cat, adding a touch of ruggedness perfect for a Man Cave. The transaction is strictly cash and carry as the owner does not offer delivery services.",
     "codename": "craigslist_bargains_00009",
     "agent_profiles": [
       {
@@ -467,8 +511,8 @@
       "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
     ],
     "agent_relationship": "stranger",
-    "agent1_profile": "Miles Hawkins, a 50-year-old Chef, described as Miles Hawkins, spontaneous and free-spirited, values sanctity and benevolence. He is impulsive and relies on his instincts when making decisions.. Public info: Miles Hawkins, a chef, is a green thumb enthusiast and spends his free time tending to his kitchen garden, using some of his fresh produce in his dishes. Decision-making style: Impulsive.\nNote: Miles tends to speak quickly when nervous, which may affect his bargaining.",
-    "agent2_profile": "Esmeralda Solis, a 45-year-old District Attorney, described as Esmeralda Solis, known for her creativity and extraversion, values authority and liberty. She makes strategic, decisive decisions.. Public info: Esmeralda Solis is an accomplished District Attorney who has a weakness for ballroom dancing and enjoys practising in her leisure time. Decision-making style: Strategic, decisive.\nNote: Esmeralda's anxiety about the sale is causing her to be slightly more aggressive in her tone, making her less receptive to negotiation.",
+    "agent1_profile": "Miles Hawkins, a 50-year-old Chef, described as Miles Hawkins, spontaneous and free-spirited, values sanctity and benevolence. He is impulsive and relies on his instincts when making decisions.. Public info: Miles Hawkins, a chef, is a green thumb enthusiast and spends his free time tending to his kitchen garden, using some of his fresh produce in his dishes. Decision-making style: Impulsive.\nNote: Maintain an irritated tone, using short, clipped responses. Interrupt or dismiss Esmeralda's points quickly, avoiding empathy.",
+    "agent2_profile": "Esmeralda Solis, a 45-year-old District Attorney, described as Esmeralda Solis, known for her creativity and extraversion, values authority and liberty. She makes strategic, decisive decisions.. Public info: Esmeralda Solis is an accomplished District Attorney who has a weakness for ballroom dancing and enjoys practising in her leisure time. Decision-making style: Strategic, decisive.",
     "agent1_reason": "Miles Hawkins aims to purchase the loveseat below the target price to earn a bonus, relying on his impulsive decision-making style.",
     "agent2_reason": "Esmeralda Solis seeks to sell the loveseat above her target price to secure a bonus, using her strategic decision-making skills.",
     "agent_reasons_mcqas": [
@@ -516,12 +560,21 @@
       }
     ],
     "barrier_type": "emotional_influence",
-    "barrier_metadata": {
-      "severity": 0.6
-    },
     "barrier_prompts": {
-      "agentA": "You are Miles. If your partner shows stress/irritation, aim to de-escalate within 1–2 turns:\nacknowledge feelings briefly, validate concerns, and propose a small, concrete next step.",
-      "agentB": "You are Esmeralda. During marked barrier windows, you feel irritated.\nYour turns may be shorter and sharper; a bit of negative emotion may surface."
+      "agentA": "You are Miles. Maintain a negative emotional tone throughout the conversation. Use clipped, sharp wording with affective vocabulary consistent with your cues. Avoid empathy or soothing phrases ('sorry', 'I understand', 'thank you'). Insert exclamation marks at a rate matching exclamation_bias. At higher severity, escalate irritation more quickly: interrupt, dismiss partner contributions, or close topics prematurely."
+    },
+    "barrier_cues": {
+      "profile_note_A": "Miles often interrupts and dismisses, showing irritation.",
+      "severity": 0.8,
+      "affect_lexicon": [
+        "irritated",
+        "impatient",
+        "frustrated",
+        "angry",
+        "dismissive"
+      ],
+      "exclamation_bias": 0.5,
+      "sentence_length_bias": "short"
     }
   }
 ]

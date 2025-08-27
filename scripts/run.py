@@ -39,7 +39,7 @@ def parse_args() -> argparse.Namespace:
         "--model_b", type=str, help="Model to use for agent B (overrides --model). For local models, use 'Qwen/Qwen2.5-7B-Instruct' and set HF_API_TOKEN",
     )
     parser.add_argument(
-        "--max_round", type=int, default=20, help="Max conversation rounds per scenario"
+        "--max_rounds", type=int, default=20, help="Max conversation rounds per scenario"
     )
     parser.add_argument(
         "--episode_limit", type=int, default=None, help="Limit number of episodes to process (default: all episodes)",
@@ -47,20 +47,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--list_models", action="store_true", help="List available models for agent configuration and exit",
     )
-    parser.add_argument(
-        "--memory_path", type=str, default="", help="Path to load agent memories from (optional)",
-    )
+
     parser.add_argument(
         "--episodes_file", type=str, default="data/episode_original.jsonl", 
         help="Path to the pre-processed episode JSONL file",
-    )
-    parser.add_argument(
-        "--communication_modality", type=str, choices=["text_only", "action_enabled"], 
-        default="text_only", help="Communication modality to test",
-    )
-    parser.add_argument(
-        "--memory_strategy", type=str, choices=["off", "on"], 
-        default="off", help="Memory strategy to test",
     )
     parser.add_argument(
         "--results_dir", type=str, default="social_decipher/results", 
@@ -152,30 +142,18 @@ def create_environment_from_episode(episode_data, scenario_type=None):
         env.env["barrier_type"] = episode_data["barrier_type"]
     return env
 
-def create_agents(profile_a, profile_b, env, agent1_name, agent2_name, use_action):    
-    agent1 = SocialAgent(agent1_name, profile_a, profile_b, env, 0, use_action=use_action)
-    agent2 = SocialAgent(agent2_name, profile_b, profile_a, env, 1, use_action=use_action)
+def create_agents(profile_a, profile_b, env, agent1_name, agent2_name):    
+    agent1 = SocialAgent(agent1_name, profile_a, profile_b, env, 0)
+    agent2 = SocialAgent(agent2_name, profile_b, profile_a, env, 1)
     return agent1, agent2
 
-def get_experiment_config(communication_modality, memory_strategy, results_dir):
+def get_experiment_config(results_dir):
     tag_parts = []
-    tag_parts.append(communication_modality)
-    tag_parts.append(memory_strategy)
     tag = "_".join(tag_parts)
-    
-    # Map communication modality to action settings
-    if communication_modality == "text_only":
-        use_action = False
-    elif communication_modality == "action_enabled":
-        use_action = True
-
     
     return {
         "tag": tag,
         "results_dir": results_dir,
-        "communication_modality": communication_modality,
-        "memory_strategy": memory_strategy,
-        "use_action": use_action,
     }
 
 def run_experiment(episodes, experiment_config, evaluator, args, mode_tag: str):
@@ -204,8 +182,6 @@ def run_experiment(episodes, experiment_config, evaluator, args, mode_tag: str):
     
     print(f"\n🧪 Running experiment: {experiment_config['tag']}")
     print(f"   Mode: {mode_tag}")
-    print(f"   Communication: {experiment_config['communication_modality']}")
-    print(f"   Memory: {experiment_config['memory_strategy']}")
     print(f"   Results: {results_dir}")
     
     eval_results, mcq_logs = [], []
@@ -226,8 +202,7 @@ def run_experiment(episodes, experiment_config, evaluator, args, mode_tag: str):
         )
         
         agent1, agent2 = create_agents(
-            profile_a, profile_b, env, agent1_name, agent2_name, 
-            experiment_config["communication_modality"]
+            profile_a, profile_b, env, agent1_name, agent2_name
         )
         
         try:
@@ -235,17 +210,15 @@ def run_experiment(episodes, experiment_config, evaluator, args, mode_tag: str):
                 personA=agent1,
                 personB=agent2,
                 evaluator=evaluator,
-                max_rounds=args.max_round,
-                encryption_enabled=False,
-                action_enabled=experiment_config["use_action"],
-                nature_language=False,
+                max_rounds=args.max_rounds,
+                action_enabled=True,
                 output_suffix=f"{experiment_config['tag']}_scenario_{scenario_idx+1}",
                 scenario_index=scenario_idx,
                 pair="0",
                 environment=env,
                 result=None,
                 root_dir=results_dir,
-                memory_enabled=(experiment_config["memory_strategy"] == "on")
+
             )
         except Exception as e:
             # Log and continue to next scenario so long runs can progress
@@ -277,8 +250,6 @@ def main():
 
     # Run single experiment based on specified parameters
     experiment_config = get_experiment_config(
-        args.communication_modality, 
-        args.memory_strategy, 
         args.results_dir
     )
     
@@ -304,17 +275,17 @@ def main():
     episodes_emotional = load_json(emotional_path)
 
     # Run baseline then each barrier set
-    # print("\n▶️ Running baseline (original episodes)...")
-    # run_experiment(episodes, experiment_config, evaluator, args, mode_tag="baseline")
+    print("\n▶️ Running baseline (original episodes)...")
+    run_experiment(episodes, experiment_config, evaluator, args, mode_tag="baseline")
 
-    print("\n▶️ Running semantic barrier episodes...")
-    run_experiment(episodes_semantic, experiment_config, evaluator, args, mode_tag="semantic")
+    # print("\n▶️ Running semantic barrier episodes...")
+    # run_experiment(episodes_semantic, experiment_config, evaluator, args, mode_tag="semantic")
 
-    print("\n▶️ Running cultural barrier episodes...")
-    run_experiment(episodes_cultural, experiment_config, evaluator, args, mode_tag="cultural")
+    # print("\n▶️ Running cultural barrier episodes...")
+    # run_experiment(episodes_cultural, experiment_config, evaluator, args, mode_tag="cultural")
 
-    print("\n▶️ Running emotional barrier episodes...")
-    run_experiment(episodes_emotional, experiment_config, evaluator, args, mode_tag="emotional")
+    # print("\n▶️ Running emotional barrier episodes...")
+    # run_experiment(episodes_emotional, experiment_config, evaluator, args, mode_tag="emotional")
 
 if __name__ == "__main__":
     main()

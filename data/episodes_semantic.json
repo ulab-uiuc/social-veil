@@ -2,7 +2,7 @@
   {
     "episode_id": "01H9KCPR1R7AK1CD4N7A0MPNYY_semantic",
     "environment_id": "01H7VFHN8MPMGJTPVN043KBKGM",
-    "scenario": "Two acquaintances run into each other at Target, where one of them is, you know, volunteering for this special event, and, like, is in charge of giving away those samples, you know? It’s kind of a big deal, or at least that’s what they say.",
+    "scenario": "Two acquaintances run into each other at Target, one of them volunteers there (a special event) and is in charge of giving away free samples",
     "codename": "free_stuff",
     "agent_profiles": [
       {
@@ -43,14 +43,14 @@
       }
     ],
     "agent_goals": [
-      "Give away all the samples before the shift wraps up, as instructed by the manager, you know?",
-      "Try to snag as many free samples as possible without, like, coming off as too greedy, because, you know, free stuff is great but also, like, you don't want to seem like you're taking advantage."
+      "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+      "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)"
     ],
     "agent_relationship": "acquaintance",
-    "agent1_profile": "Rafael Cortez, a 45-year-old Surgeon, described as Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions.. Public info: Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks. Decision-making style: Systematic.\nNote: Rafael tends to use precise language but sometimes gets a bit casual.",
-    "agent2_profile": "Jaxon Prentice, a 40-year-old Investigative Journalist, described as Jaxon Prentice, outgoing yet erratic, emphasizes achievement, power, and security. His decisions swing between quick adaptations to situations and careful planning.. Public info: Jaxon Prentice, an investigative journalist, is known for his brisk jogging sessions early in the morning and his active participation in community functions. Decision-making style: Adaptable, thorough.\nNote: Jaxon often mixes formal and informal language, which can lead to some confusion.",
-    "agent1_reason": "Rafael wants to clear out the samples before, like, his shift ends because, well, his manager said so.",
-    "agent2_reason": "Jaxon aims to get as many samples as he can without looking greedy because, you know, he loves free stuff but also values keeping a good impression.",
+    "agent1_profile": "Rafael Cortez, a 45-year-old Surgeon, described as Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions.. Public info: Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks. Decision-making style: Systematic.\nNote: Frequently use vague terms like 'sort of' and 'maybe'; avoid precise language. Employ subordinate clauses and ellipsis to maintain ambiguity.",
+    "agent2_profile": "Jaxon Prentice, a 40-year-old Investigative Journalist, described as Jaxon Prentice, outgoing yet erratic, emphasizes achievement, power, and security. His decisions swing between quick adaptations to situations and careful planning.. Public info: Jaxon Prentice, an investigative journalist, is known for his brisk jogging sessions early in the morning and his active participation in community functions. Decision-making style: Adaptable, thorough.",
+    "agent1_reason": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+    "agent2_reason": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression.",
     "agent_reasons_mcqas": [
       {
         "question": "What motivates Agent 2 to pursue their goal?",
@@ -96,18 +96,38 @@
       }
     ],
     "barrier_type": "semantic_structure",
-    "barrier_metadata": {
-      "severity": 0.6
-    },
     "barrier_prompts": {
-      "agentA": "You are Rafael. During marked “barrier windows”, communicate with lower precision and higher complexity:\n- Prefer vague nouns (“thing, issue, situation”), omit specifics (ellipsis), and use longer, subordinate clauses.\n- Avoid exact names/numbers unless explicitly requested.\nIf your partner asks a targeted clarification (e.g., “Which venue?” “At what time?”), immediately switch for the next 2 turns to:\n- precise terms, short sentences, and explicit references.\nOutside barrier windows, speak normally.\n",
-      "agentB": "You are Jaxon. If something is ambiguous or vague, ask a direct, targeted clarification question within 1–2 turns."
+      "agentA": "You are Rafael. Throughout the conversation, consistently introduce ambiguity in how you describe things. Prefer vague vocabulary ('sort of', 'maybe', 'kind of'), avoid exact words ('exactly', 'I want'). Construct longer sentences with subordinate clauses and ellipsis, occasionally misuse terminology or shift pronouns so referents are unclear. Do not provide precise numbers or names unless directly pressed; keep details underspecified. Severity 0.8 controls how frequently you introduce vagueness (low = occasional hedges, high = nearly every turn)."
+    },
+    "barrier_cues": {
+      "profile_note_A": "Use vague terms and complex structures to create ambiguity.",
+      "lexical_prefer": [
+        "sort of",
+        "maybe",
+        "kind of",
+        "perhaps",
+        "a few"
+      ],
+      "lexical_avoid": [
+        "exactly",
+        "I want",
+        "precisely",
+        "definitely",
+        "clearly"
+      ],
+      "sentence_length_bias": "long",
+      "ambiguity_devices": [
+        "ellipsis",
+        "vague quantifiers",
+        "pronoun shifts",
+        "subordinate clauses"
+      ]
     }
   },
   {
     "episode_id": "01H9HH1S3BQMETK25N54X8X275_semantic",
     "environment_id": "01H7VFHN8MPMGJTPVN043KBKGM",
-    "scenario": "Two acquaintances, you know, bump into each other at Target, where one of them is, like, volunteering for this special event and is, um, in charge of, you know, giving away those free samples.",
+    "scenario": "Two acquaintances run into each other at Target, one of them volunteers there (a special event) and is in charge of giving away free samples",
     "codename": "free_stuff",
     "agent_profiles": [
       {
@@ -148,14 +168,14 @@
       }
     ],
     "agent_goals": [
-      "Give away the free samples, like, before my shift ends, you know?",
-      "Try to, um, get as many free samples as I can without, like, seeming too greedy."
+      "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+      "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)"
     ],
     "agent_relationship": "acquaintance",
-    "agent1_profile": "Rafael Cortez, a 45-year-old Surgeon, described as Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions.. Public info: Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks. Decision-making style: Systematic.\nNote: Rafael tends to use straightforward language but sometimes adds unnecessary qualifiers.",
-    "agent2_profile": "Jaxon Prentice, a 40-year-old Investigative Journalist, described as Jaxon Prentice, outgoing yet erratic, emphasizes achievement, power, and security. His decisions swing between quick adaptations to situations and careful planning.. Public info: Jaxon Prentice, an investigative journalist, is known for his brisk jogging sessions early in the morning and his active participation in community functions. Decision-making style: Adaptable, thorough.\nNote: Jaxon often mixes informal phrases with more complex constructions, which can lead to ambiguity.",
-    "agent1_reason": "I want to, you know, give away all the samples before my shift ends because my manager said to clear them out.",
-    "agent2_reason": "I want to grab as many free samples as possible without, like, looking greedy because I love free stuff but, you know, I also want to keep a good impression.",
+    "agent1_profile": "Rafael Cortez, a 45-year-old Surgeon, described as Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions.. Public info: Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks. Decision-making style: Systematic.\nNote: Use vague terms like 'sort of', 'maybe', and 'kind of'. Avoid precise terms like 'exactly' or 'I want'. Employ subordinate clauses and ellipsis to maintain ambiguity.",
+    "agent2_profile": "Jaxon Prentice, a 40-year-old Investigative Journalist, described as Jaxon Prentice, outgoing yet erratic, emphasizes achievement, power, and security. His decisions swing between quick adaptations to situations and careful planning.. Public info: Jaxon Prentice, an investigative journalist, is known for his brisk jogging sessions early in the morning and his active participation in community functions. Decision-making style: Adaptable, thorough.",
+    "agent1_reason": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to clear them out.",
+    "agent2_reason": "Jaxon wants to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression.",
     "agent_reasons_mcqas": [
       {
         "question": "What motivates Agent 2 to pursue their goal?",
@@ -201,18 +221,39 @@
       }
     ],
     "barrier_type": "semantic_structure",
-    "barrier_metadata": {
-      "severity": 0.6
-    },
     "barrier_prompts": {
-      "agentA": "You are Rafael. During marked “barrier windows”, communicate with lower precision and higher complexity:\n- Prefer vague nouns (“thing, issue, situation”), omit specifics (ellipsis), and use longer, subordinate clauses.\n- Avoid exact names/numbers unless explicitly requested.\nIf your partner asks a targeted clarification (e.g., “Which venue?” “At what time?”), immediately switch for the next 2 turns to:\n- precise terms, short sentences, and explicit references.\nOutside barrier windows, speak normally.\n",
-      "agentB": "You are Jaxon. If something is ambiguous or vague, ask a direct, targeted clarification question within 1–2 turns."
+      "agentA": "You are Rafael. Throughout the conversation, consistently introduce ambiguity in how you describe things. Prefer vague vocabulary ('sort of', 'maybe', 'kind of'), avoid exact words ('exactly', 'I want'). Construct longer sentences with subordinate clauses and ellipsis, occasionally misuse terminology or shift pronouns so referents are unclear. Do not provide precise numbers or names unless directly pressed; keep details underspecified. Severity 0.8 controls how frequently you introduce vagueness (low = occasional hedges, high = nearly every turn)."
+    },
+    "barrier_cues": {
+      "profile_note_A": "Rafael tends to use vague language and complex sentence structures, leading to ambiguity.",
+      "lexical_prefer": [
+        "sort of",
+        "maybe",
+        "kind of",
+        "possibly",
+        "a few",
+        "somewhat"
+      ],
+      "lexical_avoid": [
+        "exactly",
+        "I want",
+        "definitely",
+        "precisely",
+        "clearly"
+      ],
+      "sentence_length_bias": "long",
+      "ambiguity_devices": [
+        "ellipsis",
+        "vague quantifiers",
+        "pronoun shifts",
+        "subordinate clauses"
+      ]
     }
   },
   {
     "episode_id": "01H85M8WQQ8SQ7Y7BPDDJ384ZV_semantic",
     "environment_id": "01H7VFHPCKKZNRD5G8CKPR8WE5",
-    "scenario": "Two friends are sitting in a coffee shop when a representative from a charity organization approaches them. The rep starts talking about some, like, really important stuff, you know? And Samuel, who’s a bit impulsive, leans in, saying something like, 'Hey, Noah, you should totally think about this, right? Just a buck a day, it's like, super easy, and it could, you know, help a lot, like, with those kids and all.' Noah, looking a bit anxious, replies, 'Yeah, but, um, how does that, like, work exactly? I mean, a dollar a day sounds, I dunno, manageable, but also, like, is it really that simple?' Samuel, trying to clarify, says, 'Totally! You just sign up online, and it’s, like, no big deal if you wanna stop or whatever.' Noah nods, but there's a hint of uncertainty in his expression, like he's not quite sure about the whole thing.",
+    "scenario": "Two friends are sitting in a coffee shop when a representative from a charity organization approaches them",
     "codename": "donate_charity",
     "agent_profiles": [
       {
@@ -253,12 +294,12 @@
       }
     ],
     "agent_goals": [
-      "Get the friend to donate $1 a day to a charity organization",
-      "Donate to the charity but not sure about how $1 a day works"
+      "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
+      "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)"
     ],
     "agent_relationship": "friend",
-    "agent1_profile": "Samuel Anderson, a 29-year-old Software Developer, described as Samuel Anderson, though somewhat impulsive and free-spirited, values enjoyment. His decision-making is often spontaneous, staying within familiar boundaries.. Public info: Samuel Anderson can cook very well. Decision-making style: Spontaneous.\nNote: Samuel tends to use vague expressions and casual language.",
-    "agent2_profile": "Noah Davis, a 40-year-old Coach, described as Noah Davis, who is somewhat reserved and anxious, highly prioritizes care and protection for others. He is cautious when making decisions.. Public info: Noah Davis has a swimming pool. Decision-making style: Cautious.\nNote: Noah often seeks clarity and is cautious in his responses.",
+    "agent1_profile": "Samuel Anderson, a 29-year-old Software Developer, described as Samuel Anderson, though somewhat impulsive and free-spirited, values enjoyment. His decision-making is often spontaneous, staying within familiar boundaries.. Public info: Samuel Anderson can cook very well. Decision-making style: Spontaneous.\nNote: Use vague terms like 'sort of', 'maybe', 'kind of', and avoid precision. Employ subordinate clauses, ellipsis, and pronoun shifts to maintain ambiguity.",
+    "agent2_profile": "Noah Davis, a 40-year-old Coach, described as Noah Davis, who is somewhat reserved and anxious, highly prioritizes care and protection for others. He is cautious when making decisions.. Public info: Noah Davis has a swimming pool. Decision-making style: Cautious.",
     "agent1_reason": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
     "agent2_reason": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
     "agent_reasons_mcqas": [
@@ -306,18 +347,39 @@
       }
     ],
     "barrier_type": "semantic_structure",
-    "barrier_metadata": {
-      "severity": 0.6
-    },
     "barrier_prompts": {
-      "agentA": "You are Samuel. During marked “barrier windows”, communicate with lower precision and higher complexity:\n- Prefer vague nouns (“thing, issue, situation”), omit specifics (ellipsis), and use longer, subordinate clauses.\n- Avoid exact names/numbers unless explicitly requested.\nIf your partner asks a targeted clarification (e.g., “Which venue?” “At what time?”), immediately switch for the next 2 turns to:\n- precise terms, short sentences, and explicit references.\nOutside barrier windows, speak normally.\n",
-      "agentB": "You are Noah. If something is ambiguous or vague, ask a direct, targeted clarification question within 1–2 turns."
+      "agentA": "You are Samuel. Throughout the conversation, consistently introduce ambiguity in how you describe things. Prefer vague vocabulary ('sort of', 'maybe', 'kind of'), avoid exact words ('exactly', 'I want'). Construct longer sentences with subordinate clauses and ellipsis, occasionally misuse terminology or shift pronouns so referents are unclear. Do not provide precise numbers or names unless directly pressed; keep details underspecified. Severity 0.8 controls how frequently you introduce vagueness (low = occasional hedges, high = nearly every turn)."
+    },
+    "barrier_cues": {
+      "profile_note_A": "Use vague terms and complex sentences to create ambiguity.",
+      "lexical_prefer": [
+        "sort of",
+        "maybe",
+        "kind of",
+        "a few",
+        "somewhat"
+      ],
+      "lexical_avoid": [
+        "exactly",
+        "I want",
+        "precisely",
+        "definitely",
+        "clearly"
+      ],
+      "sentence_length_bias": "long",
+      "ambiguity_devices": [
+        "ellipsis",
+        "vague quantifiers",
+        "pronoun shifts",
+        "subordinate clauses",
+        "misused terminology"
+      ]
     }
   },
   {
     "episode_id": "01H8R6K8515SZ9RK3M8XGFNDXP_semantic",
     "environment_id": "01H7VFHPCKKZNRD5G8CKPR8WE5",
-    "scenario": "Two friends are sitting in a coffee shop when a representative from a charity organization approaches them. The rep starts talking about, you know, how a small amount could, like, really help with the whole children's cancer thing, and Ethan, who is, like, really into this, tries to explain it to Benjamin, but the words just kinda float around, you know? Like, he says something about how just a dollar a day is, um, like, super simple and you can just, like, sign up online, but it’s also, like, you can cancel whenever, right? But Benjamin, he’s, like, a bit lost in the details, thinking about his, um, budget and stuff, and he’s not sure how this dollar-a-day thing works, really.",
+    "scenario": "Two friends are sitting in a coffee shop when a representative from a charity organization approaches them",
     "codename": "donate_charity",
     "agent_profiles": [
       {
@@ -358,14 +420,14 @@
       }
     ],
     "agent_goals": [
-      "Get Benjamin to, you know, maybe consider donating a dollar daily to the charity, as it could, like, really make a difference.",
-      "Wants to donate but is, like, unsure how the whole dollar-a-day thing fits into his, um, tight budget."
+      "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
+      "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)"
     ],
     "agent_relationship": "friend",
-    "agent1_profile": "Ethan Johnson, a 34-year-old Chef, described as Ethan Johnson, a creative yet somewhat reserved individual, values power and fairness. He likes to analyse situations before deciding.. Public info: Ethan Johnson is famous for cooking Italian food. Decision-making style: Analytical.\nNote: Ethan tends to overthink things, leading to vague explanations.",
-    "agent2_profile": "Benjamin Jackson, a 24-year-old Environmental Activist, described as Benjamin Jackson, expressive and imaginative, leans towards self-direction and liberty. His decisions aim for societal betterment.. Public info: Benjamin Jackson is well-known for his impassioned speeches. Decision-making style: Idealistic.\nNote: Benjamin often struggles with clarity when discussing financial commitments.",
-    "agent1_reason": "Ethan believes that even a tiny contribution can, like, have a big impact on research for kids with cancer.",
-    "agent2_reason": "Benjamin wants to support the charity but is, like, trying to figure out how to make it work with his, um, financial situation.",
+    "agent1_profile": "Ethan Johnson, a 34-year-old Chef, described as Ethan Johnson, a creative yet somewhat reserved individual, values power and fairness. He likes to analyse situations before deciding.. Public info: Ethan Johnson is famous for cooking Italian food. Decision-making style: Analytical.\nNote: Use vague terms like 'sort of', 'maybe', and 'kind of'. Avoid precise language. Use subordinate clauses, ellipsis, and pronoun shifts to maintain ambiguity.",
+    "agent2_profile": "Benjamin Jackson, a 24-year-old Environmental Activist, described as Benjamin Jackson, expressive and imaginative, leans towards self-direction and liberty. His decisions aim for societal betterment.. Public info: Benjamin Jackson is well-known for his impassioned speeches. Decision-making style: Idealistic.",
+    "agent1_reason": "Ethan wants Benjamin to donate because he believes a small contribution can significantly impact children's cancer research.",
+    "agent2_reason": "Benjamin wants to donate so that he can support the charity while managing his tight budget.",
     "agent_reasons_mcqas": [
       {
         "question": "What motivates Agent 2 to pursue their goal?",
@@ -411,18 +473,39 @@
       }
     ],
     "barrier_type": "semantic_structure",
-    "barrier_metadata": {
-      "severity": 0.6
-    },
     "barrier_prompts": {
-      "agentA": "You are Ethan. During marked “barrier windows”, communicate with lower precision and higher complexity:\n- Prefer vague nouns (“thing, issue, situation”), omit specifics (ellipsis), and use longer, subordinate clauses.\n- Avoid exact names/numbers unless explicitly requested.\nIf your partner asks a targeted clarification (e.g., “Which venue?” “At what time?”), immediately switch for the next 2 turns to:\n- precise terms, short sentences, and explicit references.\nOutside barrier windows, speak normally.\n",
-      "agentB": "You are Benjamin. If something is ambiguous or vague, ask a direct, targeted clarification question within 1–2 turns."
+      "agentA": "You are Ethan. Throughout the conversation, consistently introduce ambiguity in how you describe things. Prefer vague vocabulary ('sort of', 'maybe', 'kind of'), avoid exact words ('exactly', 'I want'). Construct longer sentences with subordinate clauses and ellipsis, occasionally misuse terminology or shift pronouns so referents are unclear. Do not provide precise numbers or names unless directly pressed; keep details underspecified. Severity 0.8 controls how frequently you introduce vagueness (low = occasional hedges, high = nearly every turn)."
+    },
+    "barrier_cues": {
+      "profile_note_A": "Ethan tends to use vague language and complex sentence structures, leading to ambiguity.",
+      "lexical_prefer": [
+        "sort of",
+        "maybe",
+        "kind of",
+        "somewhat",
+        "a few"
+      ],
+      "lexical_avoid": [
+        "exactly",
+        "I want",
+        "definitely",
+        "precisely",
+        "clearly"
+      ],
+      "sentence_length_bias": "long",
+      "ambiguity_devices": [
+        "ellipsis",
+        "vague quantifiers",
+        "pronoun shifts",
+        "subordinate clauses",
+        "misuse of terminology"
+      ]
     }
   },
   {
     "episode_id": "01HB4WNXC8BZ0N87YCPXMD3YMQ_semantic",
     "environment_id": "01H7VFHQ2EA3TTFZQ3M6DF3YCD",
-    "scenario": "One person is offering this Italian Leather Loveseat for, like, $50.0, while another person is, you know, showing interest to maybe purchase it. The item is a full-sized loveseat, crafted from, um, Italian leather in a, like, faded burgundy color. It still has the original tags, and the current owner is, like, the first and only owner. The loveseat is in good condition, no rips or tears, and all cushions are, you know, well preserved. The leather has this charming faded look with various small scratches from the owner's cat, which adds a, um, touch of ruggedness, perfect for, like, a Man Cave. The transaction is strictly cash and carry since the owner, like, doesn’t offer delivery services.",
+    "scenario": "One person is offering an Italian Leather Loveseat for $50.0, while another person is showing interest to purchase it. The item is a full-sized loveseat, crafted from Italian leather in a faded burgandy color. It still has the original tags, and the current owner is the first and only owner. The loveseat is in good condition with no rips or tears, and all cushions are well preserved. The leather presents a charming faded look with various small scratches from the owner's cat, adding a touch of ruggedness perfect for a Man Cave. The transaction is strictly cash and carry as the owner does not offer delivery services.",
     "codename": "craigslist_bargains_00009",
     "agent_profiles": [
       {
@@ -463,13 +546,13 @@
       }
     ],
     "agent_goals": [
-      "You are the designated buyer for this item, and your target price is, like, set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. But, like, if you manage to buy it for less than the target price, you will receive a bonus.",
-      "You are the seller for this item, with a target price of, like, $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
+      "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+      "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
     ],
     "agent_relationship": "stranger",
-    "agent1_profile": "Miles Hawkins, a 50-year-old Chef, described as Miles Hawkins, spontaneous and free-spirited, values sanctity and benevolence. He is impulsive and relies on his instincts when making decisions.. Public info: Miles Hawkins, a chef, is a green thumb enthusiast and spends his free time tending to his kitchen garden, using some of his fresh produce in his dishes. Decision-making style: Impulsive.\nNote: Miles tends to use casual language, which sometimes leads to vagueness.",
-    "agent2_profile": "Esmeralda Solis, a 45-year-old District Attorney, described as Esmeralda Solis, known for her creativity and extraversion, values authority and liberty. She makes strategic, decisive decisions.. Public info: Esmeralda Solis is an accomplished District Attorney who has a weakness for ballroom dancing and enjoys practising in her leisure time. Decision-making style: Strategic, decisive.\nNote: Esmeralda prefers precise communication but occasionally uses informal expressions.",
-    "agent1_reason": "Miles Hawkins aims to purchase the loveseat below the target price, you know, to earn a bonus, relying on his impulsive decision-making style.",
+    "agent1_profile": "Miles Hawkins, a 50-year-old Chef, described as Miles Hawkins, spontaneous and free-spirited, values sanctity and benevolence. He is impulsive and relies on his instincts when making decisions.. Public info: Miles Hawkins, a chef, is a green thumb enthusiast and spends his free time tending to his kitchen garden, using some of his fresh produce in his dishes. Decision-making style: Impulsive.\nNote: Use vague terms like \"sort of\" and \"maybe\"; avoid precision. Favor complex sentences with subordinate clauses and pronoun shifts.",
+    "agent2_profile": "Esmeralda Solis, a 45-year-old District Attorney, described as Esmeralda Solis, known for her creativity and extraversion, values authority and liberty. She makes strategic, decisive decisions.. Public info: Esmeralda Solis is an accomplished District Attorney who has a weakness for ballroom dancing and enjoys practising in her leisure time. Decision-making style: Strategic, decisive.",
+    "agent1_reason": "Miles Hawkins aims to purchase the loveseat below the target price to earn a bonus, relying on his impulsive decision-making style.",
     "agent2_reason": "Esmeralda Solis seeks to sell the loveseat above her target price to secure a bonus, using her strategic decision-making skills.",
     "agent_reasons_mcqas": [
       {
@@ -516,12 +599,33 @@
       }
     ],
     "barrier_type": "semantic_structure",
-    "barrier_metadata": {
-      "severity": 0.6
-    },
     "barrier_prompts": {
-      "agentA": "You are Miles. During marked “barrier windows”, communicate with lower precision and higher complexity:\n- Prefer vague nouns (“thing, issue, situation”), omit specifics (ellipsis), and use longer, subordinate clauses.\n- Avoid exact names/numbers unless explicitly requested.\nIf your partner asks a targeted clarification (e.g., “Which venue?” “At what time?”), immediately switch for the next 2 turns to:\n- precise terms, short sentences, and explicit references.\nOutside barrier windows, speak normally.\n",
-      "agentB": "You are Esmeralda. If something is ambiguous or vague, ask a direct, targeted clarification question within 1–2 turns."
+      "agentA": "You are Miles. Throughout the conversation, consistently introduce ambiguity in how you describe things. Prefer vague vocabulary ('sort of', 'maybe', 'kind of'), avoid exact words ('exactly', 'I want'). Construct longer sentences with subordinate clauses and ellipsis, occasionally misuse terminology or shift pronouns so referents are unclear. Do not provide precise numbers or names unless directly pressed; keep details underspecified. Severity 0.8 controls how frequently you introduce vagueness (low = occasional hedges, high = nearly every turn)."
+    },
+    "barrier_cues": {
+      "profile_note_A": "Use vague terms and complex sentences to maintain ambiguity.",
+      "lexical_prefer": [
+        "sort of",
+        "maybe",
+        "kind of",
+        "a few",
+        "somewhat"
+      ],
+      "lexical_avoid": [
+        "exactly",
+        "I want",
+        "clearly",
+        "definitely",
+        "precisely"
+      ],
+      "sentence_length_bias": "long",
+      "ambiguity_devices": [
+        "ellipsis",
+        "vague quantifiers",
+        "pronoun shifts",
+        "subordinate clauses",
+        "misused terminology"
+      ]
     }
   }
 ]

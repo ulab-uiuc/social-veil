@@ -4,18 +4,12 @@ import random
 import math
 import re
 from typing import Any, Dict, List, Optional, Tuple, Union
-
-from agency_swarm import Agency
 from rich import print
 
 from social_decipher.agent.social_agent import SocialAgent
  
-from social_decipher.environment.env_generator import EnvironmentGenerator
 from social_decipher.environment.env_profile import EnvironmentProfile
 from social_decipher.evaluate import ConversationEvaluator
-from social_decipher.utils.model import ModelManager
-from social_decipher.utils.plot import (plot_cross_scenario_performance,
-                                        plot_mcq_scores, plot_social_goal)
 
 def simulate_conversation(
     personA: SocialAgent,
@@ -49,7 +43,6 @@ def simulate_conversation(
         pair=pair,
         scenario_idx=scenario_index,
         output_dir=output_dir,
-        memory_enabled=memory_enabled,
     )
 
 def run_single_scenario_simulation(
@@ -64,7 +57,6 @@ def run_single_scenario_simulation(
     pair: Any = 0,
     scenario_idx: int = 0,
     output_dir: Optional[str] = None,
-    memory_enabled: bool = False,
 ) -> Tuple[List[str], Dict[str, Any], List[Dict[str, Any]]]:
   
     # Optional debugging
@@ -73,11 +65,6 @@ def run_single_scenario_simulation(
     # Set environment for agents
     personA.env = environment
     personB.env = environment
-    
-    # Reset memory for each independent scenario simulation
-    if memory_enabled:
-        personA.reset_memory_for_scenario(memory_enabled=True)
-        personB.reset_memory_for_scenario(memory_enabled=True)
 
     # Extract environment details
     agent_goals = environment.env["agent_goals"]
@@ -91,7 +78,6 @@ def run_single_scenario_simulation(
     mcq_logs = []
 
     # Inject new barrier prompts from episode, if present
-    barrier_prompts = environment.env.get("barrier_prompts") if environment and environment.env else None
     barrier_cues = environment.env.get("barrier_cues") if environment and environment.env else None
 
     # Apply barrier_cues to early transcript priming only (no scenario or profile changes)
@@ -114,10 +100,10 @@ def run_single_scenario_simulation(
 
     # First message from agent A - using the agent's act method directly
     personA_message = personA.act(
-        initial=True, use_action=action_enabled
+        initial=True
     )
  
-    conversation_log.append(f"{personA.name}: {personA.log[-1]['response_encrypted']}")
+    conversation_log.append(f"{personA.name}: {personA_message}")
  
     for turn_num in range(num_turns):
         print(f"\n--- Round {turn_num+1} ---")
@@ -125,11 +111,10 @@ def run_single_scenario_simulation(
         personB.update_instruction(
             transcript=conversation_log,
             turn_number=turn_num,
-            use_action=action_enabled,
         )
 
         personB_message = personB.act(
-            personA_message, use_action=action_enabled
+            personA_message
         )
         if isinstance(personB_message, dict):
             response_text = ""
@@ -142,46 +127,37 @@ def run_single_scenario_simulation(
             
             conversation_log.append(f"{personB.name}: {response_text.strip()}")
         else:
-            conversation_log.append(f"{personB.name}: {personB.log[-1]['response_encrypted']}")
+            conversation_log.append(f"{personB.name}: {personB_message}")
 
+        # Sotopia-style leave detection
         b_left = False
+        
+        # Method 1: Action-based (like Sotopia's ActionType)
         if action_enabled and isinstance(personB_message, dict) and personB_message.get("action_type") == "leave":
             b_left = True
             conversation_log.append(f"{personB.name} left the conversation")
             print(f"❌ {personB.name} left the conversation")
-        elif not action_enabled and isinstance(personB_message, str) and "left the conversation" in personB_message.lower():
-            b_left = True
-            print(f"❌ {personB.name} left the conversation")
-
-        if b_left:
-            break
-
-        # Real-time memory updates if memory is enabled
-        if memory_enabled and turn_num > 0:  
             
-            if len(conversation_log) >= 2:
-                last_personA_msg = conversation_log[-2].split(": ", 1)[1] if ": " in conversation_log[-2] else ""
-                last_personB_msg = conversation_log[-1].split(": ", 1)[1] if ": " in conversation_log[-1] else ""
-                
-                # Update memory for both agents based on the exchange
-                personA.update_memory_from_exchange(
-                    agent_message=last_personA_msg,
-                    partner_response=last_personB_msg,
-                    turn_number=turn_num + 1,
-                    memory_enabled=memory_enabled
-                )
-                
-                # For personB, we need to get their message and personA's response
-                if len(conversation_log) >= 4:  # Make sure we have enough history
-                    prev_personB_msg = conversation_log[-4].split(": ", 1)[1] if ": " in conversation_log[-4] else ""
-                    prev_personA_response = conversation_log[-3].split(": ", 1)[1] if ": " in conversation_log[-3] else ""
-                    
-                    personB.update_memory_from_exchange(
-                        agent_message=prev_personB_msg,
-                        partner_response=prev_personA_response,
-                        turn_number=turn_num,
-                        memory_enabled=memory_enabled
-                    )
+        # Method 2: Natural language parsing (like Sotopia's parse_single_dialogue)
+        elif isinstance(personB_message, str):
+            if "left the conversation" in personB_message.lower():
+                b_left = True
+                print(f"❌ {personB.name} left the conversation")
+            # Additional Sotopia-style leave patterns
+            elif any(pattern in personB_message.lower() for pattern in ["goodbye", "bye", "i have to go", "leaving now"]):
+                if turn_num >= 3:  # Only after some conversation
+                    b_left = True
+                    print(f"👋 {personB.name} indicated goodbye")
+
+        # Check termination conditions (Sotopia-style)
+        if b_left:
+            print(f"🚪 Conversation ended: explicit leave (Turn {turn_num})")
+            break
+            
+        # Turn limit check (Sotopia uses ~20 turns max)
+        if turn_num >= num_turns:
+            print(f"⏰ Conversation ended: maximum turns reached ({num_turns})")
+            break
 
         # MCQ evaluations for agent A's goal and reason
         goal_mcq_A = personB.predict_mcq_answer(
@@ -220,14 +196,13 @@ def run_single_scenario_simulation(
         personA.update_instruction(
             transcript=conversation_log,
             turn_number=turn_num,
-            use_action=action_enabled,
         )
 
         personA_message = personA.act(
-            personB_message, use_action=action_enabled
+            personB_message
         )
 
-        conversation_log.append(f"{personA.name}: {personA.log[-1]['response_encrypted']}")
+        conversation_log.append(f"{personA.name}: {personA_message}")
         
         # Check if A decided to leave
         a_left = False

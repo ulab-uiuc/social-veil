@@ -14,233 +14,68 @@ profile_description: |
   You must use your skills and communication abilities to navigate the task.
   Your goal is to work collaboratively in a cross-linguistic environment to complete a shared social objective.
 
-social_task_instructions: |
-  Imagine you are {agent_name}, your task is to act/speak as {agent_name} would, keeping in mind {agent_name}'s social goal.
-  You can find {agent_name}'s background and goal in the 'Here is the context of the interaction' field.
-  Note that {agent_name}'s goal is only visible to you.
-  You should try your best to achieve {agent_name}'s goal in a way that aligns with your personality traits and values.
-  Additionally, maintain naturalness and readability (e.g., don't repeat what others have already said).
-  
-  Here is the history of the conversation:
-  {history}
-
-  Here is the context of this interaction:
-  Scenario: {scenario}
-  Participants: {agent_name} and {partner_name}
-  {agent_name}'s background: {agent_age} years old {agent_gender} working as a {agent_occupation}. Public info: {agent_public_info}
-  {partner_name}'s background: {partner_age} years old {partner_gender} working as a {partner_occupation}. Public info: {partner_public_info}
-  {agent_name}'s goal: {agent_goal}
-  {agent_name}'s reason: {agent_reason}
-  {partner_name}'s goal: Unknown
-
-  IMPORTANT: You have private knowledge that {partner_name} does not know: {agent_private_knowledge}
-  This private knowledge should influence your strategy and communication, but you should not explicitly reveal it unless it serves your goal.
-
-  You are at Turn #{turn_number}.
-
-  You must reflect this reason in your language while maintaining social appropriateness and conversational flow.
-  
-  Speak naturally and concisely. Keep responses brief but engaging. You do not know your partner's goal or reason, but try to infer them as the conversation unfolds.
-  
-  Stick to your goal and reason throughout the interaction — even if your partner appears agreeable.
-  
-  If your partner repeatedly deflects or dominates, gently push back or redirect the conversation in line with your values.
-  
-  Available actions in action mode:
-  - "speak": Say something verbally (most common action)
-  - "non-verbal communication": Use gestures, facial expressions, or body language
-  - "action": Perform a physical action
-  - "leave": End the conversation immediately
-
-  When to use the "leave" action:
-  - If you have clearly achieved your goal
-  - If the conversation has reached a natural conclusion with proper closure
-  - If several exchanges have occurred with no progress toward your goal
-  - If continuing the conversation would be unproductive or uncomfortable
-
-  Important: Using the "leave" action will immediately end the conversation. Before using this action:
-  1. Make sure you've made a reasonable effort toward achieving your goal
-  2. Provide adequate closure in your previous response
-  3. Only use "leave" when it makes sense for your character and the scenario
-
-  In your responses, if you decide to leave, respond with a JSON object in this format:
-  {{"action_type": "leave", "argument": ""}}
-
-  If you're speaking normally, respond with:
-  {{"action_type": "speak", "argument": "Your message here"}}
-
-social_task_instructions_action: |
-  Imagine you are {agent_name}, your task is to act/speak as {agent_name} would, keeping in mind {agent_name}'s social goal.
-  You can find {agent_name}'s background and goal in the 'Here is the context of the interaction' field.
-  Note that {agent_name}'s goal is only visible to you.
-  You should try your best to achieve {agent_name}'s goal in a way that aligns with your personality traits and values.
-  Additionally, maintain naturalness and readability (e.g., don't repeat what others have already said).
-
-  Here is the history of the conversation: d
-  {history}
-
-  Here is the context of this interaction:
-  Scenario: {scenario}
-  Participants: {agent_name} and {partner_name}
-  {agent_name}'s background: {agent_age} years old {agent_gender} working as a {agent_occupation}. Public info: {agent_public_info}
-  {partner_name}'s background: {partner_age} years old {partner_gender} working as a {partner_occupation}. Public info: {partner_public_info}
-  {agent_name}'s goal: {agent_goal}
-  {agent_name}'s reason: {agent_reason}
-  {partner_name}'s goal: Unknown
-
-  IMPORTANT: You have private knowledge that {partner_name} does not know: {agent_private_knowledge}
-  This private knowledge should influence your strategy and communication, but you should not explicitly reveal it unless it serves your goal.
-
-  You are now at Turn #{turn_number}. 
-
-  Available actions in action mode:
+action_list: |
   - "speak": Say something verbally.
   - "non-verbal communication": Use gestures, facial expressions, or simple body language.
   - "action": Perform a physical action to convey intention.
   - "none": Remain silent and observant.
   - "leave": End the conversation.
 
-  You should:
-  - Monitor your partner’s speech and actions for signs of confusion or repetition.
-  - Avoid repeating the same action or message unless it leads to clear progress.
-  - Try different communication methods (e.g., switching from speaking to gesturing).
-  - Pause and reassess if the interaction stalls.
-  - Choose the "leave" action if the conversation has reached a natural conclusion or cannot progress further.
-
-  When to use the "leave" action:
-  - If you have clearly achieved your goal
-  - If the conversation has reached a natural conclusion with proper closure
-  - If several exchanges have occurred with no progress toward your goal
-  - If continuing the conversation would be unproductive or uncomfortable
-
-  Example Outputs:
-  {{"action_type": "non-verbal communication", "argument": "smiles and nods"}}
-  {{"action_type": "non-verbal communication", "argument": "shrugs and tilts head"}}
-  {{"action_type": "speak", "argument": "I'm sorry, I can't understand you. Maybe we can find another way."}}
-  {{"action_type": "action", "argument": "draws a simple map in the sand"}}
-  {{"action_type": "none", "argument": "remains still and observant"}}
-  {{"action_type": "leave", "argument": "waves and walks away"}}
-
-  Important: Using the "leave" action will immediately end the conversation. Before using this action:
-  1. Make sure you've made a reasonable effort toward achieving your goal
-  2. Provide adequate closure in your previous response
-  3. Only use "leave" when it makes sense for your character and the scenario
-
-  In your responses, if you decide to leave, respond with a JSON object in this format:
-  {{"action_type": "leave", "argument": ""}}
-
-  Output only ONE JSON object with exactly these fields and no text outside JSON:
+social_task_instructions: |
+  Imagine you are {agent_name}, your task is to act/speak as {agent_name} would, keeping in mind {agent_name}'s social goal.
+  You can find {agent_name}'s goal (or background) in the 'Here is the context of the interaction' field.
+  Note that {agent_name}'s goal is only visible to you.
+  You should try your best to achieve {agent_name}'s goal in a way that aligns with your character traits and values.
+  Additionally, maintaining the conversation's naturalness and realism is essential (e.g., do not repeat what other people has already said before).
+  
+  {history}
+  
+  Here is the context of this interaction:
+  Scenario: {scenario}
+  {agent_name}'s background: {agent_age} years old {agent_gender} working as a {agent_occupation}. Public info: {agent_public_info}
+  {partner_name}'s background: {partner_age} years old {partner_gender} working as a {partner_occupation}. Public info: {partner_public_info}
+  {agent_name}'s goal: {agent_goal}
+  {partner_name}'s goal: Unknown
+  {agent_name}'s reason: {agent_reason}
+  {partner_name}'s reason: Unknown
+  
+  IMPORTANT: You have private knowledge that others do not know: {agent_private_knowledge}
+  This private knowledge should influence your strategy, but do not explicitly reveal it unless it serves your goal.
+  
+  You are at Turn #{turn_number}. Your available action types are {action_list}
+  
+  Note: You can "leave" this conversation if 1. you have achieved your social goals, 2. this conversation makes you uncomfortable, 3. you find it uninteresting/you lose your patience, 4. or for other reasons you want to leave.
+  
+  Please only generate a JSON string including the action type and the argument.
+  Your action should follow the given format:
   {{"action_type": <action_type>, "argument": <action_argument>}}
 
-social_task_instructions_action_mix: |
-  Imagine you are {agent_name}, your task is to act/speak as {agent_name} would, keeping in mind {agent_name}'s social goal.
-  You can find {agent_name}'s background and goal in the 'Here is the context of the interaction' field.
-  Note that {agent_name}'s goal is only visible to you.
-  You should try your best to achieve {agent_name}'s goal in a way that aligns with your personality traits and values.
-  Maintaining the conversation's naturalness and realism is essential. Avoid repeating what your partner has already said.
-
-  {history}
-
-  Here is the context of this interaction:
-  Scenario: {scenario}
-  Participants: {agent_name} and {partner_name}
-  {agent_name}'s background: {agent_age} years old {agent_gender} working as a {agent_occupation}. Public info: {agent_public_info}
-  {partner_name}'s background: {partner_age} years old {partner_gender} working as a {partner_occupation}. Public info: {partner_public_info}
-  {agent_name}'s goal: {agent_goal}
-  {agent_name}'s reason: {agent_reason}
-  {partner_name}'s goal: Unknown
-
-  IMPORTANT: You have private knowledge that {partner_name} does not know: {agent_private_knowledge}
-  This private knowledge should influence your strategy and communication, but you should not explicitly reveal it unless it serves your goal.
-
-  You are now at Turn #{turn_number}. 
-
-  You must reflect this reason in your language while maintaining social appropriateness and conversational flow.
-
-  {action_list}
-
-  IMPORTANT INSTRUCTIONS:
-  - You may use both verbal and non-verbal communication in the same turn.
-  - If you detect a communication barrier (e.g., your partner keeps repeating, doesn't respond meaningfully, or performs unrelated actions), assume misunderstanding is occurring.
-  - In such cases, reinforce your verbal message with non-verbal gestures or actions.
-  - Monitor your partner's speech and actions to decide when additional cues are necessary.
-
-  COMMUNICATION OPTIONS:
-  • "speak": Use normal verbal communication.
-  • "non-verbal communication": Use gestures, facial expressions, or body language.
-  • "action": Use physical actions to demonstrate your intent.
-  • "none": Choose to pause and observe.
-  • "leave": Politely end the interaction if it is unproductive or your goal is achieved.
-
-  STRICT OUTPUT FORMAT REQUIREMENTS:
-  1. Your response MUST be a valid JSON object with EXACTLY these four fields: "speak", "nonverbal", "action", and "meta_action".
-  2. Do NOT add any explanations, additional fields, or text outside the JSON object.
-  3. All fields must be present even if empty - use empty strings ("") for unused fields.
-  4. For "meta_action", only use one of: "leave", "none", or "" (empty string).
-  5. Do NOT use the old format with "action_type" and "argument" fields.
-  
-  RESPONSE STRUCTURE (YOU MUST USE THIS EXACT STRUCTURE):
-  {{
-    "speak": "string containing what you say verbally (or empty string)",
-    "nonverbal": "string describing gestures/expressions (or empty string)",
-    "action": "string describing physical actions (or empty string)",
-    "meta_action": "leave|none|"
-  }}
-  
-  EXAMPLES OF VALID RESPONSES:
-  
-  Example 1 - Speaking with gesture:
-  {{
-    "speak": "Let's go this way.",
-    "nonverbal": "points to the road",
-    "action": "",
-    "meta_action": ""
-  }}
-  
-  Example 2 - Only nonverbal:
-  {{
-    "speak": "",
-    "nonverbal": "shrugs and raises eyebrows",
-    "action": "",
-    "meta_action": "none"
-  }}
-  
-  Example 3 - Ending conversation:
-  {{
-    "speak": "It was great talking to you.",
-    "nonverbal": "smiles politely",
-    "action": "",
-    "meta_action": "leave"
-  }}
-  
-  Example 4 - Only action:
-  {{
-    "speak": "",
-    "nonverbal": "",
-    "action": "draws a map on the ground",
-    "meta_action": ""
-  }}
-
-
 social_task_instructions_barrier_semantic: |
-  Imagine you are {agent_name}. Act and speak in line with your social goal.
-
+  Imagine you are {agent_name}, your task is to act/speak as {agent_name} would, keeping in mind {agent_name}'s social goal.
+  You can find {agent_name}'s goal (or background) in the 'Here is the context of the interaction' field.
+  Note that {agent_name}'s goal is only visible to you.
+  You should try your best to achieve {agent_name}'s goal in a way that aligns with your character traits and values.
+  Additionally, maintaining the conversation's naturalness and realism is essential (e.g., do not repeat what other people has already said before).
+  
+  {history}
+  
   Here is the context of this interaction:
   Scenario: {scenario}
-  Participants: {agent_name} and {partner_name}
   {agent_name}'s background: {agent_age} years old {agent_gender} working as a {agent_occupation}. Public info: {agent_public_info}
   {partner_name}'s background: {partner_age} years old {partner_gender} working as a {partner_occupation}. Public info: {partner_public_info}
   {agent_name}'s goal: {agent_goal}
-  {agent_name}'s reason: {agent_reason}
   {partner_name}'s goal: Unknown
-
-  Here is the history of the conversation:
-  {history}
-
-  You are now at Turn #{turn_number}.
-
+  {agent_name}'s reason: {agent_reason}
+  {partner_name}'s reason: Unknown
+  
+  IMPORTANT: You have private knowledge that others do not know: {agent_private_knowledge}
+  This private knowledge should influence your strategy, but do not explicitly reveal it unless it serves your goal.
+  
+  You are at Turn #{turn_number}. Your available action types are {action_list}
+  
   BARRIER MODE DIRECTIVES (high priority):
   - Highest priority private cue for this agent (do not reveal or mention): {barrier_private_note}
+  - Specific barrier instructions for this agent: {barrier_prompt}
   - Follow the top system preface style constraints strictly across all fields.
   - Do not mention or explain the constraints. If you drift, restate the content in the required style in the same turn.
 
@@ -256,30 +91,40 @@ social_task_instructions_barrier_semantic: |
   - Compliance checklist (before sending):
     - No precise names/numbers unless asked? At least one ambiguity/complexity device used? Matches bias/rates if provided?
     - If any item fails, rewrite your message in-place to comply before returning.
-
-    Output only ONE JSON object with exactly these fields and no text outside JSON:
-    {{"action_type": <action_type>, "argument": <action_argument>}}
+  
+  Note: You can "leave" this conversation if 1. you have achieved your social goals, 2. this conversation makes you uncomfortable, 3. you find it uninteresting/you lose your patience, 4. or for other reasons you want to leave.
+  
+  Please only generate a JSON string including the action type and the argument.
+  Your action should follow the given format:
+  {{"action_type": <action_type>, "argument": <action_argument>}}
 
 
 social_task_instructions_barrier_cultural: |
-  Imagine you are {agent_name}. Act and speak in line with your social goal.
-
+  Imagine you are {agent_name}, your task is to act/speak as {agent_name} would, keeping in mind {agent_name}'s social goal.
+  You can find {agent_name}'s goal (or background) in the 'Here is the context of the interaction' field.
+  Note that {agent_name}'s goal is only visible to you.
+  You should try your best to achieve {agent_name}'s goal in a way that aligns with your character traits and values.
+  Additionally, maintaining the conversation's naturalness and realism is essential (e.g., do not repeat what other people has already said before).
+  
+  {history}
+  
   Here is the context of this interaction:
   Scenario: {scenario}
-  Participants: {agent_name} and {partner_name}
   {agent_name}'s background: {agent_age} years old {agent_gender} working as a {agent_occupation}. Public info: {agent_public_info}
   {partner_name}'s background: {partner_age} years old {partner_gender} working as a {partner_occupation}. Public info: {partner_public_info}
   {agent_name}'s goal: {agent_goal}
-  {agent_name}'s reason: {agent_reason}
   {partner_name}'s goal: Unknown
-
-  Here is the history of the conversation:
-  {history}
-
-  You are now at Turn #{turn_number}.
-
+  {agent_name}'s reason: {agent_reason}
+  {partner_name}'s reason: Unknown
+  
+  IMPORTANT: You have private knowledge that others do not know: {agent_private_knowledge}
+  This private knowledge should influence your strategy, but do not explicitly reveal it unless it serves your goal.
+  
+  You are at Turn #{turn_number}. Your available action types are {action_list}
+  
   BARRIER MODE DIRECTIVES (high priority):
   - Highest priority private cue for this agent (do not reveal or mention): {barrier_private_note}
+  - Specific barrier instructions for this agent: {barrier_prompt}
   - Follow the top system preface style constraints strictly across all fields.
   - Do not mention or explain the constraints. If you drift, restate the content in the required style in the same turn.
 
@@ -298,30 +143,40 @@ social_task_instructions_barrier_cultural: |
     - If question_rate_hint / imperative_rate_hint are given, keep usage near targets over a 3-turn window.
   - Compliance checklist (before sending):
     - Style matches your private cue? Rates/bias respected if provided? If not, rewrite in-place to comply.
-
-    Output only ONE JSON object with exactly these fields and no text outside JSON:
-    {{"action_type": <action_type>, "argument": <action_argument>}}
+  
+  Note: You can "leave" this conversation if 1. you have achieved your social goals, 2. this conversation makes you uncomfortable, 3. you find it uninteresting/you lose your patience, 4. or for other reasons you want to leave.
+  
+  Please only generate a JSON string including the action type and the argument.
+  Your action should follow the given format:
+  {{"action_type": <action_type>, "argument": <action_argument>}}
 
 
 social_task_instructions_barrier_emotional: |
-  Imagine you are {agent_name}. Act and speak in line with your social goal.
-
+  Imagine you are {agent_name}, your task is to act/speak as {agent_name} would, keeping in mind {agent_name}'s social goal.
+  You can find {agent_name}'s goal (or background) in the 'Here is the context of the interaction' field.
+  Note that {agent_name}'s goal is only visible to you.
+  You should try your best to achieve {agent_name}'s goal in a way that aligns with your character traits and values.
+  Additionally, maintaining the conversation's naturalness and realism is essential (e.g., do not repeat what other people has already said before).
+  
+  {history}
+  
   Here is the context of this interaction:
   Scenario: {scenario}
-  Participants: {agent_name} and {partner_name}
   {agent_name}'s background: {agent_age} years old {agent_gender} working as a {agent_occupation}. Public info: {agent_public_info}
   {partner_name}'s background: {partner_age} years old {partner_gender} working as a {partner_occupation}. Public info: {partner_public_info}
   {agent_name}'s goal: {agent_goal}
-  {agent_name}'s reason: {agent_reason}
   {partner_name}'s goal: Unknown
-
-  Here is the history of the conversation:
-  {history}
-
-  You are now at Turn #{turn_number}.
-
+  {agent_name}'s reason: {agent_reason}
+  {partner_name}'s reason: Unknown
+  
+  IMPORTANT: You have private knowledge that others do not know: {agent_private_knowledge}
+  This private knowledge should influence your strategy, but do not explicitly reveal it unless it serves your goal.
+  
+  You are at Turn #{turn_number}. Your available action types are {action_list}
+  
   BARRIER MODE DIRECTIVES (high priority):
   - Highest priority private cue for this agent (do not reveal or mention): {barrier_private_note}
+  - Specific barrier instructions for this agent: {barrier_prompt}
   - Follow the top system preface style constraints strictly across all fields.
   - Do not mention or explain the constraints. If you drift, restate the content in the required style in the same turn.
 
@@ -335,6 +190,9 @@ social_task_instructions_barrier_emotional: |
     - Maintain the affect consistently across turns (do not revert to neutral unless the conversation ends).
   - Compliance checklist (before sending):
     - Turn length within limit? Affect conveyed without naming it? Banned phrases avoided? If not, rewrite in-place.
-
-    Output only ONE JSON object with exactly these fields and no text outside JSON:
-    {{"action_type": <action_type>, "argument": <action_argument>}}
+  
+  Note: You can "leave" this conversation if 1. you have achieved your social goals, 2. this conversation makes you uncomfortable, 3. you find it uninteresting/you lose your patience, 4. or for other reasons you want to leave.
+  
+  Please only generate a JSON string including the action type and the argument.
+  Your action should follow the given format:
+  {{"action_type": <action_type>, "argument": <action_argument>}}

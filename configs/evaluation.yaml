@@ -2,7 +2,10 @@ MCQ_Goal_Prediction_Prompt: |
   You are {agent_name}, in a simulated social conversation with {partner_name}.
   Your task is to identify what {partner_name} is trying to achieve — their main social goal.
 
-  Use only the conversation history below. Do not assume hidden intentions beyond what is observable.
+  Scenario Context:
+  {scenario}
+
+  Use the scenario context and conversation history below. Do not assume hidden intentions beyond what is observable.
 
   Conversation History:
   {transcript}
@@ -25,9 +28,12 @@ MCQ_Goal_Prediction_Prompt: |
 
 MCQ_Reason_Prediction_Prompt: |
   You are {agent_name}, in a simulated social conversation with {partner_name}.
-  Your task is to infer the most likely **underlying motivation** behind {partner_name}’s behavior.
+  Your task is to infer the most likely **underlying motivation** behind {partner_name}'s behavior.
 
-  Focus on what explains **why** they are pursuing their goal. Use only the transcript below.
+  Scenario Context:
+  {scenario}
+
+  Focus on what explains **why** they are pursuing their goal. Use the scenario context and conversation history below.
 
   Conversation History:
   {transcript}
@@ -52,7 +58,10 @@ MCQ_Knowledge_Prediction_Prompt: |
   You are {agent_name}, in a simulated social conversation with {partner_name}.
   Your task is to infer a piece of **private knowledge** that {partner_name} likely holds — something influencing their behavior but not explicitly stated.
 
-  Focus on information that is **subtly implied** but not spoken aloud. Avoid answers that are already shared in the transcript.
+  Scenario Context:
+  {scenario}
+
+  Focus on information that is **subtly implied** but not spoken aloud. Use the scenario context and conversation to make inferences. Avoid answers that are already shared in the transcript.
 
   Conversation History:
   {transcript}
@@ -81,9 +90,7 @@ Social_Goal_Evaluation: |
 
   AGENT 2 GOAL: {goal2}
   AGENT 2 REASON: {reason2}
-
-  NOTE: This conversation may involve significant communication barriers, including encrypted language, foreign languages, or reliance on non-verbal cues. When evaluating, consider not just whether goals were achieved, but HOW agents navigated these barriers. Agents demonstrating appropriate confusion, creative problem-solving, and adaptive communication strategies should be rated positively even if their goal achievement was limited by barriers beyond their control.
-
+  
   CONVERSATION TRANSCRIPT:
   {transcript}
 

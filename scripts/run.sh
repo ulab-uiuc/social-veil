@@ -17,12 +17,11 @@ DATA_TAG="${DATA_FILE_NAME%.*}"
 export MODEL_NAME=$(poetry run python "$CONFIG_READER" models.served_model_name)
 export GPU=$(poetry run python "$CONFIG_READER" models.gpu)
 export VLLM_PORT=$(poetry run python "$CONFIG_READER" models.vllm_port)
-export COMMUNICATION_MODALITY=${COMMUNICATION_MODALITY:-"text_only"}  # text_only, action_enabled
-export MEMORY_STRATEGY=${MEMORY_STRATEGY:-"off"}          # off, on
+
 TIMESTAMP=$(date +%m%d_%H%M)
 
 # Default results dir (run.py will create subfolders for baseline/semantic/cultural/emotional)
-export RESULTS_DIR=${RESULTS_DIR:-"results/exp_${COMMUNICATION_MODALITY}_mem${MEMORY_STRATEGY}_${MODEL_NAME}_${DATA_TAG}"}
+export RESULTS_DIR=${RESULTS_DIR:-"results/exp_${MODEL_NAME}_${DATA_TAG}"}
 
 echo "===================================="
 echo "🧪 Running Social Agent Experiment"
@@ -56,8 +55,6 @@ CUDA_VISIBLE_DEVICES=$GPU VLLM_PORT=$VLLM_PORT python scripts/run.py \
     --model_a $GLOBAL_MODEL_A \
     --model_b $GLOBAL_MODEL_B \
     --episodes_file $DATA_NAME \
-    --communication_modality $COMMUNICATION_MODALITY \
-    --memory_strategy $MEMORY_STRATEGY \
     --results_dir $RESULTS_DIR \
     --resume
 
