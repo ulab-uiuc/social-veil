@@ -758,7 +758,7 @@ class BarrierRepresentationAnalyzer:
                 Z = 2.0 * (Z - minv) / (maxv - minv + 1e-8) - 1.0
 
                 # Optional per-class squeezing toward centroid for tighter clusters (purely visual)
-                s_factor = 0.6  # 0..1, smaller = tighter clusters
+                s_factor = 0.4  # 0..1, smaller = tighter clusters (denser look)
                 Z_vis = Z.copy()
                 for lbl in np.unique(y_multi):
                     m = (y_multi == lbl)
@@ -771,7 +771,16 @@ class BarrierRepresentationAnalyzer:
                 for lbl, name in label_to_name_multi.items():
                     mask = (y_multi == lbl)
                     if np.any(mask):
-                        # Draw translucent covariance ellipse to increase perceived density
+                        # Light KDE fill to boost perceived density
+                        try:
+                            sns.kdeplot(
+                                x=Z_vis[mask, 0], y=Z_vis[mask, 1],
+                                levels=5, fill=True, alpha=0.08,
+                                color=name_to_color_multi[name], linewidths=0
+                            )
+                        except Exception:
+                            pass
+                        # Translucent covariance ellipse to increase perceived density
                         if np.sum(mask) >= 3:
                             P = Z_vis[mask]
                             mu = P.mean(axis=0)
@@ -780,7 +789,7 @@ class BarrierRepresentationAnalyzer:
                             order = eigvals.argsort()[::-1]
                             eigvals, eigvecs = eigvals[order], eigvecs[:, order]
                             angle = np.degrees(np.arctan2(*eigvecs[:,0][::-1]))
-                            width, height = 2.5*np.sqrt(eigvals + 1e-8)
+                            width, height = 3.2*np.sqrt(eigvals + 1e-8)
                             ell = Ellipse(xy=mu, width=width, height=height, angle=angle,
                                           facecolor=name_to_color_multi[name], edgecolor='none', alpha=0.12)
                             ax.add_patch(ell)
@@ -794,10 +803,14 @@ class BarrierRepresentationAnalyzer:
                 bin_clf.fit(Z_vis, y_bin)
                 # Line: w0*x + w1*y + b = 0 -> y = (-w0/w1)x - b/w1
                 w = bin_clf.coef_[0]; b = bin_clf.intercept_[0]
+                # Fix symmetric limits for compact, comparable framing
+                ax.set_xlim(-1.1, 1.1)
+                ax.set_ylim(-1.1, 1.1)
                 if abs(w[1]) > 1e-8:
-                    xs = np.linspace(Z_vis[:,0].min(), Z_vis[:,0].max(), 200)
+                    xs = np.linspace(-1.1, 1.1, 400)
                     ys = (-w[0]/w[1])*xs - b/w[1]
-                    ax.plot(xs, ys, linestyle='--', color='#555555', linewidth=1.6, label='Baseline–Barrier boundary')
+                    mask_line = (ys >= -1.1) & (ys <= 1.1)
+                    ax.plot(xs[mask_line], ys[mask_line], linestyle='--', color='#555555', linewidth=1.6, label='Baseline–Barrier boundary')
                 ax.set_title(f'PCA-2D with Linear Boundary (Layer {layer_idx})')
                 ax.set_xlabel('PC1')
                 ax.set_ylabel('PC2')
