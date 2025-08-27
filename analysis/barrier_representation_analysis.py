@@ -550,12 +550,21 @@ class BarrierRepresentationAnalyzer:
                 init='pca'
             )
             tsne_results = tsne.fit_transform(layer_data)
+
+            # Visual normalization: aggregate clusters (not preserving real scale)
+            Z = tsne_results.copy()
+            Z = (Z - Z.mean(axis=0)) / (Z.std(axis=0) + 1e-8)
+            lo = np.percentile(Z, 1, axis=0)
+            hi = np.percentile(Z, 99, axis=0)
+            Z = np.clip(Z, lo, hi)
+            minv = Z.min(axis=0); maxv = Z.max(axis=0)
+            Z = 2.0 * (Z - minv) / (maxv - minv + 1e-8) - 1.0
             
             for barrier_type in barrier_types:
                 mask = np.array(layer_labels) == barrier_type
                 if mask.any():
-                    x = tsne_results[mask, 0]
-                    y = tsne_results[mask, 1]
+                    x = Z[mask, 0]
+                    y = Z[mask, 1]
                     ax.scatter(
                         x,
                         y,
@@ -588,7 +597,9 @@ class BarrierRepresentationAnalyzer:
             ax.set_ylabel("t-SNE Dimension 2", fontsize=12)
             legend = ax.legend(frameon=True, title="Barrier Type", loc='upper left')
             legend.get_title().set_fontweight('bold')
-            ax.grid(True, alpha=0.3)
+            ax.grid(False)
+            for spine in ax.spines.values():
+                spine.set_visible(False)
             
             plt.tight_layout(pad=1.2)
             plt.savefig(f"{output_dir}/tsne_layer_{layer_idx}.png", bbox_inches='tight')
