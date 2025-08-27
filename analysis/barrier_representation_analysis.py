@@ -509,7 +509,10 @@ class BarrierRepresentationAnalyzer:
         }
         
         for layer_idx in self.analysis_layers:
-            plt.style.use('seaborn-whitegrid')
+            try:
+                sns.set_theme(style="whitegrid")
+            except Exception:
+                pass
             fig, ax = plt.subplots(1, 1, figsize=(10, 8), dpi=150)
             
             layer_data = []
