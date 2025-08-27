@@ -48,14 +48,12 @@ class BarrierRepresentationAnalyzer:
         model_name: str = "Qwen/Qwen2.5-7B-Instruct",
         device: str = "auto",
         episodes_file: str = "data/episode_all.jsonl",
-        num_episodes: int = 180,
         severity: float = 0.8
     ):
         self.model_name = model_name
         self.device = self._setup_device(device)
         print(f"Using device: {self.device}")
         self.episodes_file = episodes_file
-        self.num_episodes = num_episodes
         self.severity = severity
         
         # Initialize model and tokenizer
@@ -103,9 +101,10 @@ class BarrierRepresentationAnalyzer:
         print(f"📂 Loading episodes from existing barrier files...")
         
         # Use the dedicated episode loader
+        # Load all episodes (no limit)
         all_episodes = load_all_episodes(
             baseline_file=self.episodes_file,
-            max_episodes=self.num_episodes
+            max_episodes=None
         )
         
         return all_episodes

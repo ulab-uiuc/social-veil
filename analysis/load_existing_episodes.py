@@ -43,7 +43,7 @@ def load_baseline_episodes(
     try:
         with open(file_path, 'r') as f:
             for i, line in enumerate(f):
-                if max_episodes and i >= max_episodes:
+                if max_episodes is not None and i >= max_episodes:
                     break
                 line = line.strip()
                 if line:
@@ -86,7 +86,7 @@ def load_barrier_episodes(
         
         # Take the episodes we need
         episodes_to_take = len(barrier_episodes)
-        if max_episodes:
+        if max_episodes is not None:
             episodes_to_take = min(max_episodes, len(barrier_episodes))
         
         for i in range(episodes_to_take):

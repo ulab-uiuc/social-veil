@@ -20,7 +20,6 @@ from analysis.utils import check_dependencies
 def run_full_analysis(
     model_name: str = "Qwen/Qwen2.5-7B-Instruct",
     episodes_file: str = "data/episode_sample.jsonl",
-    num_episodes: int = 3,
     severity: float = 0.8
 ):
     """Run the full barrier analysis"""
@@ -37,7 +36,6 @@ def run_full_analysis(
         "model_name": model_name,
         "device": "auto", 
         "episodes_file": episodes_file,
-        "num_episodes": num_episodes,
         "severity": severity
     }
     
@@ -61,8 +59,6 @@ def main():
                        help="Model name to analyze")
     parser.add_argument("--episodes", type=str, default="data/episode_sample.jsonl",
                        help="Baseline episodes file to use (barrier episodes loaded automatically)")
-    parser.add_argument("--num_episodes", type=int, default=3,
-                       help="Number of episodes to analyze")
     parser.add_argument("--severity", type=float, default=0.8,
                        help="Barrier severity level")
     
@@ -71,7 +67,6 @@ def main():
     run_full_analysis(
         model_name=args.model,
         episodes_file=args.episodes,
-        num_episodes=args.num_episodes,
         severity=args.severity
     )
     
