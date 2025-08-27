@@ -27,7 +27,6 @@ from sklearn.preprocessing import StandardScaler
 from scipy import stats
 from scipy.spatial.distance import pdist, squareform
 from scipy.spatial import ConvexHull
-from matplotlib.patches import Ellipse
 import warnings
 import yaml
 warnings.filterwarnings('ignore')
@@ -743,92 +742,36 @@ class BarrierRepresentationAnalyzer:
                 "pr_auc_std": pr_s,
             }
 
-            # 2D PCA visualization like SafeSwitch: scatter by multiclass label + binary boundary
+            # 2D PCA visualization like SafeSwitch: scatter by multiclass label + two fitted linear probe lines
             try:
                 scaler = StandardScaler(with_mean=True, with_std=True)
                 Xs = scaler.fit_transform(X)
                 pca2 = PCA(n_components=2, random_state=42)
                 X2 = pca2.fit_transform(Xs)
-
-                # Visual normalization to aggregate clusters
-                Z = (X2 - X2.mean(axis=0)) / (X2.std(axis=0) + 1e-8)
-                lo = np.percentile(Z, 2, axis=0); hi = np.percentile(Z, 98, axis=0)
-                Z = np.clip(Z, lo, hi)
-                minv = Z.min(axis=0); maxv = Z.max(axis=0)
-                Z = 2.0 * (Z - minv) / (maxv - minv + 1e-8) - 1.0
-
-                # Optional per-class squeezing toward centroid for tighter clusters (purely visual)
-                s_factor = 0.5  # 0..1, smaller = tighter clusters (denser look)
-                Z_vis = Z.copy()
-                for lbl in np.unique(y_multi):
-                    m = (y_multi == lbl)
-                    if np.any(m):
-                        c = Z[m].mean(axis=0)
-                        Z_vis[m] = c + s_factor * (Z[m] - c)
-
                 # Scatter by multiclass to match paper legend
-                fig, ax = plt.subplots(1, 1, figsize=(6.2, 6.2), dpi=200)
-                ax.set_facecolor('#fbfbfb')
+                fig, ax = plt.subplots(1, 1, figsize=(6.5, 6), dpi=160)
                 for lbl, name in label_to_name_multi.items():
                     mask = (y_multi == lbl)
                     if np.any(mask):
-                        # Light KDE fill to boost perceived density
-                        try:
-                            sns.kdeplot(x=Z_vis[mask, 0], y=Z_vis[mask, 1],
-                                        levels=3, fill=True, alpha=0.05,
-                                        color=name_to_color_multi[name], linewidths=0)
-                        except Exception:
-                            pass
-                        # Translucent covariance ellipse to increase perceived density
-                        if np.sum(mask) >= 3:
-                            P = Z_vis[mask]
-                            mu = P.mean(axis=0)
-                            cov = np.cov(P.T)
-                            eigvals, eigvecs = np.linalg.eigh(cov)
-                            order = eigvals.argsort()[::-1]
-                            eigvals, eigvecs = eigvals[order], eigvecs[:, order]
-                            angle = np.degrees(np.arctan2(*eigvecs[:,0][::-1]))
-                            width, height = 2.2*np.sqrt(eigvals + 1e-8)
-                            ell = Ellipse(xy=mu, width=width, height=height, angle=angle,
-                                          facecolor=name_to_color_multi[name], edgecolor='none', alpha=0.08)
-                            ax.add_patch(ell)
                         ax.scatter(
-                            Z_vis[mask, 0], Z_vis[mask, 1],
+                            X2[mask, 0], X2[mask, 1],
                             c=name_to_color_multi[name], label=name,
-                            s=28, alpha=0.95, edgecolors='white', linewidths=0.7
+                            s=26, alpha=0.9, edgecolors='white', linewidths=0.3
                         )
-                # Fit binary boundary in normalized PCA-2D space and draw a dashed line
+                # Fit binary boundary in PCA-2D space and draw a dashed line
                 bin_clf = LogisticRegression(max_iter=2000)
-                bin_clf.fit(Z_vis, y_bin)
+                bin_clf.fit(X2, y_bin)
                 # Line: w0*x + w1*y + b = 0 -> y = (-w0/w1)x - b/w1
                 w = bin_clf.coef_[0]; b = bin_clf.intercept_[0]
-                # Fix symmetric limits for compact, comparable framing
-                ax.set_xlim(-1.0, 1.0)
-                ax.set_ylim(-1.0, 1.0)
-                try:
-                    ax.set_aspect('equal', adjustable='box')
-                except Exception:
-                    pass
-                if abs(w[1]) > 1e-8:
-                    xs = np.linspace(-1.0, 1.0, 400)
+                if abs(w[1]) > 1e-6:
+                    xs = np.linspace(X2[:,0].min(), X2[:,0].max(), 100)
                     ys = (-w[0]/w[1])*xs - b/w[1]
-                    mask_line = (ys >= -1.0) & (ys <= 1.0)
-                    ax.plot(xs[mask_line], ys[mask_line], linestyle='--', color='#555555', linewidth=1.6, label='Baseline–Barrier boundary')
-                ax.set_title(f'PCA-2D with Linear Boundary (Layer {layer_idx})', fontsize=16, fontweight='bold')
-                ax.set_xlabel('PC1', fontsize=12)
-                ax.set_ylabel('PC2', fontsize=12)
-                ax.grid(False)
-                for spine in ax.spines.values():
-                    spine.set_visible(False)
-                # Coarse ticks at -1, 0, 1
-                ax.set_xticks([-1, 0, 1])
-                ax.set_yticks([-1, 0, 1])
-                ax.tick_params(axis='both', labelsize=11, colors='#4a4a4a')
-                # Put legend outside to avoid overlapping points
-                leg = ax.legend(frameon=True, fontsize=10, loc='upper left',
-                                bbox_to_anchor=(1.02, 1.0), borderaxespad=0., fancybox=True,
-                                framealpha=0.95)
-                plt.tight_layout(pad=0.7, rect=[0, 0, 0.76, 1])
+                    ax.plot(xs, ys, linestyle='--', color='#555555', linewidth=1.5, label='Baseline–Barrier boundary')
+                ax.set_title(f'PCA-2D with Linear Boundary (Layer {layer_idx})')
+                ax.set_xlabel('PC1')
+                ax.set_ylabel('PC2')
+                ax.legend(frameon=True, fontsize=9)
+                plt.tight_layout()
                 plt.savefig(f"{output_dir}/svm_pca2_layer_{layer_idx}.png", bbox_inches='tight')
                 plt.close()
             except Exception:
