@@ -27,6 +27,7 @@ from sklearn.preprocessing import StandardScaler
 from scipy import stats
 from scipy.spatial.distance import pdist, squareform
 from scipy.spatial import ConvexHull
+from matplotlib.patches import Ellipse
 import warnings
 import yaml
 warnings.filterwarnings('ignore')
@@ -756,23 +757,45 @@ class BarrierRepresentationAnalyzer:
                 minv = Z.min(axis=0); maxv = Z.max(axis=0)
                 Z = 2.0 * (Z - minv) / (maxv - minv + 1e-8) - 1.0
 
+                # Optional per-class squeezing toward centroid for tighter clusters (purely visual)
+                s_factor = 0.6  # 0..1, smaller = tighter clusters
+                Z_vis = Z.copy()
+                for lbl in np.unique(y_multi):
+                    m = (y_multi == lbl)
+                    if np.any(m):
+                        c = Z[m].mean(axis=0)
+                        Z_vis[m] = c + s_factor * (Z[m] - c)
+
                 # Scatter by multiclass to match paper legend
-                fig, ax = plt.subplots(1, 1, figsize=(6.6, 6), dpi=170)
+                fig, ax = plt.subplots(1, 1, figsize=(7.0, 6.2), dpi=180)
                 for lbl, name in label_to_name_multi.items():
                     mask = (y_multi == lbl)
                     if np.any(mask):
+                        # Draw translucent covariance ellipse to increase perceived density
+                        if np.sum(mask) >= 3:
+                            P = Z_vis[mask]
+                            mu = P.mean(axis=0)
+                            cov = np.cov(P.T)
+                            eigvals, eigvecs = np.linalg.eigh(cov)
+                            order = eigvals.argsort()[::-1]
+                            eigvals, eigvecs = eigvals[order], eigvecs[:, order]
+                            angle = np.degrees(np.arctan2(*eigvecs[:,0][::-1]))
+                            width, height = 2.5*np.sqrt(eigvals + 1e-8)
+                            ell = Ellipse(xy=mu, width=width, height=height, angle=angle,
+                                          facecolor=name_to_color_multi[name], edgecolor='none', alpha=0.12)
+                            ax.add_patch(ell)
                         ax.scatter(
-                            Z[mask, 0], Z[mask, 1],
+                            Z_vis[mask, 0], Z_vis[mask, 1],
                             c=name_to_color_multi[name], label=name,
-                            s=28, alpha=0.95, edgecolors='white', linewidths=0.35
+                            s=22, alpha=0.96, edgecolors='white', linewidths=0.35
                         )
                 # Fit binary boundary in normalized PCA-2D space and draw a dashed line
                 bin_clf = LogisticRegression(max_iter=2000)
-                bin_clf.fit(Z, y_bin)
+                bin_clf.fit(Z_vis, y_bin)
                 # Line: w0*x + w1*y + b = 0 -> y = (-w0/w1)x - b/w1
                 w = bin_clf.coef_[0]; b = bin_clf.intercept_[0]
                 if abs(w[1]) > 1e-8:
-                    xs = np.linspace(Z[:,0].min(), Z[:,0].max(), 200)
+                    xs = np.linspace(Z_vis[:,0].min(), Z_vis[:,0].max(), 200)
                     ys = (-w[0]/w[1])*xs - b/w[1]
                     ax.plot(xs, ys, linestyle='--', color='#555555', linewidth=1.6, label='Baseline–Barrier boundary')
                 ax.set_title(f'PCA-2D with Linear Boundary (Layer {layer_idx})')
@@ -781,8 +804,9 @@ class BarrierRepresentationAnalyzer:
                 ax.grid(False)
                 for spine in ax.spines.values():
                     spine.set_visible(False)
-                ax.legend(frameon=True, fontsize=9, loc='upper left')
-                plt.tight_layout(pad=1.1)
+                # Put legend outside to avoid overlapping points
+                leg = ax.legend(frameon=True, fontsize=9, loc='upper left', bbox_to_anchor=(1.02, 1.0), borderaxespad=0.)
+                plt.tight_layout(pad=1.0, rect=[0, 0, 0.80, 1])
                 plt.savefig(f"{output_dir}/svm_pca2_layer_{layer_idx}.png", bbox_inches='tight')
                 plt.close()
             except Exception:
