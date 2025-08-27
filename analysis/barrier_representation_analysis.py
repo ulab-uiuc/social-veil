@@ -541,15 +541,13 @@ class BarrierRepresentationAnalyzer:
             layer_data = np.stack(layer_data)
             # Use a slightly higher perplexity for nicer separation when possible
             perplexity = max(5, min(30, len(layer_data)//3))
+            # Keep args compatible across scikit-learn versions
             tsne = TSNE(
                 n_components=2,
                 random_state=42,
                 perplexity=perplexity,
                 learning_rate='auto',
-                init='pca',
-                n_iter=1500,
-                n_iter_without_progress=300,
-                angle=0.5
+                init='pca'
             )
             tsne_results = tsne.fit_transform(layer_data)
             
