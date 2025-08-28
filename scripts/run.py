@@ -211,14 +211,12 @@ def run_experiment(episodes, experiment_config, evaluator, args, mode_tag: str):
                 personB=agent2,
                 evaluator=evaluator,
                 max_rounds=args.max_rounds,
-                action_enabled=True,
                 output_suffix=f"{experiment_config['tag']}_scenario_{scenario_idx+1}",
                 scenario_index=scenario_idx,
                 pair="0",
                 environment=env,
                 result=None,
                 root_dir=results_dir,
-
             )
         except Exception as e:
             # Log and continue to next scenario so long runs can progress
@@ -275,11 +273,11 @@ def main():
     episodes_emotional = load_json(emotional_path)
 
     # Run baseline then each barrier set
-    print("\n▶️ Running baseline (original episodes)...")
-    run_experiment(episodes, experiment_config, evaluator, args, mode_tag="baseline")
+    # print("\n▶️ Running baseline (original episodes)...")
+    # run_experiment(episodes, experiment_config, evaluator, args, mode_tag="baseline")
 
-    # print("\n▶️ Running semantic barrier episodes...")
-    # run_experiment(episodes_semantic, experiment_config, evaluator, args, mode_tag="semantic")
+    print("\n▶️ Running semantic barrier episodes...")
+    run_experiment(episodes_semantic, experiment_config, evaluator, args, mode_tag="semantic")
 
     # print("\n▶️ Running cultural barrier episodes...")
     # run_experiment(episodes_cultural, experiment_config, evaluator, args, mode_tag="cultural")

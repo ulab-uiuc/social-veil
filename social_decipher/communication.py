@@ -10,22 +10,68 @@ from social_decipher.agent.social_agent import SocialAgent
  
 from social_decipher.environment.env_profile import EnvironmentProfile
 from social_decipher.evaluate import ConversationEvaluator
+from social_decipher.utils.repair import judge_repair_with_llm
+
+
+def _format_action_output(message: Union[str, Dict[str, Any]]) -> str:
+    """
+    Normalize agent outputs to a readable single-line text for logs.
+    Supports two schemas:
+      1) {"action_type": "speak|non-verbal communication|action|leave|none", "argument": "..."}
+      2) {"speak": "...", "nonverbal": "...", "action": "...", "meta_action": "..."}
+    Falls back to str(message) for plain strings or unknown structures.
+    """
+    # Plain text
+    if isinstance(message, str):
+        return message
+
+    # Dict-based formats
+    if isinstance(message, dict):
+        # Newer strict action schema
+        if "action_type" in message:
+            action_type = str(message.get("action_type", "")).strip().lower()
+            argument = str(message.get("argument", "")).strip()
+            if action_type == "speak":
+                return argument
+            if action_type in ["non-verbal communication", "nonverbal", "non verbal communication"]:
+                return f"[nonverbal] {argument}" if argument else ""
+            if action_type == "action":
+                return f"[action] {argument}" if argument else ""
+            if action_type == "leave":
+                return "left the conversation"
+            if action_type == "none":
+                return ""
+            # Unknown action type → show raw
+            return argument or str(message)
+
+        # Mixed schema with parallel fields
+        speak = str(message.get("speak", "")).strip() if message.get("speak") is not None else ""
+        nonverbal = str(message.get("nonverbal", "")).strip() if message.get("nonverbal") is not None else ""
+        act = str(message.get("action", "")).strip() if message.get("action") is not None else ""
+
+        parts: List[str] = []
+        if speak:
+            parts.append(f'says: "{speak}"')
+        if nonverbal:
+            parts.append(f"[nonverbal] {nonverbal}")
+        if act:
+            parts.append(f"[action] {act}")
+        return " ".join(parts)
+
+    # Fallback
+    return str(message)
 
 def simulate_conversation(
     personA: SocialAgent,
     personB: SocialAgent,
     max_rounds: int,
     evaluator: ConversationEvaluator,
-    encryption_enabled: bool = False,
-    action_enabled: bool = False,
-    nature_language: bool = False,
-    output_suffix: str = "default",
+    output_suffix: str = "",
     scenario_index: int = 0,
     pair: Any = 0,
     environment = None,
     result = None,
     root_dir = None,
-    memory_enabled: bool = False,
 ) -> Union[Tuple[List[str], Dict[str, Any], List[Dict[str, Any]]], Tuple[List[Dict[str, Any]], Dict[str, List[Any]]]]:
 
     output_dir = f"{root_dir}"
@@ -37,9 +83,6 @@ def simulate_conversation(
         environment=environment,
         num_turns=max_rounds,
         evaluator=evaluator,
-        encryption_enabled=encryption_enabled,
-        action_enabled=action_enabled,
-        nature_language=nature_language,
         pair=pair,
         scenario_idx=scenario_index,
         output_dir=output_dir,
@@ -51,9 +94,6 @@ def run_single_scenario_simulation(
     environment: EnvironmentProfile,
     evaluator: ConversationEvaluator,
     num_turns: int = 20,
-    encryption_enabled: bool = False,
-    action_enabled: bool = False,
-    nature_language: bool = False,
     pair: Any = 0,
     scenario_idx: int = 0,
     output_dir: Optional[str] = None,
@@ -100,7 +140,7 @@ def run_single_scenario_simulation(
         initial=True
     )
  
-    conversation_log.append(f"{personA.name}: {personA_message}")
+    conversation_log.append(f"{personA.name}: {_format_action_output(personA_message)}")
  
     for turn_num in range(num_turns):
         print(f"\n--- Round {turn_num+1} ---")
@@ -113,45 +153,34 @@ def run_single_scenario_simulation(
         personB_message = personB.act(
             personA_message
         )
-        if isinstance(personB_message, dict):
-            response_text = ""
-            if personB_message.get("speak"):
-                response_text += f'says: "{personB_message["speak"]}" '
-            if personB_message.get("nonverbal"):
-                response_text += f'[nonverbal] {personB_message["nonverbal"]} '
-            if personB_message.get("action"):
-                response_text += f'[action] {personB_message["action"]} '
-            
-            conversation_log.append(f"{personB.name}: {response_text.strip()}")
-        else:
-            conversation_log.append(f"{personB.name}: {personB_message}")
+
+        formatted_b = _format_action_output(personB_message)
+        conversation_log.append(f"{personB.name}: {formatted_b}")
 
         # Sotopia-style leave detection
         b_left = False
-        
-        # Method 1: Action-based (like Sotopia's ActionType)
-        if action_enabled and isinstance(personB_message, dict) and personB_message.get("action_type") == "leave":
+        if isinstance(personB_message, dict) and personB_message.get("action_type") == "leave":
             b_left = True
             conversation_log.append(f"{personB.name} left the conversation")
             print(f"❌ {personB.name} left the conversation")
-            
-        # Method 2: Natural language parsing (like Sotopia's parse_single_dialogue)
         elif isinstance(personB_message, str):
             if "left the conversation" in personB_message.lower():
                 b_left = True
                 print(f"❌ {personB.name} left the conversation")
-            # Additional Sotopia-style leave patterns
             elif any(pattern in personB_message.lower() for pattern in ["goodbye", "bye", "i have to go", "leaving now"]):
-                if turn_num >= 3:  # Only after some conversation
+                if turn_num >= 3:  
                     b_left = True
                     print(f"👋 {personB.name} indicated goodbye")
 
-        # Check termination conditions (Sotopia-style)
+        barrier_type = environment.env.get("barrier_type") if environment and environment.env else None
+        barrier_cues = environment.env.get("barrier_cues") if environment and environment.env else None
+        judge_json = judge_repair_with_llm(formatted_b, conversation_log, barrier_type, barrier_cues)
+        print(judge_json)
+       
         if b_left:
             print(f"🚪 Conversation ended: explicit leave (Turn {turn_num})")
             break
             
-        # Turn limit check (Sotopia uses ~20 turns max)
         if turn_num >= num_turns:
             print(f"⏰ Conversation ended: maximum turns reached ({num_turns})")
             break
@@ -199,18 +228,22 @@ def run_single_scenario_simulation(
             personB_message
         )
 
-        conversation_log.append(f"{personA.name}: {personA_message}")
+        conversation_log.append(f"{personA.name}: {_format_action_output(personA_message)}")
         
         # Check if A decided to leave
         a_left = False
-        if action_enabled and isinstance(personA_message, dict) and personA_message.get("action_type") == "leave":
+        if isinstance(personA_message, dict) and personA_message.get("action_type") == "leave":
             a_left = True
             conversation_log.append(f"{personA.name} left the conversation")
             print(f"❌ {personA.name} left the conversation")
-        elif not action_enabled and isinstance(personA_message, str) and "left the conversation" in personA_message.lower():
-            a_left = True
-            print(f"❌ {personA.name} left the conversation")
-
+        elif isinstance(personA_message, str):
+            if "left the conversation" in personA_message.lower():
+                a_left = True
+                print(f"❌ {personA.name} left the conversation")
+            elif any(pattern in personA_message.lower() for pattern in ["goodbye", "bye", "i have to go", "leaving now"]):
+                if turn_num >= 3:  
+                    a_left = True
+                    print(f"👋 {personA.name} indicated goodbye")
         if a_left:
             break 
 
@@ -246,7 +279,7 @@ def run_single_scenario_simulation(
                 task_type="knowledge",
             )
 
-        # Log MCQ results
+        # Log MCQ results and LLM repair judgment
         mcq_logs.append(
             {
                 "round": turn_num + 1,
@@ -257,6 +290,7 @@ def run_single_scenario_simulation(
                 f"agent_2_goal_mcq": goal_mcq_B,
                 f"agent_2_reason_mcq": reason_mcq_B,
                 f"agent_2_knowledge_mcq": knowledge_mcq_B,
+                "agent_b_repair_eval_llm": judge_json,
             }
         )
     
@@ -314,11 +348,7 @@ def run_single_scenario_simulation(
                     }
                 },
                 "experimental_configuration": {
-                    "encryption_enabled": encryption_enabled,
-                    "action_enabled": action_enabled,
-                    "nature_language": nature_language,
                     "max_rounds": num_turns,
-                    "barrier_language": barrier_language if (encryption_enabled and nature_language and 'barrier_language' in locals()) else None
                 }
             },
             "conversation_log": conversation_log,
