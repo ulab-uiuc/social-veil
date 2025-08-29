@@ -26,8 +26,15 @@ system_instruction: |
   - ambiguity_devices: Up to 5 strings naming devices that increase ambiguity/complexity (e.g., "ellipsis", "vague quantifiers", "pronoun shifts", "subordinate clauses").
   - question_rate_hint: Float in [0,1] indicating the fraction of turns that tend to include a question (cultural style only).
   - imperative_rate_hint: Float in [0,1] indicating the fraction of turns that tend to include an imperative (cultural style only).
+  - politeness_markers: List of idioms/markers used for high-context politeness (e.g., "as you know", "if you don't mind") (cultural only).
+  - shared_background_refs: List of short phrases referencing shared context (e.g., "the usual way", "like before") (cultural only).
+  - indirectness_score: Float in [0,1] indicating tendency to phrase requests indirectly (cultural only).
+  - imperative_frames: List of terse directive stems (e.g., "Do", "State", "Provide", "List") (cultural only, low-context).
   - affect_lexicon: Up to 8 emotion/affect words that characterize the negative affect (emotional barrier only), e.g., "frustrated", "impatient".
   - exclamation_bias: Float in [0,1] indicating how often exclamation marks might appear (emotional barrier only).
+  - interruption_rate_target: Float in [0,1] indicating likelihood to cut the partner off (emotional only).
+  - escalation_rate: Float in [0,1] indicating how quickly tone sharpens across turns (emotional only).
+  - banned_empathy_phrases: List of phrases to avoid when emotional (e.g., "sorry", "I understand") (emotional only).
 
 user_templates:
   semantic: |
@@ -50,22 +57,20 @@ user_templates:
     RELATIONSHIP: {relationship}
 
     Instructions:
-    - Write agent1_profile_note as private, actionable guidance (1–2 lines) specialized for SEMANTIC barrier. Agent B remains unmodified:
-      • Specify lexical vagueness (e.g., "sort of", "maybe", "a few") and avoidance (e.g., "exactly", "I want").
-      • Note complexity devices (subordinate clauses, ellipsis, pronoun shifts) and ambiguity maintenance.
-      • Avoid theory names/demographics.
-      • Do NOT shift cultural style; keep directness/politeness neutral (no high/low-context behaviors). Focus strictly on vagueness/complexity.
+    - agent1_profile_note (1–2 lines). FORM-only: use syntactic complexity (subordinate clauses), fragments, mild self-contradictions; add occasional lexical misuse/jargon.
+    - Non-hedge vagueness only (approximately/roughly/around/ranges); avoid hedges ("perhaps", "kind of", "it seems").
+    - Neutral directness/politeness; no high/low-context shift.
     - Provide implicit barrier cues (for researchers, not for agents). Cues must encode measurable quotas derived from Severity:
       • profile_note_A (1 line for Agent A only)
       • lexical_prefer / lexical_avoid
       • sentence_length_bias: short|medium|long (if severity ≥ 0.6 use long; if ≤ 0.3 use short; otherwise medium)
-      • ambiguity_devices: up to 5 items (e.g., ellipsis, vague quantifiers, pronoun shifts, subordinate clauses)
+      • ambiguity_devices: up to 5 items (e.g., subordinate clauses, fragments/incomplete sentences, self-contradictions, referent shifts, ellipsis)
       • min_ambiguity_devices_per_turn: integer ≥ 0 (≈ ceil(severity*2); at least 2 if severity ≥ 0.8)
       • max_specific_refs: 0 or 1 (0 if severity ≥ 0.6; otherwise 1) — specific names/dates/IDs
       • allow_exact_numbers_only_if_partner_requests: true|false (true if severity ≥ 0.4)
       • question_rate_hint: 0.2–0.5 (increase slightly with severity)
     - Also produce barrier_prompts for runtime:
-      • barrier_prompts.agentA: concise, operational instruction for {A_name} to be imprecise/vague as above, using ≥ min_ambiguity_devices_per_turn devices each turn and avoiding exact numbers/names unless pressed.
+      • barrier_prompts.agentA: concise, operational instruction for {A_name} to realize FORM-based ambiguity: each turn use ≥ min_ambiguity_devices_per_turn from [subordinate clause, fragment, self-contradiction, referent shift, ellipsis]; include occasional lexical misuse/jargon; avoid hedges; keep directness/politeness neutral; give exact numbers/names only if asked.
       • barrier_prompts.agentB: must be "" (empty string).
     - Compliance requirement (do not emit in dialogue): If constraints are not satisfied, rewrite your output before returning. Do not mention constraints.
 
@@ -74,7 +79,7 @@ user_templates:
       "agent1_profile_note": "<private 1–2 lines: vague lexical choices + complexity devices>",
       "barrier_type": "semantic_structure",
       "barrier_prompts": {{
-        "agentA": "You are {A_name}. Maintain neutral directness/politeness (no high/low-context shift). Each turn, use at least the required ambiguity/complexity devices (≥ min_ambiguity_devices_per_turn). Prefer vague vocabulary ('sort of', 'maybe', 'kind of'); avoid exact words ('exactly', 'I want'). Use subordinate clauses or ellipsis; keep referents slightly ambiguous. Give precise numbers/names only if partner explicitly asks. Severity {severity} scales frequency.",
+        "agentA": "You are {A_name}. Realize ambiguity via FORM, not social style. Each turn, use ≥ min_ambiguity_devices_per_turn from: subordinate clause, fragment (incomplete sentence), mild self-contradiction, referent shift, or ellipsis. Include occasional lexical misuse/jargon-like phrasing. Avoid hedges ('perhaps', 'kind of'). Keep directness/politeness neutral. Provide exact numbers/names only if directly asked. Severity {severity} scales frequency.",
       }},
       "barrier_cues": {{
         "profile_note_A": "<concise hint for A>",
@@ -113,23 +118,22 @@ user_templates:
     RELATIONSHIP: {relationship}
 
     Instructions:
-    - Write agent1_profile_note as private, actionable guidance (1–2 lines) specialized for CULTURAL barrier. Agent B remains unmodified:
-      • For high-context: hedges/softeners, indirect requests/refusals, tolerance of silence; avoid bluntness.
-      • For low-context: direct, explicit statements, short sentences, pointed clarifications; avoid hedges.
-      • Avoid theory names/demographics.
+    - agent1_profile_note (1–2 lines). PRAGMATICS-only; choose one style (no mixing): high_context or low_context.
+    - High_context: politeness markers/idioms; indirect requests/refusals; shared-background references.
+    - Low_context: blunt imperatives and direct phrasing; no hedges.
+    - Keep form simple; content precise (no ambiguity devices/vague quantifiers).
     - Provide implicit barrier cues (for researchers, not for agents). Cues must encode measurable style quotas derived from Severity while preserving content precision (no added ambiguity or semantic vagueness):
       • profile_note_A (1 line for Agent A only) reflecting high/low context style
       • severity: repeat the numeric severity
       • style: "high_context" | "low_context" (choose one; do not mix within an episode)
       • directness_level: 0.0–1.0 (≈ severity for low_context; ≈ 1−severity for high_context)
-      • lexical_prefer / lexical_avoid (reflect the chosen style; avoid overlap with semantic vagueness terms)
-      • hedge_lexicon: a few softeners (for high_context)
+      • lexical_prefer / lexical_avoid (reflect the chosen style; avoid overlap with semantic vagueness terms). For high_context include politeness markers/idioms ("as you know", "if you don't mind"). For low_context include imperative frames ("Do", "State", "Provide").
+      • hedge_lexicon: a few softeners (for high_context); set empty/low for low_context
       • hedge_rate_target: 0.0–1.0 (≈ severity for high_context; ≈ 0 for low_context)
       • imperative_rate_target: 0.0–1.0 (≈ severity for low_context; ≈ 0 for high_context)
       • question_rate_hint: 0.0–1.0 (slightly higher for high_context)
-      • sentence_length_bias: short|medium|long (short for low_context at high severity; long for high_context at high severity)
     - Also produce barrier_prompts for runtime (single-sided barrier; partner remains default):
-      • barrier_prompts.agentA: {A_name} adopts the selected cultural style. Keep factual content precise; do NOT introduce ambiguity devices or vague quantifiers. Match hedge/imperative/question rates to targets implied by severity.
+      • barrier_prompts.agentA: {A_name} adopts ONLY the selected cultural style. If high_context: use politeness markers/idioms and indirect framing (e.g., "as you know…", "if you don’t mind…"), avoid blunt imperatives, keep content precise. If low_context: use blunt imperatives and direct phrasing, avoid hedges/indirectness. Never introduce ambiguity devices or vague quantifiers. Match hedge/imperative/question rates to severity targets.
       • barrier_prompts.agentB: must be "" (empty string).
     - Compliance requirement: If the style quotas are not reflected, rewrite before returning. Do not mention constraints.
 
@@ -144,13 +148,14 @@ user_templates:
         "profile_note_A": "<concise hint for A>",
         "style": "high_context|low_context",
         "directness_level": 0.0,
-        "lexical_prefer": ["<3-6 phrases>"],
-        "lexical_avoid": ["<3-6 phrases>"],
+        "imperative_frames": ["<Do, State, Provide, List>"] ,
         "hedge_lexicon": ["<a few softeners>"],
+        "politeness_markers": ["<idioms/markers like 'as you know', 'if you don't mind'>"],
+        "shared_background_refs": ["<the usual way, like before>"] ,
+        "indirectness_score": 0.0,
         "hedge_rate_target": 0.0,
         "imperative_rate_target": 0.0,
         "question_rate_hint": 0.0,
-        "sentence_length_bias": "short|medium|long",
         "opening_seed": [
           {{"speaker": "A", "text": "I wonder if we might consider another option…"}},
           {{"speaker": "B", "text": "Please state what you want clearly."}}
