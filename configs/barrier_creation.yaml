@@ -54,16 +54,18 @@ user_templates:
       • Specify lexical vagueness (e.g., "sort of", "maybe", "a few") and avoidance (e.g., "exactly", "I want").
       • Note complexity devices (subordinate clauses, ellipsis, pronoun shifts) and ambiguity maintenance.
       • Avoid theory names/demographics.
+      • Do NOT shift cultural style; keep directness/politeness neutral (no high/low-context behaviors). Focus strictly on vagueness/complexity.
     - Provide implicit barrier cues (for researchers, not for agents). Cues must encode measurable quotas derived from Severity:
       • profile_note_A (1 line for Agent A only)
       • lexical_prefer / lexical_avoid
-      • sentence_length_bias: short|medium|long
-      • ambiguity_devices: up to 5 items (e.g., ellipsis, vague quantifiers, pronoun shifts)
-      • min_ambiguity_devices_per_turn: integer ≥ 0 (≈ ceil(severity*2))
-      • max_specific_refs: 0 or 1 (use 0 if severity ≥ 0.6) — specific names/dates/IDs
+      • sentence_length_bias: short|medium|long (if severity ≥ 0.6 use long; if ≤ 0.3 use short; otherwise medium)
+      • ambiguity_devices: up to 5 items (e.g., ellipsis, vague quantifiers, pronoun shifts, subordinate clauses)
+      • min_ambiguity_devices_per_turn: integer ≥ 0 (≈ ceil(severity*2); at least 2 if severity ≥ 0.8)
+      • max_specific_refs: 0 or 1 (0 if severity ≥ 0.6; otherwise 1) — specific names/dates/IDs
       • allow_exact_numbers_only_if_partner_requests: true|false (true if severity ≥ 0.4)
+      • question_rate_hint: 0.2–0.5 (increase slightly with severity)
     - Also produce barrier_prompts for runtime:
-      • barrier_prompts.agentA: concise, operational instruction for {A_name} to be imprecise/vague as above.
+      • barrier_prompts.agentA: concise, operational instruction for {A_name} to be imprecise/vague as above, using ≥ min_ambiguity_devices_per_turn devices each turn and avoiding exact numbers/names unless pressed.
       • barrier_prompts.agentB: must be "" (empty string).
     - Compliance requirement (do not emit in dialogue): If constraints are not satisfied, rewrite your output before returning. Do not mention constraints.
 
@@ -72,7 +74,7 @@ user_templates:
       "agent1_profile_note": "<private 1–2 lines: vague lexical choices + complexity devices>",
       "barrier_type": "semantic_structure",
       "barrier_prompts": {{
-        "agentA": "You are {A_name}. Throughout the conversation, consistently introduce ambiguity in how you describe things. Prefer vague vocabulary ('sort of', 'maybe', 'kind of'), avoid exact words ('exactly', 'I want'). Construct longer sentences with subordinate clauses and ellipsis, occasionally shift referents. Do not provide precise numbers or names unless directly pressed; keep details underspecified. Severity {severity} controls frequency.",
+        "agentA": "You are {A_name}. Maintain neutral directness/politeness (no high/low-context shift). Each turn, use at least the required ambiguity/complexity devices (≥ min_ambiguity_devices_per_turn). Prefer vague vocabulary ('sort of', 'maybe', 'kind of'); avoid exact words ('exactly', 'I want'). Use subordinate clauses or ellipsis; keep referents slightly ambiguous. Give precise numbers/names only if partner explicitly asks. Severity {severity} scales frequency.",
       }},
       "barrier_cues": {{
         "profile_note_A": "<concise hint for A>",
@@ -82,7 +84,11 @@ user_templates:
         "ambiguity_devices": ["<up to 5 devices>"],
         "min_ambiguity_devices_per_turn": 0,
         "max_specific_refs": 0,
-        "allow_exact_numbers_only_if_partner_requests": true
+        "allow_exact_numbers_only_if_partner_requests": true,
+        "opening_seed": [
+          {{"speaker": "A", "text": "Maybe we could look at this from a few angles…"}},
+          {{"speaker": "B", "text": "Could you be more specific about what you mean?"}}
+        ]
       }}
     }}
     IMPORTANT: Do NOT add trailing commas; escape internal quotes and backslashes; remove any HTML/markup from values; return ONE JSON object only; DO NOT include scenario, agent_goals, or agent_reasons in the output.
@@ -111,19 +117,19 @@ user_templates:
       • For high-context: hedges/softeners, indirect requests/refusals, tolerance of silence; avoid bluntness.
       • For low-context: direct, explicit statements, short sentences, pointed clarifications; avoid hedges.
       • Avoid theory names/demographics.
-    - Provide implicit barrier cues (for researchers, not for agents). Cues must encode measurable style quotas derived from Severity while preserving content precision (no added ambiguity):
+    - Provide implicit barrier cues (for researchers, not for agents). Cues must encode measurable style quotas derived from Severity while preserving content precision (no added ambiguity or semantic vagueness):
       • profile_note_A (1 line for Agent A only) reflecting high/low context style
       • severity: repeat the numeric severity
-      • style: "high_context" | "low_context"
-      • directness_level: 0.0–1.0
-      • lexical_prefer / lexical_avoid
+      • style: "high_context" | "low_context" (choose one; do not mix within an episode)
+      • directness_level: 0.0–1.0 (≈ severity for low_context; ≈ 1−severity for high_context)
+      • lexical_prefer / lexical_avoid (reflect the chosen style; avoid overlap with semantic vagueness terms)
       • hedge_lexicon: a few softeners (for high_context)
-      • hedge_rate_target: 0.0–1.0
-      • imperative_rate_target: 0.0–1.0
-      • question_rate_hint: 0.0–1.0
-      • sentence_length_bias: short|medium|long
+      • hedge_rate_target: 0.0–1.0 (≈ severity for high_context; ≈ 0 for low_context)
+      • imperative_rate_target: 0.0–1.0 (≈ severity for low_context; ≈ 0 for high_context)
+      • question_rate_hint: 0.0–1.0 (slightly higher for high_context)
+      • sentence_length_bias: short|medium|long (short for low_context at high severity; long for high_context at high severity)
     - Also produce barrier_prompts for runtime (single-sided barrier; partner remains default):
-      • barrier_prompts.agentA: {A_name} adopts the selected cultural style. Keep factual content precise; do NOT introduce ambiguity devices.
+      • barrier_prompts.agentA: {A_name} adopts the selected cultural style. Keep factual content precise; do NOT introduce ambiguity devices or vague quantifiers. Match hedge/imperative/question rates to targets implied by severity.
       • barrier_prompts.agentB: must be "" (empty string).
     - Compliance requirement: If the style quotas are not reflected, rewrite before returning. Do not mention constraints.
 
@@ -132,7 +138,7 @@ user_templates:
       "agent1_profile_note": "<private 1–2 lines: cultural style cues>",
       "barrier_type": "cultural_style",
       "barrier_prompts": {{
-        "agentA": "You are {A_name}. Adopt the specified cultural style. If high_context: use hedges, indirect requests/refusals, longer/softer phrasing; avoid imperatives. If low_context: be concise, explicit, and direct; favor clear requests and pointed clarifications; avoid hedges. Maintain content precision; do not introduce ambiguity devices.",
+        "agentA": "You are {A_name}. Adopt ONLY the selected cultural style (no semantic vagueness). If high_context: use hedges and indirect requests; longer/softer phrasing; keep numbers/names when known. If low_context: be concise, explicit, and direct; favor clear requests and pointed clarifications; avoid hedges. Maintain content precision; NEVER use ambiguity devices or vague quantifiers. Match hedge/imperative/question rates to targets implied by severity.",
       }},
       "barrier_cues": {{
         "profile_note_A": "<concise hint for A>",
@@ -144,7 +150,11 @@ user_templates:
         "hedge_rate_target": 0.0,
         "imperative_rate_target": 0.0,
         "question_rate_hint": 0.0,
-        "sentence_length_bias": "short|medium|long"
+        "sentence_length_bias": "short|medium|long",
+        "opening_seed": [
+          {{"speaker": "A", "text": "I wonder if we might consider another option…"}},
+          {{"speaker": "B", "text": "Please state what you want clearly."}}
+        ]
       }}
     }}
     IMPORTANT: Do NOT add trailing commas; escape internal quotes and backslashes; remove any HTML/markup from values; return ONE JSON object only; DO NOT include scenario, agent_goals, or agent_reasons in the output.
