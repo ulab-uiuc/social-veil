@@ -66,30 +66,6 @@ def _get_default_template_for_model(model_id):
         else:
             return "configs/qwen2.5-7b.jinja"
 
-
-def chinese_to_pinyin(text: Any) -> Any:
-    if isinstance(text, dict) and "argument" in text:
-        argument = text["argument"]
-        if _contains_chinese(argument):
-            text["argument"] = _convert_text_to_pinyin(argument)
-        return text
-    else:
-        if _contains_chinese(text):
-            return _convert_text_to_pinyin(text)
-        return text
-
-
-def _convert_text_to_pinyin(text):
-    try:
-        if not isinstance(text, str):
-            text = str(text)
-        pinyin_list = lazy_pinyin(text, style=Style.NORMAL)
-        return " ".join(pinyin_list)
-    except Exception as e:
-        print(f"[ERROR] Pinyin conversion failed: {e}")
-        return text
-
-
 def get_openai_client():
     """Get or create OpenAI client"""
     global openai_client
@@ -116,7 +92,8 @@ def direct_completion(
     print(model_id)
  
     system_message = agent.instructions
-
+    if agent.role_num == 0:
+        print(system_message)
     # Check if it's a local model (contains path or specific local model names)
     if "/" in model_id or "qwen" in model_id.lower() or "llama" in model_id.lower():
         return local_model_completion(model_id, system_message, message)

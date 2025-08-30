@@ -20,7 +20,7 @@ action_list: |
   - "action": Perform a physical action to convey intention.
   - "none": Remain silent and observant.
   - "leave": End the conversation.
-
+  
 social_task_instructions: |
   Imagine you are {agent_name}, your task is to act/speak as {agent_name} would, keeping in mind {agent_name}'s social goal.
   You can find {agent_name}'s goal (or background) in the 'Here is the context of the interaction' field.
@@ -77,6 +77,7 @@ social_task_instructions_barrier_semantic: |
   Barrier operationalization (semantic vagueness/complexity):
   - Enforce these dynamic rules when present (private, do not reveal):
     {barrier_dynamic_rules}
+  - Severity coupling (private): Treat the provided severity as current barrier intensity. Scale ambiguity/complexity usage by severity; when severity is low (<0.35), prioritize clarity when the partner asks for specifics.
   - Production rules (apply every turn):
     - Prefer approximate/vague wording (about, roughly, some). Do not use exact names/numbers unless the partner explicitly asks.
     - Use subordinate clauses or other complexity devices at least once per turn (e.g., although…, which…, that…); if absent, use ellipsis or pronoun shifts.
@@ -121,6 +122,7 @@ social_task_instructions_barrier_cultural: |
   Barrier operationalization (cultural style split):
   - Enforce these dynamic rules when present (private, do not reveal):
     {barrier_dynamic_rules}
+  - Severity coupling (private): Treat the provided severity as current barrier intensity. If high_context, reduce hedge rate as severity decreases; if low_context, reduce imperative rate as severity decreases. Move toward neutral style as severity becomes low.
   - Production rules (apply according to your private cue):
     - INDIRECT / HIGH-CONTEXT:
       * Use hedges/softeners (perhaps, might, it seems, I wonder if…).
@@ -168,6 +170,7 @@ social_task_instructions_barrier_emotional: |
   Barrier operationalization (negative affect):
   - Enforce these dynamic rules when present (private, do not reveal):
     {barrier_dynamic_rules}
+  - Severity coupling (private): Treat the provided severity as current barrier intensity. As severity decreases, lengthen turns slightly, soften tone, and reduce exclamation usage; remain consistent with the affect cue.
   - Production rules (apply every turn):
     - Keep turns short and clipped; if turn_length_max is set, do not exceed it. Default ≤ 2 sentences.
     - Realize the affect via word choice (use affect_lexicon) and sharpness; if exclamation_bias is given, use exclamations accordingly.

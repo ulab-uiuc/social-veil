@@ -3,75 +3,86 @@ system: |
   Judge ONLY the provided reply in its brief context (last few turns).
   Return STRICT JSON that matches the schema below. Do not add any text outside JSON.
   IMPORTANT: Do NOT compute any overall/final score. Output only the three aspect scores.
+  Use a 1–5 Likert scale for aspect scores where 1 = very poor, 3 = fair, 5 = excellent.
+  Scoring must be EVIDENCE-BASED. If there is no explicit evidence in the reply for a behavior, assign 1 for that aspect (do not award partial credit for generic enthusiasm or politeness alone).
+  Confidence (0–1) guidance: choose a non-zero value based on evidence strength:
+    • 0.2≈low: few/no explicit markers; high ambiguity; weak alignment
+    • 0.5≈medium: some explicit markers; partial alignment; limited empathy
+    • 0.8≈high: clear explicit markers; strong alignment; solid empathy
+  You may output any value in [0,1], not only anchors; avoid always returning 0.0.
 
 schema_json: |
   {
     "aspects": {
-      "clarity": {"score": 0.0, "reasoning": ""},
-      "accommodation": {"score": 0.0, "reasoning": ""},
-      "empathy": {"score": 0.0, "reasoning": ""}
+      "clarity": {"score": 1, "reasoning": ""},
+      "accommodation": {"score": 1, "reasoning": ""},
+      "empathy": {"score": 1, "reasoning": ""}
     },
     "confidence": 0.0
   }
 
 rubric:
   semantic: |
-    - CLARITY (0–1): How much the reply clarifies/requests specifics/disambiguates (e.g., "do you mean", summaries, numbers/names).
-      • 0.0–0.2: adds ambiguity or ignores confusion
-      • 0.2–0.4: minimal clarifying attempt; vague
-      • 0.4–0.6: some concrete clarification or specific request
-      • 0.6–0.8: clear, targeted clarification or disambiguation
-      • 0.8–1.0: highly effective, specific, resolves ambiguity
-    - ACCOMMODATION (0–1): How much the reply adapts to A’s needs/formulations (e.g., rephrasing, aligning terms).
-      • 0.0–0.2: no adaptation
-      • 0.2–0.4: superficial alignment
-      • 0.4–0.6: moderate restatement/aligning terms
-      • 0.6–0.8: strong alignment, tailored to A’s phrasing
-      • 0.8–1.0: exceptional adaptation to reduce semantic gaps
-    - EMPATHY (0–1): affective support that helps reduce friction while pursuing clarity (optional but scored when present).
-      • 0.0–0.2: dismissive/irritated tone; ignores partner’s confusion
-      • 0.2–0.4: perfunctory courtesy without acknowledging difficulty
-      • 0.4–0.6: brief acknowledgement (e.g., “I see your point”) that softens delivery
-      • 0.6–0.8: supportive phrasing that maintains patience while requesting specifics
-      • 0.8–1.0: strong validation that encourages clarification and cooperative problem‑solving
+    - CLARITY (1–5): How much the reply clarifies/requests specifics/disambiguates (e.g., "do you mean", summaries, numbers/names).
+      ZERO-POINT TRIGGERS: If the reply includes NONE of the following—question mark '?', explicit WH-requests (which/what exactly/when/where/who/how many), explicit numbers/names, or a concrete summary/check—then set clarity to 1.
+      • 1: adds ambiguity or ignores confusion
+      • 2: minimal clarifying attempt; vague
+      • 3: some concrete clarification or specific request
+      • 4: clear, targeted clarification or disambiguation
+      • 5: highly effective, specific, resolves ambiguity
+    - ACCOMMODATION (1–5): How much the reply adapts to A’s needs/formulations (e.g., rephrasing, aligning terms).
+      ZERO-POINT TRIGGERS: If the reply merely expresses enthusiasm/agreeableness without rephrasing A’s terms or aligning terminology, set accommodation to 1–2.
+      • 1: no adaptation
+      • 2: superficial alignment
+      • 3: moderate restatement/aligning terms
+      • 4: strong alignment, tailored to A’s phrasing
+      • 5: exceptional adaptation to reduce semantic gaps
+    - EMPATHY (1–5): affective support that helps reduce friction while pursuing clarity (optional but scored when present).
+      • 1: dismissive/irritated tone; ignores partner’s confusion
+      • 2: perfunctory courtesy without acknowledging difficulty
+      • 3: brief acknowledgement (e.g., “I see your point”) that softens delivery
+      • 4: supportive phrasing that maintains patience while requesting specifics
+      • 5: strong validation that encourages clarification and cooperative problem‑solving
   cultural: |
-    - CLARITY (0–1): explicitness and clear questioning/confirmation.
-      • 0.0–0.2: vague, implicit, or ignores implied content gaps
-      • 0.2–0.4: minimal clarification; generic or rhetorical questions
-      • 0.4–0.6: specific clarification requests or re-stating key points
-      • 0.6–0.8: targeted, concrete questions that reduce ambiguity
-      • 0.8–1.0: highly clear, resolves contextual gaps without being overbearing
-    - ACCOMMODATION (0–1): culturally sensitive adaptation that preserves A’s face while making content explicit.
-      • 0.0–0.2: blunt, face-threatening, or dismissive of indirectness
-      • 0.2–0.4: some softening words but little adaptation to A’s style
-      • 0.4–0.6: respectful phrasing; partial rephrasing to bridge styles
-      • 0.6–0.8: well-balanced directness with politeness; mirrors A’s cues while clarifying
-      • 0.8–1.0: excellent balance; explicit yet face-preserving, invites shared understanding
-    - EMPATHY (0–1): politeness/validation that supports collaboration.
-      • 0.0–0.2: rude/ignoring the partner’s stance
-      • 0.2–0.4: formulaic politeness with little attunement
-      • 0.4–0.6: acknowledges the partner’s position; cooperative tone
-      • 0.6–0.8: validating and supportive while progressing the task
-      • 0.8–1.0: highly attuned; promotes rapport and cooperative progress
+    - CLARITY (1–5): explicitness and clear questioning/confirmation.
+      ZERO-POINT TRIGGERS: If the reply contains no explicit question/confirmation request and adds no missing details, set clarity to 1–2.
+      • 1: vague, implicit, or ignores implied content gaps
+      • 2: minimal clarification; generic or rhetorical questions
+      • 3: specific clarification requests or re-stating key points
+      • 4: targeted, concrete questions that reduce ambiguity
+      • 5: highly clear, resolves contextual gaps without being overbearing
+    - ACCOMMODATION (1–5): culturally sensitive adaptation that preserves A’s face while making content explicit.
+      • 1: blunt, face-threatening, or dismissive of indirectness
+      • 2: some softening words but little adaptation to A’s style
+      • 3: respectful phrasing; partial rephrasing to bridge styles
+      • 4: well-balanced directness with politeness; mirrors A’s cues while clarifying
+      • 5: excellent balance; explicit yet face-preserving, invites shared understanding
+    - EMPATHY (1–5): politeness/validation that supports collaboration.
+      • 1: rude/ignoring the partner’s stance
+      • 2: formulaic politeness with little attunement
+      • 3: acknowledges the partner’s position; cooperative tone
+      • 4: validating and supportive while progressing the task
+      • 5: highly attuned; promotes rapport and cooperative progress
   emotional: |
-    - EMPATHY (0–1): empathy/validation/apology; de-escalation and supportive tone.
-      • 0.0–0.2: dismissive, escalatory, or ignores the partner’s feelings
-      • 0.2–0.4: perfunctory courtesy; no real de-escalation
-      • 0.4–0.6: acknowledges feelings; slightly reduces tension
-      • 0.6–0.8: clear validation and calming intent; invites collaboration
-      • 0.8–1.0: strong empathy that diffuses tension and builds safety
-    - CLARITY (0–1): calm, constructive clarity that moves the task forward.
-      • 0.0–0.2: vague, sharp, or derailing
-      • 0.2–0.4: minimal guidance; still fuzzy or reactive
-      • 0.4–0.6: some concrete, calm guidance toward resolution
-      • 0.6–0.8: targeted, specific next-steps framed neutrally
-      • 0.8–1.0: highly clear, actionable next-steps that remain calm and respectful
-    - ACCOMMODATION (0–1): adapts to A’s emotional state (pace, softness, length, hedging when helpful).
-      • 0.0–0.2: insensitive tone; ignores emotional cues
-      • 0.2–0.4: minor softening; little adaptation of pace/length
-      • 0.4–0.6: noticeable softening and pacing adjustments
-      • 0.6–0.8: well-tuned adjustments that ease processing and reception
-      • 0.8–1.0: excellent adaptation; tone/length/pacing match A’s state while progressing the task
+    - EMPATHY (1–5): empathy/validation/apology; de-escalation and supportive tone.
+      • 1: dismissive, escalatory, or ignores the partner’s feelings
+      • 2: perfunctory courtesy; no real de-escalation
+      • 3: acknowledges feelings; slightly reduces tension
+      • 4: clear validation and calming intent; invites collaboration
+      • 5: strong empathy that diffuses tension and builds safety
+    - CLARITY (1–5): calm, constructive clarity that moves the task forward.
+      ZERO-POINT TRIGGERS: If no concrete next step, request, or check for understanding is present, set clarity to 1–2.
+      • 1: vague, sharp, or derailing
+      • 2: minimal guidance; still fuzzy or reactive
+      • 3: some concrete, calm guidance toward resolution
+      • 4: targeted, specific next-steps framed neutrally
+      • 5: highly clear, actionable next-steps that remain calm and respectful
+    - ACCOMMODATION (1–5): adapts to A’s emotional state (pace, softness, length, hedging when helpful).
+      • 1: insensitive tone; ignores emotional cues
+      • 2: minor softening; little adaptation of pace/length
+      • 3: noticeable softening and pacing adjustments
+      • 4: well-tuned adjustments that ease processing and reception
+      • 5: excellent adaptation; tone/length/pacing match A’s state while progressing the task
 
 user_template: |
   Barrier type: {barrier_type}
@@ -85,6 +96,6 @@ user_template: |
   Rubric:
   {rubric}
 
-  Output STRICT JSON that matches this schema exactly (numeric fields in [0,1]):
+  Output STRICT JSON that matches this schema exactly (aspect scores must be integers in [1,5], confidence in [0,1]):
   {schema_json}
 

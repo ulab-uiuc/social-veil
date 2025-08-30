@@ -26,7 +26,6 @@ def _find_repair_yaml() -> str:
         root = os.path.abspath(os.path.join(root, ".."))
     raise FileNotFoundError("configs/repair.yaml not found in expected locations")
 
-
 def _load_repair_cfg() -> Dict[str, Any]:
     path = _find_repair_yaml()
     with open(path, "r", encoding="utf-8") as f:
@@ -37,7 +36,6 @@ def judge_repair_with_llm(
     formatted_reply: str,
     transcript: List[str],
     barrier_type: Optional[str],
-    barrier_cues: Optional[Dict[str, Any]],
     model_id: Optional[str] = None,
 ) -> Dict[str, Any]:
 
@@ -76,6 +74,7 @@ def judge_repair_with_llm(
         temperature=0.0,
     )
     content = resp.choices[0].message.content or "{}"
+
     try:
         data = json.loads(content)
     except Exception:
@@ -83,20 +82,16 @@ def judge_repair_with_llm(
         e = content.rfind("}")
         data = json.loads(content[s:e+1]) if (s != -1 and e != -1 and e > s) else {"score": 0.0}
 
-    def clamp01(v: Any) -> float:
-        try:
-            x = float(v)
-            return max(0.0, min(1.0, x))
-        except Exception:
-            return 0.0
-
-    # Extract aspect scores from nested schema { aspects: { clarity: {score, reasoning}, ... } }
     raw_aspects = data.get("aspects", {}) or {}
+
     def _get_aspect_score(name: str) -> float:
         entry = raw_aspects.get(name, 0.0)
         if isinstance(entry, dict):
-            return clamp01(entry.get("score", 0.0))
-        return clamp01(entry)
+            raw = entry.get("score", 0.0)
+        else:
+            raw = entry
+        val = float(raw)
+        return val
 
     clarity = _get_aspect_score("clarity")
     accommodation = _get_aspect_score("accommodation")
@@ -109,11 +104,11 @@ def judge_repair_with_llm(
         "empathy": empathy,
     }
 
-    conf = clamp01(data.get("confidence", 0.0)) or 0.5
+    conf = data.get("confidence", 0.0)
     data["confidence"] = conf
 
     base_score = (clarity +  accommodation + empathy)/3
-    final_score = clamp01(base_score * conf)
+    final_score = base_score * conf
     data["score"] = final_score
     
     return data

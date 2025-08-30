@@ -3,7 +3,7 @@ system_instruction: |
   General requirements (apply to all barrier families):
   - Do NOT change the scenario text, agent goals, or agent reasons; keep identities and core setting; 
   - Embed barriers only via short profile notes and barrier_prompts; never alter core content.
-  - Provide barrier_cues for researchers only (never shown to agents). Cues must include at least: profile_note_A and severity; include any barrier-specific cue fields requested in the user prompt.
+  - Provide barrier_cues for researchers only (never shown to agents). Cues must include at least: profile_note_A; include any barrier-specific cue fields requested in the user prompt.
   - Single-sided barrier policy: Apply the barrier ONLY to Agent A. Agent B must remain unmodified. Always set barrier_prompts.agentB to an empty string "".
   - Always output valid JSON ONLY, matching the schema given in the user prompt. No extra prose.
 
@@ -19,7 +19,6 @@ system_instruction: |
 
   Cue attribute definitions (use precisely):
   - profile_note_A: One–two lines, private. Give actionable, concrete style/affect behaviors (lexical tendencies, tone, devices) that realize the barrier for Agent A only. No theory names, no stereotypes/demographics.
-  - severity: A number in [0,1] indicating intensity of the barrier (0.2≈light, 0.5≈moderate, 0.8≈strong). Should match other cue choices.
   - lexical_prefer: List of 3–8 short phrases the barriered agent should tend to use (e.g., "perhaps", "kind of").
   - lexical_avoid: List of 3–8 short phrases the barriered agent should avoid (e.g., "exactly", "I want").
   - sentence_length_bias: One of {short, medium, long} indicating typical sentence length.
@@ -38,10 +37,7 @@ system_instruction: |
 
 user_templates:
   semantic: |
-    Task: Given the base episode information, create ONE augmented variant that naturally embeds a SEMANTIC STRUCTURE barrier at the requested severity. Keep the same identities and core setting. Make minimal edits.
-
-    Severity: 
-    {severity}
+    Task: Given the base episode information, create ONE augmented variant that naturally embeds a SEMANTIC STRUCTURE barrier. Keep the same identities and core setting. Make minimal edits.
 
     Barrier intent: 
     {barrier_definition}
@@ -60,15 +56,15 @@ user_templates:
     - agent1_profile_note (1–2 lines). FORM-only: use syntactic complexity (subordinate clauses), fragments, mild self-contradictions; add occasional lexical misuse/jargon.
     - Non-hedge vagueness only (approximately/roughly/around/ranges); avoid hedges ("perhaps", "kind of", "it seems").
     - Neutral directness/politeness; no high/low-context shift.
-    - Provide implicit barrier cues (for researchers, not for agents). Cues must encode measurable quotas derived from Severity:
+    - Provide implicit barrier cues (for researchers, not for agents). Cues must encode measurable quotas:
       • profile_note_A (1 line for Agent A only)
       • lexical_prefer / lexical_avoid
-      • sentence_length_bias: short|medium|long (if severity ≥ 0.6 use long; if ≤ 0.3 use short; otherwise medium)
+      • sentence_length_bias: short|medium|long
       • ambiguity_devices: up to 5 items (e.g., subordinate clauses, fragments/incomplete sentences, self-contradictions, referent shifts, ellipsis)
-      • min_ambiguity_devices_per_turn: integer ≥ 0 (≈ ceil(severity*2); at least 2 if severity ≥ 0.8)
-      • max_specific_refs: 0 or 1 (0 if severity ≥ 0.6; otherwise 1) — specific names/dates/IDs
-      • allow_exact_numbers_only_if_partner_requests: true|false (true if severity ≥ 0.4)
-      • question_rate_hint: 0.2–0.5 (increase slightly with severity)
+      • min_ambiguity_devices_per_turn: integer ≥ 0
+      • max_specific_refs: 0 or 1 — specific names/dates/IDs
+      • allow_exact_numbers_only_if_partner_requests: true|false
+      • question_rate_hint: 0.2–0.5
     - Also produce barrier_prompts for runtime:
       • barrier_prompts.agentA: concise, operational instruction for {A_name} to realize FORM-based ambiguity: each turn use ≥ min_ambiguity_devices_per_turn from [subordinate clause, fragment, self-contradiction, referent shift, ellipsis]; include occasional lexical misuse/jargon; avoid hedges; keep directness/politeness neutral; give exact numbers/names only if asked.
       • barrier_prompts.agentB: must be "" (empty string).
@@ -79,7 +75,7 @@ user_templates:
       "agent1_profile_note": "<private 1–2 lines: vague lexical choices + complexity devices>",
       "barrier_type": "semantic_structure",
       "barrier_prompts": {{
-        "agentA": "You are {A_name}. Realize ambiguity via FORM, not social style. Each turn, use ≥ min_ambiguity_devices_per_turn from: subordinate clause, fragment (incomplete sentence), mild self-contradiction, referent shift, or ellipsis. Include occasional lexical misuse/jargon-like phrasing. Avoid hedges ('perhaps', 'kind of'). Keep directness/politeness neutral. Provide exact numbers/names only if directly asked. Severity {severity} scales frequency.",
+        "agentA": "You are {A_name}. Realize ambiguity via FORM, not social style. Each turn, use ≥ min_ambiguity_devices_per_turn from: subordinate clause, fragment (incomplete sentence), mild self-contradiction, referent shift, or ellipsis. Include occasional lexical misuse/jargon-like phrasing. Avoid hedges ('perhaps', 'kind of'). Keep directness/politeness neutral. Provide exact numbers/names only if directly asked.",
       }},
       "barrier_cues": {{
         "profile_note_A": "<concise hint for A>",
@@ -89,20 +85,13 @@ user_templates:
         "ambiguity_devices": ["<up to 5 devices>"],
         "min_ambiguity_devices_per_turn": 0,
         "max_specific_refs": 0,
-        "allow_exact_numbers_only_if_partner_requests": true,
-        "opening_seed": [
-          {{"speaker": "A", "text": "Maybe we could look at this from a few angles…"}},
-          {{"speaker": "B", "text": "Could you be more specific about what you mean?"}}
-        ]
+        "allow_exact_numbers_only_if_partner_requests": true
       }}
     }}
     IMPORTANT: Do NOT add trailing commas; escape internal quotes and backslashes; remove any HTML/markup from values; return ONE JSON object only; DO NOT include scenario, agent_goals, or agent_reasons in the output.
 
   cultural: |
-    Task: Given the base episode information, create ONE augmented variant that naturally embeds a CULTURAL STYLE barrier at the requested severity. Keep the same identities and core setting. Make minimal edits.
-
-    Severity: 
-    {severity}
+    Task: Given the base episode information, create ONE augmented variant that naturally embeds a CULTURAL STYLE barrier. Keep the same identities and core setting. Make minimal edits.
 
     Barrier intent: 
     {barrier_definition}
@@ -122,15 +111,14 @@ user_templates:
     - High_context: politeness markers/idioms; indirect requests/refusals; shared-background references.
     - Low_context: blunt imperatives and direct phrasing; no hedges.
     - Keep form simple; content precise (no ambiguity devices/vague quantifiers).
-    - Provide implicit barrier cues (for researchers, not for agents). Cues must encode measurable style quotas derived from Severity while preserving content precision (no added ambiguity or semantic vagueness):
+    - Provide implicit barrier cues (for researchers, not for agents). Cues must encode measurable style quotas while preserving content precision (no added ambiguity or semantic vagueness):
       • profile_note_A (1 line for Agent A only) reflecting high/low context style
-      • severity: repeat the numeric severity
       • style: "high_context" | "low_context" (choose one; do not mix within an episode)
-      • directness_level: 0.0–1.0 (≈ severity for low_context; ≈ 1−severity for high_context)
+      • directness_level: 0.0–1.0
       • lexical_prefer / lexical_avoid (reflect the chosen style; avoid overlap with semantic vagueness terms). For high_context include politeness markers/idioms ("as you know", "if you don't mind"). For low_context include imperative frames ("Do", "State", "Provide").
       • hedge_lexicon: a few softeners (for high_context); set empty/low for low_context
-      • hedge_rate_target: 0.0–1.0 (≈ severity for high_context; ≈ 0 for low_context)
-      • imperative_rate_target: 0.0–1.0 (≈ severity for low_context; ≈ 0 for high_context)
+      • hedge_rate_target: 0.0–1.0
+      • imperative_rate_target: 0.0–1.0
       • question_rate_hint: 0.0–1.0 (slightly higher for high_context)
     - Also produce barrier_prompts for runtime (single-sided barrier; partner remains default):
       • barrier_prompts.agentA: {A_name} adopts ONLY the selected cultural style. If high_context: use politeness markers/idioms and indirect framing (e.g., "as you know…", "if you don’t mind…"), avoid blunt imperatives, keep content precise. If low_context: use blunt imperatives and direct phrasing, avoid hedges/indirectness. Never introduce ambiguity devices or vague quantifiers. Match hedge/imperative/question rates to severity targets.
@@ -142,7 +130,7 @@ user_templates:
       "agent1_profile_note": "<private 1–2 lines: cultural style cues>",
       "barrier_type": "cultural_style",
       "barrier_prompts": {{
-        "agentA": "You are {A_name}. Adopt ONLY the selected cultural style (no semantic vagueness). If high_context: use hedges and indirect requests; longer/softer phrasing; keep numbers/names when known. If low_context: be concise, explicit, and direct; favor clear requests and pointed clarifications; avoid hedges. Maintain content precision; NEVER use ambiguity devices or vague quantifiers. Match hedge/imperative/question rates to targets implied by severity.",
+        "agentA": "You are {A_name}. Adopt ONLY the selected cultural style (no semantic vagueness). If high_context: use hedges and indirect requests; longer/softer phrasing; keep numbers/names when known. If low_context: be concise, explicit, and direct; favor clear requests and pointed clarifications; avoid hedges. Maintain content precision; NEVER use ambiguity devices or vague quantifiers. Match hedge/imperative/question rates to the provided targets.",
       }},
       "barrier_cues": {{
         "profile_note_A": "<concise hint for A>",
@@ -155,20 +143,13 @@ user_templates:
         "indirectness_score": 0.0,
         "hedge_rate_target": 0.0,
         "imperative_rate_target": 0.0,
-        "question_rate_hint": 0.0,
-        "opening_seed": [
-          {{"speaker": "A", "text": "I wonder if we might consider another option…"}},
-          {{"speaker": "B", "text": "Please state what you want clearly."}}
-        ]
+        "question_rate_hint": 0.0
       }}
     }}
     IMPORTANT: Do NOT add trailing commas; escape internal quotes and backslashes; remove any HTML/markup from values; return ONE JSON object only; DO NOT include scenario, agent_goals, or agent_reasons in the output.
 
   emotional: |
-    Task: Given the base episode information, create ONE augmented variant that naturally embeds an EMOTIONAL INFLUENCE barrier at the requested severity. Keep the same identities and core setting. Make minimal edits.
-
-    Severity: 
-    {severity}
+    Task: Given the base episode information, create ONE augmented variant that naturally embeds an EMOTIONAL INFLUENCE barrier. Keep the same identities and core setting. Make minimal edits.
 
     Barrier intent: 
     {barrier_definition}
@@ -186,14 +167,13 @@ user_templates:
     Instructions:
     - Write agent1_profile_note as private, actionable affect guidance (1–2 lines) specialized for EMOTIONAL barrier. Agent B remains unmodified:
       • Specify tone and pacing (short/clipped), negative affect tendencies (e.g., irritated, impatient) from affect_lexicon.
-      • Include likely reactions (interrupt, dismiss, escalate) scaled by severity; avoid empathy phrases.
+      • Include likely reactions (interrupt, dismiss, escalate); avoid empathy phrases.
       • No diagnosis/theory names.
     - Provide implicit barrier cues (for researchers, not for agents):
       • profile_note_A (1 line for Agent A only) reflecting sustained affect
-      • severity: repeat the numeric severity
       • affect_lexicon (up to 8 words), exclamation_bias (0..1), sentence_length_bias
     - Also produce barrier_prompts for runtime:
-      • barrier_prompts.agentA: {A_name} maintains a negative affect (scaled by severity): short (≤2 sentences), clipped, a bit sharp; avoid empathy/soothing phrases.
+      • barrier_prompts.agentA: {A_name} maintains a negative affect: short (≤2 sentences), clipped, a bit sharp; avoid empathy/soothing phrases.
 
     Output JSON only with this schema (DO NOT include scenario, goals, or reasons in the output):
     {{
