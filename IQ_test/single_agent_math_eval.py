@@ -926,20 +926,9 @@ def main():
     with open(f"{args.output_dir}/evaluation_summary.json", 'w') as f:
         json.dump({
             "statistics": results["statistics"],
-            "conclusion": results["conclusion"]
         }, f, indent=2)
     
-    # Print summary
-    print("\n" + "="*60)
-    print("🧮 SINGLE AGENT MATH EVALUATION SUMMARY")
-    print("="*60)
-    print(f"🎯 Main Finding: {results['conclusion']['main_finding']}")
-    print(f"🤖 Mathematical Capability: {results['conclusion']['mathematical_capability']}")
-    
-    print("\n📈 Communication Effects:")
-    for barrier, effect in results['conclusion']['communication_effects'].items():
-        print(f"  • {barrier.replace('_', ' ').title()}: {effect}")
-    
+
     print(f"\n💾 Detailed results saved to: {args.output_dir}/")
 
 if __name__ == "__main__":
