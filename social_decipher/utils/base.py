@@ -92,8 +92,7 @@ def direct_completion(
     print(model_id)
  
     system_message = agent.instructions
-    if agent.role_num == 0:
-        print(system_message)
+
     # Check if it's a local model (contains path or specific local model names)
     if "/" in model_id or "qwen" in model_id.lower() or "llama" in model_id.lower():
         return local_model_completion(model_id, system_message, message)

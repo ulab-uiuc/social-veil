@@ -211,7 +211,6 @@ def run_experiment(episodes, experiment_config, evaluator, args, mode_tag: str):
                 personB=agent2,
                 evaluator=evaluator,
                 max_rounds=args.max_rounds,
-                output_suffix=f"{experiment_config['tag']}_scenario_{scenario_idx+1}",
                 scenario_index=scenario_idx,
                 pair="0",
                 environment=env,

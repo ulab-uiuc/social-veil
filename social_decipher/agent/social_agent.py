@@ -6,6 +6,7 @@ import yaml
 from rich import print
 
 from social_decipher.environment.env_profile import EnvironmentProfile
+from social_decipher.utils.state import build_dynamic_rules_from_state, init_barrier_state
 from social_decipher.utils.base import direct_completion
 
 from .agent_profile import AgentProfile
@@ -37,16 +38,13 @@ class SocialAgent:
         self.instructions = self.set_static_instruction(mix)
 
     def set_static_instruction(self, mix=False) -> str:
-        return self.build_instruction(transcript="", turn_number=0, mix=mix)
+        return self.build_instruction(transcript="", turn_number=0)
     
     def build_instruction(
-        self, transcript: str, turn_number: int, mix: bool = False
+        self, transcript: str, turn_number: int
     ) -> str:
         with open(self.template_path) as f:
             templates = yaml.safe_load(f)
-
-        if self.env is None:
-            return "Instructions not available yet."
 
         env_dict = self.env.env
         profile, partner = self.profile, self.partner_profile
@@ -60,7 +58,6 @@ class SocialAgent:
         agent_key = "agentA" if is_agent_a else "agentB"
         barrier_for_this_agent = barrier_prompts_present and bool((env_dict.get("barrier_prompts") or {}).get(agent_key))
         barrier_type = env_dict.get("barrier_type") if barrier_for_this_agent else None
-  
 
         template_key = (
             "social_task_instructions_barrier_semantic" if barrier_type == "semantic_structure" else
@@ -73,6 +70,14 @@ class SocialAgent:
 
         # Build private cues block from barrier_cues
         barrier_cues = env_dict.get("barrier_cues") if isinstance(env_dict.get("barrier_cues"), dict) else None
+        # Ensure barrier_state exists for Agent A when in barrier mode
+        if is_agent_a and barrier_for_this_agent and not isinstance(env_dict.get("barrier_state"), dict):
+            try:
+                init_barrier_state(env_dict)
+            except Exception:
+                pass
+        # barrier_state is a dict with keys: semantic_strength, style_strength, affect_strength
+        barrier_state = env_dict.get("barrier_state") if isinstance(env_dict.get("barrier_state"), dict) else None
         barrier_private_note: str = ""
         barrier_dynamic_rules: str = ""
   
@@ -92,23 +97,62 @@ class SocialAgent:
                 if isinstance(val, (int, float, str)) and str(val).strip():
                     lines.append(f"- {label}: {val}")
 
-            _fmt_list("lexical_prefer", "Use phrases like")
-            _fmt_list("lexical_avoid", "Avoid phrases")
-            _fmt_scalar("sentence_length_bias", "Sentence length bias")
-            _fmt_list("ambiguity_devices", "Use ambiguity devices")
-            _fmt_scalar("question_rate_hint", "Target question rate")
-            _fmt_scalar("imperative_rate_hint", "Target imperative rate")
-            _fmt_list("hedge_lexicon", "Hedge lexicon")
-            _fmt_list("politeness_markers", "Politeness markers")
-            _fmt_list("shared_background_refs", "Shared background references")
-            _fmt_scalar("indirectness_score", "Indirectness score")
-            _fmt_list("imperative_frames", "Imperative frames")
-            _fmt_list("affect_lexicon", "Affect lexicon")
-            _fmt_scalar("exclamation_bias", "Exclamation bias")
-            _fmt_scalar("turn_length_max", "Max sentences per turn")
+            # Keep only minimal cues that severity scales
+            _fmt_list("ambiguity_devices", "Use ambiguity devices")            # semantic
+            _fmt_scalar("question_rate_hint", "Target question rate")          # cultural (high-context)
+            _fmt_scalar("imperative_rate_hint", "Target imperative rate")      # cultural (low-context)
+            _fmt_scalar("exclamation_bias", "Exclamation bias")               # emotional
+            _fmt_scalar("turn_length_max", "Max sentences per turn")          # emotional
+
+            # Inject dynamic barrier state (A-only) using episode barrier_cues (no severity text)
+            if is_agent_a:
+                if barrier_type == "semantic_structure":
+                    allow_exact = barrier_cues.get("allow_exact_numbers_only_if_partner_requests")
+                    if isinstance(allow_exact, bool) and allow_exact:
+                        lines.append("- Provide exact numbers/names only if the partner explicitly requests them.")
+                    # Avoid duplicating lexicon/sentence bias and numeric targets covered by dynamic rules
+                    # Keep devices hint minimal via the earlier summary
+                elif barrier_type == "cultural_style":
+                    style = str(barrier_cues.get("style", "high_context")).strip().lower()
+                    if style:
+                        lines.append(f"- Private style: {style.replace('_','-')}")
+                    directness = barrier_cues.get("directness_level")
+                    if isinstance(directness, (int, float)):
+                        lines.append(f"- Directness level: {float(directness):.2f}")
+                    shared_refs = barrier_cues.get("shared_background_refs")
+                    if isinstance(shared_refs, list) and shared_refs:
+                        examples = [str(v).strip() for v in shared_refs if isinstance(v, str) and v.strip()]
+                        if examples:
+                            lines.append("- Shared background cues: " + ", ".join(examples[:6]))
+                    # Drop hedge lexicon / politeness / frames here (dynamic rules already include)
+                elif barrier_type == "emotional_influence":
+                    affect_lex = barrier_cues.get("affect_lexicon")
+                    if isinstance(affect_lex, list) and affect_lex:
+                        examples = [str(v).strip() for v in affect_lex if isinstance(v, str) and v.strip()]
+                        if examples:
+                            lines.append("- Affect lexicon: " + ", ".join(examples[:6]))
+                    # Avoid duplicating sentence_length_bias here (dynamic rules include)
+
+            # Prepend concise severity-driven rules so they dominate
+            if is_agent_a and isinstance(env_dict, dict):
+                dyn_map = build_dynamic_rules_from_state(env_dict, is_agent_a=True)
+                sev_lines: List[str] = []
+                for v in dyn_map.values():
+                    if isinstance(v, str) and v.strip():
+                        sev_lines.append(v)
+                if sev_lines:
+                    lines = sev_lines + lines
 
             if lines:
-                barrier_dynamic_rules = "\n".join(lines)
+                # Deduplicate lines by content order-preserving
+                seen = set()
+                deduped: List[str] = []
+                for ln in lines:
+                    key = ln.strip()
+                    if key and key not in seen:
+                        seen.add(key)
+                        deduped.append(ln)
+                barrier_dynamic_rules = "\n".join(deduped)
 
         mapping = {
             "agent_name": profile.first_name,
@@ -131,7 +175,6 @@ class SocialAgent:
             "partner_public_info": partner.public_info,
             "action_list": templates.get("action_list", ""),
             "barrier_prompt": (env_dict.get("barrier_prompts") or {}).get(agent_key, ""),
-
             "barrier_private_note": barrier_private_note,
             "barrier_dynamic_rules": barrier_dynamic_rules,
         }
@@ -148,17 +191,19 @@ class SocialAgent:
         # Get barrier prompt from environment if this agent has one
         barrier_preface = (env_dict.get("barrier_prompts") or {}).get(agent_key)
         
-        # If we're using a barrier template and have a barrier prompt, integrate it
+        # Place Additional barrier context at the end of the BARRIER section to keep dynamic rules dominant
         if (isinstance(barrier_preface, str) and barrier_preface.strip() and 
             template_key.startswith("social_task_instructions_barrier_")):
-            # For barrier templates, add the prompt as additional context in the barrier directives section
-            barrier_integration = f"\n  - Additional barrier context: {barrier_preface.strip()}"
-            formatted_template = formatted_template.replace(
-                "BARRIER MODE DIRECTIVES (high priority):",
-                f"BARRIER MODE DIRECTIVES (high priority):{barrier_integration}"
-            )
+            addl = f"\n- Additional barrier context: {barrier_preface.strip()}"
+            # Remove any prior header injection remnants
+            formatted_template = formatted_template.replace(addl, "")
+            # Insert just before the leave note if present; otherwise append
+            marker = "Note: You can \"leave\""
+            if marker in formatted_template:
+                formatted_template = formatted_template.replace(marker, addl + "\n\n" + marker)
+            else:
+                formatted_template = formatted_template + addl
         elif isinstance(barrier_preface, str) and barrier_preface.strip():
-            # For non-barrier templates, prepend as before
             return f"{barrier_preface.strip()}\n\n{formatted_template}"
             
         return formatted_template
@@ -170,7 +215,7 @@ class SocialAgent:
         transcript_text = "\n".join(short_transcript)
         
         self.instructions = self.build_instruction(
-            transcript=transcript_text, turn_number=turn_number, mix=mix
+            transcript=transcript_text, turn_number=turn_number
         )
 
     def act(
@@ -179,7 +224,7 @@ class SocialAgent:
         if initial:
             # Ensure latest barrier preface and cues are reflected in the very first turn
      
-            self.instructions = self.build_instruction(transcript="", turn_number=0, mix=False)
+            self.instructions = self.build_instruction(transcript="", turn_number=0)
             prompt = "Now, generate your initial message to start the conversation, try to be concise"
             response = direct_completion(self, message=prompt)
             

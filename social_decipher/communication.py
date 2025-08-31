@@ -11,17 +11,11 @@ from social_decipher.agent.social_agent import SocialAgent
 from social_decipher.environment.env_profile import EnvironmentProfile
 from social_decipher.evaluate import ConversationEvaluator
 from social_decipher.utils.repair import judge_repair_with_llm
+from social_decipher.utils.state import init_barrier_state, update_barrier_state
 
 
 def _format_action_output(message: Union[str, Dict[str, Any]]) -> str:
-    """
-    Normalize agent outputs to a readable single-line text for logs.
-    Supports two schemas:
-      1) {"action_type": "speak|non-verbal communication|action|leave|none", "argument": "..."}
-      2) {"speak": "...", "nonverbal": "...", "action": "...", "meta_action": "..."}
-    Falls back to str(message) for plain strings or unknown structures.
-    """
-    # Plain text
+    
     if isinstance(message, str):
         return message
 
@@ -66,7 +60,6 @@ def simulate_conversation(
     personB: SocialAgent,
     max_rounds: int,
     evaluator: ConversationEvaluator,
-    output_suffix: str = "",
     scenario_index: int = 0,
     pair: Any = 0,
     environment = None,
@@ -99,7 +92,6 @@ def run_single_scenario_simulation(
     output_dir: Optional[str] = None,
 ) -> Tuple[List[str], Dict[str, Any], List[Dict[str, Any]]]:
   
-    # Set environment for agents
     personA.env = environment
     personB.env = environment
 
@@ -114,24 +106,8 @@ def run_single_scenario_simulation(
     conversation_log = []
     mcq_logs = []
 
-    # Inject new barrier prompts from episode, if present
-    barrier_cues = environment.env.get("barrier_cues") if environment and environment.env else None
-
-    # Apply barrier_cues to early transcript priming only (no scenario or profile changes)
-    if isinstance(barrier_cues, dict):
-        # Opening seed: pre-seed the transcript to bias first turns
-        opening_seed = barrier_cues.get("opening_seed")
-        preseed_lines = []
-        if isinstance(opening_seed, list):
-            for item in opening_seed[:2]:
-                if isinstance(item, dict):
-                    spk = item.get("speaker")
-                    txt = item.get("text")
-                    if isinstance(spk, str) and isinstance(txt, str) and txt.strip():
-                        name = personA.name if spk.upper() == "A" else personB.name
-                        preseed_lines.append(f"{name}: {txt.strip()}")
-        if preseed_lines:
-            conversation_log.extend(preseed_lines)
+    # Initialize dynamic barrier state for Agent A (single-sided)
+    init_barrier_state(environment.env)
 
     print(f"🌐 Using agent profile models: {personA.name}({personA.profile.model_id}) ↔ {personB.name}({personB.profile.model_id})")
 
@@ -173,10 +149,12 @@ def run_single_scenario_simulation(
                     print(f"👋 {personB.name} indicated goodbye")
 
         barrier_type = environment.env.get("barrier_type") if environment and environment.env else None
-        barrier_cues = environment.env.get("barrier_cues") if environment and environment.env else None
-        judge_json = judge_repair_with_llm(formatted_b, conversation_log, barrier_type, barrier_cues)
+        judge_json = judge_repair_with_llm(formatted_b, conversation_log, barrier_type)
         print(judge_json)
-       
+     
+        repair_score = float(judge_json.get("score", 0.0) or 0.0)
+        update_barrier_state(environment.env, repair_score)
+
         if b_left:
             print(f"🚪 Conversation ended: explicit leave (Turn {turn_num})")
             break
@@ -203,19 +181,6 @@ def run_single_scenario_simulation(
             test_prompt=evaluator.evaluation_template,
             task_type="reason",
         )
-
-        # Knowledge barrier MCQ testing for agent A's private knowledge
-        knowledge_mcq_A = None
-        agent1_private_knowledge = environment.env.get("agent1_private_knowledge", "").strip()
-        if (agent_knowledge_mcqas and len(agent_knowledge_mcqas) >= 1 and agent1_private_knowledge):
-            knowledge_mcq_A = personB.predict_mcq_answer(
-                agent_name=personB.name,
-                partner_name=personA.name,
-                transcript=conversation_log,
-                mcqa=agent_knowledge_mcqas[0],
-                test_prompt=evaluator.evaluation_template,
-                task_type="knowledge",
-            )
 
         # Before Agent A's next turn, add barrier preface if still in barrier window
         # Update agent A's instructions first (this rebuilds the system prompt)
@@ -266,19 +231,6 @@ def run_single_scenario_simulation(
             task_type="reason",
         )
 
-        # Knowledge barrier MCQ testing for agent B's private knowledge
-        knowledge_mcq_B = None
-        agent2_private_knowledge = environment.env.get("agent2_private_knowledge", "").strip()
-        if (agent_knowledge_mcqas and len(agent_knowledge_mcqas) >= 2 and agent2_private_knowledge):
-            knowledge_mcq_B = personA.predict_mcq_answer(
-                agent_name=personA.name,
-                partner_name=personB.name,
-                transcript=conversation_log,
-                mcqa=agent_knowledge_mcqas[1],
-                test_prompt=evaluator.evaluation_template,
-                task_type="knowledge",
-            )
-
         # Log MCQ results and LLM repair judgment
         mcq_logs.append(
             {
@@ -286,11 +238,12 @@ def run_single_scenario_simulation(
                 "scenario": scenario_idx + 1,
                 f"agent_1_goal_mcq": goal_mcq_A,
                 f"agent_1_reason_mcq": reason_mcq_A,
-                f"agent_1_knowledge_mcq": knowledge_mcq_A,
+                f"agent_1_knowledge_mcq": None,
                 f"agent_2_goal_mcq": goal_mcq_B,
                 f"agent_2_reason_mcq": reason_mcq_B,
-                f"agent_2_knowledge_mcq": knowledge_mcq_B,
+                f"agent_2_knowledge_mcq": None,
                 "agent_b_repair_eval_llm": judge_json,
+                "barrier_state": environment.env.get("barrier_state"),
             }
         )
     

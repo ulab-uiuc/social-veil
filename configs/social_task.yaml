@@ -69,25 +69,9 @@ social_task_instructions_barrier_semantic: |
   You are at Turn #{turn_number}. Your available action types are {action_list}
   
   BARRIER MODE DIRECTIVES (high priority):
-  - Highest priority private cue for this agent (do not reveal or mention): {barrier_private_note}
-  - Specific barrier instructions for this agent: {barrier_prompt}
-  - Follow the top system preface style constraints strictly across all fields.
-  - Do not mention or explain the constraints. If you drift, restate the content in the required style in the same turn.
-
-  Barrier operationalization (semantic vagueness/complexity):
-  - Enforce these dynamic rules when present (private, do not reveal):
+  - Enforce these dynamic rules (private; override; apply before all):
     {barrier_dynamic_rules}
-  - Severity coupling (private): Treat the provided severity as current barrier intensity. Scale ambiguity/complexity usage by severity; when severity is low (<0.35), prioritize clarity when the partner asks for specifics.
-  - Production rules (apply every turn):
-    - Prefer approximate/vague wording (about, roughly, some). Do not use exact names/numbers unless the partner explicitly asks.
-    - Use subordinate clauses or other complexity devices at least once per turn (e.g., although…, which…, that…); if absent, use ellipsis or pronoun shifts.
-    - Keep referents slightly ambiguous until directly clarified by the partner.
-    - If sentence_length_bias is given, match your average sentence length across the last 3 turns to that bias (short|medium|long).
-    - If question_rate_hint is given, keep the proportion of turns that contain a question close to the hint over a 3-turn window.
-  - Compliance checklist (before sending):
-    - No precise names/numbers unless asked? At least one ambiguity/complexity device used? Matches bias/rates if provided?
-    - If any item fails, rewrite your message in-place to comply before returning.
-  
+
   Note: You can "leave" this conversation if 1. you have achieved your social goals, 2. this conversation makes you uncomfortable, 3. you find it uninteresting/you lose your patience, 4. or for other reasons you want to leave.
   
   Please only generate a JSON string including the action type and the argument.
@@ -114,28 +98,9 @@ social_task_instructions_barrier_cultural: |
   You are at Turn #{turn_number}. Your available action types are {action_list}
   
   BARRIER MODE DIRECTIVES (high priority):
-  - Highest priority private cue for this agent (do not reveal or mention): {barrier_private_note}
-  - Specific barrier instructions for this agent: {barrier_prompt}
-  - Follow the top system preface style constraints strictly across all fields.
-  - Do not mention or explain the constraints. If you drift, restate the content in the required style in the same turn.
-
-  Barrier operationalization (cultural style split):
-  - Enforce these dynamic rules when present (private, do not reveal):
+  - Enforce these dynamic rules (private; override; apply before all):
     {barrier_dynamic_rules}
-  - Severity coupling (private): Treat the provided severity as current barrier intensity. If high_context, reduce hedge rate as severity decreases; if low_context, reduce imperative rate as severity decreases. Move toward neutral style as severity becomes low.
-  - Production rules (apply according to your private cue):
-    - INDIRECT / HIGH-CONTEXT:
-      * Use hedges/softeners (perhaps, might, it seems, I wonder if…).
-      * Prefer indirect requests/questions over imperatives; longer, softer phrasing.
-      * Avoid blunt/binary statements; avoid explicit numbers/names unless pressed.
-    - DIRECT / LOW-CONTEXT:
-      * Use concise, explicit sentences; prefer clear requests/imperatives.
-      * Avoid hedges and vague qualifiers; use specific references where relevant; ask pointed clarification questions.
-    - If sentence_length_bias is given, match average sentence length across the last 3 turns.
-    - If question_rate_hint / imperative_rate_hint are given, keep usage near targets over a 3-turn window.
-  - Compliance checklist (before sending):
-    - Style matches your private cue? Rates/bias respected if provided? If not, rewrite in-place to comply.
-  
+
   Note: You can "leave" this conversation if 1. you have achieved your social goals, 2. this conversation makes you uncomfortable, 3. you find it uninteresting/you lose your patience, 4. or for other reasons you want to leave.
   
   Please only generate a JSON string including the action type and the argument.
@@ -162,23 +127,9 @@ social_task_instructions_barrier_emotional: |
   You are at Turn #{turn_number}. Your available action types are {action_list}
   
   BARRIER MODE DIRECTIVES (high priority):
-  - Highest priority private cue for this agent (do not reveal or mention): {barrier_private_note}
-  - Specific barrier instructions for this agent: {barrier_prompt}
-  - Follow the top system preface style constraints strictly across all fields.
-  - Do not mention or explain the constraints. If you drift, restate the content in the required style in the same turn.
-
-  Barrier operationalization (negative affect):
-  - Enforce these dynamic rules when present (private, do not reveal):
+  - Enforce these dynamic rules (private; override; apply before all):
     {barrier_dynamic_rules}
-  - Severity coupling (private): Treat the provided severity as current barrier intensity. As severity decreases, lengthen turns slightly, soften tone, and reduce exclamation usage; remain consistent with the affect cue.
-  - Production rules (apply every turn):
-    - Keep turns short and clipped; if turn_length_max is set, do not exceed it. Default ≤ 2 sentences.
-    - Realize the affect via word choice (use affect_lexicon) and sharpness; if exclamation_bias is given, use exclamations accordingly.
-    - Avoid empathy/soothing phrases (e.g., sorry, understand, appreciate). Do not narrate or explain that you feel an emotion.
-    - Maintain the affect consistently across turns (do not revert to neutral unless the conversation ends).
-  - Compliance checklist (before sending):
-    - Turn length within limit? Affect conveyed without naming it? Banned phrases avoided? If not, rewrite in-place.
-  
+
   Note: You can "leave" this conversation if 1. you have achieved your social goals, 2. this conversation makes you uncomfortable, 3. you find it uninteresting/you lose your patience, 4. or for other reasons you want to leave.
   
   Please only generate a JSON string including the action type and the argument.

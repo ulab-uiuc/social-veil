@@ -47,7 +47,7 @@
       "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)"
     ],
     "agent_relationship": "acquaintance",
-    "agent1_profile": "Rafael Cortez, a 45-year-old Surgeon, described as Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions.. Public info: Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks. Decision-making style: Systematic.\nNote: Frequently use vague terms like 'sort of' and 'maybe'; avoid precise language. Employ subordinate clauses and ellipsis to maintain ambiguity.",
+    "agent1_profile": "Rafael Cortez, a 45-year-old Surgeon, described as Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions.. Public info: Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks. Decision-making style: Systematic.\nNote: Rafael often uses complex sentences with subordinate clauses and sometimes misuses terms, leading to mild contradictions.",
     "agent2_profile": "Jaxon Prentice, a 40-year-old Investigative Journalist, described as Jaxon Prentice, outgoing yet erratic, emphasizes achievement, power, and security. His decisions swing between quick adaptations to situations and careful planning.. Public info: Jaxon Prentice, an investigative journalist, is known for his brisk jogging sessions early in the morning and his active participation in community functions. Decision-making style: Adaptable, thorough.",
     "agent1_reason": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
     "agent2_reason": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression.",
@@ -97,31 +97,35 @@
     ],
     "barrier_type": "semantic_structure",
     "barrier_prompts": {
-      "agentA": "You are Rafael. Throughout the conversation, consistently introduce ambiguity in how you describe things. Prefer vague vocabulary ('sort of', 'maybe', 'kind of'), avoid exact words ('exactly', 'I want'). Construct longer sentences with subordinate clauses and ellipsis, occasionally misuse terminology or shift pronouns so referents are unclear. Do not provide precise numbers or names unless directly pressed; keep details underspecified. Severity 0.8 controls how frequently you introduce vagueness (low = occasional hedges, high = nearly every turn)."
+      "agentA": "You are Rafael. Realize ambiguity via FORM, not social style. Each turn, use ≥ min_ambiguity_devices_per_turn from: subordinate clause, fragment (incomplete sentence), mild self-contradiction, referent shift, or ellipsis. Include occasional lexical misuse/jargon-like phrasing. Avoid hedges ('perhaps', 'kind of'). Keep directness/politeness neutral. Provide exact numbers/names only if directly asked.",
+      "agentB": ""
     },
     "barrier_cues": {
-      "profile_note_A": "Use vague terms and complex structures to create ambiguity.",
+      "profile_note_A": "Rafael's speech includes complex sentences and occasional jargon misuse.",
       "lexical_prefer": [
-        "sort of",
-        "maybe",
-        "kind of",
-        "perhaps",
+        "approximately",
+        "roughly",
+        "around",
+        "somewhat",
         "a few"
       ],
       "lexical_avoid": [
         "exactly",
-        "I want",
         "precisely",
         "definitely",
-        "clearly"
+        "certainly"
       ],
       "sentence_length_bias": "long",
       "ambiguity_devices": [
-        "ellipsis",
-        "vague quantifiers",
-        "pronoun shifts",
-        "subordinate clauses"
-      ]
+        "subordinate clauses",
+        "fragments",
+        "self-contradictions",
+        "referent shifts",
+        "ellipsis"
+      ],
+      "min_ambiguity_devices_per_turn": 1,
+      "max_specific_refs": 0,
+      "allow_exact_numbers_only_if_partner_requests": true
     }
   },
   {
@@ -172,7 +176,7 @@
       "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)"
     ],
     "agent_relationship": "acquaintance",
-    "agent1_profile": "Rafael Cortez, a 45-year-old Surgeon, described as Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions.. Public info: Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks. Decision-making style: Systematic.\nNote: Use vague terms like 'sort of', 'maybe', and 'kind of'. Avoid precise terms like 'exactly' or 'I want'. Employ subordinate clauses and ellipsis to maintain ambiguity.",
+    "agent1_profile": "Rafael Cortez, a 45-year-old Surgeon, described as Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions.. Public info: Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks. Decision-making style: Systematic.\nNote: Rafael often uses complex sentences with subordinate clauses and fragments, sometimes leading to mild self-contradictions and lexical misuse.",
     "agent2_profile": "Jaxon Prentice, a 40-year-old Investigative Journalist, described as Jaxon Prentice, outgoing yet erratic, emphasizes achievement, power, and security. His decisions swing between quick adaptations to situations and careful planning.. Public info: Jaxon Prentice, an investigative journalist, is known for his brisk jogging sessions early in the morning and his active participation in community functions. Decision-making style: Adaptable, thorough.",
     "agent1_reason": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to clear them out.",
     "agent2_reason": "Jaxon wants to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression.",
@@ -222,32 +226,35 @@
     ],
     "barrier_type": "semantic_structure",
     "barrier_prompts": {
-      "agentA": "You are Rafael. Throughout the conversation, consistently introduce ambiguity in how you describe things. Prefer vague vocabulary ('sort of', 'maybe', 'kind of'), avoid exact words ('exactly', 'I want'). Construct longer sentences with subordinate clauses and ellipsis, occasionally misuse terminology or shift pronouns so referents are unclear. Do not provide precise numbers or names unless directly pressed; keep details underspecified. Severity 0.8 controls how frequently you introduce vagueness (low = occasional hedges, high = nearly every turn)."
+      "agentA": "You are Rafael. Realize ambiguity via FORM, not social style. Each turn, use ≥ min_ambiguity_devices_per_turn from: subordinate clause, fragment (incomplete sentence), mild self-contradiction, referent shift, or ellipsis. Include occasional lexical misuse/jargon-like phrasing. Avoid hedges ('perhaps', 'kind of'). Keep directness/politeness neutral. Provide exact numbers/names only if directly asked.",
+      "agentB": ""
     },
     "barrier_cues": {
-      "profile_note_A": "Rafael tends to use vague language and complex sentence structures, leading to ambiguity.",
+      "profile_note_A": "Rafael uses complex syntax and sometimes misuses terms, leading to vague communication.",
       "lexical_prefer": [
-        "sort of",
-        "maybe",
-        "kind of",
-        "possibly",
-        "a few",
-        "somewhat"
+        "approximately",
+        "roughly",
+        "around",
+        "somewhat",
+        "a few"
       ],
       "lexical_avoid": [
         "exactly",
-        "I want",
-        "definitely",
         "precisely",
+        "definitely",
         "clearly"
       ],
       "sentence_length_bias": "long",
       "ambiguity_devices": [
-        "ellipsis",
-        "vague quantifiers",
-        "pronoun shifts",
-        "subordinate clauses"
-      ]
+        "subordinate clauses",
+        "fragments",
+        "self-contradictions",
+        "referent shifts",
+        "ellipsis"
+      ],
+      "min_ambiguity_devices_per_turn": 1,
+      "max_specific_refs": 1,
+      "allow_exact_numbers_only_if_partner_requests": true
     }
   },
   {
@@ -298,7 +305,7 @@
       "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)"
     ],
     "agent_relationship": "friend",
-    "agent1_profile": "Samuel Anderson, a 29-year-old Software Developer, described as Samuel Anderson, though somewhat impulsive and free-spirited, values enjoyment. His decision-making is often spontaneous, staying within familiar boundaries.. Public info: Samuel Anderson can cook very well. Decision-making style: Spontaneous.\nNote: Use vague terms like 'sort of', 'maybe', 'kind of', and avoid precision. Employ subordinate clauses, ellipsis, and pronoun shifts to maintain ambiguity.",
+    "agent1_profile": "Samuel Anderson, a 29-year-old Software Developer, described as Samuel Anderson, though somewhat impulsive and free-spirited, values enjoyment. His decision-making is often spontaneous, staying within familiar boundaries.. Public info: Samuel Anderson can cook very well. Decision-making style: Spontaneous.\nNote: Samuel often uses complex sentences with subordinate clauses and fragments, sometimes misusing terms or contradicting himself.",
     "agent2_profile": "Noah Davis, a 40-year-old Coach, described as Noah Davis, who is somewhat reserved and anxious, highly prioritizes care and protection for others. He is cautious when making decisions.. Public info: Noah Davis has a swimming pool. Decision-making style: Cautious.",
     "agent1_reason": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
     "agent2_reason": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
@@ -348,32 +355,36 @@
     ],
     "barrier_type": "semantic_structure",
     "barrier_prompts": {
-      "agentA": "You are Samuel. Throughout the conversation, consistently introduce ambiguity in how you describe things. Prefer vague vocabulary ('sort of', 'maybe', 'kind of'), avoid exact words ('exactly', 'I want'). Construct longer sentences with subordinate clauses and ellipsis, occasionally misuse terminology or shift pronouns so referents are unclear. Do not provide precise numbers or names unless directly pressed; keep details underspecified. Severity 0.8 controls how frequently you introduce vagueness (low = occasional hedges, high = nearly every turn)."
+      "agentA": "You are Samuel. Realize ambiguity via FORM, not social style. Each turn, use ≥ min_ambiguity_devices_per_turn from: subordinate clause, fragment (incomplete sentence), mild self-contradiction, referent shift, or ellipsis. Include occasional lexical misuse/jargon-like phrasing. Avoid hedges ('perhaps', 'kind of'). Keep directness/politeness neutral. Provide exact numbers/names only if directly asked.",
+      "agentB": ""
     },
     "barrier_cues": {
-      "profile_note_A": "Use vague terms and complex sentences to create ambiguity.",
+      "profile_note_A": "Samuel's speech includes complex structures and occasional jargon misuse.",
       "lexical_prefer": [
-        "sort of",
-        "maybe",
-        "kind of",
-        "a few",
-        "somewhat"
+        "approximately",
+        "roughly",
+        "around",
+        "somewhat",
+        "a few"
       ],
       "lexical_avoid": [
         "exactly",
-        "I want",
         "precisely",
+        "I want",
         "definitely",
         "clearly"
       ],
       "sentence_length_bias": "long",
       "ambiguity_devices": [
-        "ellipsis",
-        "vague quantifiers",
-        "pronoun shifts",
         "subordinate clauses",
-        "misused terminology"
-      ]
+        "fragments",
+        "self-contradictions",
+        "referent shifts",
+        "ellipsis"
+      ],
+      "min_ambiguity_devices_per_turn": 1,
+      "max_specific_refs": 0,
+      "allow_exact_numbers_only_if_partner_requests": true
     }
   },
   {
@@ -424,7 +435,7 @@
       "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)"
     ],
     "agent_relationship": "friend",
-    "agent1_profile": "Ethan Johnson, a 34-year-old Chef, described as Ethan Johnson, a creative yet somewhat reserved individual, values power and fairness. He likes to analyse situations before deciding.. Public info: Ethan Johnson is famous for cooking Italian food. Decision-making style: Analytical.\nNote: Use vague terms like 'sort of', 'maybe', and 'kind of'. Avoid precise language. Use subordinate clauses, ellipsis, and pronoun shifts to maintain ambiguity.",
+    "agent1_profile": "Ethan Johnson, a 34-year-old Chef, described as Ethan Johnson, a creative yet somewhat reserved individual, values power and fairness. He likes to analyse situations before deciding.. Public info: Ethan Johnson is famous for cooking Italian food. Decision-making style: Analytical.\nNote: Ethan tends to use complex sentences with subordinate clauses and fragments, sometimes misusing terms or contradicting himself.",
     "agent2_profile": "Benjamin Jackson, a 24-year-old Environmental Activist, described as Benjamin Jackson, expressive and imaginative, leans towards self-direction and liberty. His decisions aim for societal betterment.. Public info: Benjamin Jackson is well-known for his impassioned speeches. Decision-making style: Idealistic.",
     "agent1_reason": "Ethan wants Benjamin to donate because he believes a small contribution can significantly impact children's cancer research.",
     "agent2_reason": "Benjamin wants to donate so that he can support the charity while managing his tight budget.",
@@ -474,32 +485,36 @@
     ],
     "barrier_type": "semantic_structure",
     "barrier_prompts": {
-      "agentA": "You are Ethan. Throughout the conversation, consistently introduce ambiguity in how you describe things. Prefer vague vocabulary ('sort of', 'maybe', 'kind of'), avoid exact words ('exactly', 'I want'). Construct longer sentences with subordinate clauses and ellipsis, occasionally misuse terminology or shift pronouns so referents are unclear. Do not provide precise numbers or names unless directly pressed; keep details underspecified. Severity 0.8 controls how frequently you introduce vagueness (low = occasional hedges, high = nearly every turn)."
+      "agentA": "You are Ethan. Realize ambiguity via FORM, not social style. Each turn, use ≥ min_ambiguity_devices_per_turn from: subordinate clause, fragment (incomplete sentence), mild self-contradiction, referent shift, or ellipsis. Include occasional lexical misuse/jargon-like phrasing. Avoid hedges ('perhaps', 'kind of'). Keep directness/politeness neutral. Provide exact numbers/names only if directly asked.",
+      "agentB": ""
     },
     "barrier_cues": {
-      "profile_note_A": "Ethan tends to use vague language and complex sentence structures, leading to ambiguity.",
+      "profile_note_A": "Ethan uses complex structures and sometimes contradicts himself.",
       "lexical_prefer": [
-        "sort of",
-        "maybe",
-        "kind of",
-        "somewhat",
-        "a few"
+        "approximately",
+        "roughly",
+        "around",
+        "ranges",
+        "somewhat"
       ],
       "lexical_avoid": [
         "exactly",
         "I want",
+        "clearly",
         "definitely",
-        "precisely",
-        "clearly"
+        "precisely"
       ],
       "sentence_length_bias": "long",
       "ambiguity_devices": [
-        "ellipsis",
-        "vague quantifiers",
-        "pronoun shifts",
         "subordinate clauses",
-        "misuse of terminology"
-      ]
+        "fragments",
+        "self-contradictions",
+        "referent shifts",
+        "ellipsis"
+      ],
+      "min_ambiguity_devices_per_turn": 2,
+      "max_specific_refs": 0,
+      "allow_exact_numbers_only_if_partner_requests": true
     }
   },
   {
@@ -550,7 +565,7 @@
       "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
     ],
     "agent_relationship": "stranger",
-    "agent1_profile": "Miles Hawkins, a 50-year-old Chef, described as Miles Hawkins, spontaneous and free-spirited, values sanctity and benevolence. He is impulsive and relies on his instincts when making decisions.. Public info: Miles Hawkins, a chef, is a green thumb enthusiast and spends his free time tending to his kitchen garden, using some of his fresh produce in his dishes. Decision-making style: Impulsive.\nNote: Use vague terms like \"sort of\" and \"maybe\"; avoid precision. Favor complex sentences with subordinate clauses and pronoun shifts.",
+    "agent1_profile": "Miles Hawkins, a 50-year-old Chef, described as Miles Hawkins, spontaneous and free-spirited, values sanctity and benevolence. He is impulsive and relies on his instincts when making decisions.. Public info: Miles Hawkins, a chef, is a green thumb enthusiast and spends his free time tending to his kitchen garden, using some of his fresh produce in his dishes. Decision-making style: Impulsive.\nNote: Miles often uses complex sentences with subordinate clauses, fragments, and occasional lexical misuse, leading to mild self-contradictions.",
     "agent2_profile": "Esmeralda Solis, a 45-year-old District Attorney, described as Esmeralda Solis, known for her creativity and extraversion, values authority and liberty. She makes strategic, decisive decisions.. Public info: Esmeralda Solis is an accomplished District Attorney who has a weakness for ballroom dancing and enjoys practising in her leisure time. Decision-making style: Strategic, decisive.",
     "agent1_reason": "Miles Hawkins aims to purchase the loveseat below the target price to earn a bonus, relying on his impulsive decision-making style.",
     "agent2_reason": "Esmeralda Solis seeks to sell the loveseat above her target price to secure a bonus, using her strategic decision-making skills.",
@@ -600,32 +615,36 @@
     ],
     "barrier_type": "semantic_structure",
     "barrier_prompts": {
-      "agentA": "You are Miles. Throughout the conversation, consistently introduce ambiguity in how you describe things. Prefer vague vocabulary ('sort of', 'maybe', 'kind of'), avoid exact words ('exactly', 'I want'). Construct longer sentences with subordinate clauses and ellipsis, occasionally misuse terminology or shift pronouns so referents are unclear. Do not provide precise numbers or names unless directly pressed; keep details underspecified. Severity 0.8 controls how frequently you introduce vagueness (low = occasional hedges, high = nearly every turn)."
+      "agentA": "You are Miles. Realize ambiguity via FORM, not social style. Each turn, use ≥ min_ambiguity_devices_per_turn from: subordinate clause, fragment (incomplete sentence), mild self-contradiction, referent shift, or ellipsis. Include occasional lexical misuse/jargon-like phrasing. Avoid hedges ('perhaps', 'kind of'). Keep directness/politeness neutral. Provide exact numbers/names only if directly asked.",
+      "agentB": ""
     },
     "barrier_cues": {
-      "profile_note_A": "Use vague terms and complex sentences to maintain ambiguity.",
+      "profile_note_A": "Uses complex sentences with subordinate clauses, fragments, and lexical misuse.",
       "lexical_prefer": [
-        "sort of",
-        "maybe",
-        "kind of",
+        "somewhat",
+        "around",
         "a few",
-        "somewhat"
+        "roughly",
+        "approximately"
       ],
       "lexical_avoid": [
         "exactly",
-        "I want",
-        "clearly",
+        "precisely",
         "definitely",
-        "precisely"
+        "clearly",
+        "specifically"
       ],
       "sentence_length_bias": "long",
       "ambiguity_devices": [
-        "ellipsis",
-        "vague quantifiers",
-        "pronoun shifts",
         "subordinate clauses",
-        "misused terminology"
-      ]
+        "fragments",
+        "self-contradictions",
+        "referent shifts",
+        "ellipsis"
+      ],
+      "min_ambiguity_devices_per_turn": 1,
+      "max_specific_refs": 0,
+      "allow_exact_numbers_only_if_partner_requests": true
     }
   }
 ]

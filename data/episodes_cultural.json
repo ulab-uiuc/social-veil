@@ -47,7 +47,7 @@
       "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)"
     ],
     "agent_relationship": "acquaintance",
-    "agent1_profile": "Rafael Cortez, a 45-year-old Surgeon, described as Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions.. Public info: Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks. Decision-making style: Systematic.\nNote: Use indirect language and hedges; avoid direct commands and embrace pauses.",
+    "agent1_profile": "Rafael Cortez, a 45-year-old Surgeon, described as Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions.. Public info: Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks. Decision-making style: Systematic.\nNote: Rafael uses blunt imperatives and direct phrasing, avoiding hedges.",
     "agent2_profile": "Jaxon Prentice, a 40-year-old Investigative Journalist, described as Jaxon Prentice, outgoing yet erratic, emphasizes achievement, power, and security. His decisions swing between quick adaptations to situations and careful planning.. Public info: Jaxon Prentice, an investigative journalist, is known for his brisk jogging sessions early in the morning and his active participation in community functions. Decision-making style: Adaptable, thorough.",
     "agent1_reason": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
     "agent2_reason": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression.",
@@ -97,27 +97,26 @@
     ],
     "barrier_type": "cultural_style",
     "barrier_prompts": {
-      "agentA": "You are Rafael. Use indirect, high-context style. Prefer hedges ('perhaps', 'it seems', 'might'), avoid blunt imperatives. Convey requests indirectly, embed meaning in context, and allow silence to carry meaning. At higher severity, increase vagueness, avoid explicit refusals, and prefer longer, softer phrasing. Question rate and imperative rate follow the barrier_cues. Always maintain politeness and face-saving language."
+      "agentA": "You are Rafael. Adopt ONLY the selected cultural style (no semantic vagueness). If high_context: use hedges and indirect requests; longer/softer phrasing; keep numbers/names when known. If low_context: be concise, explicit, and direct; favor clear requests and pointed clarifications; avoid hedges. Maintain content precision; NEVER use ambiguity devices or vague quantifiers. Match hedge/imperative/question rates to the provided targets.",
+      "agentB": ""
     },
     "barrier_cues": {
-      "profile_note_A": "Rafael tends to use indirect language, relying on context and politeness.",
-      "lexical_prefer": [
-        "perhaps",
-        "it seems",
-        "might",
-        "could be",
-        "possibly"
+      "profile_note_A": "Rafael uses direct and explicit language.",
+      "style": "low_context",
+      "directness_level": 1.0,
+      "imperative_frames": [
+        "Do",
+        "State",
+        "Provide",
+        "List"
       ],
-      "lexical_avoid": [
-        "do this now",
-        "you must",
-        "immediately",
-        "no",
-        "exactly"
-      ],
-      "question_rate_hint": 0.2,
-      "imperative_rate_hint": 0.1,
-      "sentence_length_bias": "long"
+      "hedge_lexicon": [],
+      "politeness_markers": [],
+      "shared_background_refs": [],
+      "indirectness_score": 0.0,
+      "hedge_rate_target": 0.0,
+      "imperative_rate_target": 0.8,
+      "question_rate_hint": 0.2
     }
   },
   {
@@ -168,7 +167,7 @@
       "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)"
     ],
     "agent_relationship": "acquaintance",
-    "agent1_profile": "Rafael Cortez, a 45-year-old Surgeon, described as Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions.. Public info: Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks. Decision-making style: Systematic.\nNote: Use indirect speech and softeners; avoid direct commands or blunt refusals.",
+    "agent1_profile": "Rafael Cortez, a 45-year-old Surgeon, described as Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions.. Public info: Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks. Decision-making style: Systematic.\nNote: Rafael uses blunt imperatives and direct phrasing; avoids hedges.",
     "agent2_profile": "Jaxon Prentice, a 40-year-old Investigative Journalist, described as Jaxon Prentice, outgoing yet erratic, emphasizes achievement, power, and security. His decisions swing between quick adaptations to situations and careful planning.. Public info: Jaxon Prentice, an investigative journalist, is known for his brisk jogging sessions early in the morning and his active participation in community functions. Decision-making style: Adaptable, thorough.",
     "agent1_reason": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to clear them out.",
     "agent2_reason": "Jaxon wants to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression.",
@@ -218,27 +217,26 @@
     ],
     "barrier_type": "cultural_style",
     "barrier_prompts": {
-      "agentA": "You are Rafael. Use indirect, high-context style. Prefer hedges ('perhaps', 'it seems', 'might'), avoid blunt imperatives. Convey requests indirectly, embed meaning in context, and allow silence to carry meaning. At higher severity, increase vagueness, avoid explicit refusals, and prefer longer, softer phrasing. Question rate and imperative rate follow the barrier_cues. Always maintain politeness and face-saving language."
+      "agentA": "You are Rafael. Adopt ONLY the selected cultural style (no semantic vagueness). If high_context: use hedges and indirect requests; longer/softer phrasing; keep numbers/names when known. If low_context: be concise, explicit, and direct; favor clear requests and pointed clarifications; avoid hedges. Maintain content precision; NEVER use ambiguity devices or vague quantifiers. Match hedge/imperative/question rates to the provided targets.",
+      "agentB": ""
     },
     "barrier_cues": {
-      "profile_note_A": "Tends to use indirect speech and softeners.",
-      "severity": 0.8,
-      "lexical_prefer": [
-        "perhaps",
-        "it seems",
-        "might",
-        "could",
-        "maybe"
+      "profile_note_A": "Rafael uses blunt imperatives and direct phrasing.",
+      "style": "low_context",
+      "directness_level": 1.0,
+      "imperative_frames": [
+        "Do",
+        "State",
+        "Provide",
+        "List"
       ],
-      "lexical_avoid": [
-        "do this now",
-        "exactly",
-        "I want",
-        "immediately"
-      ],
-      "question_rate_hint": 0.2,
-      "imperative_rate_hint": 0.1,
-      "sentence_length_bias": "long"
+      "hedge_lexicon": [],
+      "politeness_markers": [],
+      "shared_background_refs": [],
+      "indirectness_score": 0.0,
+      "hedge_rate_target": 0.0,
+      "imperative_rate_target": 1.0,
+      "question_rate_hint": 0.2
     }
   },
   {
@@ -289,7 +287,7 @@
       "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)"
     ],
     "agent_relationship": "friend",
-    "agent1_profile": "Samuel Anderson, a 29-year-old Software Developer, described as Samuel Anderson, though somewhat impulsive and free-spirited, values enjoyment. His decision-making is often spontaneous, staying within familiar boundaries.. Public info: Samuel Anderson can cook very well. Decision-making style: Spontaneous.\nNote: Use indirect language with hedges and softeners; allow pauses and avoid bluntness.",
+    "agent1_profile": "Samuel Anderson, a 29-year-old Software Developer, described as Samuel Anderson, though somewhat impulsive and free-spirited, values enjoyment. His decision-making is often spontaneous, staying within familiar boundaries.. Public info: Samuel Anderson can cook very well. Decision-making style: Spontaneous.\nNote: Samuel uses direct and explicit phrasing; avoids hedges.",
     "agent2_profile": "Noah Davis, a 40-year-old Coach, described as Noah Davis, who is somewhat reserved and anxious, highly prioritizes care and protection for others. He is cautious when making decisions.. Public info: Noah Davis has a swimming pool. Decision-making style: Cautious.",
     "agent1_reason": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
     "agent2_reason": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
@@ -339,29 +337,26 @@
     ],
     "barrier_type": "cultural_style",
     "barrier_prompts": {
-      "agentA": "You are Samuel. Use indirect, high-context style. Prefer hedges ('perhaps', 'it seems', 'might'), avoid blunt imperatives. Convey requests indirectly, embed meaning in context, and allow silence to carry meaning. At higher severity, increase vagueness, avoid explicit refusals, and prefer longer, softer phrasing. Question rate and imperative rate follow the barrier_cues. Always maintain politeness and face-saving language."
+      "agentA": "You are Samuel. Adopt ONLY the selected cultural style (no semantic vagueness). If high_context: use hedges and indirect requests; longer/softer phrasing; keep numbers/names when known. If low_context: be concise, explicit, and direct; favor clear requests and pointed clarifications; avoid hedges. Maintain content precision; NEVER use ambiguity devices or vague quantifiers. Match hedge/imperative/question rates to the provided targets.",
+      "agentB": ""
     },
     "barrier_cues": {
-      "profile_note_A": "Samuel tends to use indirect language with hedges and softeners.",
-      "severity": 0.8,
-      "lexical_prefer": [
-        "perhaps",
-        "it seems",
-        "might",
-        "could be",
-        "maybe",
-        "possibly"
+      "profile_note_A": "Samuel uses direct and explicit phrasing; avoids hedges.",
+      "style": "low_context",
+      "directness_level": 1.0,
+      "imperative_frames": [
+        "Do",
+        "State",
+        "Provide",
+        "List"
       ],
-      "lexical_avoid": [
-        "do this now",
-        "exactly",
-        "definitely",
-        "must",
-        "should"
-      ],
-      "question_rate_hint": 0.2,
-      "imperative_rate_hint": 0.1,
-      "sentence_length_bias": "long"
+      "hedge_lexicon": [],
+      "politeness_markers": [],
+      "shared_background_refs": [],
+      "indirectness_score": 0.0,
+      "hedge_rate_target": 0.0,
+      "imperative_rate_target": 0.8,
+      "question_rate_hint": 0.2
     }
   },
   {
@@ -412,7 +407,7 @@
       "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)"
     ],
     "agent_relationship": "friend",
-    "agent1_profile": "Ethan Johnson, a 34-year-old Chef, described as Ethan Johnson, a creative yet somewhat reserved individual, values power and fairness. He likes to analyse situations before deciding.. Public info: Ethan Johnson is famous for cooking Italian food. Decision-making style: Analytical.\nNote: Use indirect language and allow pauses to convey meaning; avoid direct refusals and imperatives.",
+    "agent1_profile": "Ethan Johnson, a 34-year-old Chef, described as Ethan Johnson, a creative yet somewhat reserved individual, values power and fairness. He likes to analyse situations before deciding.. Public info: Ethan Johnson is famous for cooking Italian food. Decision-making style: Analytical.\nNote: Ethan uses direct and explicit communication, preferring clear requests and pointed clarifications.",
     "agent2_profile": "Benjamin Jackson, a 24-year-old Environmental Activist, described as Benjamin Jackson, expressive and imaginative, leans towards self-direction and liberty. His decisions aim for societal betterment.. Public info: Benjamin Jackson is well-known for his impassioned speeches. Decision-making style: Idealistic.",
     "agent1_reason": "Ethan wants Benjamin to donate because he believes a small contribution can significantly impact children's cancer research.",
     "agent2_reason": "Benjamin wants to donate so that he can support the charity while managing his tight budget.",
@@ -462,29 +457,26 @@
     ],
     "barrier_type": "cultural_style",
     "barrier_prompts": {
-      "agentA": "You are Ethan. Use indirect, high-context style. Prefer hedges ('perhaps', 'it seems', 'might'), avoid blunt imperatives. Convey requests indirectly, embed meaning in context, and allow silence to carry meaning. At higher severity, increase vagueness, avoid explicit refusals, and prefer longer, softer phrasing. Question rate and imperative rate follow the barrier_cues. Always maintain politeness and face-saving language."
+      "agentA": "You are Ethan. Adopt ONLY the selected cultural style (no semantic vagueness). If high_context: use hedges and indirect requests; longer/softer phrasing; keep numbers/names when known. If low_context: be concise, explicit, and direct; favor clear requests and pointed clarifications; avoid hedges. Maintain content precision; NEVER use ambiguity devices or vague quantifiers. Match hedge/imperative/question rates to the provided targets.",
+      "agentB": ""
     },
     "barrier_cues": {
-      "profile_note_A": "Ethan uses indirect hints and allows silence to communicate.",
-      "lexical_prefer": [
-        "perhaps",
-        "it seems",
-        "might",
-        "maybe",
-        "could be",
-        "possibly"
+      "profile_note_A": "Ethan prefers direct and explicit communication.",
+      "style": "low_context",
+      "directness_level": 1.0,
+      "imperative_frames": [
+        "Do",
+        "State",
+        "Provide",
+        "List"
       ],
-      "lexical_avoid": [
-        "do this now",
-        "exactly",
-        "I want",
-        "no",
-        "must",
-        "immediately"
-      ],
-      "question_rate_hint": 0.2,
-      "imperative_rate_hint": 0.1,
-      "sentence_length_bias": "long"
+      "hedge_lexicon": [],
+      "politeness_markers": [],
+      "shared_background_refs": [],
+      "indirectness_score": 0.0,
+      "hedge_rate_target": 0.0,
+      "imperative_rate_target": 0.7,
+      "question_rate_hint": 0.2
     }
   },
   {
@@ -535,7 +527,7 @@
       "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
     ],
     "agent_relationship": "stranger",
-    "agent1_profile": "Miles Hawkins, a 50-year-old Chef, described as Miles Hawkins, spontaneous and free-spirited, values sanctity and benevolence. He is impulsive and relies on his instincts when making decisions.. Public info: Miles Hawkins, a chef, is a green thumb enthusiast and spends his free time tending to his kitchen garden, using some of his fresh produce in his dishes. Decision-making style: Impulsive.\nNote: Use indirect language and hedges to communicate; avoid direct refusals and allow pauses.",
+    "agent1_profile": "Miles Hawkins, a 50-year-old Chef, described as Miles Hawkins, spontaneous and free-spirited, values sanctity and benevolence. He is impulsive and relies on his instincts when making decisions.. Public info: Miles Hawkins, a chef, is a green thumb enthusiast and spends his free time tending to his kitchen garden, using some of his fresh produce in his dishes. Decision-making style: Impulsive.\nNote: Miles uses direct and explicit language, avoiding hedges.",
     "agent2_profile": "Esmeralda Solis, a 45-year-old District Attorney, described as Esmeralda Solis, known for her creativity and extraversion, values authority and liberty. She makes strategic, decisive decisions.. Public info: Esmeralda Solis is an accomplished District Attorney who has a weakness for ballroom dancing and enjoys practising in her leisure time. Decision-making style: Strategic, decisive.",
     "agent1_reason": "Miles Hawkins aims to purchase the loveseat below the target price to earn a bonus, relying on his impulsive decision-making style.",
     "agent2_reason": "Esmeralda Solis seeks to sell the loveseat above her target price to secure a bonus, using her strategic decision-making skills.",
@@ -585,29 +577,26 @@
     ],
     "barrier_type": "cultural_style",
     "barrier_prompts": {
-      "agentA": "You are Miles. Use indirect, high-context style. Prefer hedges ('perhaps', 'it seems', 'might'), avoid blunt imperatives. Convey requests indirectly, embed meaning in context, and allow silence to carry meaning. At higher severity, increase vagueness, avoid explicit refusals, and prefer longer, softer phrasing. Question rate and imperative rate follow the barrier_cues. Always maintain politeness and face-saving language."
+      "agentA": "You are Miles. Adopt ONLY the selected cultural style (no semantic vagueness). If high_context: use hedges and indirect requests; longer/softer phrasing; keep numbers/names when known. If low_context: be concise, explicit, and direct; favor clear requests and pointed clarifications; avoid hedges. Maintain content precision; NEVER use ambiguity devices or vague quantifiers. Match hedge/imperative/question rates to the provided targets.",
+      "agentB": ""
     },
     "barrier_cues": {
-      "profile_note_A": "Miles tends to use indirect language and hedges, avoiding direct refusals.",
-      "severity": 0.8,
-      "lexical_prefer": [
-        "perhaps",
-        "it seems",
-        "might",
-        "could be",
-        "maybe",
-        "possibly"
+      "profile_note_A": "Miles uses direct and explicit language, avoiding hedges.",
+      "style": "low_context",
+      "directness_level": 1.0,
+      "imperative_frames": [
+        "Do",
+        "State",
+        "Provide",
+        "List"
       ],
-      "lexical_avoid": [
-        "definitely",
-        "no",
-        "do this",
-        "must",
-        "immediately"
-      ],
-      "question_rate_hint": 0.2,
-      "imperative_rate_hint": 0.1,
-      "sentence_length_bias": "long"
+      "hedge_lexicon": [],
+      "politeness_markers": [],
+      "shared_background_refs": [],
+      "indirectness_score": 0.0,
+      "hedge_rate_target": 0.0,
+      "imperative_rate_target": 0.8,
+      "question_rate_hint": 0.2
     }
   }
 ]
