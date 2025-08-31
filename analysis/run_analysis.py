@@ -57,17 +57,14 @@ def main():
     parser = argparse.ArgumentParser(description="Run barrier representation analysis using real social_task.yaml prompts")
     parser.add_argument("--model", type=str, default="Qwen/Qwen2.5-7B-Instruct",
                        help="Model name to analyze")
-    parser.add_argument("--episodes", type=str, default="data/episode_sample.jsonl",
+    parser.add_argument("--episodes", type=str, default="data/episode_all.jsonl",
                        help="Baseline episodes file to use (barrier episodes loaded automatically)")
-    parser.add_argument("--severity", type=float, default=0.8,
-                       help="Barrier severity level")
     
     args = parser.parse_args()
     
     run_full_analysis(
         model_name=args.model,
         episodes_file=args.episodes,
-        severity=args.severity
     )
     
     print("\n💡 Analysis Tips:")
@@ -75,7 +72,6 @@ def main():
     print("  2. Review analysis_summary.md for statistical results")
     print("  3. Look at visualizations to see cluster separation")
     print("  4. If no significant effects, try:")
-    print("     - Increasing severity (0.9+)")
     print("     - Using more episodes (5-10)")
     print("     - Different model or layers")
     print("\n📂 All prompts use actual templates from configs/social_task.yaml")

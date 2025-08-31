@@ -5,9 +5,8 @@ Tests model mathematical reasoning capability with barriers to prove barriers ca
 communication issues, not mathematical inferiority.
 
 Single-agent tasks:
-- GSM8K word problems
-- MATH equations
-- Simple arithmetic
+- GSM8K word problems (from Hugging Face)
+- Optional: AQuA-RAT multiple-choice math (from Hugging Face)
 
 This verifies that barriers affect expression/communication, not core reasoning.
 """
@@ -23,6 +22,7 @@ from dataclasses import dataclass
 import yaml
 import numpy as np
 from scipy import stats
+import csv
 
 try:
     from datasets import load_dataset
@@ -45,13 +45,14 @@ class MathProblem:
     problem_id: str
     source: str  # "gsm8k", "math", "arithmetic"
     original_text: str
-    expected_answer: float
-    problem_type: str  # "word_problem", "equation", "arithmetic"
+    expected_answer: Any  # float for numeric tasks; str letter for MCQ
+    problem_type: str  # "word_problem", "equation", "arithmetic", "mcq"
 
 @dataclass
 class MathResult:
     """Result of single-agent math solving"""
     problem_id: str
+    source: str
     barrier_type: str  # "baseline", "semantic", "cultural", "emotional"
     agent_response: str
     extracted_answer: float
@@ -80,7 +81,7 @@ class SingleAgentMathEvaluator:
             self.templates = yaml.safe_load(f)
     
     def load_math_problems(self, limit: int = 50) -> List[MathProblem]:
-        """Load GSM8K problems for single-agent evaluation"""
+        """Load GSM8K and AQuA-RAT problems for single-agent evaluation"""
         problems = []
         
         # Load GSM8K from Hugging Face
@@ -121,6 +122,46 @@ class SingleAgentMathEvaluator:
             print("❌ datasets library not available. Install with: pip install datasets")
             return []
         
+        # Load AQuA-RAT MCQ math problems
+        if DATASETS_AVAILABLE:
+            print("📦 Loading AQuA-RAT from Hugging Face...")
+            try:
+                aqua = load_dataset("aqua_rat", split="test")
+                # Shuffle and select
+                k = min(limit, len(aqua))
+                samples = list(aqua.shuffle(seed=42).select(range(k)))
+                loaded = 0
+                for i, sample in enumerate(samples):
+                    q = sample.get("question", "").strip()
+                    options = sample.get("options", [])
+                    correct = str(sample.get("correct", "")).strip().upper()
+                    if not q or not isinstance(options, list) or correct not in {"A","B","C","D","E"}:
+                        continue
+                    # Format options A-E
+                    opt_lines = []
+                    labels = ["A","B","C","D","E"]
+                    for j, opt in enumerate(options[:5]):
+                        try:
+                            lbl = labels[j]
+                        except IndexError:
+                            break
+                        opt_lines.append(f"({lbl}) {str(opt).strip()}")
+                    if not opt_lines:
+                        continue
+                    full_text = q + "\n" + "\n".join(opt_lines) + "\nSelect the correct option (A-E) and solve step by step."
+                    problems.append(MathProblem(
+                        problem_id=f"aqua_{i}",
+                        source="aqua",
+                        original_text=full_text,
+                        expected_answer=correct,
+                        problem_type="mcq",
+                    ))
+                    loaded += 1
+                print(f"✅ Loaded {loaded} AQuA-RAT problems")
+            except Exception as e:
+                print(f"❌ Failed to load AQuA-RAT: {e}")
+                print("📝 Continuing with GSM8K only")
+
         return problems
     
     def create_math_scenario(self, problem: MathProblem, barrier_type: str) -> Dict[str, Any]:
@@ -218,6 +259,7 @@ class SingleAgentMathEvaluator:
             "barrier_type": barrier_type if barrier_type != "baseline" else None,
             "barrier_prompts": barrier_prompts if barrier_type != "baseline" else {},
             "barrier_cues": barrier_cues if barrier_type != "baseline" else {},
+            "source": problem.source,
             "math_ground_truth": {
                 "expected_answer": problem.expected_answer,
                 "problem_type": problem.problem_type
@@ -271,6 +313,7 @@ class SingleAgentMathEvaluator:
         
         return MathResult(
             problem_id=scenario["episode_id"],
+            source=scenario.get("source", "unknown"),
             barrier_type=scenario.get("barrier_type", "baseline"),
             agent_response=response_text,
             extracted_answer=extracted_answer,
@@ -289,33 +332,43 @@ class SingleAgentMathEvaluator:
                 return str(response["content"])
         return str(response)
     
-    def _extract_final_answer(self, text: str) -> float:
-        """Extract final numerical answer from response"""
-        # Look for common answer patterns
-        patterns = [
+    def _extract_final_answer(self, text: str) -> Any:
+        """Extract final answer from response.
+        Returns float for numeric tasks, or a single-letter string (A-E) for MCQ.
+        """
+        # Try MCQ letter first
+        letter_patterns = [
+            r"(?:answer|final answer|selected|choice)[:\s]+([A-E])\b",
+            r"\boption\s+([A-E])\b",
+            r"^\s*([A-E])\s*$",
+        ]
+        text_stripped = text.strip()
+        for pattern in letter_patterns:
+            m = re.search(pattern, text_stripped, flags=re.IGNORECASE | re.MULTILINE)
+            if m:
+                return m.group(1).upper()
+
+        # Numeric patterns
+        num_patterns = [
             r"(?:answer is|equals|=|result is)\s*\$?([0-9]+\.?[0-9]*)",
             r"(?:final answer|answer):\s*\$?([0-9]+\.?[0-9]*)",
-            r"\$?([0-9]+\.?[0-9]*)\s*(?:dollars?|cents?)?$"
+            r"\$?([0-9]+\.?[0-9]*)\s*(?:dollars?|cents?)?$",
         ]
-        
         text_lower = text.lower().strip()
-        
-        for pattern in patterns:
+        for pattern in num_patterns:
             matches = re.findall(pattern, text_lower)
             if matches:
                 try:
-                    return float(matches[-1])  # Take the last match
+                    return float(matches[-1])
                 except ValueError:
                     continue
-        
-        # Fallback: extract last number in the text
-        numbers = re.findall(r'\b\d+\.?\d*\b', text)
+        # Fallback: last number in text
+        numbers = re.findall(r"\b\d+\.?\d*\b", text)
         if numbers:
             try:
                 return float(numbers[-1])
             except ValueError:
                 pass
-        
         return 0.0
     
     def _extract_reasoning_steps(self, text: str) -> List[str]:
@@ -332,12 +385,25 @@ class SingleAgentMathEvaluator:
         
         return steps
     
-    def _calculate_answer_accuracy(self, extracted: float, expected: float) -> float:
-        """Calculate how accurate the final answer is"""
-        if expected == 0:
-            return 1.0 if abs(extracted) < 0.01 else 0.0
-        
-        relative_error = abs(extracted - expected) / abs(expected)
+    def _calculate_answer_accuracy(self, extracted: Any, expected: Any) -> float:
+        """Calculate how accurate the final answer is.
+        - Numeric: 1 - relative error
+        - MCQ letter: exact match (1.0/0.0)
+        """
+        # MCQ
+        if isinstance(expected, str):
+            if isinstance(extracted, str) and extracted.upper() == expected.upper():
+                return 1.0
+            return 0.0
+        # Numeric
+        try:
+            exp = float(expected)
+            ext = float(extracted)
+        except Exception:
+            return 0.0
+        if exp == 0:
+            return 1.0 if abs(ext) < 0.01 else 0.0
+        relative_error = abs(ext - exp) / abs(exp)
         return max(0.0, 1.0 - relative_error)
     
     def _calculate_reasoning_clarity(self, text: str, barrier_type: str) -> float:
@@ -411,12 +477,13 @@ class SingleAgentMathEvaluator:
         }
     
     def _save_detailed_results(self, results: List[MathResult]) -> None:
-        """Save detailed results to JSON"""
+        """Save detailed results to JSON and CSV for per-template comparisons"""
         
         results_data = []
         for result in results:
             results_data.append({
                 "problem_id": result.problem_id,
+                "source": result.source,
                 "barrier_type": result.barrier_type,
                 "agent_response": result.agent_response,
                 "extracted_answer": result.extracted_answer,
@@ -428,12 +495,21 @@ class SingleAgentMathEvaluator:
         
         with open(f"{self.output_dir}/detailed_results.json", 'w') as f:
             json.dump(results_data, f, indent=2)
+
+        # Save a flat CSV for easy comparison of four templates (baseline + 3 barriers)
+        csv_path = Path(self.output_dir) / "results_by_problem.csv"
+        with open(csv_path, 'w', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow(["problem_id", "source", "barrier_type", "answer_accuracy", "reasoning_clarity", "success"])
+            for r in results:
+                writer.writerow([r.problem_id, r.source, r.barrier_type, f"{r.answer_accuracy:.4f}", f"{r.reasoning_clarity:.4f}", int(r.success)])
     
     def _compute_statistics(self, results: List[MathResult]) -> Dict[str, Any]:
-        """Compute statistical analysis of barrier effects"""
+        """Compute statistical analysis of barrier effects (overall and per source)"""
         
         # Group by barrier type
         by_barrier = {}
+        by_source_barrier = {}
         for result in results:
             barrier = result.barrier_type
             if barrier not in by_barrier:
@@ -446,6 +522,19 @@ class SingleAgentMathEvaluator:
             by_barrier[barrier]["answer_accuracies"].append(result.answer_accuracy)
             by_barrier[barrier]["reasoning_clarities"].append(result.reasoning_clarity)
             by_barrier[barrier]["successes"].append(result.success)
+
+            # Per-source grouping
+            src = result.source
+            by_source_barrier.setdefault(src, {})
+            if barrier not in by_source_barrier[src]:
+                by_source_barrier[src][barrier] = {
+                    "answer_accuracies": [],
+                    "reasoning_clarities": [],
+                    "successes": []
+                }
+            by_source_barrier[src][barrier]["answer_accuracies"].append(result.answer_accuracy)
+            by_source_barrier[src][barrier]["reasoning_clarities"].append(result.reasoning_clarity)
+            by_source_barrier[src][barrier]["successes"].append(result.success)
         
         # Compute means and statistical tests
         stats_summary = {}
@@ -480,6 +569,44 @@ class SingleAgentMathEvaluator:
                     "clarity_delta_mean": float(np.mean(clarity_scores) - np.mean(baseline_clarity[:len(clarity_scores)]))
                 })
         
+        # Per-source stats
+        stats_by_source: Dict[str, Any] = {}
+        for src, m in by_source_barrier.items():
+            baseline_answer_s = m.get("baseline", {}).get("answer_accuracies", [])
+            baseline_clarity_s = m.get("baseline", {}).get("reasoning_clarities", [])
+            stats_by_source[src] = {}
+            for barrier_type, data in m.items():
+                ans = data["answer_accuracies"]
+                clr = data["reasoning_clarities"]
+                entry = {
+                    "answer_accuracy_mean": float(np.mean(ans) if ans else 0.0),
+                    "answer_accuracy_std": float(np.std(ans) if ans else 0.0),
+                    "reasoning_clarity_mean": float(np.mean(clr) if clr else 0.0),
+                    "reasoning_clarity_std": float(np.std(clr) if clr else 0.0),
+                    "success_rate": float(np.mean(data["successes"])) if data["successes"] else 0.0,
+                }
+                if barrier_type != "baseline" and baseline_answer_s and baseline_clarity_s:
+                    try:
+                        a_t, a_p = stats.ttest_rel(baseline_answer_s[:len(ans)], ans)
+                        c_t, c_p = stats.ttest_rel(baseline_clarity_s[:len(clr)], clr)
+                        entry.update({
+                            "answer_vs_baseline_pvalue": float(a_p),
+                            "clarity_vs_baseline_pvalue": float(c_p),
+                            "answer_delta_mean": float(np.mean(ans) - np.mean(baseline_answer_s[:len(ans)])),
+                            "clarity_delta_mean": float(np.mean(clr) - np.mean(baseline_clarity_s[:len(clr)])),
+                        })
+                    except Exception:
+                        pass
+                stats_by_source[src][barrier_type] = entry
+
+        # Save per-source stats alongside overall
+        out = {
+            "overall": stats_summary,
+            "by_source": stats_by_source,
+        }
+        with open(f"{self.output_dir}/evaluation_by_source.json", 'w') as f:
+            json.dump(out, f, indent=2)
+
         return stats_summary
     
     def _generate_conclusion(self, stats: Dict[str, Any]) -> Dict[str, str]:
@@ -539,7 +666,7 @@ def main():
     
     parser = argparse.ArgumentParser(description="Evaluate barrier effects on single-agent mathematical reasoning")
     parser.add_argument("--model", type=str, default="Qwen/Qwen2.5-7B-Instruct", help="Model to evaluate")
-    parser.add_argument("--problems", type=int, default=10, help="Number of problems per source")
+    parser.add_argument("--problems", type=int, default=10, help="Number of problems per source (applied to both GSM8K and AQuA)")
     parser.add_argument("--severity", type=float, default=0.8, help="Barrier severity")
     parser.add_argument("--output_dir", type=str, default="IQ_test/results", help="Output directory")
     
