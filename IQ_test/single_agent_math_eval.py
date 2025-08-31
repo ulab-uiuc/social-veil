@@ -25,6 +25,7 @@ sys.path.insert(0, str(project_root))
 from social_decipher.agent.social_agent import SocialAgent
 from social_decipher.agent.agent_profile import AgentProfile
 from social_decipher.environment.env_profile import EnvironmentProfile
+from analysis.load_existing_episodes import load_all_episodes
 
 @dataclass
 class MathProblem:
