@@ -287,9 +287,9 @@ class SingleAgentMathEvaluator:
         environment.env["barrier_cues"] = scenario.get("barrier_cues", {})
         environment.env["barrier_state"] = {"severity": self.severity}
         
-        # Create agent profiles
-        agentA = AgentProfile.from_dict(scenario["agent_profiles"][0])
-        agentB = AgentProfile.from_dict(scenario["agent_profiles"][1])  # Dummy partner
+        # Create agent profiles and set model id for local model routing (e.g., Qwen)
+        agentA = AgentProfile.from_dict(scenario["agent_profiles"][0], model_id=self.model_name)
+        agentB = AgentProfile.from_dict(scenario["agent_profiles"][1], model_id=self.model_name)  # Dummy partner
         
         # Create solver agent
         solver = SocialAgent(
