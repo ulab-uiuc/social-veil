@@ -41,6 +41,8 @@ import torch.nn.functional as F
 # Import project modules
 from social_decipher.agent.agent_profile import AgentProfile
 from social_decipher.environment.episode_loader import EpisodeLoader
+from social_decipher.agent.social_agent import SocialAgent
+from social_decipher.environment.env_profile import EnvironmentProfile
 
 @dataclass
 class RepresentationData:
@@ -123,75 +125,47 @@ class BarrierRepresentationAnalyzer:
         return all_episodes
     
     def create_agent_prompt(self, episode: Dict[str, Any]) -> str:
-        config_path = Path(__file__).parent.parent / "configs" / "social_task.yaml"
-        with open(config_path, 'r') as f:
-            templates = yaml.safe_load(f)
-        
-        # Extract episode info
+        # Build environment and prompts using SocialAgent to match live embedding
         scenario = episode.get("scenario", "")
-        agent_goals = episode.get("agent_goals", ["", ""])
-        agent1_goal = agent_goals[0] if len(agent_goals) > 0 else ""
-        agent_reasons = episode.get("agent_reasons", ["", ""])
-        agent1_reason = agent_reasons[0] if len(agent_reasons) > 0 else ""
-        
-        # Extract agent profiles if available
+        agent_goals = episode.get("agent_goals", ["", ""]) or ["", ""]
+        agent_reasons = episode.get("agent_reasons", ["", ""]) or ["", ""]
+
+        environment = EnvironmentProfile(
+            scenario=scenario,
+            agent_goals=agent_goals,
+            agent_reasons=agent_reasons,
+            agent_goals_mcqas=episode.get("agent_goals_mcqas", []),
+            agent_reasons_mcqas=episode.get("agent_reasons_mcqas", []),
+            agent_knowledge_mcqas=episode.get("agent_knowledge_mcqas", []),
+            agent_relationship=episode.get("agent_relationship", "friend"),
+            agent1_private_knowledge=episode.get("agent1_private_knowledge", ""),
+            agent2_private_knowledge=episode.get("agent2_private_knowledge", ""),
+        )
+
+        # Attach barrier fields
+        environment.env["barrier_type"] = episode.get("barrier_type", None)
+        environment.env["barrier_prompts"] = episode.get("barrier_prompts", {})
+        environment.env["barrier_cues"] = episode.get("barrier_cues", {})
+        # Seed severity for analysis so banded rules reflect analyzer setting
+        environment.env["barrier_state"] = {"severity": float(self.severity)}
+
+        # Build agent profiles
         agent_profiles = episode.get("agent_profiles", [{}, {}])
-        agent1_profile = agent_profiles[0] if len(agent_profiles) > 0 else {}
-        agent2_profile = agent_profiles[1] if len(agent_profiles) > 1 else {}
-        
-        # Prepare template data
-        template_data = {
-            "agent_name": agent1_profile.get("first_name", "Agent") + " " + agent1_profile.get("last_name", "A"),
-            "partner_name": agent2_profile.get("first_name", "Agent") + " " + agent2_profile.get("last_name", "B"),
-            "scenario": scenario,
-            "agent_age": agent1_profile.get("age", "30"),
-            "agent_gender": agent1_profile.get("gender", "person"),
-            "agent_occupation": agent1_profile.get("occupation", "professional"),
-            "agent_public_info": agent1_profile.get("public_info", "friendly person"),
-            "partner_age": agent2_profile.get("age", "30"),
-            "partner_gender": agent2_profile.get("gender", "person"),
-            "partner_occupation": agent2_profile.get("occupation", "professional"),
-            "partner_public_info": agent2_profile.get("public_info", "friendly person"),
-            "agent_goal": agent1_goal,
-            "agent_reason": agent1_reason,
-            "agent_private_knowledge": episode.get("agent1_private_knowledge", ""),
-            "turn_number": 1,
-            "history": "",
-            "action_list": templates.get("action_list", "")
-        }
-        
-        barrier_type = episode.get("barrier_type", "baseline")
-        
-        if barrier_type == "baseline":
-            prompt = templates["social_task_instructions"].format(**template_data)
-            
-        elif barrier_type == "semantic_structure":
-            barrier_data = template_data.copy()
-            barrier_data.update({
-                "barrier_private_note": episode.get("barrier_cues", {}).get("profile_note_A", "Use vague, ambiguous language"),
-                "barrier_prompt": episode.get("barrier_prompts", {}).get("agentA", ""),
-                "barrier_dynamic_rules": self._format_barrier_dynamic_rules(episode.get("barrier_cues", {}))
-            })
-            prompt = templates["social_task_instructions_barrier_semantic"].format(**barrier_data)
-            
-        elif barrier_type == "cultural_style":
-            barrier_data = template_data.copy()
-            barrier_data.update({
-                "barrier_private_note": episode.get("barrier_cues", {}).get("profile_note_A", "Use indirect, high-context communication"),
-                "barrier_prompt": episode.get("barrier_prompts", {}).get("agentA", ""),
-                "barrier_dynamic_rules": self._format_barrier_dynamic_rules(episode.get("barrier_cues", {}))
-            })
-            prompt = templates["social_task_instructions_barrier_cultural"].format(**barrier_data)
-            
-        elif barrier_type == "emotional_influence":
-            barrier_data = template_data.copy()
-            barrier_data.update({
-                "barrier_private_note": episode.get("barrier_cues", {}).get("profile_note_A", "Maintain negative emotional tone"),
-                "barrier_prompt": episode.get("barrier_prompts", {}).get("agentA", ""),
-                "barrier_dynamic_rules": self._format_barrier_dynamic_rules(episode.get("barrier_cues", {}))
-            })
-            prompt = templates["social_task_instructions_barrier_emotional"].format(**barrier_data)
-        
+        a_dict = agent_profiles[0] if len(agent_profiles) > 0 else {}
+        b_dict = agent_profiles[1] if len(agent_profiles) > 1 else {}
+        agentA = AgentProfile.from_dict(a_dict, model_id=self.model_name)
+        agentB = AgentProfile.from_dict(b_dict, model_id=self.model_name)
+
+        # Use SocialAgent to construct the exact instruction as in runtime
+        agent = SocialAgent(
+            name=f"{agentA.first_name}",
+            profile=agentA,
+            partner_profile=agentB,
+            env=environment,
+            role_num=0,
+        )
+
+        prompt = agent.build_instruction(transcript="", turn_number=0)
         return prompt
     
     def _format_barrier_dynamic_rules(self, barrier_cues: Dict[str, Any]) -> str:
