@@ -75,10 +75,21 @@ class SingleAgentMathEvaluator:
         self.severity = severity
         os.makedirs(output_dir, exist_ok=True)
         
-        # Load social task templates
-        config_path = project_root / "configs" / "social_task.yaml"
-        with open(config_path, 'r') as f:
+        # Load social task templates and global config (to read vLLM port)
+        social_cfg_path = project_root / "configs" / "social_task.yaml"
+        with open(social_cfg_path, 'r') as f:
             self.templates = yaml.safe_load(f)
+
+        # Apply vLLM port from config.yaml (fallback to env or 8000)
+        try:
+            main_cfg_path = project_root / "configs" / "config.yaml"
+            with open(main_cfg_path, 'r') as f:
+                main_cfg = yaml.safe_load(f)
+            vllm_port_cfg = ((main_cfg or {}).get("models", {}) or {}).get("vllm_port")
+            if isinstance(vllm_port_cfg, int) and vllm_port_cfg > 0:
+                os.environ.setdefault("VLLM_PORT", str(vllm_port_cfg))
+        except Exception:
+            pass
     
     def load_math_problems(self, limit: int = 50) -> List[MathProblem]:
         """Load GSM8K and AQuA-RAT problems for single-agent evaluation.
