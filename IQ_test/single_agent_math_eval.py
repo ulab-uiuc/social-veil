@@ -205,49 +205,29 @@ class SingleAgentMathEvaluator:
         return episodes
 
     def load_profiles_from_episodes(self) -> List[Dict[str, Any]]:
-        """Extract Agent A profiles and barrier metadata from episode files.
-        Sources:
-          - data/episode_all.jsonl (baseline)
-          - data/episodes_all_semantic.json
-          - data/episodes_all_cultural.json
-          - data/episodes_all_emotional.json
-        Falls back to data/episodes_*.json variants if _all_ files are missing.
+        """Extract Agent A profiles and barrier metadata using the central loader.
+        Uses analysis.load_existing_episodes.load_all_episodes to ensure consistent episode parsing.
         """
-        data_dir = project_root / "data"
-        candidates: List[Tuple[str, Path]] = [
-            ("baseline", data_dir / "episode_all.jsonl"),
-            ("semantic_structure", data_dir / "episodes_all_semantic.json"),
-            ("cultural_style", data_dir / "episodes_all_cultural.json"),
-            ("emotional_influence", data_dir / "episodes_all_emotional.json"),
-        ]
-        # Fallbacks
-        if not (data_dir / "episodes_all_semantic.json").exists():
-            candidates.append(("semantic_structure", data_dir / "episodes_semantic.json"))
-        if not (data_dir / "episodes_all_cultural.json").exists():
-            candidates.append(("cultural_style", data_dir / "episodes_cultural.json"))
-        if not (data_dir / "episodes_all_emotional.json").exists():
-            candidates.append(("emotional_influence", data_dir / "episodes_emotional.json"))
+        baseline_path = str(project_root / "data" / "episode_all.jsonl")
+        try:
+            episodes = load_all_episodes(baseline_file=baseline_path, max_episodes=None)
+        except Exception:
+            episodes = load_all_episodes()
 
         profiles: List[Dict[str, Any]] = []
-        for btype, p in candidates:
-            episodes = self._load_episode_file(p)
-            for ep in episodes:
-                try:
-                    agent_profiles = ep.get("agent_profiles", [{}, {}])
-                    a_dict = agent_profiles[0] if len(agent_profiles) > 0 else {}
-                    # Barrier fields (if present)
-                    barrier_type = ep.get("barrier_type") or (None if btype == "baseline" else btype)
-                    barrier_prompts = ep.get("barrier_prompts", {})
-                    barrier_cues = ep.get("barrier_cues", {})
-                    profiles.append({
-                        "episode_id": ep.get("episode_id", "unknown"),
-                        "barrier_type": barrier_type,
-                        "barrier_prompts": barrier_prompts,
-                        "barrier_cues": barrier_cues,
-                        "agentA": a_dict,
-                    })
-                except Exception:
-                    continue
+        for ep in episodes:
+            try:
+                agent_profiles = ep.get("agent_profiles", [{}, {}])
+                a_dict = agent_profiles[0] if len(agent_profiles) > 0 else {}
+                profiles.append({
+                    "episode_id": ep.get("episode_id", "unknown"),
+                    "barrier_type": ep.get("barrier_type"),
+                    "barrier_prompts": ep.get("barrier_prompts", {}),
+                    "barrier_cues": ep.get("barrier_cues", {}),
+                    "agentA": a_dict,
+                })
+            except Exception:
+                continue
         return profiles
 
     def create_math_scenario(self, problem: MathProblem, barrier_type: str) -> Dict[str, Any]:
