@@ -81,7 +81,10 @@ class SingleAgentMathEvaluator:
             self.templates = yaml.safe_load(f)
     
     def load_math_problems(self, limit: int = 50) -> List[MathProblem]:
-        """Load GSM8K and AQuA-RAT problems for single-agent evaluation"""
+        """Load GSM8K and AQuA-RAT problems for single-agent evaluation.
+
+        If limit == 0, load the entire available split for each dataset.
+        """
         problems = []
         
         # Load GSM8K from Hugging Face
@@ -89,7 +92,8 @@ class SingleAgentMathEvaluator:
             print("📦 Loading GSM8K from Hugging Face...")
             try:
                 gsm8k_dataset = load_dataset("gsm8k", "main", split="test")
-                gsm8k_samples = list(gsm8k_dataset.shuffle(seed=42).select(range(min(limit, len(gsm8k_dataset)))))
+                k = len(gsm8k_dataset) if limit == 0 else min(limit, len(gsm8k_dataset))
+                gsm8k_samples = list(gsm8k_dataset.shuffle(seed=42).select(range(k)))
                 
                 for i, sample in enumerate(gsm8k_samples):
                     # Extract answer from the solution
@@ -128,7 +132,7 @@ class SingleAgentMathEvaluator:
             try:
                 aqua = load_dataset("aqua_rat", split="test")
                 # Shuffle and select
-                k = min(limit, len(aqua))
+                k = len(aqua) if limit == 0 else min(limit, len(aqua))
                 samples = list(aqua.shuffle(seed=42).select(range(k)))
                 loaded = 0
                 for i, sample in enumerate(samples):
