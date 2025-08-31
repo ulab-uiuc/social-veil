@@ -402,8 +402,31 @@ class SingleAgentMathEvaluator:
         # Solve the problem
         print(f"🧮 Solving {scenario['episode_id']}")
 
-        # Ensure fresh instructions then issue a targeted solving prompt
-        solver.instructions = solver.build_instruction(transcript="", turn_number=0)
+        # Ensure fresh instructions then strip JSON/action-mode enforcement for evaluation
+        raw_instr = solver.build_instruction(transcript="", turn_number=0)
+
+        def _sanitize_instruction_for_eval(text: str) -> str:
+            lines = text.split("\n")
+            out = []
+            skip_next = 0
+            for ln in lines:
+                if skip_next > 0:
+                    skip_next -= 1
+                    continue
+                s = ln.strip()
+                # Drop action listing line
+                if s.startswith("You are at Turn #") and "Your available action types" in s:
+                    continue
+                # Drop JSON-output enforcement lines
+                if s.startswith("Please only generate a JSON string including the action type and the argument"):
+                    skip_next = 2  # also skip the two format lines
+                    continue
+                out.append(ln)
+            # Add explicit eval formatting guidance
+            out.append("Formatting: Respond in plain text. Provide steps, then end with a single final line 'Answer: <...>'.")
+            return "\n".join(out)
+
+        solver.instructions = _sanitize_instruction_for_eval(raw_instr)
 
         src = scenario.get("source", "gsm8k").lower()
         if src == "aqua":
@@ -479,7 +502,7 @@ class SingleAgentMathEvaluator:
         """Extract final answer from response.
         Returns float for numeric tasks, or a single-letter string (A-E) for MCQ.
         """
-        # Try MCQ letter first (require explicit 'Answer: <LETTER>' to reduce false positives)
+        # Try MCQ letter first (prefer explicit 'Answer: <LETTER>' line)
         letter_patterns = [
             r"^\s*answer[:\s]+([A-E])\b",
             r"^\s*final answer[:\s]+([A-E])\b",
@@ -491,11 +514,18 @@ class SingleAgentMathEvaluator:
             m = re.search(pattern, text_stripped, flags=re.IGNORECASE | re.MULTILINE)
             if m:
                 return m.group(1).upper()
+        # Looser MCQ fallback (e.g., "...correct answer is (D)")
+        loose_letter_patterns = [
+            r"(?:correct answer|answer is|is)\s*\(?([A-E])\)?\b",
+        ]
+        for pattern in loose_letter_patterns:
+            m = re.search(pattern, text_stripped, flags=re.IGNORECASE)
+            if m:
+                return m.group(1).upper()
 
-        # Numeric patterns
+        # Numeric patterns (prefer explicit final line 'Answer: <NUMBER>')
         num_patterns = [
-            r"^.*(?:final answer|answer)[:\s]*\$?([0-9]+\.?[0-9]*)\s*$",
-            r"^.*(?:equals|=|result is)\s*\$?([0-9]+\.?[0-9]*)\s*$",
+            r"(?mi)^\s*(?:final answer|answer)[:\s]*\$?([+-]?[0-9]+\.?[0-9]*)\s*\.?\s*$",
         ]
         text_lower = text.lower().strip()
         for pattern in num_patterns:
@@ -505,13 +535,7 @@ class SingleAgentMathEvaluator:
                     return float(matches[-1])
                 except ValueError:
                     continue
-        # Fallback: last number in text
-        numbers = re.findall(r"\b\d+\.?\d*\b", text)
-        if numbers:
-            try:
-                return float(numbers[-1])
-            except ValueError:
-                pass
+        # No numeric answer line found -> treat as unsolved
         return 0.0
     
     def _extract_reasoning_steps(self, text: str) -> List[str]:
