@@ -9,6 +9,7 @@ import pandas as pd
 from pathlib import Path
 from typing import Dict, List, Tuple, Any, Optional
 from dataclasses import dataclass
+from analysis.load_existing_episodes import load_all_episodes
 from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
 from sklearn.metrics import (
@@ -109,10 +110,7 @@ class BarrierRepresentationAnalyzer:
                 return "cpu"
         return device
     
-    def load_and_augment_episodes(self) -> List[Dict[str, Any]]:
-        """Load episodes from existing barrier files"""
-        from analysis.load_existing_episodes import load_all_episodes
-        
+    def load_and_augment_episodes(self) -> List[Dict[str, Any]]:        
         print(f"📂 Loading episodes from existing barrier files...")
         
         # Use the dedicated episode loader
@@ -221,32 +219,23 @@ class BarrierRepresentationAnalyzer:
                 prompt, 
                 return_tensors="pt",
                 truncation=True,
-                max_length=1024
             ).to(self.device)
             
             # Forward pass with hooks to capture representations
             with torch.no_grad():
                 outputs = self.model(**inputs)
                 hidden_states = outputs.hidden_states  # Tuple of (batch_size, seq_len, hidden_size)
-                attentions = outputs.attentions if hasattr(outputs, 'attentions') else None
-                
+            
                 # Store representations for key layers
                 for layer_idx in self.analysis_layers:
                     if layer_idx < len(hidden_states):
-                        # Get last token representation (most relevant for generation)
                         layer_repr = hidden_states[layer_idx][0, -1, :].cpu()  # [hidden_size]
-                        
-                        attention_weights = None
-                        if attentions and layer_idx < len(attentions):
-                            # Average attention across heads
-                            attention_weights = attentions[layer_idx][0].mean(dim=0).cpu()  # [seq_len, seq_len]
                         
                         rep_data = RepresentationData(
                             episode_id=episode_id,
                             barrier_type=barrier_type,
                             layer_idx=layer_idx,
                             representations=layer_repr,
-                            attention_weights=attention_weights,
                             prompt_text=prompt,
                             severity=severity
                         )
@@ -256,13 +245,7 @@ class BarrierRepresentationAnalyzer:
         print(f"✅ Extracted {len(self.representations)} representations")
     
     def _create_preliminary_visualization(self, output_dir: str, barrier_types: List[str], barrier_colors: Dict[str, str]) -> None:
-        """
-        Create preliminary visualization inspired by SafeSwitch paper.
-        Visualizes model internal states for different barrier prompts using 2D PCA.
-        Similar to Figures 15-17 in SafeSwitch paper showing clustering of different query types.
-        """
-        print("  📊 Creating preliminary visualization (SafeSwitch-style)...")
-        
+
         # Focus on middle layer for preliminary analysis (most informative)
         middle_layer = self.analysis_layers[len(self.analysis_layers) // 2]
         
@@ -604,10 +587,7 @@ class BarrierRepresentationAnalyzer:
         # Save detailed results
         with open(f"{output_dir}/analysis_report.json", 'w') as f:
             json.dump(report, f, indent=2)
-        
-        # Create markdown summary
-        self._create_markdown_report(report, f"{output_dir}/analysis_summary.md")
-        
+
         print(f"✅ Report saved to {output_dir}/")
 
     def _collect_layer_features(self) -> Dict[int, Tuple[np.ndarray, np.ndarray, np.ndarray]]:
@@ -815,82 +795,6 @@ class BarrierRepresentationAnalyzer:
         }
         
         return summary
-    
-    def _create_markdown_report(self, report: Dict[str, Any], output_path: str) -> None:
-        """Create markdown summary report"""
-        
-        metadata = report["analysis_metadata"]
-        summary = report["summary"]
-        
-        content = f"""# Barrier Representation Analysis Report
-
-## Analysis Configuration
-- **Model**: {metadata["model"]}
-# (All episodes in the provided files are analyzed)
-- **Barrier Severity**: {metadata["severity"]}
-- **Layers Analyzed**: {metadata["analysis_layers"]}
-- **Total Representations**: {metadata["total_representations"]}
-
-## Key Findings
-
-### Significant Distribution Differences (p < 0.05)
-"""
-        
-        if summary["significant_differences"]:
-            for diff in summary["significant_differences"]:
-                barrier_clean = diff["barrier_type"].replace("_", " ").title()
-                content += f"- **{barrier_clean}** at {diff['layer']}: KS statistic = {diff['ks_statistic']:.4f}, p = {diff['p_value']:.4f}\n"
-        else:
-            content += "- No statistically significant differences found\n"
-        
-        content += f"""
-### Strongest Effects
-"""
-        
-        if summary["strongest_effects"]["mse"]:
-            strongest = summary["strongest_effects"]["mse"]
-            barrier_clean = strongest["barrier_type"].replace("_", " ").title()
-            content += f"- **Largest MSE**: {barrier_clean} at {strongest['layer']}\n"
-        
-        if summary["strongest_effects"]["ks_statistic"]:
-            strongest = summary["strongest_effects"]["ks_statistic"]
-            barrier_clean = strongest["barrier_type"].replace("_", " ").title()
-            content += f"- **Largest KS Statistic**: {barrier_clean} at {strongest['layer']}\n"
-        
-        content += f"""
-## Layer-by-Layer Analysis
-
-"""
-        
-        for layer_key, layer_data in summary["layer_analysis"].items():
-            content += f"### {layer_key.replace('_', ' ').title()}\n"
-            if layer_data["significant_barriers"]:
-                barriers = [b.replace("_", " ").title() for b in layer_data["significant_barriers"]]
-                content += f"- **Significant barriers**: {', '.join(barriers)}\n"
-            else:
-                content += f"- No significant barrier effects detected\n"
-            content += "\n"
-        
-        content += f"""
-## Interpretation
-
-This analysis demonstrates how communication barriers create measurable distribution shifts in model internal representations. The statistical tests provide evidence that:
-
-1. **Barrier prompts cause systematic changes** in how the model processes social scenarios
-2. **Different barrier types create distinct patterns** of representational change
-3. **Layer-specific effects** show where in the model barriers have the strongest impact
-
-The visualization files (PNG) show the spatial distribution of representations, while this statistical analysis provides quantitative evidence of barrier effects.
-
-## Files Generated
-- `analysis_report.json`: Complete statistical results
-- `tsne_layer_*.png`: t-SNE visualizations for each layer
-- `pca_all_layers.png`: PCA comparison across layers  
-- `heatmap_*.png`: Distance metrics heatmaps
-"""
-        
-        with open(output_path, 'w') as f:
-            f.write(content)
     
     def run_full_analysis(self) -> None:
         """Run complete barrier representation analysis"""
