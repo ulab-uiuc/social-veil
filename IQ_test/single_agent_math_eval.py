@@ -1,16 +1,3 @@
-#!/usr/bin/env python3
-"""
-Single Agent Math Evaluation
-Tests model mathematical reasoning capability with barriers to prove barriers cause 
-communication issues, not mathematical inferiority.
-
-Single-agent tasks:
-- GSM8K word problems (from Hugging Face)
-- Optional: AQuA-RAT multiple-choice math (from Hugging Face)
-
-This verifies that barriers affect expression/communication, not core reasoning.
-"""
-
 import json
 import os
 import random

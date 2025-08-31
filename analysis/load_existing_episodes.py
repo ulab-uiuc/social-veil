@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional
 
 def load_all_episodes(
-    baseline_file: str = "data/episode_original.jsonl", 
+    baseline_file: str = "data/episode_all.jsonl", 
     max_episodes: Optional[int] = None
 ) -> List[Dict[str, Any]]:
     """Load episodes from all barrier files"""
@@ -19,9 +19,9 @@ def load_all_episodes(
     # File mappings
     file_mappings = {
         "baseline": baseline_file,
-        "semantic_structure": "data/episodes_semantic.json", 
-        "cultural_style": "data/episodes_cultural.json",
-        "emotional_influence": "data/episodes_emotional.json"
+        "semantic_structure": "data/episodes_all_semantic.json", 
+        "cultural_style": "data/episodes_all_cultural.json",
+        "emotional_influence": "data/episodes_all_emotional.json"
     }
     
     for barrier_type, file_path in file_mappings.items():
@@ -54,7 +54,6 @@ def load_all_episodes(
         except Exception as e:
             print(f"❌ Error loading {file_path}: {e}")
     
-    # Limit episodes if specified
     if max_episodes and len(episodes) > max_episodes:
         episodes = episodes[:max_episodes]
         print(f"🔄 Limited to {max_episodes} episodes")
