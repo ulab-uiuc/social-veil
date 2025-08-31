@@ -179,6 +179,76 @@ class SingleAgentMathEvaluator:
 
         return problems
     
+    def _load_episode_file(self, path: Path) -> List[Dict[str, Any]]:
+        """Load episodes from JSON or JSONL path (baseline or barrier variants)."""
+        episodes: List[Dict[str, Any]] = []
+        if not path.exists():
+            return episodes
+        try:
+            if path.suffix == ".jsonl":
+                with open(path, 'r') as f:
+                    for line in f:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        episodes.append(json.loads(line))
+            else:
+                with open(path, 'r') as f:
+                    data = json.load(f)
+                    if isinstance(data, list):
+                        episodes = data
+                    elif isinstance(data, dict):
+                        episodes = [data]
+        except Exception:
+            pass
+        return episodes
+
+    def load_profiles_from_episodes(self) -> List[Dict[str, Any]]:
+        """Extract Agent A profiles and barrier metadata from episode files.
+        Sources:
+          - data/episode_all.jsonl (baseline)
+          - data/episodes_all_semantic.json
+          - data/episodes_all_cultural.json
+          - data/episodes_all_emotional.json
+        Falls back to data/episodes_*.json variants if _all_ files are missing.
+        """
+        data_dir = project_root / "data"
+        candidates: List[Tuple[str, Path]] = [
+            ("baseline", data_dir / "episode_all.jsonl"),
+            ("semantic_structure", data_dir / "episodes_all_semantic.json"),
+            ("cultural_style", data_dir / "episodes_all_cultural.json"),
+            ("emotional_influence", data_dir / "episodes_all_emotional.json"),
+        ]
+        # Fallbacks
+        if not (data_dir / "episodes_all_semantic.json").exists():
+            candidates.append(("semantic_structure", data_dir / "episodes_semantic.json"))
+        if not (data_dir / "episodes_all_cultural.json").exists():
+            candidates.append(("cultural_style", data_dir / "episodes_cultural.json"))
+        if not (data_dir / "episodes_all_emotional.json").exists():
+            candidates.append(("emotional_influence", data_dir / "episodes_emotional.json"))
+
+        profiles: List[Dict[str, Any]] = []
+        for btype, p in candidates:
+            episodes = self._load_episode_file(p)
+            for ep in episodes:
+                try:
+                    agent_profiles = ep.get("agent_profiles", [{}, {}])
+                    a_dict = agent_profiles[0] if len(agent_profiles) > 0 else {}
+                    # Barrier fields (if present)
+                    barrier_type = ep.get("barrier_type") or (None if btype == "baseline" else btype)
+                    barrier_prompts = ep.get("barrier_prompts", {})
+                    barrier_cues = ep.get("barrier_cues", {})
+                    profiles.append({
+                        "episode_id": ep.get("episode_id", "unknown"),
+                        "barrier_type": barrier_type,
+                        "barrier_prompts": barrier_prompts,
+                        "barrier_cues": barrier_cues,
+                        "agentA": a_dict,
+                    })
+                except Exception:
+                    continue
+        return profiles
+
     def create_math_scenario(self, problem: MathProblem, barrier_type: str) -> Dict[str, Any]:
         """Create scenario for single-agent mathematical reasoning with barriers"""
         
@@ -280,6 +350,54 @@ class SingleAgentMathEvaluator:
                 "problem_type": problem.problem_type
             }
         }
+
+    def create_math_scenario_from_profile(self, profile: Dict[str, Any], problem: MathProblem) -> Dict[str, Any]:
+        """Create scenario using a real Agent A profile and its barrier metadata from episodes."""
+        # Build agent profiles: real Agent A + neutral partner
+        a = profile.get("agentA", {})
+        agent_profiles = [
+            a,
+            {
+                "pk": "dummy_partner",
+                "first_name": "Partner",
+                "last_name": "Agent",
+                "age": 30,
+                "gender": "Person",
+                "gender_pronoun": "They/them",
+                "occupation": "Assistant",
+                "public_info": "Helpful assistant",
+                "personality_and_values": "Supportive and encouraging",
+                "decision_making_style": "Collaborative",
+            },
+        ]
+        scenario_text = f"You need to solve this mathematical problem step by step: {problem.original_text}"
+        agent_goals = [
+            f"Solve this math problem correctly and show your work: {problem.original_text}",
+            "Listen and provide encouragement",
+        ]
+        agent_reasons = [
+            "Use your mathematical skills to arrive at the correct answer",
+            "Be supportive",
+        ]
+        barrier_type = profile.get("barrier_type") or "baseline"
+        barrier_prompts = profile.get("barrier_prompts", {})
+        barrier_cues = profile.get("barrier_cues", {})
+        return {
+            "episode_id": f"{profile.get('episode_id','profile')}_{problem.problem_id}",
+            "scenario": scenario_text,
+            "agent_profiles": agent_profiles,
+            "agent_goals": agent_goals,
+            "agent_reasons": agent_reasons,
+            "agent_relationship": "individual_task",
+            "barrier_type": barrier_type if barrier_type != "baseline" else None,
+            "barrier_prompts": barrier_prompts if barrier_type != "baseline" else {},
+            "barrier_cues": barrier_cues if barrier_type != "baseline" else {},
+            "source": problem.source,
+            "math_ground_truth": {
+                "expected_answer": problem.expected_answer,
+                "problem_type": problem.problem_type,
+            },
+        }
     
     def solve_math_problem(self, scenario: Dict[str, Any]) -> MathResult:
         """Have agent solve math problem with barriers"""
@@ -323,7 +441,7 @@ class SingleAgentMathEvaluator:
         
         # Calculate accuracies
         expected_answer = scenario["math_ground_truth"]["expected_answer"]
-        answer_accuracy = self._calculate_answer_accuracy(extracted_answer, expected_answer)
+        answer_accuracy = self._calculate_answer_accuracy(extracted_answer, expected_answer, scenario.get("source", "gsm8k"))
         reasoning_clarity = self._calculate_reasoning_clarity(response_text, scenario.get("barrier_type", "baseline"))
         
         return MathResult(
@@ -400,26 +518,20 @@ class SingleAgentMathEvaluator:
         
         return steps
     
-    def _calculate_answer_accuracy(self, extracted: Any, expected: Any) -> float:
-        """Calculate how accurate the final answer is.
-        - Numeric: 1 - relative error
-        - MCQ letter: exact match (1.0/0.0)
-        """
-        # MCQ
-        if isinstance(expected, str):
-            if isinstance(extracted, str) and extracted.upper() == expected.upper():
+    def _calculate_answer_accuracy(self, extracted: Any, expected: Any, source: str) -> float:
+   
+        # AQuA MCQ: exact letter match
+        if isinstance(expected, str) or source == "aqua":
+            if isinstance(extracted, str) and extracted.upper() == str(expected).upper():
                 return 1.0
             return 0.0
-        # Numeric
+        # GSM8K numeric: strict match
         try:
             exp = float(expected)
             ext = float(extracted)
         except Exception:
             return 0.0
-        if exp == 0:
-            return 1.0 if abs(ext) < 0.01 else 0.0
-        relative_error = abs(ext - exp) / abs(exp)
-        return max(0.0, 1.0 - relative_error)
+        return 1.0 if abs(ext - exp) <= 1e-6 else 0.0
     
     def _calculate_reasoning_clarity(self, text: str, barrier_type: str) -> float:
         """Calculate clarity of reasoning (should be lower for barriers affecting communication)"""
@@ -482,13 +594,139 @@ class SingleAgentMathEvaluator:
         # Save detailed results
         self._save_detailed_results(results)
         
-        # Compute statistics
-        stats_summary = self._compute_statistics(results)
+        # Compute statistics (overall and by-source)
+        stats_overall = self._compute_statistics(results)
+        
+        # Also load per-source summary saved by _compute_statistics
+        try:
+            with open(f"{self.output_dir}/evaluation_by_source.json", 'r') as f:
+                stats_by_source_blob = json.load(f)
+                stats_by_source = stats_by_source_blob.get("by_source", {})
+        except Exception:
+            stats_by_source = {}
         
         return {
             "detailed_results": results,
-            "statistics": stats_summary,
-            "conclusion": self._generate_conclusion(stats_summary)
+            "statistics": stats_overall,
+            "statistics_by_source": stats_by_source,
+            "conclusion": self._generate_conclusion(stats_overall)
+        }
+
+    def run_evaluation_by_profiles(self, per_profile_questions: int = 200) -> Dict[str, Any]:
+        """Run evaluation by iterating real Agent A profiles and sampling questions per dataset per profile.
+        For each profile, sample up to N questions from GSM8K and N from AQuA, compute per-profile averages,
+        then aggregate by barrier type.
+        """
+        print("\n🧮 Loading problems (GSM8K + AQuA) ...")
+        # Load maximum needed; we will sample per profile below
+        problems = self.load_math_problems(limit=0)  # full
+        gsm8k = [p for p in problems if p.source == "gsm8k"]
+        aqua = [p for p in problems if p.source == "aqua"]
+        print(f"   GSM8K: {len(gsm8k)} | AQuA: {len(aqua)}")
+
+        profiles = self.load_profiles_from_episodes()
+        print(f"👤 Loaded {len(profiles)} agent A profiles from episodes")
+
+        all_results: List[MathResult] = []
+        for idx, prof in enumerate(profiles):
+            # Sample per dataset
+            rng = random.Random(42 + idx)
+            gsm_sample = rng.sample(gsm8k, min(per_profile_questions, len(gsm8k))) if gsm8k else []
+            aqua_sample = rng.sample(aqua, min(per_profile_questions, len(aqua))) if aqua else []
+            sample_set = gsm_sample + aqua_sample
+            for prob in sample_set:
+                scenario = self.create_math_scenario_from_profile(prof, prob)
+                res = self.solve_math_problem(scenario)
+                all_results.append(res)
+            print(f"  ✅ Profile {idx+1}/{len(profiles)} | barrier={prof.get('barrier_type','baseline')} | items={len(sample_set)}")
+
+        # Per-profile averages (combined across sources)
+        per_profile: Dict[str, Dict[str, Any]] = {}
+        for r in all_results:
+            pid = r.problem_id.split("_")[0]  # original episode id prefix
+            key = pid
+            if key not in per_profile:
+                per_profile[key] = {"answers": [], "clarities": [], "barrier": None}
+            per_profile[key]["answers"].append(r.answer_accuracy)
+            per_profile[key]["clarities"].append(r.reasoning_clarity)
+            # barrier type can be derived from r.barrier_type
+            per_profile[key]["barrier"] = r.barrier_type or "baseline"
+
+        profile_averages = {}
+        for k, v in per_profile.items():
+            profile_averages[k] = {
+                "mean_answer_accuracy": float(np.mean(v["answers"])) if v["answers"] else 0.0,
+                "mean_reasoning_clarity": float(np.mean(v["clarities"])) if v["clarities"] else 0.0,
+                "barrier_type": v["barrier"],
+                "n": len(v["answers"]),
+            }
+
+        # Aggregate by barrier type (combined)
+        by_barrier_group: Dict[str, List[float]] = {}
+        for k, v in profile_averages.items():
+            bt = v["barrier_type"] or "baseline"
+            by_barrier_group.setdefault(bt, []).append(v["mean_answer_accuracy"])
+        barrier_type_avgs = {bt: float(np.mean(scores)) for bt, scores in by_barrier_group.items() if scores}
+
+        # Per-profile averages separated by source
+        per_profile_by_source: Dict[str, Dict[str, Dict[str, Any]]] = {}
+        for r in all_results:
+            pid = r.problem_id.split("_")[0]
+            src = r.source
+            per_profile_by_source.setdefault(src, {})
+            if pid not in per_profile_by_source[src]:
+                per_profile_by_source[src][pid] = {"answers": [], "clarities": [], "barrier": r.barrier_type or "baseline"}
+            per_profile_by_source[src][pid]["answers"].append(r.answer_accuracy)
+            per_profile_by_source[src][pid]["clarities"].append(r.reasoning_clarity)
+
+        profile_averages_by_source: Dict[str, Dict[str, Any]] = {}
+        for src, prof_map in per_profile_by_source.items():
+            profile_averages_by_source[src] = {}
+            for pid, vals in prof_map.items():
+                profile_averages_by_source[src][pid] = {
+                    "mean_answer_accuracy": float(np.mean(vals["answers"])) if vals["answers"] else 0.0,
+                    "mean_reasoning_clarity": float(np.mean(vals["clarities"])) if vals["clarities"] else 0.0,
+                    "barrier_type": vals["barrier"],
+                    "n": len(vals["answers"]),
+                }
+
+        # Barrier-type averages separated by source
+        barrier_type_averages_by_source: Dict[str, Dict[str, float]] = {}
+        for src, prof_map in profile_averages_by_source.items():
+            bt_group: Dict[str, List[float]] = {}
+            for pid, row in prof_map.items():
+                bt = row["barrier_type"] or "baseline"
+                bt_group.setdefault(bt, []).append(row["mean_answer_accuracy"])
+            barrier_type_averages_by_source[src] = {bt: float(np.mean(scores)) for bt, scores in bt_group.items() if scores}
+
+        # Persist
+        out_dir = Path(self.output_dir)
+        out_dir.mkdir(parents=True, exist_ok=True)
+        with open(out_dir / "profile_averages.json", 'w') as f:
+            json.dump(profile_averages, f, indent=2)
+        with open(out_dir / "barrier_type_averages.json", 'w') as f:
+            json.dump(barrier_type_avgs, f, indent=2)
+
+        # Save source-separated summaries
+        with open(out_dir / "profile_averages_by_source.json", 'w') as f:
+            json.dump(profile_averages_by_source, f, indent=2)
+        with open(out_dir / "barrier_type_averages_by_source.json", 'w') as f:
+            json.dump(barrier_type_averages_by_source, f, indent=2)
+
+        # Also write a CSV summary
+        csv_path = out_dir / "profile_scores.csv"
+        with open(csv_path, 'w', newline='') as f:
+            w = csv.writer(f)
+            w.writerow(["profile_id", "barrier_type", "mean_answer_accuracy", "mean_reasoning_clarity", "n"])
+            for pid, row in profile_averages.items():
+                w.writerow([pid, row["barrier_type"], f"{row['mean_answer_accuracy']:.4f}", f"{row['mean_reasoning_clarity']:.4f}", row["n"]])
+
+        return {
+            "detailed_results": all_results,
+            "profile_averages": profile_averages,
+            "barrier_type_averages": barrier_type_avgs,
+            "profile_averages_by_source": profile_averages_by_source,
+            "barrier_type_averages_by_source": barrier_type_averages_by_source,
         }
     
     def _save_detailed_results(self, results: List[MathResult]) -> None:
@@ -682,6 +920,8 @@ def main():
     parser = argparse.ArgumentParser(description="Evaluate barrier effects on single-agent mathematical reasoning")
     parser.add_argument("--model", type=str, default="Qwen/Qwen2.5-7B-Instruct", help="Model to evaluate")
     parser.add_argument("--problems", type=int, default=10, help="Number of problems per source (applied to both GSM8K and AQuA)")
+    parser.add_argument("--by_profiles", action="store_true", help="Iterate real Agent A profiles from episodes and sample per-profile questions")
+    parser.add_argument("--per_profile_questions", type=int, default=200, help="Questions per dataset per profile when --by_profiles is set")
     parser.add_argument("--severity", type=float, default=0.8, help="Barrier severity")
     parser.add_argument("--output_dir", type=str, default="IQ_test/results", help="Output directory")
     
@@ -694,11 +934,13 @@ def main():
         severity=args.severity
     )
     
-    # Load problems
-    problems = evaluator.load_math_problems(limit=args.problems)
-    
-    # Run evaluation
-    results = evaluator.run_evaluation(problems)
+    if args.by_profiles:
+        results = evaluator.run_evaluation_by_profiles(per_profile_questions=args.per_profile_questions)
+    else:
+        # Load problems
+        problems = evaluator.load_math_problems(limit=args.problems)
+        # Run evaluation (baseline + 3 barriers for each problem)
+        results = evaluator.run_evaluation(problems)
     
     # Save results
     with open(f"{args.output_dir}/evaluation_summary.json", 'w') as f:
