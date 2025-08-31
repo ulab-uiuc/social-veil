@@ -90,6 +90,20 @@ class SingleAgentMathEvaluator:
                 os.environ.setdefault("VLLM_PORT", str(vllm_port_cfg))
         except Exception:
             pass
+
+        # Preload a baseline Agent A profile (for non --by_profiles mode)
+        self._default_profile: Optional[Dict[str, Any]] = None
+        try:
+            all_profiles = self.load_profiles_from_episodes()
+            # prefer baseline (no barrier)
+            for p in all_profiles:
+                if not p.get("barrier_type"):
+                    self._default_profile = p
+                    break
+            if not self._default_profile and all_profiles:
+                self._default_profile = all_profiles[0]
+        except Exception:
+            self._default_profile = None
     
     def load_math_problems(self, limit: int = 50) -> List[MathProblem]:
         """Load GSM8K and AQuA-RAT problems for single-agent evaluation.
@@ -252,32 +266,26 @@ class SingleAgentMathEvaluator:
     def create_math_scenario(self, problem: MathProblem, barrier_type: str) -> Dict[str, Any]:
         """Create scenario for single-agent mathematical reasoning with barriers"""
         
-        # Create single agent profile (Math Solver)
+        # Use Agent A profile loaded from episodes if available (baseline).
+        # This removes any hardcoded profile.
+        if self._default_profile and isinstance(self._default_profile.get("agentA"), dict):
+            agentA_dict = self._default_profile["agentA"]
+        else:
+            agentA_dict = {}
         agent_profiles = [
-            {
-                "pk": "math_solver",
-                "first_name": "Alex",
-                "last_name": "Chen", 
-                "age": 28,
-                "gender": "Person",
-                "gender_pronoun": "They/them",
-                "occupation": "Data Analyst",
-                "public_info": "Skilled in mathematical problem solving and analytical thinking",
-                "personality_and_values": "Logical and systematic, values precision and accuracy",
-                "decision_making_style": "Analytical"
-            },
+            agentA_dict,
             {
                 "pk": "dummy_partner",
                 "first_name": "Partner",
                 "last_name": "Agent",
                 "age": 30,
                 "gender": "Person",
-                "gender_pronoun": "They/them", 
+                "gender_pronoun": "They/them",
                 "occupation": "Assistant",
                 "public_info": "Helpful assistant",
                 "personality_and_values": "Supportive and encouraging",
-                "decision_making_style": "Collaborative"
-            }
+                "decision_making_style": "Collaborative",
+            },
         ]
         
         scenario = f"You need to solve this mathematical problem step by step: {problem.original_text}"
@@ -292,47 +300,9 @@ class SingleAgentMathEvaluator:
             "Partner wants to be supportive" # Dummy reason
         ]
         
-        # Create barrier cues based on type
+    
         barrier_cues = {}
         barrier_prompts = {"agentA": "", "agentB": ""}
-        
-        if barrier_type == "semantic_structure":
-            barrier_cues = {
-                "profile_note_A": "Alex tends to think through problems using ambiguous and unclear reasoning",
-                "lexical_prefer": ["approximately", "roughly", "around", "somewhat", "kind of"],
-                "lexical_avoid": ["exactly", "precisely", "definitely", "clearly"],
-                "sentence_length_bias": "long",
-                "ambiguity_devices": ["subordinate clauses", "fragments", "referent shifts"],
-                "min_ambiguity_devices_per_turn": 2,
-                "max_specific_refs": 1,
-                "allow_exact_numbers_only_if_partner_requests": True
-            }
-            barrier_prompts["agentA"] = "You are Alex. When solving math problems, use ambiguous language and unclear reasoning. Each step should use ≥ min_ambiguity_devices_per_turn from: subordinate clause, fragment (incomplete sentence), mild self-contradiction, referent shift, or ellipsis. Include occasional lexical misuse. Avoid precise mathematical language. Keep mathematical content accurate but express it unclearly."
-            
-        elif barrier_type == "cultural_style":
-            barrier_cues = {
-                "profile_note_A": "Alex approaches math problems with indirect, hedged reasoning style",
-                "style": "high_context",
-                "directness_level": 0.2,
-                "imperative_frames": [],
-                "hedge_lexicon": ["perhaps", "might", "could be", "possibly"],
-                "politeness_markers": ["if you don't mind", "when convenient"],
-                "shared_background_refs": [],
-                "indirectness_score": 0.8,
-                "hedge_rate_target": 0.6,
-                "imperative_rate_target": 0.1,
-                "question_rate_hint": 0.4
-            }
-            barrier_prompts["agentA"] = "You are Alex. When solving math problems, use indirect, hedged reasoning. Express mathematical steps tentatively with hedges and soft language. Avoid direct statements about calculations. Keep the mathematical content correct but express uncertainty about each step. Use high-context communication style throughout your mathematical reasoning."
-            
-        elif barrier_type == "emotional_influence":
-            barrier_cues = {
-                "profile_note_A": "Alex approaches math problems with impatience and frustration",
-                "affect_lexicon": ["irritated", "impatient", "frustrated", "annoyed"],
-                "exclamation_bias": 0.3,
-                "sentence_length_bias": "short"
-            }
-            barrier_prompts["agentA"] = "You are Alex. When solving math problems, maintain an impatient and frustrated tone. Use clipped, short sentences. Show irritation with the problem-solving process. Insert exclamation marks frequently. Express annoyance at having to work through steps. Keep the mathematical content accurate but express it with negative emotional tone."
         
         return {
             "episode_id": f"{problem.problem_id}_{barrier_type}",
@@ -431,9 +401,49 @@ class SingleAgentMathEvaluator:
         
         # Solve the problem
         print(f"🧮 Solving {scenario['episode_id']}")
-        
-        response = solver.act(initial=True)
-        response_text = self._extract_text_from_response(response)
+
+        # Ensure fresh instructions then issue a targeted solving prompt
+        solver.instructions = solver.build_instruction(transcript="", turn_number=0)
+
+        src = scenario.get("source", "gsm8k").lower()
+        if src == "aqua":
+            user_prompt = (
+                "Solve the problem above now. In your argument text, first give brief steps. "
+                "On the final line, output exactly: Answer: <LETTER> where <LETTER> is one of A, B, C, D, or E. "
+                "Do not include LaTeX or backslashes; avoid additional JSON inside the argument."
+            )
+        else:
+            user_prompt = (
+                "Solve the problem above now. In your argument text, first give brief steps. "
+                "On the final line, output exactly: Answer: <NUMBER> with a numeric value only. "
+                "Do not include LaTeX or backslashes; avoid additional JSON inside the argument."
+            )
+
+        # Try multiple attempts to force a completed solution with explicit final answer
+        max_attempts = 3
+        response_text = ""
+        for attempt in range(max_attempts):
+            response = solver.act(message=user_prompt)
+            response_text = self._extract_text_from_response(response)
+            # Check if an explicit final answer line is present
+            txt = response_text.strip()
+            if src == "aqua":
+                has_final = bool(re.search(r"(?mi)^\s*(final answer|answer|selected|choice)[:\s]+([A-E])\b", txt))
+            else:
+                has_final = bool(re.search(r"(?mi)^\s*(final answer|answer|equals|=|result is)\s*\$?[0-9]+\.?[0-9]*\s*$", txt))
+            if has_final:
+                break
+            # Strengthen prompt for next attempt
+            if src == "aqua":
+                user_prompt = (
+                    "Continue and finish now. Compute the choice and, on the final line, output exactly: "
+                    "Answer: <LETTER> (A–E). Do not restate the problem."
+                )
+            else:
+                user_prompt = (
+                    "Continue and finish now. Compute the numeric result and, on the final line, output exactly: "
+                    "Answer: <NUMBER>. Do not restate the problem."
+                )
         
         # Parse the response
         extracted_answer = self._extract_final_answer(response_text)
@@ -469,11 +479,12 @@ class SingleAgentMathEvaluator:
         """Extract final answer from response.
         Returns float for numeric tasks, or a single-letter string (A-E) for MCQ.
         """
-        # Try MCQ letter first
+        # Try MCQ letter first (require explicit 'Answer: <LETTER>' to reduce false positives)
         letter_patterns = [
-            r"(?:answer|final answer|selected|choice)[:\s]+([A-E])\b",
-            r"\boption\s+([A-E])\b",
-            r"^\s*([A-E])\s*$",
+            r"^\s*answer[:\s]+([A-E])\b",
+            r"^\s*final answer[:\s]+([A-E])\b",
+            r"^\s*selected[:\s]+([A-E])\b",
+            r"^\s*choice[:\s]+([A-E])\b",
         ]
         text_stripped = text.strip()
         for pattern in letter_patterns:
@@ -483,9 +494,8 @@ class SingleAgentMathEvaluator:
 
         # Numeric patterns
         num_patterns = [
-            r"(?:answer is|equals|=|result is)\s*\$?([0-9]+\.?[0-9]*)",
-            r"(?:final answer|answer):\s*\$?([0-9]+\.?[0-9]*)",
-            r"\$?([0-9]+\.?[0-9]*)\s*(?:dollars?|cents?)?$",
+            r"^.*(?:final answer|answer)[:\s]*\$?([0-9]+\.?[0-9]*)\s*$",
+            r"^.*(?:equals|=|result is)\s*\$?([0-9]+\.?[0-9]*)\s*$",
         ]
         text_lower = text.lower().strip()
         for pattern in num_patterns:
@@ -609,19 +619,16 @@ class SingleAgentMathEvaluator:
             "detailed_results": results,
             "statistics": stats_overall,
             "statistics_by_source": stats_by_source,
-            "conclusion": self._generate_conclusion(stats_overall)
         }
 
     def run_evaluation_by_profiles(self, per_profile_questions: int = 200) -> Dict[str, Any]:
-        """Run evaluation by iterating real Agent A profiles and sampling questions per dataset per profile.
-        For each profile, sample up to N questions from GSM8K and N from AQuA, compute per-profile averages,
-        then aggregate by barrier type.
-        """
+
         print("\n🧮 Loading problems (GSM8K + AQuA) ...")
         # Load maximum needed; we will sample per profile below
         problems = self.load_math_problems(limit=0)  # full
         gsm8k = [p for p in problems if p.source == "gsm8k"]
         aqua = [p for p in problems if p.source == "aqua"]
+
         print(f"   GSM8K: {len(gsm8k)} | AQuA: {len(aqua)}")
 
         profiles = self.load_profiles_from_episodes()
@@ -861,58 +868,7 @@ class SingleAgentMathEvaluator:
             json.dump(out, f, indent=2)
 
         return stats_summary
-    
-    def _generate_conclusion(self, stats: Dict[str, Any]) -> Dict[str, str]:
-        """Generate conclusions about barrier effects on mathematical reasoning"""
-        
-        conclusions = {
-            "main_finding": "",
-            "mathematical_capability": "",
-            "communication_effects": {}
-        }
-        
-        baseline_answer = stats.get("baseline", {}).get("answer_accuracy_mean", 0)
-        baseline_clarity = stats.get("baseline", {}).get("reasoning_clarity_mean", 0)
-        
-        # Check mathematical capability preservation
-        math_preserved = True
-        significant_clarity_loss = False
-        
-        for barrier_type in ["semantic_structure", "cultural_style", "emotional_influence"]:
-            if barrier_type in stats:
-                barrier_stats = stats[barrier_type]
-                answer_delta = barrier_stats.get("answer_delta_mean", 0)
-                clarity_delta = barrier_stats.get("clarity_delta_mean", 0)
-                
-                # Mathematical accuracy preservation
-                if answer_delta < -0.1 and barrier_stats.get("answer_vs_baseline_pvalue", 1) < 0.05:
-                    math_preserved = False
-                    conclusions["communication_effects"][barrier_type] = "Impairs mathematical accuracy"
-                
-                # Communication clarity effects
-                if clarity_delta < -0.1 and barrier_stats.get("clarity_vs_baseline_pvalue", 1) < 0.05:
-                    significant_clarity_loss = True
-                    effect = conclusions["communication_effects"].get(barrier_type, "")
-                    conclusions["communication_effects"][barrier_type] = effect + " | Reduces reasoning clarity"
-        
-        # Overall mathematical capability
-        if baseline_answer > 0.8:
-            conclusions["mathematical_capability"] = "Model demonstrates strong mathematical reasoning capability"
-        elif baseline_answer > 0.6:
-            conclusions["mathematical_capability"] = "Model shows adequate mathematical reasoning capability"
-        else:
-            conclusions["mathematical_capability"] = "Model has limited mathematical reasoning capability"
-        
-        # Main finding
-        if math_preserved and significant_clarity_loss:
-            conclusions["main_finding"] = "✅ Barriers affect communication clarity but preserve mathematical accuracy - proves barriers cause communication issues, not mathematical inferiority"
-        elif math_preserved and not significant_clarity_loss:
-            conclusions["main_finding"] = "Barriers have minimal impact on both mathematical accuracy and communication"
-        else:
-            conclusions["main_finding"] = "⚠️ Barriers affect both mathematical accuracy and communication - may indicate model limitations beyond communication"
-        
-        return conclusions
-
+  
 def main():
     """Main evaluation script"""
     import argparse
