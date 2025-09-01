@@ -92,6 +92,13 @@ class SingleAgentMathEvaluator:
                 self._default_profile = all_profiles[0]
         except Exception:
             self._default_profile = None
+
+        # Prepare incremental output path
+        self._incremental_path = Path(self.output_dir) / "incremental_results.jsonl"
+        try:
+            Path(self.output_dir).mkdir(parents=True, exist_ok=True)
+        except Exception:
+            pass
     
     def load_math_problems(self, limit: int = 50) -> List[MathProblem]:
         """Load GSM8K and AQuA-RAT problems for single-agent evaluation.
@@ -456,6 +463,26 @@ class SingleAgentMathEvaluator:
             reasoning_clarity=reasoning_clarity,
             success=(answer_accuracy > 0.8 and reasoning_clarity > 0.6)
         )
+
+    def _write_incremental(self, result: MathResult) -> None:
+        """Append a single result as a JSON line for immediate persistence."""
+        try:
+            rec = {
+                "problem_id": result.problem_id,
+                "source": result.source,
+                "barrier_type": result.barrier_type,
+                "agent_response": result.agent_response,
+                "extracted_answer": result.extracted_answer,
+                "reasoning_steps": result.reasoning_steps,
+                "answer_accuracy": result.answer_accuracy,
+                "reasoning_clarity": result.reasoning_clarity,
+                "success": result.success,
+            }
+            with open(self._incremental_path, 'a') as f:
+                f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+        except Exception:
+            # Do not crash the run on I/O errors
+            pass
     
     def _extract_text_from_response(self, response: Any) -> str:
         """Extract text content from agent response"""
@@ -590,6 +617,8 @@ class SingleAgentMathEvaluator:
                 scenario = self.create_math_scenario(problem, barrier_type)
                 result = self.solve_math_problem(scenario)
                 results.append(result)
+                # Incremental persistence per result
+                self._write_incremental(result)
                 
                 print(f"  ✅ {problem.problem_id} | {barrier_type} | Answer: {result.answer_accuracy:.2f} | Clarity: {result.reasoning_clarity:.2f}")
         
@@ -613,7 +642,7 @@ class SingleAgentMathEvaluator:
             "statistics_by_source": stats_by_source,
         }
 
-    def run_evaluation_by_profiles(self, per_profile_questions: int = 200) -> Dict[str, Any]:
+    def run_evaluation_by_profiles(self, per_profile_questions: int = 200, num_profiles: int = 0) -> Dict[str, Any]:
 
         print("\n🧮 Loading problems (GSM8K + AQuA) ...")
         # Load maximum needed; we will sample per profile below
@@ -626,8 +655,28 @@ class SingleAgentMathEvaluator:
         profiles = self.load_profiles_from_episodes()
         print(f"👤 Loaded {len(profiles)} agent A profiles from episodes")
 
+        # Optionally subsample per barrier type
+        grouped: Dict[str, List[Dict[str, Any]]] = {}
+        for p in profiles:
+            bt = p.get("barrier_type") or "baseline"
+            grouped.setdefault(bt, []).append(p)
+
+        selected_profiles: List[Dict[str, Any]] = []
+        rng = random.Random(42)
+        for bt, lst in grouped.items():
+            if isinstance(num_profiles, int) and num_profiles > 0:
+                take = min(num_profiles, len(lst))
+                chosen = rng.sample(lst, take)
+            else:
+                chosen = lst
+            selected_profiles.extend(chosen)
+            print(f"   • {bt}: using {len(chosen)}/{len(lst)} profiles")
+
+        # Shuffle combined selection for fair interleaving
+        rng.shuffle(selected_profiles)
+
         all_results: List[MathResult] = []
-        for idx, prof in enumerate(profiles):
+        for idx, prof in enumerate(selected_profiles):
             # Sample per dataset
             rng = random.Random(42 + idx)
             gsm_sample = rng.sample(gsm8k, min(per_profile_questions, len(gsm8k))) if gsm8k else []
@@ -637,7 +686,9 @@ class SingleAgentMathEvaluator:
                 scenario = self.create_math_scenario_from_profile(prof, prob)
                 res = self.solve_math_problem(scenario)
                 all_results.append(res)
-            print(f"  ✅ Profile {idx+1}/{len(profiles)} | barrier={prof.get('barrier_type','baseline')} | items={len(sample_set)}")
+                # Incremental persistence per result
+                self._write_incremental(res)
+            print(f"  ✅ Profile {idx+1}/{len(selected_profiles)} | barrier={prof.get('barrier_type','baseline')} | items={len(sample_set)}")
 
         # Per-profile averages (combined across sources)
         per_profile: Dict[str, Dict[str, Any]] = {}
@@ -870,6 +921,7 @@ def main():
     parser.add_argument("--problems", type=int, default=10, help="Number of problems per source (applied to both GSM8K and AQuA)")
     parser.add_argument("--by_profiles", action="store_true", help="Iterate real Agent A profiles from episodes and sample per-profile questions")
     parser.add_argument("--per_profile_questions", type=int, default=200, help="Questions per dataset per profile when --by_profiles is set")
+    parser.add_argument("--num_profiles", type=int, default=0, help="Max profiles per barrier type (0 = use all)")
     parser.add_argument("--severity", type=float, default=0.8, help="Barrier severity")
     parser.add_argument("--output_dir", type=str, default="IQ_test/results", help="Output directory")
     
@@ -883,7 +935,7 @@ def main():
     )
     
     if args.by_profiles:
-        results = evaluator.run_evaluation_by_profiles(per_profile_questions=args.per_profile_questions)
+        results = evaluator.run_evaluation_by_profiles(per_profile_questions=args.per_profile_questions, num_profiles=args.num_profiles)
     else:
         # Load problems
         problems = evaluator.load_math_problems(limit=args.problems)

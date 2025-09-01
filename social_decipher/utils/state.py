@@ -94,6 +94,9 @@ def build_dynamic_rules_from_state(
             out["sem_tactics"] = (
                 "- Anchor statements with concrete nouns; resolve pronouns explicitly; prefer straightforward clauses."
             )
+            out["sem_how"] = (
+                "- Restate key entities explicitly (names, roles); repeat important numbers plainly to remove doubt."
+            )
         elif band == "light":
             out["sem_narrative"] = (
                 "- Mostly speak clearly, but occasionally introduce light ambiguity (e.g., a subtle referent shift or brief ellipsis)."
@@ -101,6 +104,9 @@ def build_dynamic_rules_from_state(
             )
             out["sem_tactics"] = (
                 "- Use gentle vagueness (\"around\", \"some\"); tie off thoughts with an ellipsis when unsure; avoid piling devices."
+            )
+            out["sem_examples"] = (
+                "- Example: \"There were around a dozen…\"; \"It was roughly mid-afternoon…\"; \"We met somewhere near the entrance…\""
             )
         elif band == "moderate":
             out["sem_narrative"] = (
@@ -113,6 +119,17 @@ def build_dynamic_rules_from_state(
             out["sem_deflection"] = (
                 "- When pushed for specifics, redirect briefly (e.g., background, general patterns) before conceding details."
             )
+            out["sem_reveal_policy"] = (
+                "- Do not provide exact numbers on first request. If the partner asks again explicitly, reveal only the minimal figure needed,"
+                " and avoid showing full calculations or stepwise equations."
+            )
+            out["sem_avoid_equations"] = (
+                "- Avoid algebraic symbols (x, y) and equation-like formatting; speak in descriptions rather than formulae."
+            )
+            out["sem_deflection_examples"] = (
+                "- If asked \"how many?\" try: \"It wasn’t a large number—more a handful than a crowd.\""
+                " If asked \"which person?\" try: \"The coordinator—the one managing the schedule—rather than an attendee.\""
+            )
         elif band == "strong":
             out["sem_narrative"] = (
                 "- Frequently layer ambiguity: use complex clauses, fragments, or shifting referents so specifics stay obscured."
@@ -124,6 +141,19 @@ def build_dynamic_rules_from_state(
             out["sem_clarify_policy"] = (
                 "- If clarity is unavoidable, reveal the minimal detail needed, then return to broader descriptions."
             )
+            out["sem_numbers"] = (
+                "- Refrain from stating exact numbers proactively; prefer ranges or vague quantities unless explicitly required."
+            )
+            out["sem_shape"] = (
+                "- Favor latched subordinate clauses (\"…which, incidentally, was kind of…\"); use soft overlaps (\"sort of… well…\")."
+            )
+            out["sem_reveal_policy"] = (
+                "- Withstand one or two explicit requests for numbers by paraphrasing impacts (\"not many\", \"more than a few\")."
+                " Only upon repeated insistence, provide a single approximate value and immediately return to broader framing."
+            )
+            out["sem_avoid_equations"] = (
+                "- Do not write out formulas or precise step-by-step computations; avoid LaTeX-like notation entirely."
+            )
         else:  # extreme
             out["sem_narrative"] = (
                 "- Lean into ambiguity nearly every turn. Keep multiple referents unclear and sidestep precise names and numbers throughout."
@@ -133,6 +163,19 @@ def build_dynamic_rules_from_state(
             )
             out["sem_guardrails"] = (
                 "- If the partner persists vigorously, acknowledge but continue to leave anchors undefined where possible."
+            )
+            out["sem_numbers"] = (
+                "- Avoid committing to exact numeric values; speak in approximations or defer precise figures until repeatedly pressed."
+            )
+            out["sem_examples"] = (
+                "- Example: \"Somewhere between a handful and a small cluster…\"; \"We were near the entry—adjacent, more or less.\""
+            )
+            out["sem_reveal_policy"] = (
+                "- Even when pressed, resist giving a precise figure. If absolutely necessary, give a broad range (\"on the order of…\")"
+                " and explicitly avoid detailing how it was derived."
+            )
+            out["sem_avoid_equations"] = (
+                "- Never present explicit equations, variable names, or numeric derivations; keep reasoning qualitative and oblique."
             )
         if prefer:
             out["sem_lexicon_prefer"] = f"- Favor wording like: {prefer}."
@@ -151,12 +194,18 @@ def build_dynamic_rules_from_state(
                 out["cul_tone"] = (
                     "- Use matter-of-fact phrasing; invite clarification without pressure; avoid barking orders."
                 )
+                out["cul_examples"] = (
+                    "- Example: \"Please provide the totals.\"; \"Could you clarify the location?\""
+                )
             elif band == "light":
                 out["cul_narrative"] = (
                     "- Use straightforward, explicit phrasing with some gentle directives. Keep sentences crisp and clear."
                 )
                 out["cul_requests"] = (
                     "- Phrase requests as clear steps (\"Please provide…\"); keep mitigators light and rare."
+                )
+                out["cul_examples"] = (
+                    "- Example: \"List the steps you took, then share any issues.\""
                 )
             elif band == "moderate":
                 out["cul_narrative"] = (
@@ -165,6 +214,9 @@ def build_dynamic_rules_from_state(
                 out["cul_refusals"] = (
                     "- Decline or correct bluntly but professionally; steer the partner toward the needed action."
                 )
+                out["cul_clarify"] = (
+                    "- Use short interrogatives: \"When?\" \"Where?\" \"How many?\" to pin down specifics; minimize small talk."
+                )
             elif band == "strong":
                 out["cul_narrative"] = (
                     "- Be forthright most turns. Issue explicit requests and lay out expectations unambiguously."
@@ -172,12 +224,18 @@ def build_dynamic_rules_from_state(
                 out["cul_openings"] = (
                     "- Open with clear instructions; omit softeners; close loops by assigning next steps."
                 )
+                out["cul_examples"] = (
+                    "- Example: \"State the exact total and the source documents.\""
+                )
             else:
                 out["cul_narrative"] = (
                     "- Be maximally explicit and highly directive nearly every turn; avoid hedging altogether."
                 )
                 out["cul_enforcement"] = (
                     "- Push for commitments; challenge vague answers; replace hints with direct asks."
+                )
+                out["cul_shape"] = (
+                    "- Use imperative frames (\"Provide…\", \"List…\", \"State…\"); sequence actions (\"First… then… finally…\")."
                 )
             if frames:
                 out["cul_frames"] = f"- Useful directive frames include: {frames}."
@@ -189,12 +247,18 @@ def build_dynamic_rules_from_state(
                 out["cul_tone"] = (
                     "- Keep polite but direct; avoid reading between the lines unless invited."
                 )
+                out["cul_examples"] = (
+                    "- Example: \"Perhaps we could revisit the summary, if that works for you.\""
+                )
             elif band == "light":
                 out["cul_narrative"] = (
                     "- Use mild hedging and hints. Prefer gentle suggestions over blunt statements."
                 )
                 out["cul_openings"] = (
                     "- Cushion requests with softeners (\"perhaps\", \"might\"); leave space for the partner to infer intent."
+                )
+                out["cul_hints"] = (
+                    "- Example: \"It might be helpful to…\"; \"Perhaps we could consider…\"; \"I wonder if…\""
                 )
             elif band == "moderate":
                 out["cul_narrative"] = (
@@ -203,6 +267,12 @@ def build_dynamic_rules_from_state(
                 out["cul_refusals"] = (
                     "- Decline obliquely (express reluctance or constraints) instead of stating \"no\" outright."
                 )
+                out["cul_numbers"] = (
+                    "- When quantities arise, prefer qualitative descriptors or ranges over exact numbers unless explicitly requested."
+                )
+                out["cul_indirect_questions"] = (
+                    "- Prefer indirect interrogatives: \"Would it be possible to share…?\" rather than \"Share…\"."
+                )
             elif band == "strong":
                 out["cul_narrative"] = (
                     "- Lean on heavy hedging and roundabout phrasing; sidestep blunt statements and keep intent implicit."
@@ -210,12 +280,24 @@ def build_dynamic_rules_from_state(
                 out["cul_hints"] = (
                     "- Rely on shared context and allusions; leave the desired action implied rather than named."
                 )
+                out["cul_numbers"] = (
+                    "- Avoid direct numeric commitments; deflect to approximations or context instead of stating exact figures."
+                )
+                out["cul_face_saving"] = (
+                    "- Use face-saving closers (\"if that’s alright\", \"when convenient\"); avoid confrontational follow-ups."
+                )
             else:
                 out["cul_narrative"] = (
                     "- Be pervasively indirect: wrap most content in softeners and hints; avoid bluntness entirely."
                 )
                 out["cul_implicature"] = (
                     "- Communicate intent via implications and face-saving phrasing; resist direct commitments."
+                )
+                out["cul_numbers"] = (
+                    "- Do not provide exact numbers unless repeatedly and explicitly asked; prefer vague amounts or ranges."
+                )
+                out["cul_examples"] = (
+                    "- Example: \"It seems quite a few—more than a handful—though pinning down the exact figure may be premature.\""
                 )
             if hedge_words:
                 out["cul_hedges"] = f"- You can hedge with words like: {hedge_words}."

@@ -263,8 +263,13 @@ class SocialAgent:
         try:
             response_json = json.loads(response) if isinstance(response, str) else response
         except (json.JSONDecodeError, KeyError) as e:
-            print(f"❌ Error processing action response: {e}")
-            response_json = response
+            # Attempt to sanitize common backslash escapes (e.g., LaTeX) before retrying JSON parsing
+            try:
+                sanitized = response.replace("\\(", "(").replace("\\)", ")").replace("\\", "") if isinstance(response, str) else response
+                response_json = json.loads(sanitized) if isinstance(sanitized, str) else sanitized
+            except Exception:
+                print(f"❌ Error processing action response: {e}")
+                response_json = response
         original_response = json.loads(json.dumps(response_json))
         
         print(f"💬 {self.name}: {str(original_response)}")
