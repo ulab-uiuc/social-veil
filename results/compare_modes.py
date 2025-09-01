@@ -92,7 +92,7 @@ def main():
     parser.add_argument(
         "--base_dir",
         type=str,
-        default="../results/exp_text_only_memoff_4o_mini_episodes_original_0823_2230",
+        default="../results/exp_qwen2.5-7b-instruct_episodes_original",
         help="Base results directory that contains mode_* subfolders",
     )
     parser.add_argument("--out_json", type=str, default="", help="Optional path to save the summary JSON")
