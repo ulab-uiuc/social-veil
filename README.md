@@ -25,10 +25,49 @@ pip install -r analysis/IQ_test/requirements.txt
 # 1) Edit configs/config.yaml
 # - models.model_a / models.model_b: API or local HF path (used by scripts)
 # - models.vllm_port, models.gpu, models.served_model_name, chat_template
-# - OPENAI_API_KEY / HF_API_TOKEN / MISTRAL_API_KEY (if needed)
+# - OPENAI_API_KEY / ANTHROPIC_API_KEY / HF_API_TOKEN / MISTRAL_API_KEY (if needed)
 
-# 2) Start vLLM for local/HF models (reads model_b, port, gpu from config)
+# 2) Export keys (if not stored in config.yaml)
+export OPENAI_API_KEY=...
+export ANTHROPIC_API_KEY=...
+export HF_API_TOKEN=...
+export MISTRAL_API_KEY=...
+
+# 3) Start vLLM for local/HF models (reads model_b, port, gpu from config)
 bash scripts/start_vllm_server.sh
+```
+
+### 🧩 Config Examples
+```yaml
+# 1) OpenAI (GPT)
+models:
+  model_a: "gpt-4o-mini"
+  model_b: "gpt-4o-mini"
+  gpu: "0"
+  vllm_port: 6900
+  chat_template: "configs/llama3.1-8b.jinja"  # ignored for OpenAI
+  served_model_name: "gpt-4o-mini"            # ignored for OpenAI
+OPENAI_API_KEY: "sk-..."
+
+# 2) Claude (Anthropic)
+models:
+  model_a: "claude-3-5-sonnet-20240620"
+  model_b: "claude-3-5-sonnet-20240620"
+  gpu: "0"                     # unused for hosted APIs
+  vllm_port: 6900               # unused for hosted APIs
+  chat_template: "configs/llama3.1-8b.jinja"  # ignored for Anthropic
+  served_model_name: "claude-3-5-sonnet-20240620"  # ignored for Anthropic
+ANTHROPIC_API_KEY: "ak-..."
+
+# 3) Local model (Qwen2.5 via vLLM)
+models:
+  model_a: "Qwen/Qwen2.5-7B-Instruct"
+  model_b: "Qwen/Qwen2.5-7B-Instruct"
+  gpu: "0,1"                   # GPUs for both vLLM and runs
+  vllm_port: 6901
+  chat_template: "configs/qwen2.5-7b.jinja"
+  served_model_name: "qwen2.5-7b-instruct"
+HF_API_TOKEN: "hf_..."
 ```
 
 

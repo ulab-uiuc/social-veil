@@ -26,13 +26,6 @@ with open(CONFIG_PATH, "r") as f:
 openai_client = None
 anthropic_client = None
 
-def _contains_chinese(text):
-    """Check if text contains Chinese characters"""
-    chinese_pattern = re.compile(
-        r"[\u4e00-\u9fff\u3400-\u4dbf\u20000-\u2a6df\u2a700-\u2b73f\u2b740-\u2b81f\u2b820-\u2ceaf]"
-    )
-    return bool(chinese_pattern.search(text))
-
 
 def _get_default_template_for_model(model_id):
     """Auto-detect the appropriate template based on model name"""
@@ -103,8 +96,6 @@ def direct_completion(
     else:
         return openai_completion(model_id, system_message, message)
     
-
-
 def openai_completion(model_id, system_message, message):
     client = get_openai_client()
     try:    
@@ -151,6 +142,7 @@ def anthropic_completion(model_id, system_message, message):
             system=system_message,
             messages=[{"role": "user", "content": message}],
             temperature=0.3,
+            max_tokens=1024,
         )
         content = response.content[0].text
 
