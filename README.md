@@ -10,6 +10,27 @@
 > [!NOTE]
 > This repo is continuously updating with more tools. Any contribution is welcome.
 
+## 🧰 Environment Setup
+```bash
+conda create -n socialveil python=3.10
+conda activate socialveil
+pip install poetry
+poetry install
+# optional (math IQ tests)
+pip install -r analysis/IQ_test/requirements.txt
+```
+
+### 🔑 Variables & Model Setup
+```bash
+# 1) Edit configs/config.yaml
+# - models.model_a / models.model_b: API or local HF path (used by scripts)
+# - models.vllm_port, models.gpu, models.served_model_name, chat_template
+# - OPENAI_API_KEY / HF_API_TOKEN / MISTRAL_API_KEY (if needed)
+
+# 2) Start vLLM for local/HF models (reads model_b, port, gpu from config)
+bash scripts/start_vllm_server.sh
+```
+
 
 ## 🚀 Simulation (barrier modes)
 ```bash
