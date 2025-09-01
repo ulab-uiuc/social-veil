@@ -40,19 +40,12 @@ def judge_repair_with_llm(
 ) -> Dict[str, Any]:
 
     cfg = _load_repair_cfg()
-    system_prompt = cfg.get("system", "You are an annotator. Return JSON only.")
-    user_template = cfg.get("user_template", "{reply}")
-    rubric_cfg = cfg.get("rubric", {})
-    schema_json = cfg.get("schema_json", "{}")
+    system_prompt = cfg.get("system")
+    user_template = cfg.get("user_template")
+    rubric_cfg = cfg.get("rubric")
+    schema_json = cfg.get("schema_json")
 
-    if barrier_type == "semantic_structure":
-        rubric_key = "semantic"
-    elif barrier_type == "emotional_influence":
-        rubric_key = "emotional"
-    else:
-        rubric_key = "cultural"
-
-    rubric = rubric_cfg.get(rubric_key, "")
+    rubric = rubric_cfg
 
     context = "\n".join(transcript[-6:-1])
     user_prompt = user_template.format(
@@ -107,7 +100,7 @@ def judge_repair_with_llm(
     conf = data.get("confidence", 0.0)
     data["confidence"] = conf
 
-    base_score = (clarity +  accommodation + empathy)/3
+    base_score = (clarity + accommodation + empathy) / 3.0
     final_score = base_score * conf
     data["score"] = final_score
     

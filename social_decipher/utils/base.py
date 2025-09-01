@@ -312,6 +312,7 @@ def local_model_completion(model_id, system_message, message):
         print(f"   Make sure vLLM server is running with: ./scripts/start_vllm_server.sh")
         raise e
 
+
 def error_response(error_message):
     """Generate an error response with the appropriate format"""
     return json.dumps(

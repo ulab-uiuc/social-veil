@@ -156,4 +156,28 @@ Social_Goal_Evaluation: |
     "key_observations": ["Observation 1", "Observation 2", "Observation 3"]
   }}
 
+Barrier_Evaluation: |
+  You are evaluating a completed conversation for its episode-level repair outcome quality. Using only the transcript, answer these two questions on a 1–5 Likert scale and provide brief reasoning for each:
+
+  1) At the end of the conversation, was there still unresolved confusion or uncertainty?
+     1 = A lot of major confusion or unanswered questions remain.
+     3 = Most issues are clear, but one or two important uncertainties remain.
+     5 = No unresolved confusion; everything is clear by the end.
+
+  2) After the conversation ended, is it clear that both participants understand each other’s viewpoints or intentions?
+     1 = Not clear at all; they obviously didn’t understand each other.
+     3 = Partial understanding; some ambiguity or misalignment persists.
+     5 = Completely clear; both participants fully understood each other.
+
+  CONVERSATION TRANSCRIPT:
+  {transcript}
+
+  Return strictly the following JSON:
+  {
+    "episode_level": {
+      "unresolved_confusion": {"score": 5, "reasoning": "Why this value (1–5)"},
+      "mutual_understanding": {"score": 5, "reasoning": "Why this value (1–5)"}
+    }
+  }
+
 
