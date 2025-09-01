@@ -26,6 +26,7 @@ sotopia_hard_env = _config.get("sotopia_hard_env")
 os.environ["OPENAI_API_KEY"] = _config.get("OPENAI_API_KEY") 
 os.environ["HF_API_TOKEN"] = _config.get("HF_API_TOKEN")
 os.environ["MISTRAL_API_KEY"] = _config.get("MISTRAL_API_KEY")
+os.environ["ANTHROPIC_API_KEY"] = _config.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_API_KEY", "")
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run social agent simulation: baseline + three barrier variants (semantic/cultural/emotional)")

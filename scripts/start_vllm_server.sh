@@ -3,14 +3,14 @@
 # Read model configuration from config.yaml
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
-CONFIG_READER="$SCRIPT_DIR/config_reader.py"
+CONFIG_READER="-m social_decipher.utils.config_reader"
 
 # Change to project root for poetry command
 cd "$PROJECT_ROOT"
 
-export GLOBAL_MODEL_B=$(poetry run python "$CONFIG_READER" models.model_b)
-export VLLM_GPU=$(poetry run python "$CONFIG_READER" models.gpu)
-export VLLM_PORT=$(poetry run python "$CONFIG_READER" models.vllm_port)
+export GLOBAL_MODEL_B=$(poetry run python $CONFIG_READER models.model_b)
+export VLLM_GPU=$(poetry run python $CONFIG_READER models.gpu)
+export VLLM_PORT=$(poetry run python $CONFIG_READER models.vllm_port)
 
 echo "===================================="
 echo "🚀 Starting vLLM Server"
@@ -27,10 +27,10 @@ if curl -s http://localhost:$VLLM_PORT/health > /dev/null 2>&1; then
 fi
 
 echo "Starting vLLM server..."
-CHAT_TEMPLATE=$(poetry run python "$CONFIG_READER" models.chat_template)
-SERVED_MODEL_NAME=$(poetry run python "$CONFIG_READER" models.served_model_name)
-MAX_MODEL_LEN=$(poetry run python "$CONFIG_READER" models.max_model_len)
-TENSOR_PARALLEL_SIZE=$(poetry run python "$CONFIG_READER" models.tensor_parallel_size)
+CHAT_TEMPLATE=$(poetry run python $CONFIG_READER models.chat_template)
+SERVED_MODEL_NAME=$(poetry run python $CONFIG_READER models.served_model_name)
+MAX_MODEL_LEN=$(poetry run python $CONFIG_READER models.max_model_len)
+TENSOR_PARALLEL_SIZE=$(poetry run python $CONFIG_READER models.tensor_parallel_size)
 
 # If tensor_parallel_size not set, infer from number of GPUs listed
 if [[ -z "$TENSOR_PARALLEL_SIZE" || "$TENSOR_PARALLEL_SIZE" == "0" ]]; then

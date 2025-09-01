@@ -71,6 +71,24 @@ class ConversationEvaluator:
             conversation, agent_goals, agent_reasons
         )
 
+ 
+        barrier_scores = None
+        if self.evaluation_template.get("Barrier_Evaluation"):
+            transcript_text = "\n".join(conversation)
+            barrier_prompt = self.evaluation_template["Barrier_Evaluation"].format(
+                transcript=transcript_text
+            )
+            try:
+                resp = self.client.chat.completions.create(
+                    model=self.model,
+                    messages=[{"role": "user", "content": barrier_prompt}],
+                    temperature=0.0,
+                )
+                content = resp.choices[0].message.content.strip()
+                barrier_scores = extract_clean_json(content)
+            except Exception as e:
+                print(f"Barrier evaluation failed: {e}")
+
         # Compile comprehensive evaluation
         evaluation = {
             "aggregated_scores": {
@@ -123,8 +141,20 @@ class ConversationEvaluator:
                 "interaction_quality": social_performance.get(
                     "interaction_quality", {}
                 ).get("score", 0),
+                "episode_level": {
+                    "unresolved_confusion": None,
+                    "mutual_understanding": None,
+                },
             },
         }
+        if isinstance(barrier_scores, dict):
+            ep = barrier_scores.get("episode_level", {})
+            evaluation["aggregated_scores"]["episode_level"][
+                "unresolved_confusion"
+            ] = ep.get("unresolved_confusion", {}).get("score")
+            evaluation["aggregated_scores"]["episode_level"][
+                "mutual_understanding"
+            ] = ep.get("mutual_understanding", {}).get("score")
 
         # --- Enhanced MCQ Metrics ---
         def compute_mcq_metrics(mcq_logs, agent_prefix):

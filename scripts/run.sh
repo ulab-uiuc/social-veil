@@ -3,20 +3,20 @@
 # Read model configuration from config.yaml
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
-CONFIG_READER="$SCRIPT_DIR/config_reader.py"
+CONFIG_READER="-m social_decipher.utils.config_reader"
 
 # Change to project root for poetry command
 cd "$PROJECT_ROOT"
 
-export GLOBAL_MODEL_A=$(poetry run python "$CONFIG_READER" models.model_a)
-export GLOBAL_MODEL_B=$(poetry run python "$CONFIG_READER" models.model_b)
-export DATA_NAME=$(poetry run python "$CONFIG_READER" data_dir)
+export GLOBAL_MODEL_A=$(poetry run python $CONFIG_READER models.model_a)
+export GLOBAL_MODEL_B=$(poetry run python $CONFIG_READER models.model_b)
+export DATA_NAME=$(poetry run python $CONFIG_READER data_dir)
 # Derive a short tag from the data file (basename without extension), e.g., 'data/episode_hard.jsonl' -> 'episode_hard'
 DATA_FILE_NAME=$(basename "$DATA_NAME")
 DATA_TAG="${DATA_FILE_NAME%.*}"
-export MODEL_NAME=$(poetry run python "$CONFIG_READER" models.served_model_name)
-export GPU=$(poetry run python "$CONFIG_READER" models.gpu)
-export VLLM_PORT=$(poetry run python "$CONFIG_READER" models.vllm_port)
+export MODEL_NAME=$(poetry run python $CONFIG_READER models.served_model_name)
+export GPU=$(poetry run python $CONFIG_READER models.gpu)
+export VLLM_PORT=$(poetry run python $CONFIG_READER models.vllm_port)
 
 TIMESTAMP=$(date +%m%d_%H%M)
 
