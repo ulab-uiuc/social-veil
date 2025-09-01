@@ -50,7 +50,7 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "--episodes_file", type=str, default="data/episode_original.jsonl", 
+        "--episodes_file", type=str, default="data/episode_all.jsonl", 
         help="Path to the pre-processed episode JSONL file",
     )
     parser.add_argument(
@@ -251,9 +251,9 @@ def main():
         args.results_dir
     )
     
-    semantic_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_semantic.json"))
-    cultural_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_cultural.json"))
-    emotional_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_emotional.json"))
+    semantic_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_all_semantic.json"))
+    cultural_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_all_cultural.json"))
+    emotional_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_all_emotional.json"))
 
     need_generate = not (os.path.isfile(semantic_path) and os.path.isfile(cultural_path) and os.path.isfile(emotional_path))
     if need_generate:
@@ -273,17 +273,17 @@ def main():
     episodes_emotional = load_json(emotional_path)
 
     # Run baseline then each barrier set
-    # print("\n▶️ Running baseline (original episodes)...")
-    # run_experiment(episodes, experiment_config, evaluator, args, mode_tag="baseline")
+    print("\n▶️ Running baseline (original episodes)...")
+    run_experiment(episodes, experiment_config, evaluator, args, mode_tag="baseline")
 
     print("\n▶️ Running semantic barrier episodes...")
     run_experiment(episodes_semantic, experiment_config, evaluator, args, mode_tag="semantic")
 
-    # print("\n▶️ Running cultural barrier episodes...")
-    # run_experiment(episodes_cultural, experiment_config, evaluator, args, mode_tag="cultural")
+    print("\n▶️ Running cultural barrier episodes...")
+    run_experiment(episodes_cultural, experiment_config, evaluator, args, mode_tag="cultural")
 
-    # print("\n▶️ Running emotional barrier episodes...")
-    # run_experiment(episodes_emotional, experiment_config, evaluator, args, mode_tag="emotional")
+    print("\n▶️ Running emotional barrier episodes...")
+    run_experiment(episodes_emotional, experiment_config, evaluator, args, mode_tag="emotional")
 
 if __name__ == "__main__":
     main()

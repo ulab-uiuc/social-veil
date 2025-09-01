@@ -74,7 +74,7 @@ HF_API_TOKEN: "hf_..."
 ## 🚀 Simulation (barrier modes)
 ```bash
 bash scripts/start_vllm_server.sh           # optional: start vLLM (GPU)
-bash scripts/run.sh                         # run simulation (reads configs/config.yaml)
+bash scripts/run.sh --episodes_file data/episode_all.jsonl        # run simulation (reads configs/config.yaml)
 ```
 
 ## 📐 Math Analysis (GSM8K + AQuA)
