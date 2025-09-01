@@ -29,8 +29,8 @@ bash scripts/run_single_agent_math_eval.sh --problems 50
 ```
 
 Outputs:
-- Incremental: `IQ_test/results/incremental_results.jsonl`
-- Final: `IQ_test/results/detailed_results.json`, `results_by_problem.csv`, `evaluation_by_source.json`
+- Incremental: `analysis/IQ_test/results/incremental_results.jsonl`
+- Final: `analysis/IQ_test/results/detailed_results.json`, `results_by_problem.csv`, `evaluation_by_source.json`
 - Profile mode: `profile_averages.json`, `barrier_type_averages.json`, source-split JSONs, and `profile_scores.csv`
 
 Scoring:
@@ -40,7 +40,7 @@ Scoring:
 ## 🧠 Internal State Verification (Representation Analysis)
 ```bash
 bash scripts/start_vllm_server.sh
-python analysis/barrier_representation_analysis.py \
+python analysis/internal_state/barrier_representation_analysis.py \
   --model Qwen/Qwen2.5-7B-Instruct \
   --episodes data/episode_all.jsonl \
   --severity 0.8
