@@ -79,8 +79,7 @@ bash scripts/run.sh                         # run simulation (reads configs/conf
 
 ## 📐 Math Analysis (GSM8K + AQuA)
 
-The math evaluator tests whether barriers harm communication rather than raw IQ by running GSM8K (numeric) and AQuA-RAT (MCQ) with the same social instruction used for simulation. Only the JSON-output requirement is removed, and a minimal final-answer line is requested.
-
+The math evaluator tests whether barriers harm communication rather than raw IQ by running GSM8K (numeric) and AQuA-RAT (MCQ) with the same social instruction used for simulation. 
 ```bash
 bash scripts/start_vllm_server.sh
 bash scripts/run_single_agent_math_eval.sh --by-profiles --num-profiles 50 --per-profile-questions 200

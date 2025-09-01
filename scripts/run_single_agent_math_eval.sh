@@ -7,7 +7,7 @@ set -euo pipefail
 # bash scripts/run_single_agent_math_eval.sh --by-profiles --num-profiles 50 --per-profile-questions 200
 
 MODEL="Qwen/Qwen2.5-7B-Instruct"
-OUTPUT_DIR="IQ_test/results"
+OUTPUT_DIR="analysis/IQ_test/results"
 SEVERITY="0.8"
 BY_PROFILES="false"
 NUM_PROFILES="0"           # 0 = use all per barrier type
@@ -48,7 +48,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-CMD=(python IQ_test/single_agent_math_eval.py --model "$MODEL" --output_dir "$OUTPUT_DIR" --severity "$SEVERITY")
+CMD=(python analysis/IQ_test/single_agent_math_eval.py --model "$MODEL" --output_dir "$OUTPUT_DIR" --severity "$SEVERITY")
 
 if [[ "$BY_PROFILES" == "true" ]]; then
   CMD+=(--by_profiles --num_profiles "$NUM_PROFILES" --per_profile_questions "$PER_PROFILE_QUESTIONS")
