@@ -13,7 +13,8 @@ def load_all_episodes(
 ) -> List[Dict[str, Any]]:
     """Load episodes from all barrier files"""
     
-    project_root = Path(__file__).parent.parent
+    # Repo root: .../social-decipher (two levels above 'analysis/internal_state')
+    project_root = Path(__file__).resolve().parents[2]
     episodes = []
     
     # File mappings
@@ -25,7 +26,8 @@ def load_all_episodes(
     }
     
     for barrier_type, file_path in file_mappings.items():
-        full_path = project_root / file_path
+        fp = Path(file_path)
+        full_path = fp if fp.is_absolute() else (project_root / fp)
         
         if not full_path.exists():
             print(f"⚠️ File not found: {full_path}")
