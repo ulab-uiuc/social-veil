@@ -106,8 +106,9 @@ def run_single_scenario_simulation(
     conversation_log = []
     mcq_logs = []
 
-    # Initialize dynamic barrier state for Agent A (single-sided)
-    init_barrier_state(environment.env)
+    # Initialize dynamic barrier state for Agent A (single-sided) only for barrier modes
+    if environment and isinstance(environment.env, dict) and environment.env.get("barrier_type"):
+        init_barrier_state(environment.env)
 
     print(f"🌐 Using agent profile models: {personA.name}({personA.profile.model_id}) ↔ {personB.name}({personB.profile.model_id})")
 
@@ -149,11 +150,13 @@ def run_single_scenario_simulation(
                     print(f"👋 {personB.name} indicated goodbye")
 
         barrier_type = environment.env.get("barrier_type") if environment and environment.env else None
-        judge_json = judge_repair_with_llm(formatted_b, conversation_log, barrier_type)
-        print(judge_json)
-     
-        repair_score = float(judge_json.get("score", 0.0) or 0.0)
-        update_barrier_state(environment.env, repair_score)
+
+        judge_json = None
+        if barrier_type:
+            judge_json = judge_repair_with_llm(formatted_b, conversation_log, barrier_type)
+            print(judge_json)
+            repair_score = float(judge_json.get("score", 0.0) or 0.0)
+            update_barrier_state(environment.env, repair_score)
 
         if b_left:
             print(f"🚪 Conversation ended: explicit leave (Turn {turn_num})")
@@ -243,7 +246,7 @@ def run_single_scenario_simulation(
                 f"agent_2_reason_mcq": reason_mcq_B,
                 f"agent_2_knowledge_mcq": None,
                 "agent_b_repair_eval_llm": judge_json,
-                "barrier_state": environment.env.get("barrier_state"),
+                "barrier_state": environment.env.get("barrier_state") if environment.env.get("barrier_type") else None,
             }
         )
     
