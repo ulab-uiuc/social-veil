@@ -44,6 +44,7 @@ from social_decipher.agent.agent_profile import AgentProfile
 from social_decipher.environment.episode_loader import EpisodeLoader
 from social_decipher.agent.social_agent import SocialAgent
 from social_decipher.environment.env_profile import EnvironmentProfile
+from social_decipher.utils.state import build_dynamic_rules_from_state
 
 @dataclass
 class RepresentationData:
@@ -164,6 +165,26 @@ class BarrierRepresentationAnalyzer:
         )
 
         prompt = agent.build_instruction(transcript="", turn_number=0)
+
+        # Inject extreme-band barrier guidance directly into the prompt for analysis stability
+        barrier_type = environment.env.get("barrier_type")
+        if barrier_type:
+            # Force extreme band guidance regardless of runtime severity/repair state
+            extreme_env = {
+                "barrier_type": barrier_type,
+                "barrier_cues": environment.env.get("barrier_cues", {}),
+                "barrier_state": {"severity": 0.99},
+            }
+            dyn_map = build_dynamic_rules_from_state(extreme_env, is_agent_a=True)
+            # Preserve order but only include textual values
+            lines: List[str] = []
+            for v in dyn_map.values():
+                if isinstance(v, str) and v.strip():
+                    lines.append(v)
+            if lines:
+                extreme_block = "\n".join(lines)
+                prompt = f"{prompt}\n\n[Extreme barrier guidance]\n{extreme_block}"
+
         return prompt
     
     def _format_barrier_dynamic_rules(self, barrier_cues: Dict[str, Any]) -> str:

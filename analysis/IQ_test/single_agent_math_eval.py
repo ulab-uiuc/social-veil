@@ -25,6 +25,7 @@ sys.path.insert(0, str(project_root))
 from social_decipher.agent.social_agent import SocialAgent
 from social_decipher.agent.agent_profile import AgentProfile
 from social_decipher.environment.env_profile import EnvironmentProfile
+from social_decipher.utils.state import build_dynamic_rules_from_state
 from analysis.load_existing_episodes import load_all_episodes
 
 @dataclass
@@ -401,7 +402,25 @@ class SingleAgentMathEvaluator:
             out.append("Formatting: Respond in plain text. Provide steps, then end with a single final line 'Answer: <...>'.")
             return "\n".join(out)
 
-        solver.instructions = _sanitize_instruction_for_eval(raw_instr)
+        # Inject extreme-band guidance when a barrier is present to lock in the strongest barrier behavior
+        injected = raw_instr
+        barrier_type = environment.env.get("barrier_type")
+        if barrier_type:
+            extreme_env = {
+                "barrier_type": barrier_type,
+                "barrier_cues": environment.env.get("barrier_cues", {}),
+                "barrier_state": {"severity": 0.99},
+            }
+            dyn_map = build_dynamic_rules_from_state(extreme_env, is_agent_a=True)
+            lines = []
+            for v in dyn_map.values():
+                if isinstance(v, str) and v.strip():
+                    lines.append(v)
+            if lines:
+                extreme_block = "\n".join(lines)
+                injected = f"{raw_instr}\n\n[Extreme barrier guidance]\n{extreme_block}"
+
+        solver.instructions = _sanitize_instruction_for_eval(injected)
 
         src = scenario.get("source", "gsm8k").lower()
         if src == "aqua":
