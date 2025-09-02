@@ -9,7 +9,7 @@ import pandas as pd
 from pathlib import Path
 from typing import Dict, List, Tuple, Any, Optional
 from dataclasses import dataclass
-from analysis.load_existing_episodes import load_all_episodes
+from internal_state.load_existing_episodes import load_all_episodes
 from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
 from sklearn.metrics import (
@@ -40,11 +40,11 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch.nn.functional as F
 
 # Import project modules
-from social_decipher.agent.agent_profile import AgentProfile
-from social_decipher.environment.episode_loader import EpisodeLoader
-from social_decipher.agent.social_agent import SocialAgent
-from social_decipher.environment.env_profile import EnvironmentProfile
-from social_decipher.utils.state import build_dynamic_rules_from_state
+from ..social_decipher.agent.agent_profile import AgentProfile
+from ..social_decipher.environment.episode_loader import EpisodeLoader
+from ..social_decipher.agent.social_agent import SocialAgent
+from ..social_decipher.environment.env_profile import EnvironmentProfile
+from ..social_decipher.utils.state import build_dynamic_rules_from_state
 
 @dataclass
 class RepresentationData:
@@ -833,10 +833,7 @@ class BarrierRepresentationAnalyzer:
         
         # 3. Create visualizations
         self.create_visualizations()
-        
-        # 4. Generate report
-        self.generate_report()
-        
+
         print("\n" + "=" * 60)
         print("Key files:")
         print("  📊 analysis_summary.md - Human-readable results")

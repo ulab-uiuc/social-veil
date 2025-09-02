@@ -14,8 +14,8 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from analysis.barrier_representation_analysis import BarrierRepresentationAnalyzer
-from analysis.utils import check_dependencies
+from internal_state.barrier_representation_analysis import BarrierRepresentationAnalyzer
+from internal_state.utils import check_dependencies
 
 def run_full_analysis(
     model_name: str = "Qwen/Qwen2.5-7B-Instruct",

@@ -36,4 +36,4 @@ echo "Cultural:  $CULTURAL_EPISODES"
 echo "Emotional: $EMOTIONAL_EPISODES"
 
 # Run the analysis (forwards any additional CLI args)
-python analysis/run_analysis.py "$@"
+python analysis/internal_state/run_analysis.py "$@"
