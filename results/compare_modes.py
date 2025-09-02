@@ -26,6 +26,11 @@ def collect_mode_stats(base_dir: str, mode: str) -> Dict[str, float]:
     dim_acc: Dict[str, List[float]] = {f"a1_{d}": [] for d in DIMS}
     dim_acc.update({f"a2_{d}": [] for d in DIMS})
     dim_acc["iq"] = []
+    # Episode-level barrier metrics (only present in barrier runs)
+    epi_metrics: Dict[str, List[float]] = {
+        "episode_unresolved_confusion": [],
+        "episode_mutual_understanding": [],
+    }
 
     mcq_keys = [
         ("goal", "accuracy"), ("goal", "avg_confidence"),
@@ -54,6 +59,21 @@ def collect_mode_stats(base_dir: str, mode: str) -> Dict[str, float]:
                 dim_acc[f"a2_{d}"].append(a2.get(d, 0))
             dim_acc["iq"].append(iq)
 
+            # Episode-level barrier evaluation (if present)
+            ep = ag.get("episode_level")
+            if isinstance(ep, dict):
+                uc = ep.get("unresolved_confusion")
+                mu = ep.get("mutual_understanding")
+                # Accept either flattened numeric or nested {"score": x}
+                if isinstance(uc, (int, float)):
+                    epi_metrics["episode_unresolved_confusion"].append(float(uc))
+                elif isinstance(uc, dict) and isinstance(uc.get("score"), (int, float)):
+                    epi_metrics["episode_unresolved_confusion"].append(float(uc["score"]))
+                if isinstance(mu, (int, float)):
+                    epi_metrics["episode_mutual_understanding"].append(float(mu))
+                elif isinstance(mu, dict) and isinstance(mu.get("score"), (int, float)):
+                    epi_metrics["episode_mutual_understanding"].append(float(mu["score"]))
+
             # MCQ metrics
             mm = data.get("mcq_metrics", {})
             mm_a1 = mm.get("agent_1", {})
@@ -78,6 +98,11 @@ def collect_mode_stats(base_dir: str, mode: str) -> Dict[str, float]:
             continue
         out[k] = float(np.mean(v)) if v else None
     out["num_scenarios"] = int(max(len(a1_over), len(a2_over)))
+
+    # episode-level barrier means (if any collected)
+    for k, v in epi_metrics.items():
+        if v:
+            out[k] = float(np.mean(v))
 
     # mcq means
     for k, v in mcq_acc.items():
@@ -128,6 +153,11 @@ def main():
         ]
         # Sotopia dims
         preferred += [f"a1_{d}" for d in DIMS] + [f"a2_{d}" for d in DIMS]
+        # Episode-level barrier metrics
+        preferred += [
+            "episode_unresolved_confusion",
+            "episode_mutual_understanding",
+        ]
         # MCQ
         for who in ("a1","a2"):
             for t in ("goal","reason"):
