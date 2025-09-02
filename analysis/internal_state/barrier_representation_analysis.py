@@ -32,19 +32,20 @@ import warnings
 import yaml
 warnings.filterwarnings('ignore')
 
-# Add project root to path
-project_root = Path(__file__).parent.parent
-sys.path.insert(0, str(project_root))
+# Ensure repository root is on sys.path for absolute imports like `social_decipher.*`
+repo_root = Path(__file__).resolve().parents[2]
+if str(repo_root) not in sys.path:
+    sys.path.insert(0, str(repo_root))
 
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch.nn.functional as F
 
-# Import project modules
-from ..social_decipher.agent.agent_profile import AgentProfile
-from ..social_decipher.environment.episode_loader import EpisodeLoader
-from ..social_decipher.agent.social_agent import SocialAgent
-from ..social_decipher.environment.env_profile import EnvironmentProfile
-from ..social_decipher.utils.state import build_dynamic_rules_from_state
+# Import project modules (absolute imports to avoid relative-import issues)
+from social_decipher.agent.agent_profile import AgentProfile
+from social_decipher.environment.episode_loader import EpisodeLoader
+from social_decipher.agent.social_agent import SocialAgent
+from social_decipher.environment.env_profile import EnvironmentProfile
+from social_decipher.utils.state import build_dynamic_rules_from_state
 
 @dataclass
 class RepresentationData:
