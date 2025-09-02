@@ -173,11 +173,11 @@ Barrier_Evaluation: |
   {transcript}
 
   Return strictly the following JSON:
-  {
-    "episode_level": {
-      "unresolved_confusion": {"score": 5, "reasoning": "Why this value (1–5)"},
-      "mutual_understanding": {"score": 5, "reasoning": "Why this value (1–5)"}
-    }
-  }
+  {{
+    "episode_level": {{
+      "unresolved_confusion": {{"score": 5, "reasoning": "Why this value (1–5)"}},
+      "mutual_understanding": {{"score": 5, "reasoning": "Why this value (1–5)"}}
+    }}
+  }}
 
 

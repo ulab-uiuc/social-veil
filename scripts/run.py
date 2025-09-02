@@ -14,7 +14,7 @@ from social_decipher.communication import simulate_conversation
 from social_decipher.environment.env_profile import EnvironmentProfile
 from social_decipher.evaluate import ConversationEvaluator
 from social_decipher.utils.model import ModelManager
-from social_decipher.utils.utils import load_env
+from social_decipher.utils.utils import load_json
 
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), "..", "configs/config.yaml")
 with open(CONFIG_PATH, "r") as f:
@@ -50,7 +50,7 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "--episodes_file", type=str, default="data/episode_all.jsonl", 
+        "--episodes_file", type=str, default="data/episode_original.json", 
         help="Path to the pre-processed episode JSONL file",
     )
     parser.add_argument(
@@ -82,19 +82,8 @@ def load_episodes(path):
 def build_profile_from_episode_data(episode_data, agent_idx, model_id, scenario_type=None):
     agent_profile_data = episode_data["agent_profiles"][agent_idx]
     
-    # Handle private knowledge based on scenario type
-    if scenario_type == "knowledge_barrier":
-        if agent_idx == 0:
-            private_knowledge = episode_data.get("agent1_private_knowledge", "")
-        else:
-            private_knowledge = episode_data.get("agent2_private_knowledge", "")
-        # Add private_knowledge to the agent profile data
-        agent_profile_data = agent_profile_data.copy()
-        agent_profile_data["private_knowledge"] = private_knowledge
-    else:
-        # No private knowledge for normal and language barrier scenarios
-        agent_profile_data = agent_profile_data.copy()
-        agent_profile_data["private_knowledge"] = ""
+    agent_profile_data = agent_profile_data.copy()
+    agent_profile_data["private_knowledge"] = ""
     
     return AgentProfile.from_dict(agent_profile_data, model_id)
 
@@ -251,9 +240,9 @@ def main():
         args.results_dir
     )
     
-    semantic_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_all_semantic.json"))
-    cultural_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_all_cultural.json"))
-    emotional_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_all_emotional.json"))
+    semantic_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_semantic.json"))
+    cultural_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_cultural.json"))
+    emotional_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_emotional.json"))
 
     need_generate = not (os.path.isfile(semantic_path) and os.path.isfile(cultural_path) and os.path.isfile(emotional_path))
     if need_generate:
@@ -261,20 +250,13 @@ def main():
         bc = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "barrier_creation.py"))
         os.system(f"python {bc} --mode augment --input_episodes {args.episodes_file} --out_semantic {semantic_path} --out_cultural {cultural_path} --out_emotional {emotional_path}")
 
-    def load_json(path):
-        try:
-            with open(path, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except Exception:
-            return []
-
     episodes_semantic = load_json(semantic_path)
     episodes_cultural = load_json(cultural_path)
     episodes_emotional = load_json(emotional_path)
 
     # Run baseline then each barrier set
-    print("\n▶️ Running baseline (original episodes)...")
-    run_experiment(episodes, experiment_config, evaluator, args, mode_tag="baseline")
+    # print("\n▶️ Running baseline (original episodes)...")
+    # run_experiment(episodes, experiment_config, evaluator, args, mode_tag="baseline")
 
     print("\n▶️ Running semantic barrier episodes...")
     run_experiment(episodes_semantic, experiment_config, evaluator, args, mode_tag="semantic")

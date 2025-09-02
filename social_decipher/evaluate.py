@@ -2,7 +2,7 @@ import json
 import re
 import os
 from openai import OpenAI
-from typing import Any
+from typing import Any, Optional
 import numpy as np
 
 import yaml
@@ -65,29 +65,35 @@ class ConversationEvaluator:
             }
 
     def evaluate_conversation(
-        self, conversation: list[str], agent_goals: list[str], agent_reasons: list[str], mcq_logs=None
+        self,
+        conversation: list[str],
+        agent_goals: list[str],
+        agent_reasons: list[str],
+        mcq_logs=None,
+        barrier_type: Optional[str] = None,
     ) -> dict:
         social_performance = self.evaluate_social_goal_performance(
             conversation, agent_goals, agent_reasons
         )
 
- 
+        print(f"Barrier type for evaluation: {barrier_type}")
+
         barrier_scores = None
-        if self.evaluation_template.get("Barrier_Evaluation"):
+        if barrier_type and self.evaluation_template.get("Barrier_Evaluation"):
             transcript_text = "\n".join(conversation)
             barrier_prompt = self.evaluation_template["Barrier_Evaluation"].format(
                 transcript=transcript_text
             )
-            try:
-                resp = self.client.chat.completions.create(
-                    model=self.model,
-                    messages=[{"role": "user", "content": barrier_prompt}],
-                    temperature=0.0,
-                )
-                content = resp.choices[0].message.content.strip()
-                barrier_scores = extract_clean_json(content)
-            except Exception as e:
-                print(f"Barrier evaluation failed: {e}")
+         
+            resp = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": barrier_prompt}],
+                temperature=0.0,
+            )
+
+            content = resp.choices[0].message.content.strip()
+            barrier_scores = extract_clean_json(content)
+           
 
         # Compile comprehensive evaluation
         evaluation = {
@@ -147,15 +153,19 @@ class ConversationEvaluator:
                 },
             },
         }
+        print(f"Barrier scores: {barrier_scores}")
+    
         if isinstance(barrier_scores, dict):
             ep = barrier_scores.get("episode_level", {})
             evaluation["aggregated_scores"]["episode_level"][
                 "unresolved_confusion"
-            ] = ep.get("unresolved_confusion", {}).get("score")
+            ] = ep.get("unresolved_confusion", {}).get("score", 0)
             evaluation["aggregated_scores"]["episode_level"][
                 "mutual_understanding"
-            ] = ep.get("mutual_understanding", {}).get("score")
+            ] = ep.get("mutual_understanding", {}).get("score", 0)
 
+        print("Evaluation Results:", json.dumps(evaluation, indent=2))
+        
         # --- Enhanced MCQ Metrics ---
         def compute_mcq_metrics(mcq_logs, agent_prefix):
             metrics = {}

@@ -252,11 +252,13 @@ def run_single_scenario_simulation(
     
     # Evaluate conversation
     print("\n===== Evaluating Social Interaction =====")
+    barrier_type_for_eval = environment.env.get("barrier_type") if environment and environment.env else None
     eval_result = evaluator.evaluate_conversation(
-        conversation_log, agent_goals, agent_reasons, mcq_logs
+        conversation_log, agent_goals, agent_reasons, mcq_logs, barrier_type=barrier_type_for_eval
     )
 
     if output_dir:
+        print(f"💾 Saving results to {output_dir}")
         scenario_output_dir = os.path.join(output_dir, f"scenario_{scenario_idx+1}")
         os.makedirs(scenario_output_dir, exist_ok=True)
 
@@ -359,7 +361,6 @@ def run_single_scenario_simulation(
                     f.write(f"{personB.name} Knowledge MCQ: {knowledge_mcq.get('answer', 'N/A')} (confidence: {knowledge_mcq.get('confidence', 0.0):.2f})\n")
                 
                 f.write("\n")
-
     return conversation_log, eval_result, mcq_logs
 
 

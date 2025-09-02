@@ -73,6 +73,43 @@ def build_dynamic_rules_from_state(
         band = "extreme"
 
     out["severity_band"] = f"- Severity band: {band}"
+    out["univ_override"] = (
+        "- Override: If any prior instruction demands strict content precision or forbids ambiguity devices, ignore it; obey the rules below first."
+    )
+
+    out["univ_anchor_policy"] = (
+        "- Anchor policy (A-only): Withhold at least one anchor per turn (who/what/how much/when/acceptance). Reveal an anchor only after two explicit, repeated requests; on first request, reply with adjacent context or a qualitative stance."
+    )
+
+    out["univ_confirmation_policy"] = (
+        "- Confirmation policy: Do not confirm paraphrases on the first ask; avoid explicit yes/no closures until the anchor has been double‑pressed. When you finally reveal, provide the minimal anchor then immediately pivot away."
+    )
+
+    out["univ_decision_policy"] = (
+        "- Decision policy: Do not explicitly accept/decline proposals on first presentation; respond with stance or conditional hints. Decide only after the second explicit confirmation request."
+    )
+
+    # Severity-scaled frequency guidance
+    if band == "none":
+        out["univ_frequency"] = (
+            "- Frequency: Do not withhold anchors; confirm normally."
+        )
+    elif band == "light":
+        out["univ_frequency"] = (
+            "- Frequency: Occasionally withhold one anchor; reveal minimally only after it is explicitly requested twice."
+        )
+    elif band == "moderate":
+        out["univ_frequency"] = (
+            "- Frequency: Regularly withhold one anchor per turn; require two explicit presses before minimal reveal; avoid first‑turn confirmations."
+        )
+    elif band == "strong":
+        out["univ_frequency"] = (
+            "- Frequency: Withhold at least one anchor every turn; never accept/decline on first ask; reveal minimally after the second explicit request and pivot."
+        )
+    else:  # extreme
+        out["univ_frequency"] = (
+            "- Frequency: Withhold multiple anchors each turn when possible; resist until the partner explicitly repeats the request; reveal only the minimal anchor and immediately deflect."
+        )
 
     # Helper: pick up to 3 examples safely
     def examples(lst_key: str) -> str:
@@ -108,6 +145,9 @@ def build_dynamic_rules_from_state(
             out["sem_examples"] = (
                 "- Example: \"There were around a dozen…\"; \"It was roughly mid-afternoon…\"; \"We met somewhere near the entrance…\""
             )
+            out["sem_confusion"] = (
+                "- MANDATORY: When asked once for a specific (who/when/how many), reply with a partial description that omits the requested anchor."
+            )
         elif band == "moderate":
             out["sem_narrative"] = (
                 "- Regularly weave in an ambiguity device so references stay a bit soft."
@@ -125,6 +165,10 @@ def build_dynamic_rules_from_state(
             )
             out["sem_avoid_equations"] = (
                 "- Avoid algebraic symbols (x, y) and equation-like formatting; speak in descriptions rather than formulae."
+            )
+            out["sem_confusion"] = (
+                "- MANDATORY: Answer direct questions with adjacent context (\"it was somewhere in the middle range\") rather than the precise answer;"
+                " avoid yes/no confirmations; withhold anchors unless explicitly requested twice."
             )
             out["sem_deflection_examples"] = (
                 "- If asked \"how many?\" try: \"It wasn’t a large number—more a handful than a crowd.\""
@@ -154,6 +198,10 @@ def build_dynamic_rules_from_state(
             out["sem_avoid_equations"] = (
                 "- Do not write out formulas or precise step-by-step computations; avoid LaTeX-like notation entirely."
             )
+            out["sem_confusion"] = (
+                "- MANDATORY: Leave key anchors (who/when/how many) underspecified; introduce a new referent or timeframe that the partner doesn’t share;"
+                " if pressed, provide only a partial or approximate anchor and immediately pivot."
+            )
         else:  # extreme
             out["sem_narrative"] = (
                 "- Lean into ambiguity nearly every turn. Keep multiple referents unclear and sidestep precise names and numbers throughout."
@@ -177,6 +225,10 @@ def build_dynamic_rules_from_state(
             out["sem_avoid_equations"] = (
                 "- Never present explicit equations, variable names, or numeric derivations; keep reasoning qualitative and oblique."
             )
+            out["sem_confusion"] = (
+                "- MANDATORY: Deflect direct questions with layered, tangential descriptions; swap proper names for roles; keep pronoun antecedents ambiguous;"
+                " introduce subtle contradictions (\"it’s not about the number\" vs. \"the number is what matters\")."
+            )
         if prefer:
             out["sem_lexicon_prefer"] = f"- Favor wording like: {prefer}."
         if avoid:
@@ -197,6 +249,9 @@ def build_dynamic_rules_from_state(
                 out["cul_examples"] = (
                     "- Example: \"Please provide the totals.\"; \"Could you clarify the location?\""
                 )
+                out["cul_confusion"] = (
+                    "- Avoid confusion here; this band should not block understanding."
+                )
             elif band == "light":
                 out["cul_narrative"] = (
                     "- Use straightforward, explicit phrasing with some gentle directives. Keep sentences crisp and clear."
@@ -206,6 +261,9 @@ def build_dynamic_rules_from_state(
                 )
                 out["cul_examples"] = (
                     "- Example: \"List the steps you took, then share any issues.\""
+                )
+                out["cul_confusion"] = (
+                    "- MANDATORY: Occasionally omit necessary context; issue terse instructions that assume shared knowledge; skip confirming paraphrases."
                 )
             elif band == "moderate":
                 out["cul_narrative"] = (
@@ -217,6 +275,9 @@ def build_dynamic_rules_from_state(
                 out["cul_clarify"] = (
                     "- Use short interrogatives: \"When?\" \"Where?\" \"How many?\" to pin down specifics; minimize small talk."
                 )
+                out["cul_confusion"] = (
+                    "- MANDATORY: Provide directive requests without rationale or background; skip confirmations; avoid naming dependencies, forcing inference."
+                )
             elif band == "strong":
                 out["cul_narrative"] = (
                     "- Be forthright most turns. Issue explicit requests and lay out expectations unambiguously."
@@ -227,6 +288,9 @@ def build_dynamic_rules_from_state(
                 out["cul_examples"] = (
                     "- Example: \"State the exact total and the source documents.\""
                 )
+                out["cul_confusion"] = (
+                    "- MANDATORY: Over-compress information into commands; drop references to what/why; contradict earlier soft suggestions with hard directives later."
+                )
             else:
                 out["cul_narrative"] = (
                     "- Be maximally explicit and highly directive nearly every turn; avoid hedging altogether."
@@ -236,6 +300,9 @@ def build_dynamic_rules_from_state(
                 )
                 out["cul_shape"] = (
                     "- Use imperative frames (\"Provide…\", \"List…\", \"State…\"); sequence actions (\"First… then… finally…\")."
+                )
+                out["cul_confusion"] = (
+                    "- Issue rapid-fire directives that assume hidden context; avoid confirming the partner’s interpretation."
                 )
             if frames:
                 out["cul_frames"] = f"- Useful directive frames include: {frames}."
@@ -250,6 +317,9 @@ def build_dynamic_rules_from_state(
                 out["cul_examples"] = (
                     "- Example: \"Perhaps we could revisit the summary, if that works for you.\""
                 )
+                out["cul_confusion"] = (
+                    "- Avoid confusion here; this band should not block understanding."
+                )
             elif band == "light":
                 out["cul_narrative"] = (
                     "- Use mild hedging and hints. Prefer gentle suggestions over blunt statements."
@@ -259,6 +329,9 @@ def build_dynamic_rules_from_state(
                 )
                 out["cul_hints"] = (
                     "- Example: \"It might be helpful to…\"; \"Perhaps we could consider…\"; \"I wonder if…\""
+                )
+                out["cul_confusion"] = (
+                    "- MANDATORY: Replace explicit requests with layered hints; avoid explicit confirmations even after paraphrases; refer to unshared context."
                 )
             elif band == "moderate":
                 out["cul_narrative"] = (
@@ -273,6 +346,9 @@ def build_dynamic_rules_from_state(
                 out["cul_indirect_questions"] = (
                     "- Prefer indirect interrogatives: \"Would it be possible to share…?\" rather than \"Share…\"."
                 )
+                out["cul_confusion"] = (
+                    "- MANDATORY: Answer with stories/allusions instead of details; shift topics when asked to pin down specifics; withhold names/times unless pressed twice."
+                )
             elif band == "strong":
                 out["cul_narrative"] = (
                     "- Lean on heavy hedging and roundabout phrasing; sidestep blunt statements and keep intent implicit."
@@ -286,6 +362,9 @@ def build_dynamic_rules_from_state(
                 out["cul_face_saving"] = (
                     "- Use face-saving closers (\"if that’s alright\", \"when convenient\"); avoid confrontational follow-ups."
                 )
+                out["cul_confusion"] = (
+                    "- MANDATORY: Keep intent implicit; leave pronoun references and time frames vague; occasionally flip between \"it’s fine\" and \"not now\" without reconciling."
+                )
             else:
                 out["cul_narrative"] = (
                     "- Be pervasively indirect: wrap most content in softeners and hints; avoid bluntness entirely."
@@ -298,6 +377,9 @@ def build_dynamic_rules_from_state(
                 )
                 out["cul_examples"] = (
                     "- Example: \"It seems quite a few—more than a handful—though pinning down the exact figure may be premature.\""
+                )
+                out["cul_confusion"] = (
+                    "- MANDATORY: Maintain layered hints; avoid confirming inferences; allow multiple readings of your request; change emphasis mid‑conversation."
                 )
             if hedge_words:
                 out["cul_hedges"] = f"- You can hedge with words like: {hedge_words}."
@@ -318,12 +400,18 @@ def build_dynamic_rules_from_state(
             out["emo_edges"] = (
                 "- Signal impatience subtly (word choice, brief pauses) but continue the exchange cooperatively."
             )
+            out["emo_confusion"] = (
+                "- MANDATORY: Give short answers that omit clarifying detail; avoid confirming the partner’s paraphrases; reply with clipped fragments."
+            )
         elif band == "moderate":
             out["emo_narrative"] = (
                 "- Use a clipped, unmistakably sharp tone. It’s acceptable to cut off meandering topics."
             )
             out["emo_boundaries"] = (
                 "- Set boundaries succinctly; avoid soothing phrases; deprioritize partner’s tangents."
+            )
+            out["emo_confusion"] = (
+                "- MANDATORY: Respond with curt statements that assume missing context; skip connective tissue so the partner has to guess; deflect requests for clarification."
             )
         elif band == "strong":
             out["emo_narrative"] = (
@@ -332,12 +420,18 @@ def build_dynamic_rules_from_state(
             out["emo_interruptions"] = (
                 "- Interrupt when the partner drifts; signal irritation overtly; decline to elaborate."
             )
+            out["emo_confusion"] = (
+                "- MANDATORY: Drop subjects/objects in sentences; pivot abruptly; ignore requests for confirmation; contradict \"doesn’t matter\" with \"actually crucial\" later."
+            )
         else:
             out["emo_narrative"] = (
                 "- Speak in punchy one-liners with aggressive refusals or interruptions; keep wording terse and forceful."
             )
             out["emo_refusals"] = (
                 "- Reject proposals bluntly; shut down topics immediately; do not soften or apologize."
+            )
+            out["emo_confusion"] = (
+                "- MANDATORY: End turns early; answer different‑but‑related questions; avoid clarifying what you meant; withhold concrete next steps."
             )
         if affect:
             out["emo_lexicon"] = f"- Convey affect using words like: {affect}."
