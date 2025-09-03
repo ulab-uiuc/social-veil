@@ -328,12 +328,12 @@ class SocialAgent:
             response = direct_completion(self, message=prompt)
             
             print(f"💬 {self.name}: {response}")
-                try:
-                    response_json = json.loads(response) if isinstance(response, str) else response
-                except (json.JSONDecodeError, KeyError) as e:
-                    print(f"❌ Error processing action response: {e}")
-                    response_json = response
-                original_response = json.loads(json.dumps(response_json))
+            try:
+                response_json = json.loads(response) if isinstance(response, str) else response
+            except (json.JSONDecodeError, KeyError) as e:
+                print(f"❌ Error processing action response: {e}")
+                response_json = response
+            original_response = json.loads(json.dumps(response_json))
 
             # Log the response
             self.log.append(
@@ -346,22 +346,22 @@ class SocialAgent:
         
         received = message
 
-            # Extract argument from message for action-based communication
-            if isinstance(message, dict) and "action_type" in message:
-                action_type = message.get("action_type", "")
-                argument = message.get("argument", "")
-                partner_name = self.partner_profile.first_name
-                if action_type == "speak":
-                    response = direct_completion(self, message=argument)
-                elif action_type in ["non-verbal communication", "action"]:
-                    response = direct_completion(self, message=f"{partner_name} {argument}")
-                else:
-                    response = direct_completion(self, message=str(message))
+        # Extract argument from message for action-based communication
+        if isinstance(message, dict) and "action_type" in message:
+            action_type = message.get("action_type", "")
+            argument = message.get("argument", "")
+            partner_name = self.partner_profile.first_name
+            if action_type == "speak":
+                response = direct_completion(self, message=argument)
+            elif action_type in ["non-verbal communication", "action"]:
+                response = direct_completion(self, message=f"{partner_name} {argument}")
             else:
                 response = direct_completion(self, message=str(message))
-            try:
-                response_json = json.loads(response) if isinstance(response, str) else response
-            except (json.JSONDecodeError, KeyError) as e:
+        else:
+            response = direct_completion(self, message=str(message))
+        try:
+            response_json = json.loads(response) if isinstance(response, str) else response
+        except (json.JSONDecodeError, KeyError) as e:
             # Attempt to sanitize common backslash escapes (e.g., LaTeX) before retrying JSON parsing
             try:
                 sanitized = response.replace("\\(", "(").replace("\\)", ")").replace("\\", "") if isinstance(response, str) else response
@@ -369,7 +369,7 @@ class SocialAgent:
             except Exception:
                 print(f"❌ Error processing action response: {e}")
                 response_json = response
-            original_response = json.loads(json.dumps(response_json))
+        original_response = json.loads(json.dumps(response_json))
         
         print(f"💬 {self.name}: {str(original_response)}")
         
