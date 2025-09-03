@@ -57,7 +57,7 @@ class SocialAgent:
         agent_key = "agentA" if is_agent_a else "agentB"
         barrier_for_this_agent = bool((env_dict.get("barrier_prompts") or {}).get(agent_key))
         barrier_type = env_dict.get("barrier_type") if barrier_for_this_agent else None
-
+  
         template_key = (
             "social_task_instructions_barrier_semantic" if barrier_type == "semantic_structure" else
             "social_task_instructions_barrier_cultural" if barrier_type == "cultural_style" else
@@ -192,10 +192,7 @@ class SocialAgent:
                         return top
 
                     kws = _harvest_keywords(transcript, env_dict, agent_goal, agent_reason)
-                    
-                    print('this turn keywords')
-                    print(kws)
-                    
+
                     if kws:
                         lines.append("- Must‑mask keywords (refer implicitly; do not say these strings verbatim): " + ", ".join(kws))
                         lines.append("- Refer using shells only (that one/this thing/that flavor); avoid explicit labels unless repeatedly pressed.")
@@ -244,6 +241,17 @@ class SocialAgent:
                         deduped.append(ln)
                 barrier_dynamic_rules = "\n".join(deduped)
 
+        # Build action list: if Agent A has a barrier, restrict to speak/leave only
+        default_action_list = templates.get("action_list", "")
+  
+        if is_agent_a and barrier_type:
+            action_list_str = (
+                '  - "speak": Say something verbally.\n'
+                '  - "leave": End the conversation.'
+            )
+        else:
+            action_list_str = default_action_list
+
         mapping = {
             "agent_name": profile.first_name,
             "partner_name": partner.first_name,
@@ -263,7 +271,7 @@ class SocialAgent:
             "partner_gender": partner.gender,
             "partner_occupation": partner.occupation,
             "partner_public_info": partner.public_info,
-            "action_list": templates.get("action_list", ""),
+            "action_list": action_list_str,
             "barrier_prompt": (env_dict.get("barrier_prompts") or {}).get(agent_key, ""),
             "barrier_private_note": barrier_private_note,
             "barrier_dynamic_rules": barrier_dynamic_rules,
@@ -283,7 +291,8 @@ class SocialAgent:
         
         # Place Additional barrier context at the end of the BARRIER section to keep dynamic rules dominant
         if (isinstance(barrier_preface, str) and barrier_preface.strip() and 
-            template_key.startswith("social_task_instructions_barrier_")):
+            template_key.startswith("social_task_instructions_barrier_") and
+            barrier_type != "semantic_structure"):
             addl = f"\n- Additional barrier context: {barrier_preface.strip()}"
             # Remove any prior header injection remnants
             formatted_template = formatted_template.replace(addl, "")
@@ -293,7 +302,7 @@ class SocialAgent:
                 formatted_template = formatted_template.replace(marker, addl + "\n\n" + marker)
             else:
                 formatted_template = formatted_template + addl
-        elif isinstance(barrier_preface, str) and barrier_preface.strip():
+        elif isinstance(barrier_preface, str) and barrier_preface.strip() and barrier_type != "semantic_structure":
             return f"{barrier_preface.strip()}\n\n{formatted_template}"
             
         return formatted_template
@@ -307,7 +316,7 @@ class SocialAgent:
         self.instructions = self.build_instruction(
             transcript=transcript_text, turn_number=turn_number
         )
-
+    
     def act(
         self, message=None, initial: bool = False
     ) -> Union[str, Dict[str, Any]]:
@@ -319,12 +328,12 @@ class SocialAgent:
             response = direct_completion(self, message=prompt)
             
             print(f"💬 {self.name}: {response}")
-            try:
-                response_json = json.loads(response) if isinstance(response, str) else response
-            except (json.JSONDecodeError, KeyError) as e:
-                print(f"❌ Error processing action response: {e}")
-                response_json = response
-            original_response = json.loads(json.dumps(response_json))
+                try:
+                    response_json = json.loads(response) if isinstance(response, str) else response
+                except (json.JSONDecodeError, KeyError) as e:
+                    print(f"❌ Error processing action response: {e}")
+                    response_json = response
+                original_response = json.loads(json.dumps(response_json))
 
             # Log the response
             self.log.append(
@@ -337,22 +346,22 @@ class SocialAgent:
         
         received = message
 
-        # Extract argument from message for action-based communication
-        if isinstance(message, dict) and "action_type" in message:
-            action_type = message.get("action_type", "")
-            argument = message.get("argument", "")
-            partner_name = self.partner_profile.first_name
-            if action_type == "speak":
-                response = direct_completion(self, message=argument)
-            elif action_type in ["non-verbal communication", "action"]:
-                response = direct_completion(self, message=f"{partner_name} {argument}")
+            # Extract argument from message for action-based communication
+            if isinstance(message, dict) and "action_type" in message:
+                action_type = message.get("action_type", "")
+                argument = message.get("argument", "")
+                partner_name = self.partner_profile.first_name
+                if action_type == "speak":
+                    response = direct_completion(self, message=argument)
+                elif action_type in ["non-verbal communication", "action"]:
+                    response = direct_completion(self, message=f"{partner_name} {argument}")
+                else:
+                    response = direct_completion(self, message=str(message))
             else:
                 response = direct_completion(self, message=str(message))
-        else:
-            response = direct_completion(self, message=str(message))
-        try:
-            response_json = json.loads(response) if isinstance(response, str) else response
-        except (json.JSONDecodeError, KeyError) as e:
+            try:
+                response_json = json.loads(response) if isinstance(response, str) else response
+            except (json.JSONDecodeError, KeyError) as e:
             # Attempt to sanitize common backslash escapes (e.g., LaTeX) before retrying JSON parsing
             try:
                 sanitized = response.replace("\\(", "(").replace("\\)", ")").replace("\\", "") if isinstance(response, str) else response
@@ -360,7 +369,7 @@ class SocialAgent:
             except Exception:
                 print(f"❌ Error processing action response: {e}")
                 response_json = response
-        original_response = json.loads(json.dumps(response_json))
+            original_response = json.loads(json.dumps(response_json))
         
         print(f"💬 {self.name}: {str(original_response)}")
         
@@ -468,4 +477,4 @@ class SocialAgent:
             "options": mcqa["options"],
         }
     
-
+    
