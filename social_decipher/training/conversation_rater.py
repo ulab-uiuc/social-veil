@@ -49,7 +49,7 @@ class ConversationRater:
         """Rate a batch of conversations for training data filtering"""
         
         ratings = []
-        print(f"🎯 Rating {len(conversations)} conversations...")
+        print(f"Rating {len(conversations)} conversations...")
         
         for i, conversation in enumerate(conversations):
             print(f"Rating conversation {i+1}/{len(conversations)}")
@@ -59,15 +59,15 @@ class ConversationRater:
                 rating.is_positive = rating.overall_quality >= quality_threshold
                 ratings.append(rating)
                 
-                quality_emoji = "✅" if rating.is_positive else "❌"
+                quality_emoji = "PASS" if rating.is_positive else "FAIL"
                 print(f"  {quality_emoji} Quality: {rating.overall_quality:.1f}/10")
                 
             except Exception as e:
-                print(f"  ⚠️ Rating failed: {e}")
+                print(f"  WARNING: Rating failed: {e}")
                 continue
                 
         positive_count = sum(1 for r in ratings if r.is_positive)
-        print(f"\n📊 Results: {positive_count}/{len(ratings)} conversations above threshold ({quality_threshold})")
+        print(f"\nResults: {positive_count}/{len(ratings)} conversations above threshold ({quality_threshold})")
         
         return ratings
     
@@ -212,7 +212,7 @@ Rate objectively and consistently. High-quality conversations show adaptive comm
             if rating and rating.is_positive:
                 positive_conversations.append(conv)
         
-        print(f"✅ Filtered to {len(positive_conversations)}/{len(conversations)} positive conversations")
+        print(f"Filtered to {len(positive_conversations)}/{len(conversations)} positive conversations")
         return positive_conversations
     
     def save_ratings(self, ratings: List[ConversationRating], filepath: str):
@@ -233,7 +233,7 @@ Rate objectively and consistently. High-quality conversations show adaptive comm
         with open(filepath, 'w', encoding='utf-8') as f:
             json.dump(rating_data, f, indent=2, ensure_ascii=False)
             
-        print(f"💾 Saved {len(ratings)} ratings to {filepath}")
+        print(f"Saved {len(ratings)} ratings to {filepath}")
     
     def analyze_ratings(self, ratings: List[ConversationRating]) -> Dict[str, Any]:
         """Analyze rating patterns"""
@@ -264,7 +264,7 @@ Rate objectively and consistently. High-quality conversations show adaptive comm
             }
         }
         
-        print("\n📈 Rating Analysis:")
+        print("\nRating Analysis:")
         print(f"   Total conversations: {analysis['total_conversations']}")
         print(f"   Positive rate: {positive_rate:.1%}")
         print(f"   Average ratings:")

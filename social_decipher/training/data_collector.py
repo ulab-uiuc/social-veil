@@ -75,7 +75,7 @@ class BarrierDataCollector:
         
         for episode_idx, episode_data in enumerate(episodes):
             episode_type = self._get_episode_type(episode_data)
-            print(f"📝 Episode {episode_idx + 1}/{len(episodes)} ({episode_type})")
+            print(f"Episode {episode_idx + 1}/{len(episodes)} ({episode_type})")
             
             for conv_idx in range(num_conversations_per_episode):
                 try:
@@ -87,7 +87,7 @@ class BarrierDataCollector:
                         self.bc_conversations.append(conversation)
                         
                 except Exception as e:
-                    print(f"❌ Failed BC conversation {conv_idx}: {e}")
+                    print(f"ERROR: Failed BC conversation {conv_idx}: {e}")
                     continue
                     
         self._save_conversations(conversations, "bc_data.json")
@@ -103,12 +103,12 @@ class BarrierDataCollector:
         Collect self-play data (SR data).
         Current agent model plays against itself to generate improvement targets.
         """
-        print("🤖 Collecting Self-Reinforcement (SR) data...")
+        print("Collecting Self-Reinforcement (SR) data...")
         conversations = []
         
         for episode_idx, episode_data in enumerate(episodes):
             episode_type = self._get_episode_type(episode_data)
-            print(f"📝 Episode {episode_idx + 1}/{len(episodes)} ({episode_type})")
+            print(f"Episode {episode_idx + 1}/{len(episodes)} ({episode_type})")
             
             for conv_idx in range(num_conversations_per_episode):
                 try:
@@ -120,7 +120,7 @@ class BarrierDataCollector:
                         self.sr_conversations.append(conversation)
                         
                 except Exception as e:
-                    print(f"❌ Failed SR conversation {conv_idx}: {e}")
+                    print(f"ERROR: Failed SR conversation {conv_idx}: {e}")
                     continue
                     
         self._save_conversations(conversations, "sr_data.json")
@@ -160,7 +160,7 @@ class BarrierDataCollector:
             environment=env,
             evaluator=self.evaluator,
             num_turns=max_rounds,
-            action_enabled=True
+
         )
         
         # Package training conversation
@@ -213,7 +213,7 @@ class BarrierDataCollector:
             environment=env,
             evaluator=self.evaluator,
             num_turns=max_rounds,
-            action_enabled=True
+
         )
         
         # Package training conversation
@@ -297,7 +297,7 @@ class BarrierDataCollector:
         with open(filepath, 'w', encoding='utf-8') as f:
             json.dump(serializable_data, f, indent=2, ensure_ascii=False)
             
-        print(f"💾 Saved {len(conversations)} conversations to {filepath}")
+        print(f"Saved {len(conversations)} conversations to {filepath}")
     
     def get_all_conversations(self) -> Tuple[List[TrainingConversation], List[TrainingConversation]]:
         """Get all collected conversations"""
@@ -311,7 +311,7 @@ class BarrierDataCollector:
                 with open(bc_path, 'r', encoding='utf-8') as f:
                     bc_data = json.load(f)
                     self.bc_conversations = [TrainingConversation(**conv) for conv in bc_data]
-                    print(f"📁 Loaded {len(self.bc_conversations)} BC conversations")
+                    print(f"Loaded {len(self.bc_conversations)} BC conversations")
         
         if sr_file:
             sr_path = os.path.join(self.output_dir, sr_file)
@@ -319,4 +319,29 @@ class BarrierDataCollector:
                 with open(sr_path, 'r', encoding='utf-8') as f:
                     sr_data = json.load(f)
                     self.sr_conversations = [TrainingConversation(**conv) for conv in sr_data]
-                    print(f"📁 Loaded {len(self.sr_conversations)} SR conversations")
+                    print(f"Loaded {len(self.sr_conversations)} SR conversations")
+
+
+def load_barrier_episode_sets(data_dir: str = "data") -> Dict[str, List[Dict[str, Any]]]:
+    """Load pre-generated barrier episode sets"""
+    
+    episode_sets = {}
+    
+    # Load different barrier types
+    barrier_files = {
+        "semantic": "episodes_semantic.json",
+        "cultural": "episodes_cultural.json", 
+        "emotional": "episodes_emotional.json"
+    }
+    
+    for barrier_type, filename in barrier_files.items():
+        filepath = os.path.join(data_dir, filename)
+        if os.path.exists(filepath):
+            with open(filepath, 'r', encoding='utf-8') as f:
+                episode_sets[barrier_type] = json.load(f)
+            print(f"Loaded {len(episode_sets[barrier_type])} {barrier_type} episodes")
+        else:
+            print(f"WARNING: {filepath} not found - run barrier creation first")
+            episode_sets[barrier_type] = []
+    
+    return episode_sets

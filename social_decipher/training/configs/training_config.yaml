@@ -1,0 +1,151 @@
+# Sotopia-π Style Training Configuration for Social-Decipher
+# Following the methodology from Sotopia-π but adapted for barrier-aware scenarios
+
+# Experiment Settings
+experiment:
+  name: "social_decipher_barrier_training"
+  num_improve_steps: 3
+  checkpoint_dir: "checkpoints"
+  output_dir: "training_data"
+
+# Model Configuration
+models:
+  expert_model: "gpt-4o"           # Expert model for BC demonstrations
+  agent_model: "gpt-4o-mini"       # Current agent model for SR
+  evaluator_model: "gpt-4o"        # Model for conversation evaluation
+  base_model: "Qwen/Qwen2.5-7B-Instruct"  # Base model for fine-tuning
+
+# Training Parameters
+training:
+  num_train_epochs: 20.0
+  per_device_train_batch_size: 4
+  gradient_accumulation_steps: 1
+  learning_rate: 5e-5
+  lr_scheduler_type: "cosine"
+  warmup_ratio: 0.03
+  weight_decay: 0.0
+  
+  # LoRA Configuration
+  finetuning_type: "lora"
+  lora_target: "q_proj,v_proj"
+  lora_rank: 16
+  lora_alpha: 32
+  lora_dropout: 0.1
+  
+  # Quantization
+  quantization_bit: 4
+  quantization_type: "nf4"
+  double_quantization: true
+  
+  # Optimization
+  fp16: true
+  gradient_checkpointing: true
+  flash_attn: true
+
+# Data Collection Settings
+data_collection:
+  conversations_per_episode: 3
+  max_rounds: 20
+  bc_conversations_per_episode: 3  # Behavior Cloning
+  sr_conversations_per_episode: 5  # Self-Reinforcement
+
+# Quality Filtering
+quality_filtering:
+  quality_threshold: 6.0
+  filter_top_k: 2
+  min_conversation_length: 5
+  max_conversation_length: 50
+
+# Data Preprocessing
+preprocessing:
+  cutoff_len: 4096
+  template: "qwen"
+  train_on_prompt: false
+  ignore_pad_token_for_loss: true
+
+# Evaluation Settings
+evaluation:
+  eval_strategy: "steps"
+  eval_steps: 500
+  save_strategy: "steps"
+  save_steps: 1000000000
+  save_total_limit: 5
+  logging_steps: 1
+  
+  # Evaluation metrics
+  metrics:
+    - "overall_quality"
+    - "barrier_handling"
+    - "social_intelligence"
+    - "communication_effectiveness"
+    - "goal_achievement"
+
+# Barrier Types Configuration
+barrier_types:
+  semantic_structure:
+    description: "Vague, ambiguous language with complex sentence structures"
+    weight: 1.0
+  cultural_style:
+    description: "Indirect, high-context communication with hedges and politeness"
+    weight: 1.0
+  emotional_influence:
+    description: "Negative emotional tone with clipped, sharp responses"
+    weight: 1.0
+
+# Episode Types
+episode_types:
+  baseline:
+    description: "Original episodes without barriers"
+    weight: 1.0
+  semantic:
+    description: "Episodes with semantic structure barriers"
+    weight: 1.0
+  cultural:
+    description: "Episodes with cultural style barriers"
+    weight: 1.0
+  emotional:
+    description: "Episodes with emotional influence barriers"
+    weight: 1.0
+
+# Advanced Settings
+advanced:
+  # Multi-processing
+  num_workers: 4
+  
+  # Memory optimization
+  dataloader_pin_memory: true
+  dataloader_num_workers: 4
+  
+  # Monitoring
+  report_to: ["wandb"]
+  wandb_project: "social-decipher-training"
+  wandb_tags: ["barrier-adaptation", "social-intelligence"]
+  
+  # Custom callbacks
+  use_custom_callback: true
+  call_back_save_epochs: 4
+  
+  # DeepSpeed (if available)
+  deepspeed: null  # Set to deepspeed config file path if using DeepSpeed
+
+# Paths
+paths:
+  data_dir: "data"
+  episodes_file: "data/episode_sample.jsonl"
+  barrier_episodes:
+    semantic: "data/episodes_semantic.json"
+    cultural: "data/episodes_cultural.json"
+    emotional: "data/episodes_emotional.json"
+  
+  # Output paths
+  training_data_dir: "training_data"
+  checkpoint_dir: "checkpoints"
+  logs_dir: "logs"
+  results_dir: "results"
+
+# Environment Variables
+environment:
+  # Set these in your environment or .env file
+  OPENAI_API_KEY: null
+  WANDB_API_KEY: null
+  HF_TOKEN: null
