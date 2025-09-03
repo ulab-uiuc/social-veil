@@ -261,11 +261,11 @@ def main():
     print("\n▶️ Running semantic barrier episodes...")
     run_experiment(episodes_semantic, experiment_config, evaluator, args, mode_tag="semantic")
 
-    print("\n▶️ Running cultural barrier episodes...")
-    run_experiment(episodes_cultural, experiment_config, evaluator, args, mode_tag="cultural")
+    # print("\n▶️ Running cultural barrier episodes...")
+    # run_experiment(episodes_cultural, experiment_config, evaluator, args, mode_tag="cultural")
 
-    print("\n▶️ Running emotional barrier episodes...")
-    run_experiment(episodes_emotional, experiment_config, evaluator, args, mode_tag="emotional")
+    # print("\n▶️ Running emotional barrier episodes...")
+    # run_experiment(episodes_emotional, experiment_config, evaluator, args, mode_tag="emotional")
 
 if __name__ == "__main__":
     main()

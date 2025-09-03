@@ -54,9 +54,8 @@ class SocialAgent:
         agent_reason = env_dict["agent_reasons"][0 if is_agent_a else 1]
         agent_private_knowledge = env_dict.get("agent1_private_knowledge" if is_agent_a else "agent2_private_knowledge", "")
 
-        barrier_prompts_present = isinstance(env_dict.get("barrier_prompts"), dict)
         agent_key = "agentA" if is_agent_a else "agentB"
-        barrier_for_this_agent = barrier_prompts_present and bool((env_dict.get("barrier_prompts") or {}).get(agent_key))
+        barrier_for_this_agent = bool((env_dict.get("barrier_prompts") or {}).get(agent_key))
         barrier_type = env_dict.get("barrier_type") if barrier_for_this_agent else None
 
         template_key = (
@@ -97,21 +96,112 @@ class SocialAgent:
                 if isinstance(val, (int, float, str)) and str(val).strip():
                     lines.append(f"- {label}: {val}")
 
-            # Keep only minimal cues that severity scales
-            _fmt_list("ambiguity_devices", "Use ambiguity devices")            # semantic
-            _fmt_scalar("question_rate_hint", "Target question rate")          # cultural (high-context)
-            _fmt_scalar("imperative_rate_hint", "Target imperative rate")      # cultural (low-context)
-            _fmt_scalar("exclamation_bias", "Exclamation bias")               # emotional
-            _fmt_scalar("turn_length_max", "Max sentences per turn")          # emotional
+            # Keep only minimal cues and avoid injecting multi-dimensional semantic hints
+            if barrier_type == "cultural_style":
+                _fmt_scalar("question_rate_hint", "Target question rate")      # cultural (high-context)
+                _fmt_scalar("imperative_rate_hint", "Target imperative rate")  # cultural (low-context)
+            elif barrier_type == "emotional_influence":
+                _fmt_scalar("exclamation_bias", "Exclamation bias")           # emotional
+                _fmt_scalar("turn_length_max", "Max sentences per turn")      # emotional
 
             # Inject dynamic barrier state (A-only) using episode barrier_cues (no severity text)
             if is_agent_a:
                 if barrier_type == "semantic_structure":
-                    allow_exact = barrier_cues.get("allow_exact_numbers_only_if_partner_requests")
-                    if isinstance(allow_exact, bool) and allow_exact:
-                        lines.append("- Provide exact numbers/names only if the partner explicitly requests them.")
-                    # Avoid duplicating lexicon/sentence bias and numeric targets covered by dynamic rules
-                    # Keep devices hint minimal via the earlier summary
+                    # Lightweight keyword harvester to support implicit referencing (vagueness of referents and intent)
+                    def _harvest_keywords(hist: str, env: Dict[str, Any], goal_text: str, reason_text: str, max_k: int = 6) -> List[str]:
+                        import re
+                        candidates: List[str] = []
+                        text_sources = [hist or "", str((env or {}).get("scenario", "")), goal_text or "", reason_text or ""]
+                        # 1) Quoted strings
+                        for src in text_sources:
+                            for m in re.findall(r"['\"]([^'\"]{2,60})['\"]", src):
+                                s = m.strip()
+                                if s:
+                                    candidates.append(s)
+                        # 2) Capitalized multi-word tokens (likely names/titles)
+                        for src in text_sources:
+                            for m in re.findall(r"\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)\b", src):
+                                s = m.strip()
+                                if s:
+                                    candidates.append(s)
+                        # 3) Single capitalized tokens that look like product names
+                        for src in text_sources:
+                            for m in re.findall(r"\b([A-Z][A-Za-z]{2,})\b", src):
+                                s = m.strip()
+                                if s:
+                                    candidates.append(s)
+                        # 4) Content words from goal/reason (simple heuristic, exclude common stopwords)
+                        stop = set(["the","a","an","to","for","and","or","of","in","on","with","by","at","from","is","are","was","were","be","been","being","this","that","these","those","it","its","as","about","into","over","under","you","your","my","our","their","his","her","him","she","he","they","them"]) 
+                        for src in [goal_text or "", reason_text or ""]:
+                            for w in re.findall(r"[A-Za-z][A-Za-z\-]{3,}", src):
+                                lw = w.lower()
+                                if lw not in stop:
+                                    candidates.append(w)
+                        # Deduplicate and remove agent names
+                        seen = set()
+                        out_kw: List[str] = []
+                        agent_names = {
+                            self.profile.first_name,
+                            self.partner_profile.first_name,
+                            f"{self.profile.first_name} {self.profile.last_name}".strip(),
+                            f"{self.partner_profile.first_name} {self.partner_profile.last_name}".strip(),
+                        }
+                        # Score candidates by how much they reveal intent
+                        scores: Dict[str, float] = {}
+                        def add_score(key: str, val: float):
+                            scores[key] = scores.get(key, 0.0) + val
+                        # Normalize pool
+                        norm_cands: List[str] = []
+                        for c in candidates:
+                            c = c.strip()
+                            if not c or len(c) < 2:
+                                continue
+                            if c in agent_names:
+                                continue
+                            low = c.lower()
+                            if low in seen:
+                                continue
+                            seen.add(low)
+                            norm_cands.append(c)
+                        # Scoring heuristics
+                        hist_low = (hist or "").lower()
+                        scen_low = str((env or {}).get("scenario", "")).lower()
+                        goal_low = (goal_text or "").lower()
+                        reason_low = (reason_text or "").lower()
+                        for c in norm_cands:
+                            low = c.lower()
+                            # Base
+                            add_score(c, 0.5)
+                            # Presence in goal/intent → hide these first
+                            if low in goal_low:
+                                add_score(c, 3.0)
+                            if low in reason_low:
+                                add_score(c, 1.5)
+                            # Presence in scenario → contextual but useful to mask
+                            if low in scen_low:
+                                add_score(c, 0.8)
+                            # Frequency in recent transcript
+                            freq = hist_low.count(low)
+                            if freq > 0:
+                                add_score(c, min(1.0 + 0.2 * freq, 2.0))
+                            # Capitalized multi-word bonuses (likely names/brands)
+                            if any(ch.isupper() for ch in c) and (" " in c):
+                                add_score(c, 1.0)
+                        ranked = sorted(scores.items(), key=lambda kv: kv[1], reverse=True)
+                        top = [k for k, _ in ranked[:max_k]]
+                        return top
+
+                    kws = _harvest_keywords(transcript, env_dict, agent_goal, agent_reason)
+                    
+                    print('this turn keywords')
+                    print(kws)
+                    
+                    if kws:
+                        lines.append("- Must‑mask keywords (refer implicitly; do not say these strings verbatim): " + ", ".join(kws))
+                        lines.append("- Refer using shells only (that one/this thing/that flavor); avoid explicit labels unless repeatedly pressed.")
+                        lines.append("- Name‑reveal policy: 1st press → deflect descriptor; 2nd press → give minimal descriptor; 3rd press → reveal one minimal label then pivot.")
+                        lines.append("- Per‑turn quota: keep at least two salient referents implicit (prefer those tied to your goal).")
+                
                 elif barrier_type == "cultural_style":
                     style = str(barrier_cues.get("style", "high_context")).strip().lower()
                     if style:

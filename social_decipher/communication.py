@@ -12,6 +12,7 @@ from social_decipher.environment.env_profile import EnvironmentProfile
 from social_decipher.evaluate import ConversationEvaluator
 from social_decipher.utils.repair import judge_repair_with_llm
 from social_decipher.utils.state import init_barrier_state, update_barrier_state
+from social_decipher.utils.config_reader import load_config
 
 
 def _format_action_output(message: Union[str, Dict[str, Any]]) -> str:
@@ -106,8 +107,18 @@ def run_single_scenario_simulation(
     conversation_log = []
     mcq_logs = []
 
+    # Config flag to disable repair/state even in barrier runs
+    cfg = load_config()
+    enable_repair_state = True
+    try:
+        flag = ((cfg or {}).get("models", {}) or {}).get("enable_repair_and_state")
+        if isinstance(flag, bool):
+            enable_repair_state = flag
+    except Exception:
+        pass
+
     # Initialize dynamic barrier state for Agent A (single-sided) only for barrier modes
-    if environment and isinstance(environment.env, dict) and environment.env.get("barrier_type"):
+    if enable_repair_state and environment and isinstance(environment.env, dict) and environment.env.get("barrier_type"):
         init_barrier_state(environment.env)
 
     print(f"🌐 Using agent profile models: {personA.name}({personA.profile.model_id}) ↔ {personB.name}({personB.profile.model_id})")
@@ -152,7 +163,7 @@ def run_single_scenario_simulation(
         barrier_type = environment.env.get("barrier_type") if environment and environment.env else None
 
         judge_json = None
-        if barrier_type:
+        if enable_repair_state and barrier_type:
             judge_json = judge_repair_with_llm(formatted_b, conversation_log, barrier_type)
             print(judge_json)
             repair_score = float(judge_json.get("score", 0.0) or 0.0)
@@ -245,8 +256,8 @@ def run_single_scenario_simulation(
                 f"agent_2_goal_mcq": goal_mcq_B,
                 f"agent_2_reason_mcq": reason_mcq_B,
                 f"agent_2_knowledge_mcq": None,
-                "agent_b_repair_eval_llm": judge_json,
-                "barrier_state": environment.env.get("barrier_state") if environment.env.get("barrier_type") else None,
+                "agent_b_repair_eval_llm": judge_json if enable_repair_state else None,
+                "barrier_state": environment.env.get("barrier_state") if (enable_repair_state and environment.env.get("barrier_type")) else None,
             }
         )
     
