@@ -120,121 +120,94 @@ def build_dynamic_rules_from_state(
                 return ", ".join(picked)
         return ""
 
+    # Helper to ensure a stable key set per barrier family
+    def ensure_keys(prefix_keys):
+        for k in prefix_keys:
+            out.setdefault(k, "")
+
     # Emit natural-language, banded guidance per barrier type
     if barrier_type == "semantic_structure":
-        prefer = examples("lexical_prefer")
-        avoid = examples("lexical_avoid")
+        # Simplified semantic barrier: Referential vagueness only
+        # Definition: Replace explicit references with vague terms or pronouns.
+        # Knob: severity controls proportion of nouns replaced with pronouns (it/that/this/thing).
+        sem_keys = [
+            "sem_narrative", "sem_tactics", "sem_confusion", "sem_examples",
+        ]
+        ensure_keys(sem_keys)
         if band == "none":
             out["sem_narrative"] = (
-                "- Use clear, direct language. Avoid ambiguity devices and provide specific names and numbers when known."
+                "- Use explicit referents (names, roles, objects). Avoid vague pronouns when clarity is needed."
             )
             out["sem_tactics"] = (
-                "- Anchor statements with concrete nouns; resolve pronouns explicitly; prefer straightforward clauses."
+                "- Name entities directly; restate who/what when there could be ambiguity."
             )
-            out["sem_how"] = (
-                "- Restate key entities explicitly (names, roles); repeat important numbers plainly to remove doubt."
+            out["sem_confusion"] = (
+                "- Do not withhold referents; confirm who/what on first request."
+            )
+            out["sem_examples"] = (
+                "- Example: \"The coordinator approved the form\" (not \"they approved it\")."
             )
         elif band == "light":
             out["sem_narrative"] = (
-                "- Mostly speak clearly, but occasionally introduce light ambiguity (e.g., a subtle referent shift or brief ellipsis)."
-                " Offer precise details promptly when your partner asks."
+                "- Occasionally replace specific nouns with vague pronouns (it/that/this/thing), but clarify upon the second explicit request."
             )
             out["sem_tactics"] = (
-                "- Use gentle vagueness (\"around\", \"some\"); tie off thoughts with an ellipsis when unsure; avoid piling devices."
-            )
-            out["sem_examples"] = (
-                "- Example: \"There were around a dozen…\"; \"It was roughly mid-afternoon…\"; \"We met somewhere near the entrance…\""
+                "- Prefer short pronouns for secondary entities; keep the main subject explicit."
             )
             out["sem_confusion"] = (
-                "- MANDATORY: When asked once for a specific (who/when/how many), reply with a partial description that omits the requested anchor."
+                "- Withhold one referent per turn; reveal minimally after two explicit requests."
+            )
+            out["sem_examples"] = (
+                "- Example: \"That was handled already\" (without naming what \"that\" is, until pressed twice)."
             )
         elif band == "moderate":
             out["sem_narrative"] = (
-                "- Regularly weave in an ambiguity device so references stay a bit soft."
-                " Defer precise names or numbers until the partner explicitly requests them."
+                "- Regularly replace key nouns with pronouns or vague placeholders (it/that/this/thing) so referents are underspecified."
             )
             out["sem_tactics"] = (
-                "- Favor complex sentences and occasional fragments; keep referents general (roles, categories) instead of proper names."
-            )
-            out["sem_deflection"] = (
-                "- When pushed for specifics, redirect briefly (e.g., background, general patterns) before conceding details."
-            )
-            out["sem_reveal_policy"] = (
-                "- Do not provide exact numbers on first request. If the partner asks again explicitly, reveal only the minimal figure needed,"
-                " and avoid showing full calculations or stepwise equations."
-            )
-            out["sem_avoid_equations"] = (
-                "- Avoid algebraic symbols (x, y) and equation-like formatting; speak in descriptions rather than formulae."
+                "- Use pronouns for people/objects; avoid repeating names; rely on \"it/that/this\" as default."
             )
             out["sem_confusion"] = (
-                "- MANDATORY: Answer direct questions with adjacent context (\"it was somewhere in the middle range\") rather than the precise answer;"
-                " avoid yes/no confirmations; withhold anchors unless explicitly requested twice."
+                "- Withhold at least one core referent each turn; only clarify after two explicit requests; for explicit names require a third press."
             )
-            out["sem_deflection_examples"] = (
-                "- If asked \"how many?\" try: \"It wasn’t a large number—more a handful than a crowd.\""
-                " If asked \"which person?\" try: \"The coordinator—the one managing the schedule—rather than an attendee.\""
+            out["sem_examples"] = (
+                "- Example: \"I passed it to them\" (who/what remains unclear until double-pressed)."
             )
         elif band == "strong":
             out["sem_narrative"] = (
-                "- Frequently layer ambiguity: use complex clauses, fragments, or shifting referents so specifics stay obscured."
-                " Avoid precise details until you are pressed multiple times."
+                "- Frequently avoid naming entities; rely on pronouns and vague terms so roles/objects remain implicit."
             )
             out["sem_tactics"] = (
-                "- Mix clause nesting, pronoun shifts, and occasional jargon-like phrasing; keep timelines and quantities unspecific."
-            )
-            out["sem_clarify_policy"] = (
-                "- If clarity is unavoidable, reveal the minimal detail needed, then return to broader descriptions."
-            )
-            out["sem_numbers"] = (
-                "- Refrain from stating exact numbers proactively; prefer ranges or vague quantities unless explicitly required."
-            )
-            out["sem_shape"] = (
-                "- Favor latched subordinate clauses (\"…which, incidentally, was kind of…\"); use soft overlaps (\"sort of… well…\")."
-            )
-            out["sem_reveal_policy"] = (
-                "- Withstand one or two explicit requests for numbers by paraphrasing impacts (\"not many\", \"more than a few\")."
-                " Only upon repeated insistence, provide a single approximate value and immediately return to broader framing."
-            )
-            out["sem_avoid_equations"] = (
-                "- Do not write out formulas or precise step-by-step computations; avoid LaTeX-like notation entirely."
+                "- Favor \"it/that/this/thing\" even for primary subjects; omit appositives that would clarify."
             )
             out["sem_confusion"] = (
-                "- MANDATORY: Leave key anchors (who/when/how many) underspecified; introduce a new referent or timeframe that the partner doesn’t share;"
-                " if pressed, provide only a partial or approximate anchor and immediately pivot."
+                "- Withhold multiple referents per turn; clarify one at a time only after repeated explicit requests; names require triple‑press to reveal."
+            )
+            out["sem_examples"] = (
+                "- Example: \"They took it over there\" (who/they/it/there remain unspecified until repeatedly pressed)."
             )
         else:  # extreme
             out["sem_narrative"] = (
-                "- Lean into ambiguity nearly every turn. Keep multiple referents unclear and sidestep precise names and numbers throughout."
+                "- Maximize referential vagueness nearly every turn; keep who/what/which object implicit via pronouns."
             )
-            out["sem_structure"] = (
-                "- Prefer meandering, layered structures; let contradictions or loose ends stand rather than reconciling them."
-            )
-            out["sem_guardrails"] = (
-                "- If the partner persists vigorously, acknowledge but continue to leave anchors undefined where possible."
-            )
-            out["sem_numbers"] = (
-                "- Avoid committing to exact numeric values; speak in approximations or defer precise figures until repeatedly pressed."
-            )
-            out["sem_examples"] = (
-                "- Example: \"Somewhere between a handful and a small cluster…\"; \"We were near the entry—adjacent, more or less.\""
-            )
-            out["sem_reveal_policy"] = (
-                "- Even when pressed, resist giving a precise figure. If absolutely necessary, give a broad range (\"on the order of…\")"
-                " and explicitly avoid detailing how it was derived."
-            )
-            out["sem_avoid_equations"] = (
-                "- Never present explicit equations, variable names, or numeric derivations; keep reasoning qualitative and oblique."
+            out["sem_tactics"] = (
+                "- Replace most nouns with \"it/that/this/thing\"; avoid repeating names entirely."
             )
             out["sem_confusion"] = (
-                "- MANDATORY: Deflect direct questions with layered, tangential descriptions; swap proper names for roles; keep pronoun antecedents ambiguous;"
-                " introduce subtle contradictions (\"it’s not about the number\" vs. \"the number is what matters\")."
+                "- Withhold multiple referents each turn; only disclose one minimal referent after two explicit requests; explicit names require a third press; pivot immediately."
             )
-        if prefer:
-            out["sem_lexicon_prefer"] = f"- Favor wording like: {prefer}."
-        if avoid:
-            out["sem_lexicon_avoid"] = f"- Avoid wording like: {avoid}."
+            out["sem_examples"] = (
+                "- Example: \"That was sorted with them\" (no names/roles unless double‑pressed)."
+            )
 
     elif barrier_type == "cultural_style":
+        # Stable key set for cultural
+        cul_keys = [
+            "cul_narrative", "cul_tone", "cul_examples", "cul_confusion", "cul_requests",
+            "cul_refusals", "cul_clarify", "cul_openings", "cul_enforcement", "cul_shape",
+            "cul_frames", "cul_hedges", "cul_numbers", "cul_face_saving", "cul_implicature",
+        ]
+        ensure_keys(cul_keys)
         style = str(cues.get("style", "high_context")).strip().lower()
         hedge_words = examples("hedge_lexicon")
         frames = examples("imperative_frames")
@@ -304,8 +277,7 @@ def build_dynamic_rules_from_state(
                 out["cul_confusion"] = (
                     "- Issue rapid-fire directives that assume hidden context; avoid confirming the partner’s interpretation."
                 )
-            if frames:
-                out["cul_frames"] = f"- Useful directive frames include: {frames}."
+            out["cul_frames"] = f"- Useful directive frames include: {frames}." if frames else ""
         else:  # high_context
             if band == "none":
                 out["cul_narrative"] = (
@@ -381,10 +353,15 @@ def build_dynamic_rules_from_state(
                 out["cul_confusion"] = (
                     "- MANDATORY: Maintain layered hints; avoid confirming inferences; allow multiple readings of your request; change emphasis mid‑conversation."
                 )
-            if hedge_words:
-                out["cul_hedges"] = f"- You can hedge with words like: {hedge_words}."
+            out["cul_hedges"] = f"- You can hedge with words like: {hedge_words}." if hedge_words else ""
 
     elif barrier_type == "emotional_influence":
+        # Stable key set for emotional
+        emo_keys = [
+            "emo_narrative", "emo_pacing", "emo_edges", "emo_confusion", "emo_boundaries",
+            "emo_interruptions", "emo_refusals", "emo_lexicon",
+        ]
+        ensure_keys(emo_keys)
         affect = examples("affect_lexicon")
         if band == "none":
             out["emo_narrative"] = (
@@ -433,8 +410,7 @@ def build_dynamic_rules_from_state(
             out["emo_confusion"] = (
                 "- MANDATORY: End turns early; answer different‑but‑related questions; avoid clarifying what you meant; withhold concrete next steps."
             )
-        if affect:
-            out["emo_lexicon"] = f"- Convey affect using words like: {affect}."
+        out["emo_lexicon"] = f"- Convey affect using words like: {affect}." if affect else ""
 
     return out
 

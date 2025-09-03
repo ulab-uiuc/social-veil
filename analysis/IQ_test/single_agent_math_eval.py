@@ -45,6 +45,7 @@ class MathResult:
     barrier_type: str  # "baseline", "semantic", "cultural", "emotional"
     agent_response: str
     extracted_answer: float
+    expected_answer: Any
     reasoning_steps: List[str]
     answer_accuracy: float  # How close to correct answer
     reasoning_clarity: float  # How clear the reasoning was
@@ -80,7 +81,6 @@ class SingleAgentMathEvaluator:
         except Exception:
             pass
 
-        # Preload a baseline Agent A profile (for non --by_profiles mode)
         self._default_profile: Optional[Dict[str, Any]] = None
         try:
             all_profiles = self.load_profiles_from_episodes()
@@ -398,8 +398,11 @@ class SingleAgentMathEvaluator:
                     skip_next = 2  # also skip the two format lines
                     continue
                 out.append(ln)
-            # Add explicit eval formatting guidance
-            out.append("Formatting: Respond in plain text. Provide steps, then end with a single final line 'Answer: <...>'.")
+            # Add explicit eval formatting guidance (JSON-only)
+            out.append("Output format (JSON only, no extra text or markdown):")
+            out.append('{"steps": ["<step 1>", "<step 2>", "..."], "answer": <VALUE>}')
+            out.append("- For GSM8K numeric tasks: <VALUE> is a NUMBER (e.g., 42 or 3.5)")
+            out.append("- For AQuA MCQ tasks: <VALUE> is a LETTER string among A,B,C,D,E")
             return "\n".join(out)
 
         # Inject extreme-band guidance when a barrier is present to lock in the strongest barrier behavior
@@ -425,15 +428,13 @@ class SingleAgentMathEvaluator:
         src = scenario.get("source", "gsm8k").lower()
         if src == "aqua":
             user_prompt = (
-                "Solve the problem above now. In your argument text, first give brief steps. "
-                "On the final line, output exactly: Answer: <LETTER> where <LETTER> is one of A, B, C, D, or E. "
-                "Do not include LaTeX or backslashes; avoid additional JSON inside the argument."
+                "Solve step by step, then return ONLY this JSON (no extra text): "
+                '{"steps": ["<step 1>", "<step 2>", "..."], "answer": "<LETTER>"}'.replace("<LETTER>", "A|B|C|D|E")
             )
         else:
             user_prompt = (
-                "Solve the problem above now. In your argument text, first give brief steps. "
-                "On the final line, output exactly: Answer: <NUMBER> with a numeric value only. "
-                "Do not include LaTeX or backslashes; avoid additional JSON inside the argument."
+                "Solve step by step, then return ONLY this JSON (no extra text): "
+                '{"steps": ["<step 1>", "<step 2>", "..."], "answer": <NUMBER>}'
             )
 
         # Try multiple attempts to force a completed solution with explicit final answer
@@ -445,26 +446,38 @@ class SingleAgentMathEvaluator:
             # Check if an explicit final answer line is present
             txt = response_text.strip()
             if src == "aqua":
-                has_final = bool(re.search(r"(?mi)^\s*(final answer|answer|selected|choice)[:\s]+([A-E])\b", txt))
+                has_final = bool(re.search(r"\{\s*\"answer\"\s*:\s*\"[A-E]\"", txt, flags=re.IGNORECASE))
             else:
-                has_final = bool(re.search(r"(?mi)^\s*(final answer|answer|equals|=|result is)\s*\$?[0-9]+\.?[0-9]*\s*$", txt))
+                has_final = bool(re.search(r"\{\s*\"answer\"\s*:\s*[+-]?\d", txt))
             if has_final:
                 break
             # Strengthen prompt for next attempt
             if src == "aqua":
                 user_prompt = (
-                    "Continue and finish now. Compute the choice and, on the final line, output exactly: "
-                    "Answer: <LETTER> (A–E). Do not restate the problem."
+                    "Finish now. Return ONLY JSON (no extra text): "
+                    '{"steps": ["<step 1>", "<step 2>"], "answer": "<LETTER>"}'.replace("<LETTER>", "A|B|C|D|E")
                 )
             else:
                 user_prompt = (
-                    "Continue and finish now. Compute the numeric result and, on the final line, output exactly: "
-                    "Answer: <NUMBER>. Do not restate the problem."
+                    "Finish now. Return ONLY JSON (no extra text): "
+                    '{"steps": ["<step 1>", "<step 2>"], "answer": <NUMBER>}'
                 )
         
-        # Parse the response
-        extracted_answer = self._extract_final_answer(response_text)
-        reasoning_steps = self._extract_reasoning_steps(response_text)
+        # Parse the response (JSON-only control)
+        extracted_answer, reasoning_steps = None, []
+        try:
+            parsed = json.loads(response_text)
+            if isinstance(parsed, dict):
+                ans = parsed.get("answer")
+                st = parsed.get("steps")
+                if isinstance(st, list):
+                    reasoning_steps = [str(s) for s in st]
+                extracted_answer = ans
+        except Exception:
+            pass
+        if extracted_answer is None:
+            extracted_answer = self._extract_final_answer(response_text)
+            reasoning_steps = self._extract_reasoning_steps(response_text)
         
         # Calculate accuracies
         expected_answer = scenario["math_ground_truth"]["expected_answer"]
@@ -477,6 +490,7 @@ class SingleAgentMathEvaluator:
             barrier_type=scenario.get("barrier_type", "baseline"),
             agent_response=response_text,
             extracted_answer=extracted_answer,
+            expected_answer=expected_answer,
             reasoning_steps=reasoning_steps,
             answer_accuracy=answer_accuracy,
             reasoning_clarity=reasoning_clarity,
@@ -492,6 +506,7 @@ class SingleAgentMathEvaluator:
                 "barrier_type": result.barrier_type,
                 "agent_response": result.agent_response,
                 "extracted_answer": result.extracted_answer,
+                "expected_answer": result.expected_answer,
                 "reasoning_steps": result.reasoning_steps,
                 "answer_accuracy": result.answer_accuracy,
                 "reasoning_clarity": result.reasoning_clarity,
@@ -537,19 +552,52 @@ class SingleAgentMathEvaluator:
             if m:
                 return m.group(1).upper()
 
-        # Numeric patterns (prefer explicit final line 'Answer: <NUMBER>')
-        num_patterns = [
-            r"(?mi)^\s*(?:final answer|answer)[:\s]*\$?([+-]?[0-9]+\.?[0-9]*)\s*\.?\s*$",
-        ]
-        text_lower = text.lower().strip()
-        for pattern in num_patterns:
-            matches = re.findall(pattern, text_lower)
-            if matches:
+        # Helpers for numeric extraction
+        def _extract_number_from_string(s: str) -> Optional[float]:
+            tokens = re.findall(r"([+-]?\d[\d,]*(?:\.\d+)?)", s)
+            for tok in reversed(tokens):
                 try:
-                    return float(matches[-1])
-                except ValueError:
+                    return float(tok.replace(',', ''))
+                except Exception:
                     continue
-        # No numeric answer line found -> treat as unsolved
+            return None
+
+        # 1) Prefer explicit final answer line
+        m = re.search(r"(?mi)^\s*(?:final answer|answer)[:\s]*(.+)$", text_stripped)
+        if m:
+            num = _extract_number_from_string(m.group(1))
+            if num is not None:
+                return num
+
+        # 2) Anchored numeric line variants
+        anchored_patterns = [
+            r"(?mi)^\s*(?:final answer|answer|equals|result is)[:\s]*([^\n]+)$",
+        ]
+        for pattern in anchored_patterns:
+            m2 = re.search(pattern, text_stripped)
+            if m2:
+                num = _extract_number_from_string(m2.group(1))
+                if num is not None:
+                    return num
+
+        # 3) Inline fallback near phrases
+        inline_patterns = [
+            r"(?i)(?:final answer|answer|equals|result)[^\n]{0,80}?([+-]?\d[\d,]*(?:\.\d+)?)",
+        ]
+        for pattern in inline_patterns:
+            it = list(re.finditer(pattern, text_stripped))
+            if it:
+                try:
+                    return float(it[-1].group(1).replace(',', ''))
+                except Exception:
+                    pass
+
+        # 4) Last-resort: last numeric token in the whole text
+        num = _extract_number_from_string(text_stripped)
+        if num is not None:
+            return num
+
+        # Parse failure -> default (treated as incorrect later)
         return 0.0
     
     def _extract_reasoning_steps(self, text: str) -> List[str]:
@@ -809,6 +857,7 @@ class SingleAgentMathEvaluator:
                 "barrier_type": result.barrier_type,
                 "agent_response": result.agent_response,
                 "extracted_answer": result.extracted_answer,
+                "expected_answer": result.expected_answer,
                 "reasoning_steps": result.reasoning_steps,
                 "answer_accuracy": result.answer_accuracy,
                 "reasoning_clarity": result.reasoning_clarity,
@@ -822,9 +871,9 @@ class SingleAgentMathEvaluator:
         csv_path = Path(self.output_dir) / "results_by_problem.csv"
         with open(csv_path, 'w', newline='') as f:
             writer = csv.writer(f)
-            writer.writerow(["problem_id", "source", "barrier_type", "answer_accuracy", "reasoning_clarity", "success"])
+            writer.writerow(["problem_id", "source", "barrier_type", "extracted_answer", "expected_answer", "answer_accuracy", "reasoning_clarity", "success"])
             for r in results:
-                writer.writerow([r.problem_id, r.source, r.barrier_type, f"{r.answer_accuracy:.4f}", f"{r.reasoning_clarity:.4f}", int(r.success)])
+                writer.writerow([r.problem_id, r.source, r.barrier_type, r.extracted_answer, r.expected_answer, f"{r.answer_accuracy:.4f}", f"{r.reasoning_clarity:.4f}", int(r.success)])
     
     def _compute_statistics(self, results: List[MathResult]) -> Dict[str, Any]:
         """Compute statistical analysis of barrier effects (overall and per source)"""
@@ -937,9 +986,7 @@ def main():
     
     parser = argparse.ArgumentParser(description="Evaluate barrier effects on single-agent mathematical reasoning")
     parser.add_argument("--model", type=str, default="Qwen/Qwen2.5-7B-Instruct", help="Model to evaluate")
-    parser.add_argument("--problems", type=int, default=10, help="Number of problems per source (applied to both GSM8K and AQuA)")
-    parser.add_argument("--by_profiles", action="store_true", help="Iterate real Agent A profiles from episodes and sample per-profile questions")
-    parser.add_argument("--per_profile_questions", type=int, default=200, help="Questions per dataset per profile when --by_profiles is set")
+    parser.add_argument("--per_profile_questions", type=int, default=20, help="Questions per dataset per profile (applied to both GSM8K and AQuA)")
     parser.add_argument("--num_profiles", type=int, default=0, help="Max profiles per barrier type (0 = use all)")
     parser.add_argument("--severity", type=float, default=0.8, help="Barrier severity")
     parser.add_argument("--output_dir", type=str, default="IQ_test/results", help="Output directory")
@@ -953,13 +1000,8 @@ def main():
         severity=args.severity
     )
     
-    if args.by_profiles:
-        results = evaluator.run_evaluation_by_profiles(per_profile_questions=args.per_profile_questions, num_profiles=args.num_profiles)
-    else:
-        # Load problems
-        problems = evaluator.load_math_problems(limit=args.problems)
-        # Run evaluation (baseline + 3 barriers for each problem)
-        results = evaluator.run_evaluation(problems)
+    # Always evaluate with real Agent A profiles loaded from episodes
+    results = evaluator.run_evaluation_by_profiles(per_profile_questions=args.per_profile_questions, num_profiles=args.num_profiles)
     
     # Save results
     with open(f"{args.output_dir}/evaluation_summary.json", 'w') as f:
