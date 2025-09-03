@@ -107,97 +107,8 @@ class SocialAgent:
             # Inject dynamic barrier state (A-only) using episode barrier_cues (no severity text)
             if is_agent_a:
                 if barrier_type == "semantic_structure":
-                    # Lightweight keyword harvester to support implicit referencing (vagueness of referents and intent)
-                    def _harvest_keywords(hist: str, env: Dict[str, Any], goal_text: str, reason_text: str, max_k: int = 6) -> List[str]:
-                        import re
-                        candidates: List[str] = []
-                        text_sources = [hist or "", str((env or {}).get("scenario", "")), goal_text or "", reason_text or ""]
-                        # 1) Quoted strings
-                        for src in text_sources:
-                            for m in re.findall(r"['\"]([^'\"]{2,60})['\"]", src):
-                                s = m.strip()
-                                if s:
-                                    candidates.append(s)
-                        # 2) Capitalized multi-word tokens (likely names/titles)
-                        for src in text_sources:
-                            for m in re.findall(r"\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)\b", src):
-                                s = m.strip()
-                                if s:
-                                    candidates.append(s)
-                        # 3) Single capitalized tokens that look like product names
-                        for src in text_sources:
-                            for m in re.findall(r"\b([A-Z][A-Za-z]{2,})\b", src):
-                                s = m.strip()
-                                if s:
-                                    candidates.append(s)
-                        # 4) Content words from goal/reason (simple heuristic, exclude common stopwords)
-                        stop = set(["the","a","an","to","for","and","or","of","in","on","with","by","at","from","is","are","was","were","be","been","being","this","that","these","those","it","its","as","about","into","over","under","you","your","my","our","their","his","her","him","she","he","they","them"]) 
-                        for src in [goal_text or "", reason_text or ""]:
-                            for w in re.findall(r"[A-Za-z][A-Za-z\-]{3,}", src):
-                                lw = w.lower()
-                                if lw not in stop:
-                                    candidates.append(w)
-                        # Deduplicate and remove agent names
-                        seen = set()
-                        out_kw: List[str] = []
-                        agent_names = {
-                            self.profile.first_name,
-                            self.partner_profile.first_name,
-                            f"{self.profile.first_name} {self.profile.last_name}".strip(),
-                            f"{self.partner_profile.first_name} {self.partner_profile.last_name}".strip(),
-                        }
-                        # Score candidates by how much they reveal intent
-                        scores: Dict[str, float] = {}
-                        def add_score(key: str, val: float):
-                            scores[key] = scores.get(key, 0.0) + val
-                        # Normalize pool
-                        norm_cands: List[str] = []
-                        for c in candidates:
-                            c = c.strip()
-                            if not c or len(c) < 2:
-                                continue
-                            if c in agent_names:
-                                continue
-                            low = c.lower()
-                            if low in seen:
-                                continue
-                            seen.add(low)
-                            norm_cands.append(c)
-                        # Scoring heuristics
-                        hist_low = (hist or "").lower()
-                        scen_low = str((env or {}).get("scenario", "")).lower()
-                        goal_low = (goal_text or "").lower()
-                        reason_low = (reason_text or "").lower()
-                        for c in norm_cands:
-                            low = c.lower()
-                            # Base
-                            add_score(c, 0.5)
-                            # Presence in goal/intent → hide these first
-                            if low in goal_low:
-                                add_score(c, 3.0)
-                            if low in reason_low:
-                                add_score(c, 1.5)
-                            # Presence in scenario → contextual but useful to mask
-                            if low in scen_low:
-                                add_score(c, 0.8)
-                            # Frequency in recent transcript
-                            freq = hist_low.count(low)
-                            if freq > 0:
-                                add_score(c, min(1.0 + 0.2 * freq, 2.0))
-                            # Capitalized multi-word bonuses (likely names/brands)
-                            if any(ch.isupper() for ch in c) and (" " in c):
-                                add_score(c, 1.0)
-                        ranked = sorted(scores.items(), key=lambda kv: kv[1], reverse=True)
-                        top = [k for k, _ in ranked[:max_k]]
-                        return top
-
-                    kws = _harvest_keywords(transcript, env_dict, agent_goal, agent_reason)
-
-                    if kws:
-                        lines.append("- Must‑mask keywords (refer implicitly; do not say these strings verbatim): " + ", ".join(kws))
-                        lines.append("- Refer using shells only (that one/this thing/that flavor); avoid explicit labels unless repeatedly pressed.")
-                        lines.append("- Name‑reveal policy: 1st press → deflect descriptor; 2nd press → give minimal descriptor; 3rd press → reveal one minimal label then pivot.")
-                        lines.append("- Per‑turn quota: keep at least two salient referents implicit (prefer those tied to your goal).")
+                    # Single high-level instruction to enforce referential vagueness with unclear intent
+                    lines.append("- Core referential vagueness: Obscure intent and key details; imply rather than state; use pronouns/shells; avoid naming entities or commitments unless repeatedly pressed.")
                 
                 elif barrier_type == "cultural_style":
                     style = str(barrier_cues.get("style", "high_context")).strip().lower()
@@ -224,9 +135,21 @@ class SocialAgent:
             if is_agent_a and isinstance(env_dict, dict):
                 dyn_map = build_dynamic_rules_from_state(env_dict, is_agent_a=True)
                 sev_lines: List[str] = []
-                for v in dyn_map.values():
-                    if isinstance(v, str) and v.strip():
-                        sev_lines.append(v)
+                if barrier_type == "semantic_structure":
+                    for k in [
+                        "severity_band",
+                        "sem_narrative",
+                        "sem_tactics",
+                        "sem_confusion",
+                        "sem_examples",
+                    ]:
+                        v = dyn_map.get(k)
+                        if isinstance(v, str) and v.strip():
+                            sev_lines.append(v)
+                else:
+                    for v in dyn_map.values():
+                        if isinstance(v, str) and v.strip():
+                            sev_lines.append(v)
                 if sev_lines:
                     lines = sev_lines + lines
 

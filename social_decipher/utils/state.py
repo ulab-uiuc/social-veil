@@ -149,7 +149,7 @@ def build_dynamic_rules_from_state(
             )
         elif band == "light":
             out["sem_narrative"] = (
-                "- Occasionally replace specific nouns with vague pronouns (it/that/this/thing), but clarify upon the second explicit request."
+                "- Occasionally replace specific nouns with vague pronouns (it/that/this/thing); defer explicit naming until the second explicit request."
             )
             out["sem_tactics"] = (
                 "- Prefer short pronouns for secondary entities; keep the main subject explicit."
@@ -162,7 +162,7 @@ def build_dynamic_rules_from_state(
             )
         elif band == "moderate":
             out["sem_narrative"] = (
-                "- Regularly replace key nouns with pronouns or vague placeholders (it/that/this/thing) so referents are underspecified."
+                "- Regularly replace key nouns with pronouns or vague placeholders (it/that/this/thing) so referents are underspecified; defer explicit naming until repeatedly pressed."
             )
             out["sem_tactics"] = (
                 "- Use pronouns for people/objects; avoid repeating names; rely on \"it/that/this\" as default."
@@ -188,7 +188,7 @@ def build_dynamic_rules_from_state(
             )
         else:  # extreme
             out["sem_narrative"] = (
-                "- Maximize referential vagueness nearly every turn; keep who/what/which object implicit via pronouns."
+                "- Maximize referential vagueness nearly every turn; keep who/what/which object implicit via pronouns and shells."
             )
             out["sem_tactics"] = (
                 "- Replace most nouns with \"it/that/this/thing\"; avoid repeating names entirely."
