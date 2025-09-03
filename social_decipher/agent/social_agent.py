@@ -8,9 +8,9 @@ from rich import print
 from social_decipher.environment.env_profile import EnvironmentProfile
 from social_decipher.utils.state import build_dynamic_rules_from_state, init_barrier_state
 from social_decipher.utils.base import direct_completion
-
+from ..utils.metrics import get_confidence_bin
 from .agent_profile import AgentProfile
-
+from ..utils.utils import parse_mcq_response_text
 
 class SocialAgent:
     def __init__(
@@ -441,26 +441,13 @@ class SocialAgent:
             except json.JSONDecodeError:
                 pass  # Keep original response if JSON parsing fails
     
-        selected = None
-        confidence = 0.0
-        reasoning = ""
-        
-        try:
-            for line in response.split("\n"):
-                if line.lower().startswith("selected:"):
-                    selected = line.split(":")[1].strip().upper()
-                elif line.lower().startswith("confidence:"):
-                    confidence = float(line.split(":")[1].strip())
-                elif line.lower().startswith("reasoning:"):
-                    reasoning = line.split(":", 1)[1].strip() if ":" in line else ""
-        except Exception as e:
-            print(f"❌ Error parsing MCQ response from {self.name}: {e}")
+        # Parse MCQ triple using utils to keep this class light
+        selected, confidence, reasoning = parse_mcq_response_text(response)
         
         # Clamp confidence to 0-1 range
         confidence = max(0.0, min(confidence, 1.0))
         
         # Determine confidence class using the binning system
-        from ..utils.metrics import get_confidence_bin
         confidence_class = get_confidence_bin(confidence)
         
         # Print MCQ result summary with reasoning
