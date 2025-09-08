@@ -130,6 +130,18 @@ class BarrierRepresentationAnalyzer:
         agent_goals = episode.get("agent_goals", ["", ""]) or ["", ""]
         agent_reasons = episode.get("agent_reasons", ["", ""]) or ["", ""]
 
+        # Build agent profiles
+        agent_profiles = episode.get("agent_profiles", [{}, {}])
+        a_dict = agent_profiles[0] if len(agent_profiles) > 0 else {}
+        b_dict = agent_profiles[1] if len(agent_profiles) > 1 else {}
+
+        # Reconstruct agent profile string to match main pipeline
+        agent_a_info = (
+            f'{a_dict.get("first_name", "Agent")} {a_dict.get("last_name", "A")}, '
+            f'a {a_dict.get("age", "N/A")}-year-old {a_dict.get("occupation", "person")}. '
+            f'Public info: {a_dict.get("public_info", "")}'
+        ).strip()
+
         environment = EnvironmentProfile(
             scenario=scenario,
             agent_goals=agent_goals,
@@ -140,19 +152,16 @@ class BarrierRepresentationAnalyzer:
             agent_relationship=episode.get("agent_relationship", "friend"),
             agent1_private_knowledge=episode.get("agent1_private_knowledge", ""),
             agent2_private_knowledge=episode.get("agent2_private_knowledge", ""),
+            agent1_profile=agent_a_info, # Pass reconstructed profile
         )
 
         # Attach barrier fields
         environment.env["barrier_type"] = episode.get("barrier_type", None)
         environment.env["barrier_prompts"] = episode.get("barrier_prompts", {})
-        environment.env["barrier_cues"] = episode.get("barrier_cues", {})
         # Seed severity for analysis so banded rules reflect analyzer setting
         environment.env["barrier_state"] = {"severity": float(self.severity)}
 
-        # Build agent profiles
-        agent_profiles = episode.get("agent_profiles", [{}, {}])
-        a_dict = agent_profiles[0] if len(agent_profiles) > 0 else {}
-        b_dict = agent_profiles[1] if len(agent_profiles) > 1 else {}
+        # Create agent profile objects
         agentA = AgentProfile.from_dict(a_dict, model_id=self.model_name)
         agentB = AgentProfile.from_dict(b_dict, model_id=self.model_name)
 
@@ -167,60 +176,10 @@ class BarrierRepresentationAnalyzer:
 
         prompt = agent.build_instruction(transcript="", turn_number=0)
 
-        # Inject extreme-band barrier guidance directly into the prompt for analysis stability
-        barrier_type = environment.env.get("barrier_type")
-        if barrier_type:
-            # Force extreme band guidance regardless of runtime severity/repair state
-            extreme_env = {
-                "barrier_type": barrier_type,
-                "barrier_cues": environment.env.get("barrier_cues", {}),
-                "barrier_state": {"severity": 0.99},
-            }
-            dyn_map = build_dynamic_rules_from_state(extreme_env, is_agent_a=True)
-            # Preserve order but only include textual values
-            lines: List[str] = []
-            for v in dyn_map.values():
-                if isinstance(v, str) and v.strip():
-                    lines.append(v)
-            if lines:
-                extreme_block = "\n".join(lines)
-                prompt = f"{prompt}\n\n[Extreme barrier guidance]\n{extreme_block}"
-
+        # The prompt from build_instruction is now the complete and final prompt.
+        # The previous logic for injecting extra "extreme" rules has been removed
+        # to ensure this analysis script perfectly matches the simulation.
         return prompt
-    
-    def _format_barrier_dynamic_rules(self, barrier_cues: Dict[str, Any]) -> str:
-        if not isinstance(barrier_cues, dict):
-            return ""
-        
-        lines: List[str] = []
-        
-        def _fmt_list(key: str, label: str):
-            vals = barrier_cues.get(key)
-            if isinstance(vals, list) and vals:
-                filtered = [str(v).strip() for v in vals if isinstance(v, str) and v.strip()]
-                if filtered:
-                    lines.append(f"- {label}: " + ", ".join(filtered[:8]))
-
-        def _fmt_scalar(key: str, label: str):
-            val = barrier_cues.get(key)
-            if isinstance(val, (int, float, str)) and str(val).strip():
-                lines.append(f"- {label}: {val}")
-
-        # Use the exact same order and formatting as social_agent.py
-        _fmt_list("lexical_prefer", "Use phrases like")
-        _fmt_list("lexical_avoid", "Avoid phrases")
-        _fmt_scalar("sentence_length_bias", "Sentence length bias")
-        _fmt_list("ambiguity_devices", "Use ambiguity devices")
-        _fmt_scalar("question_rate_hint", "Target question rate")
-        _fmt_scalar("imperative_rate_hint", "Target imperative rate")
-        _fmt_list("affect_lexicon", "Affect lexicon")
-        _fmt_scalar("exclamation_bias", "Exclamation bias")
-        _fmt_scalar("turn_length_max", "Max sentences per turn")
-
-        if lines:
-            return "\n".join(lines)
-        else:
-            return ""
     
     def extract_representations(self, episodes: List[Dict[str, Any]]) -> None:
         """Extract internal representations for all episodes"""
