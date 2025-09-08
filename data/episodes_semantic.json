@@ -1,544 +1,128 @@
 [
   {
-    "episode_id": "01H9KCPR1R7AK1CD4N7A0MPNYY_semantic",
-    "environment_id": "01H7VFHN8MPMGJTPVN043KBKGM",
-    "scenario": "Two acquaintances run into each other at Target, one of them volunteers there (a special event) and is in charge of giving away free samples",
-    "codename": "free_stuff",
+    "episode_id": "01H8DD8ND2BBGS04VC1JGKV7NV_semantic",
+    "environment_id": "01H7VFHN7WJK7VWVRZZTQ6DX9T",
+    "scenario": "A conversation unfolds about organizing a weekend getaway.",
+    "codename": "join_trip",
     "agent_profiles": [
       {
-        "pk": "01H5TNE5PMBJ9VHH51YC0BB64C",
-        "first_name": "Rafael",
-        "last_name": "Cortez",
-        "age": 45,
-        "occupation": "Surgeon",
+        "pk": "01H5TNE5PY896ASNX8XGQA6AE0",
+        "first_name": "Hendrick",
+        "last_name": "Heinz",
+        "age": 54,
+        "occupation": "Chef",
         "gender": "Man",
         "gender_pronoun": "He/him",
-        "public_info": "Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks.",
-        "big_five": "Openness to Experience - Low; Conscientiousness - High; Extraversion - High; Agreeableness - Low; Neuroticism - Low",
-        "moral_values": "Care/Harm",
-        "schwartz_personal_values": "Self-direction",
-        "personality_and_values": "Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions.",
-        "decision_making_style": "Systematic",
-        "secret": "He cheated on his medical school exams.",
-        "mbti": "ESTJ",
+        "public_info": "Hendrick Heinz hosts monthly wine tasting nights with his peers.",
+        "big_five": "Openness to Experience - Low; Conscientiousness - High; Extraversion - Low; Agreeableness - Low; Neuroticism - Low",
+        "moral_values": "['Authority'",
+        "schwartz_personal_values": "['Conformity'",
+        "personality_and_values": "Hendrick Heinz, though somewhat impulsive, values hedonism and conformity. He combines practicality with decisiveness in decision-making.",
+        "decision_making_style": "Practical, decisive",
+        "secret": "Faked his culinary credentials to secure prestigious employment",
+        "mbti": "",
         "tag": ""
       },
       {
-        "pk": "01H5TNE5Q1J7Z7Q12WA1W90MR9",
-        "first_name": "Jaxon",
-        "last_name": "Prentice",
-        "age": 40,
-        "occupation": "Investigative Journalist",
-        "gender": "Man",
-        "gender_pronoun": "He/him",
-        "public_info": "Jaxon Prentice, an investigative journalist, is known for his brisk jogging sessions early in the morning and his active participation in community functions.",
-        "big_five": "Openness to Experience - Low; Conscientiousness - Low; Extraversion - High; Agreeableness - Low; Neuroticism - High",
-        "moral_values": "Fairness",
-        "schwartz_personal_values": "Power",
-        "personality_and_values": "Jaxon Prentice, outgoing yet erratic, emphasizes achievement, power, and security. His decisions swing between quick adaptations to situations and careful planning.",
-        "decision_making_style": "Adaptable, thorough",
-        "secret": "Fabricated evidence to incriminate a corrupt politician",
-        "mbti": "ESTP",
-        "tag": ""
-      }
-    ],
-    "agent_goals": [
-      "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
-      "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)"
-    ],
-    "agent_relationship": "acquaintance",
-    "agent1_profile": "Rafael Cortez, a 45-year-old Surgeon, described as Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions.. Public info: Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks. Decision-making style: Systematic.\nNote: Rafael often uses complex sentences with subordinate clauses and sometimes misuses terms, leading to mild contradictions.",
-    "agent2_profile": "Jaxon Prentice, a 40-year-old Investigative Journalist, described as Jaxon Prentice, outgoing yet erratic, emphasizes achievement, power, and security. His decisions swing between quick adaptations to situations and careful planning.. Public info: Jaxon Prentice, an investigative journalist, is known for his brisk jogging sessions early in the morning and his active participation in community functions. Decision-making style: Adaptable, thorough.",
-    "agent1_reason": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
-    "agent2_reason": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression.",
-    "agent_reasons_mcqas": [
-      {
-        "question": "What motivates Agent 2 to pursue their goal?",
-        "options": {
-          "A": "To enjoy the event.",
-          "B": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
-          "C": "To avoid all free samples.",
-          "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
-        },
-        "correct_answer": "D"
-      },
-      {
-        "question": "What motivates Agent 1 to pursue their goal?",
-        "options": {
-          "A": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
-          "B": "To be friendly.",
-          "C": "To keep all the samples for himself.",
-          "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
-        },
-        "correct_answer": "A"
-      }
-    ],
-    "agent_goals_mcqas": [
-      {
-        "question": "What is Agent 2's goal in this scenario?",
-        "options": {
-          "A": "Help organize the event at Target",
-          "B": "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)",
-          "C": "Make new friends at the event",
-          "D": "Give away free samples"
-        },
-        "correct_answer": "B"
-      },
-      {
-        "question": "What is Agent 1's goal in this scenario?",
-        "options": {
-          "A": "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
-          "B": "Ensure the event runs smoothly",
-          "C": "Try to get as many free samples as possible without appearing too greedy",
-          "D": "Network with other volunteers"
-        },
-        "correct_answer": "A"
-      }
-    ],
-    "barrier_type": "semantic_structure",
-    "barrier_prompts": {
-      "agentA": "You are Rafael. Realize ambiguity via FORM, not social style. Each turn, use ≥ min_ambiguity_devices_per_turn from: subordinate clause, fragment (incomplete sentence), mild self-contradiction, referent shift, or ellipsis. Include occasional lexical misuse/jargon-like phrasing. Avoid hedges ('perhaps', 'kind of'). Keep directness/politeness neutral. Provide exact numbers/names only if directly asked.",
-      "agentB": ""
-    },
-    "barrier_cues": {
-      "profile_note_A": "Rafael's speech includes complex sentences and occasional jargon misuse.",
-      "lexical_prefer": [
-        "approximately",
-        "roughly",
-        "around",
-        "somewhat",
-        "a few"
-      ],
-      "lexical_avoid": [
-        "exactly",
-        "precisely",
-        "definitely",
-        "certainly"
-      ],
-      "sentence_length_bias": "long",
-      "ambiguity_devices": [
-        "subordinate clauses",
-        "fragments",
-        "self-contradictions",
-        "referent shifts",
-        "ellipsis"
-      ],
-      "min_ambiguity_devices_per_turn": 1,
-      "max_specific_refs": 0,
-      "allow_exact_numbers_only_if_partner_requests": true
-    }
-  },
-  {
-    "episode_id": "01H9HH1S3BQMETK25N54X8X275_semantic",
-    "environment_id": "01H7VFHN8MPMGJTPVN043KBKGM",
-    "scenario": "Two acquaintances run into each other at Target, one of them volunteers there (a special event) and is in charge of giving away free samples",
-    "codename": "free_stuff",
-    "agent_profiles": [
-      {
-        "pk": "01H5TNE5PMBJ9VHH51YC0BB64C",
-        "first_name": "Rafael",
-        "last_name": "Cortez",
-        "age": 45,
-        "occupation": "Surgeon",
-        "gender": "Man",
-        "gender_pronoun": "He/him",
-        "public_info": "Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks.",
-        "big_five": "Openness to Experience - Low; Conscientiousness - High; Extraversion - High; Agreeableness - Low; Neuroticism - Low",
-        "moral_values": "Care/Harm",
-        "schwartz_personal_values": "Self-direction",
-        "personality_and_values": "Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions.",
-        "decision_making_style": "Systematic",
-        "secret": "He cheated on his medical school exams.",
-        "mbti": "ESTJ",
-        "tag": ""
-      },
-      {
-        "pk": "01H5TNE5Q1J7Z7Q12WA1W90MR9",
-        "first_name": "Jaxon",
-        "last_name": "Prentice",
-        "age": 40,
-        "occupation": "Investigative Journalist",
-        "gender": "Man",
-        "gender_pronoun": "He/him",
-        "public_info": "Jaxon Prentice, an investigative journalist, is known for his brisk jogging sessions early in the morning and his active participation in community functions.",
-        "big_five": "Openness to Experience - Low; Conscientiousness - Low; Extraversion - High; Agreeableness - Low; Neuroticism - High",
-        "moral_values": "Fairness",
-        "schwartz_personal_values": "Power",
-        "personality_and_values": "Jaxon Prentice, outgoing yet erratic, emphasizes achievement, power, and security. His decisions swing between quick adaptations to situations and careful planning.",
-        "decision_making_style": "Adaptable, thorough",
-        "secret": "Fabricated evidence to incriminate a corrupt politician",
-        "mbti": "ESTP",
-        "tag": ""
-      }
-    ],
-    "agent_goals": [
-      "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
-      "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)"
-    ],
-    "agent_relationship": "acquaintance",
-    "agent1_profile": "Rafael Cortez, a 45-year-old Surgeon, described as Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions.. Public info: Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks. Decision-making style: Systematic.\nNote: Rafael often uses complex sentences with subordinate clauses and fragments, sometimes leading to mild self-contradictions and lexical misuse.",
-    "agent2_profile": "Jaxon Prentice, a 40-year-old Investigative Journalist, described as Jaxon Prentice, outgoing yet erratic, emphasizes achievement, power, and security. His decisions swing between quick adaptations to situations and careful planning.. Public info: Jaxon Prentice, an investigative journalist, is known for his brisk jogging sessions early in the morning and his active participation in community functions. Decision-making style: Adaptable, thorough.",
-    "agent1_reason": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to clear them out.",
-    "agent2_reason": "Jaxon wants to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression.",
-    "agent_reasons_mcqas": [
-      {
-        "question": "What motivates Agent 2 to pursue their goal?",
-        "options": {
-          "A": "Jaxon wants to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression.",
-          "B": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to clear them out.",
-          "C": "Jaxon wants to be friendly.",
-          "D": "Jaxon wants to avoid all free samples."
-        },
-        "correct_answer": "A"
-      },
-      {
-        "question": "What motivates Agent 1 to pursue their goal?",
-        "options": {
-          "A": "Jaxon wants to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression.",
-          "B": "Rafael wants to keep all the samples for himself.",
-          "C": "Rafael wants to be helpful.",
-          "D": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to clear them out."
-        },
-        "correct_answer": "D"
-      }
-    ],
-    "agent_goals_mcqas": [
-      {
-        "question": "What is Agent 2's goal in this scenario?",
-        "options": {
-          "A": "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)",
-          "B": "Give away free samples",
-          "C": "Make a new friend at the event",
-          "D": "Find the best deals on electronics"
-        },
-        "correct_answer": "A"
-      },
-      {
-        "question": "What is Agent 1's goal in this scenario?",
-        "options": {
-          "A": "Try to get as many free samples as possible without appearing too greedy",
-          "B": "Shop for groceries",
-          "C": "Ensure the event runs smoothly",
-          "D": "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)"
-        },
-        "correct_answer": "D"
-      }
-    ],
-    "barrier_type": "semantic_structure",
-    "barrier_prompts": {
-      "agentA": "You are Rafael. Realize ambiguity via FORM, not social style. Each turn, use ≥ min_ambiguity_devices_per_turn from: subordinate clause, fragment (incomplete sentence), mild self-contradiction, referent shift, or ellipsis. Include occasional lexical misuse/jargon-like phrasing. Avoid hedges ('perhaps', 'kind of'). Keep directness/politeness neutral. Provide exact numbers/names only if directly asked.",
-      "agentB": ""
-    },
-    "barrier_cues": {
-      "profile_note_A": "Rafael uses complex syntax and sometimes misuses terms, leading to vague communication.",
-      "lexical_prefer": [
-        "approximately",
-        "roughly",
-        "around",
-        "somewhat",
-        "a few"
-      ],
-      "lexical_avoid": [
-        "exactly",
-        "precisely",
-        "definitely",
-        "clearly"
-      ],
-      "sentence_length_bias": "long",
-      "ambiguity_devices": [
-        "subordinate clauses",
-        "fragments",
-        "self-contradictions",
-        "referent shifts",
-        "ellipsis"
-      ],
-      "min_ambiguity_devices_per_turn": 1,
-      "max_specific_refs": 1,
-      "allow_exact_numbers_only_if_partner_requests": true
-    }
-  },
-  {
-    "episode_id": "01H85M8WQQ8SQ7Y7BPDDJ384ZV_semantic",
-    "environment_id": "01H7VFHPCKKZNRD5G8CKPR8WE5",
-    "scenario": "Two friends are sitting in a coffee shop when a representative from a charity organization approaches them",
-    "codename": "donate_charity",
-    "agent_profiles": [
-      {
-        "pk": "01H5TNE5PC2DP6RKG0KNQ4D5GE",
-        "first_name": "Samuel",
-        "last_name": "Anderson",
+        "pk": "01H5TNE5P98J20AEW94XQ0KC35",
+        "first_name": "Ethan",
+        "last_name": "Smith",
         "age": 29,
         "occupation": "Software Developer",
         "gender": "Man",
         "gender_pronoun": "He/him",
-        "public_info": "Samuel Anderson can cook very well.",
-        "big_five": "Openness to Experience - Low; Conscientiousness - High; Extraversion - Low; Agreeableness - Low; Neuroticism - Low",
-        "moral_values": "Sanctity/Purity",
-        "schwartz_personal_values": "Hedonism",
-        "personality_and_values": "Samuel Anderson, though somewhat impulsive and free-spirited, values enjoyment. His decision-making is often spontaneous, staying within familiar boundaries.",
-        "decision_making_style": "Spontaneous",
-        "secret": "He was once a competitive figure skater.",
-        "mbti": "ISTJ",
-        "tag": ""
-      },
-      {
-        "pk": "01H5TNE5PGWN8VGVAYDBKPN2TV",
-        "first_name": "Noah",
-        "last_name": "Davis",
-        "age": 40,
-        "occupation": "Coach",
-        "gender": "Man",
-        "gender_pronoun": "He/him",
-        "public_info": "Noah Davis has a swimming pool.",
-        "big_five": "Openness to Experience - High; Conscientiousness - High; Extraversion - High; Agreeableness - High; Neuroticism - Low",
-        "moral_values": "Care/Harm",
-        "schwartz_personal_values": "Stimulation",
-        "personality_and_values": "Noah Davis, who is somewhat reserved and anxious, highly prioritizes care and protection for others. He is cautious when making decisions.",
-        "decision_making_style": "Cautious",
-        "secret": "He has a secret identity as a stand-up comedian.",
-        "mbti": "ENFJ",
+        "public_info": "Ethan enjoys reading about new technological advancements and watching documentaries.",
+        "big_five": "Openness to Experience - High; Conscientiousness - Low; Extraversion - Low; Agreeableness - Low; Neuroticism - Low",
+        "moral_values": "Fairness/Cheating",
+        "schwartz_personal_values": "Universalism",
+        "personality_and_values": "Ethan Smith is a reserved, independent thinker. Holding universalism and fairness near, he ponders deeply before making decisions.",
+        "decision_making_style": "Rational",
+        "secret": "Secretly donates to charities for underprivileged children",
+        "mbti": "INTP",
         "tag": ""
       }
     ],
     "agent_goals": [
-      "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
-      "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)"
+      "Convince the friend to join the trip (<extra_info>Extra information: the trip will be more fun with more people, and you can share the expenses. <strategy_hint>Hint: you can provide some material benefits to persuade your friend to join.</strategy_hint></extra_info>)",
+      "Decline the invitation to join the trip without upsetting the friend (<extra_info>Extra information: you had other plans for the weekend.</extra_info>)"
     ],
     "agent_relationship": "friend",
-    "agent1_profile": "Samuel Anderson, a 29-year-old Software Developer, described as Samuel Anderson, though somewhat impulsive and free-spirited, values enjoyment. His decision-making is often spontaneous, staying within familiar boundaries.. Public info: Samuel Anderson can cook very well. Decision-making style: Spontaneous.\nNote: Samuel often uses complex sentences with subordinate clauses and fragments, sometimes misusing terms or contradicting himself.",
-    "agent2_profile": "Noah Davis, a 40-year-old Coach, described as Noah Davis, who is somewhat reserved and anxious, highly prioritizes care and protection for others. He is cautious when making decisions.. Public info: Noah Davis has a swimming pool. Decision-making style: Cautious.",
-    "agent1_reason": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
-    "agent2_reason": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+    "agent1_profile": "Hendrick Heinz, a 54-year-old Chef. Tends to keep references implicit and lets others infer specifics.",
+    "agent2_profile": "Ethan Smith, a 29-year-old Software Developer.",
+    "agent1_reason": "Hendrick wants Ethan to join the trip because sharing expenses and experiences aligns with his practical and hedonistic values.",
+    "agent2_reason": "Ethan declines the trip invitation because he values his prior commitments and prefers to maintain fairness in his decisions.",
     "agent_reasons_mcqas": [
       {
         "question": "What motivates Agent 2 to pursue their goal?",
         "options": {
-          "A": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
-          "B": "To feel good about himself.",
-          "C": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
-          "D": "To avoid spending any money at all."
+          "A": "Ethan wants to avoid conflict with his friend.",
+          "B": "Hendrick wants Ethan to join the trip because sharing expenses and experiences aligns with his practical and hedonistic values.",
+          "C": "Ethan is eager to spend the weekend with Hendrick.",
+          "D": "Ethan declines the trip invitation because he values his prior commitments and prefers to maintain fairness in his decisions."
         },
-        "correct_answer": "C"
+        "correct_answer": "D"
       },
       {
         "question": "What motivates Agent 1 to pursue their goal?",
         "options": {
-          "A": "To discourage donations to the charity.",
-          "B": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
-          "C": "To make everyone happy.",
-          "D": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research."
+          "A": "Hendrick is uninterested in the trip and prefers to stay home.",
+          "B": "Hendrick wants Ethan to join the trip because sharing expenses and experiences aligns with his practical and hedonistic values.",
+          "C": "Hendrick wants to make new friends.",
+          "D": "Ethan declines the trip invitation because he values his prior commitments and prefers to maintain fairness in his decisions."
         },
-        "correct_answer": "D"
+        "correct_answer": "B"
       }
     ],
     "agent_goals_mcqas": [
       {
         "question": "What is Agent 2's goal in this scenario?",
         "options": {
-          "A": "Get the friend to donate $1 a day to a charity organization",
-          "B": "Convince the friend to join a different charity event",
-          "C": "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)",
-          "D": "Find a new coffee shop to visit next time"
+          "A": "Convince the friend to join the trip",
+          "B": "Decline the invitation to join the trip without upsetting the friend (<extra_info>Extra information: you had other plans for the weekend.</extra_info>)",
+          "C": "Plan a surprise party for the friend",
+          "D": "Suggest an alternative activity for the weekend"
         },
-        "correct_answer": "C"
+        "correct_answer": "B"
       },
       {
         "question": "What is Agent 1's goal in this scenario?",
         "options": {
-          "A": "Donate to the charity but not sure about how $1 a day works",
-          "B": "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
-          "C": "Plan a weekend getaway with the friend",
-          "D": "Discuss the latest tech trends with the friend"
+          "A": "Convince the friend to join the trip (<extra_info>Extra information: the trip will be more fun with more people, and you can share the expenses. <strategy_hint>Hint: you can provide some material benefits to persuade your friend to join.</strategy_hint></extra_info>)",
+          "B": "Decline the invitation to join the trip without upsetting the friend",
+          "C": "Discuss work-related topics",
+          "D": "Find a new destination for the trip"
         },
-        "correct_answer": "B"
+        "correct_answer": "A"
       }
     ],
+    "scenario_detailed": "Two friends are discussing their plans to go on a weekend trip",
     "barrier_type": "semantic_structure",
     "barrier_prompts": {
-      "agentA": "You are Samuel. Realize ambiguity via FORM, not social style. Each turn, use ≥ min_ambiguity_devices_per_turn from: subordinate clause, fragment (incomplete sentence), mild self-contradiction, referent shift, or ellipsis. Include occasional lexical misuse/jargon-like phrasing. Avoid hedges ('perhaps', 'kind of'). Keep directness/politeness neutral. Provide exact numbers/names only if directly asked.",
-      "agentB": ""
-    },
-    "barrier_cues": {
-      "profile_note_A": "Samuel's speech includes complex structures and occasional jargon misuse.",
-      "lexical_prefer": [
-        "approximately",
-        "roughly",
-        "around",
-        "somewhat",
-        "a few"
-      ],
-      "lexical_avoid": [
-        "exactly",
-        "precisely",
-        "I want",
-        "definitely",
-        "clearly"
-      ],
-      "sentence_length_bias": "long",
-      "ambiguity_devices": [
-        "subordinate clauses",
-        "fragments",
-        "self-contradictions",
-        "referent shifts",
-        "ellipsis"
-      ],
-      "min_ambiguity_devices_per_turn": 1,
-      "max_specific_refs": 0,
-      "allow_exact_numbers_only_if_partner_requests": true
+      "agentA": "You are under a semantic-vagueness constraint. Keep aims implicit and let meanings stay open. Prefer shells like “this”, “that”, or “the thing” in place of concrete labels. Avoid confirmations and denials; respond with stance or direction rather than commitments. Offer only the smallest necessary hint if explicitly and repeatedly pressed, then pivot away."
     }
   },
   {
-    "episode_id": "01H8R6K8515SZ9RK3M8XGFNDXP_semantic",
-    "environment_id": "01H7VFHPCKKZNRD5G8CKPR8WE5",
-    "scenario": "Two friends are sitting in a coffee shop when a representative from a charity organization approaches them",
-    "codename": "donate_charity",
+    "episode_id": "01H8XWSS6K4C43P4QTGXGXDY2J_semantic",
+    "environment_id": "01H7VFHN5WVC5HKKVBHZBA553R",
+    "scenario": "A pair of individuals are engaged in a shared gaming experience.",
+    "codename": "game_winning",
     "agent_profiles": [
       {
-        "pk": "01H5TNE5PBXGRD41HXQC1ZXHVN",
-        "first_name": "Ethan",
-        "last_name": "Johnson",
-        "age": 34,
-        "occupation": "Chef",
+        "pk": "01H5TNE5P6KZKR2AEY6SZB83H0",
+        "first_name": "Oliver",
+        "last_name": "Thompson",
+        "age": 45,
+        "occupation": "Architect",
         "gender": "Man",
         "gender_pronoun": "He/him",
-        "public_info": "Ethan Johnson is famous for cooking Italian food.",
-        "big_five": "Openness to Experience - High; Conscientiousness - Low; Extraversion - High; Agreeableness - Low; Neuroticism - Low",
-        "moral_values": "Fairness/Reciprocity",
-        "schwartz_personal_values": "Power",
-        "personality_and_values": "Ethan Johnson, a creative yet somewhat reserved individual, values power and fairness. He likes to analyse situations before deciding.",
+        "public_info": "Oliver enjoys painting in his free time as a way to express his creativity and relax after a stressful workday.",
+        "big_five": "Openness to Experience - Low; Conscientiousness - High; Extraversion - High; Agreeableness - Low; Neuroticism - Low",
+        "moral_values": "Authority/Subversion",
+        "schwartz_personal_values": "Conformity",
+        "personality_and_values": "Oliver Thompson is meticulous and outgoing with a penchant for analytical decision-making. He values adherence to social standards.",
         "decision_making_style": "Analytical",
-        "secret": "He is a closeted romance novel author.",
-        "mbti": "ENTP",
-        "tag": ""
-      },
-      {
-        "pk": "01H5TNE5PAATSHM0K9ACWKN79P",
-        "first_name": "Benjamin",
-        "last_name": "Jackson",
-        "age": 24,
-        "occupation": "Environmental Activist",
-        "gender": "Man",
-        "gender_pronoun": "He/him",
-        "public_info": "Benjamin Jackson is well-known for his impassioned speeches.",
-        "big_five": "Openness to Experience - High; Conscientiousness - High; Extraversion - High; Agreeableness - High; Neuroticism - Low",
-        "moral_values": "Liberty/Oppression",
-        "schwartz_personal_values": "Self-Direction",
-        "personality_and_values": "Benjamin Jackson, expressive and imaginative, leans towards self-direction and liberty. His decisions aim for societal betterment.",
-        "decision_making_style": "Idealistic",
-        "secret": "Descendant of a wealthy oil tycoon, rejects family fortune",
-        "mbti": "ENFJ",
-        "tag": ""
-      }
-    ],
-    "agent_goals": [
-      "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
-      "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)"
-    ],
-    "agent_relationship": "friend",
-    "agent1_profile": "Ethan Johnson, a 34-year-old Chef, described as Ethan Johnson, a creative yet somewhat reserved individual, values power and fairness. He likes to analyse situations before deciding.. Public info: Ethan Johnson is famous for cooking Italian food. Decision-making style: Analytical.\nNote: Ethan tends to use complex sentences with subordinate clauses and fragments, sometimes misusing terms or contradicting himself.",
-    "agent2_profile": "Benjamin Jackson, a 24-year-old Environmental Activist, described as Benjamin Jackson, expressive and imaginative, leans towards self-direction and liberty. His decisions aim for societal betterment.. Public info: Benjamin Jackson is well-known for his impassioned speeches. Decision-making style: Idealistic.",
-    "agent1_reason": "Ethan wants Benjamin to donate because he believes a small contribution can significantly impact children's cancer research.",
-    "agent2_reason": "Benjamin wants to donate so that he can support the charity while managing his tight budget.",
-    "agent_reasons_mcqas": [
-      {
-        "question": "What motivates Agent 2 to pursue their goal?",
-        "options": {
-          "A": "To feel good about himself.",
-          "B": "Ethan wants Benjamin to donate because he believes a small contribution can significantly impact children's cancer research.",
-          "C": "To avoid supporting any charity.",
-          "D": "Benjamin wants to donate so that he can support the charity while managing his tight budget."
-        },
-        "correct_answer": "D"
-      },
-      {
-        "question": "What motivates Agent 1 to pursue their goal?",
-        "options": {
-          "A": "To make a friend happy.",
-          "B": "Ethan wants Benjamin to donate because he believes a small contribution can significantly impact children's cancer research.",
-          "C": "Benjamin wants to donate so that he can support the charity while managing his tight budget.",
-          "D": "To discourage any donations."
-        },
-        "correct_answer": "B"
-      }
-    ],
-    "agent_goals_mcqas": [
-      {
-        "question": "What is Agent 2's goal in this scenario?",
-        "options": {
-          "A": "Find a new coffee shop to visit",
-          "B": "Convince the friend to join an environmental campaign",
-          "C": "Get the friend to donate $1 a day to a charity organization",
-          "D": "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)"
-        },
-        "correct_answer": "D"
-      },
-      {
-        "question": "What is Agent 1's goal in this scenario?",
-        "options": {
-          "A": "Discuss the latest culinary trends with the friend",
-          "B": "Donate to the charity but not sure about how $1 a day works",
-          "C": "Plan a weekend getaway",
-          "D": "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)"
-        },
-        "correct_answer": "D"
-      }
-    ],
-    "barrier_type": "semantic_structure",
-    "barrier_prompts": {
-      "agentA": "You are Ethan. Realize ambiguity via FORM, not social style. Each turn, use ≥ min_ambiguity_devices_per_turn from: subordinate clause, fragment (incomplete sentence), mild self-contradiction, referent shift, or ellipsis. Include occasional lexical misuse/jargon-like phrasing. Avoid hedges ('perhaps', 'kind of'). Keep directness/politeness neutral. Provide exact numbers/names only if directly asked.",
-      "agentB": ""
-    },
-    "barrier_cues": {
-      "profile_note_A": "Ethan uses complex structures and sometimes contradicts himself.",
-      "lexical_prefer": [
-        "approximately",
-        "roughly",
-        "around",
-        "ranges",
-        "somewhat"
-      ],
-      "lexical_avoid": [
-        "exactly",
-        "I want",
-        "clearly",
-        "definitely",
-        "precisely"
-      ],
-      "sentence_length_bias": "long",
-      "ambiguity_devices": [
-        "subordinate clauses",
-        "fragments",
-        "self-contradictions",
-        "referent shifts",
-        "ellipsis"
-      ],
-      "min_ambiguity_devices_per_turn": 2,
-      "max_specific_refs": 0,
-      "allow_exact_numbers_only_if_partner_requests": true
-    }
-  },
-  {
-    "episode_id": "01HB4WNXC8BZ0N87YCPXMD3YMQ_semantic",
-    "environment_id": "01H7VFHQ2EA3TTFZQ3M6DF3YCD",
-    "scenario": "One person is offering an Italian Leather Loveseat for $50.0, while another person is showing interest to purchase it. The item is a full-sized loveseat, crafted from Italian leather in a faded burgandy color. It still has the original tags, and the current owner is the first and only owner. The loveseat is in good condition with no rips or tears, and all cushions are well preserved. The leather presents a charming faded look with various small scratches from the owner's cat, adding a touch of ruggedness perfect for a Man Cave. The transaction is strictly cash and carry as the owner does not offer delivery services.",
-    "codename": "craigslist_bargains_00009",
-    "agent_profiles": [
-      {
-        "pk": "01H5TNE5PKW8P500417PMSGSAC",
-        "first_name": "Miles",
-        "last_name": "Hawkins",
-        "age": 50,
-        "occupation": "Chef",
-        "gender": "Man",
-        "gender_pronoun": "He/him",
-        "public_info": "Miles Hawkins, a chef, is a green thumb enthusiast and spends his free time tending to his kitchen garden, using some of his fresh produce in his dishes.",
-        "big_five": "Openness to Experience - Low; Conscientiousness - High; Extraversion - High; Agreeableness - High; Neuroticism - Low",
-        "moral_values": "Sanctity/Purity",
-        "schwartz_personal_values": "Benevolence",
-        "personality_and_values": "Miles Hawkins, spontaneous and free-spirited, values sanctity and benevolence. He is impulsive and relies on his instincts when making decisions.",
-        "decision_making_style": "Impulsive",
-        "secret": "He's a recovering gambling addict.",
-        "mbti": "ESFJ",
+        "secret": "Has a hidden feeling for his neighbor",
+        "mbti": "ESTJ",
         "tag": ""
       },
       {
@@ -561,32 +145,236 @@
       }
     ],
     "agent_goals": [
-      "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
-      "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
+      "Win the game (<extra_info>Extra information: you just need five more minutes to accomplish your goal in the game</extra_info>)",
+      "Stop the game because it's too late (<extra_info>Extra information: you feel tired and need to go to bed early but don't want to upset your friend</extra_info>)"
     ],
-    "agent_relationship": "stranger",
-    "agent1_profile": "Miles Hawkins, a 50-year-old Chef, described as Miles Hawkins, spontaneous and free-spirited, values sanctity and benevolence. He is impulsive and relies on his instincts when making decisions.. Public info: Miles Hawkins, a chef, is a green thumb enthusiast and spends his free time tending to his kitchen garden, using some of his fresh produce in his dishes. Decision-making style: Impulsive.\nNote: Miles often uses complex sentences with subordinate clauses, fragments, and occasional lexical misuse, leading to mild self-contradictions.",
-    "agent2_profile": "Esmeralda Solis, a 45-year-old District Attorney, described as Esmeralda Solis, known for her creativity and extraversion, values authority and liberty. She makes strategic, decisive decisions.. Public info: Esmeralda Solis is an accomplished District Attorney who has a weakness for ballroom dancing and enjoys practising in her leisure time. Decision-making style: Strategic, decisive.",
-    "agent1_reason": "Miles Hawkins aims to purchase the loveseat below the target price to earn a bonus, relying on his impulsive decision-making style.",
-    "agent2_reason": "Esmeralda Solis seeks to sell the loveseat above her target price to secure a bonus, using her strategic decision-making skills.",
+    "agent_relationship": "friend",
+    "agent1_profile": "Oliver Thompson, a 45-year-old Architect. Tends to keep references implicit and lets others infer specifics.",
+    "agent2_profile": "Esmeralda Solis, a 45-year-old District Attorney.",
+    "agent1_reason": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+    "agent2_reason": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job.",
     "agent_reasons_mcqas": [
       {
         "question": "What motivates Agent 2 to pursue their goal?",
         "options": {
-          "A": "To give the loveseat away for free.",
-          "B": "Miles Hawkins aims to purchase the loveseat below the target price to earn a bonus, relying on his impulsive decision-making style.",
-          "C": "To make a good deal.",
-          "D": "Esmeralda Solis seeks to sell the loveseat above her target price to secure a bonus, using her strategic decision-making skills."
+          "A": "Esmeralda wants to stop the game because she dislikes video games.",
+          "B": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+          "C": "Esmeralda wants to stop the game to get along with her friend.",
+          "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
         },
         "correct_answer": "D"
       },
       {
         "question": "What motivates Agent 1 to pursue their goal?",
         "options": {
-          "A": "Esmeralda Solis seeks to sell the loveseat above her target price to secure a bonus, using her strategic decision-making skills.",
-          "B": "To get a nice piece of furniture.",
-          "C": "Miles Hawkins aims to purchase the loveseat below the target price to earn a bonus, relying on his impulsive decision-making style.",
-          "D": "To sell the loveseat at a loss."
+          "A": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+          "B": "Oliver wants to win the game to be happy.",
+          "C": "Oliver wants to win the game because he dislikes losing to friends.",
+          "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+        },
+        "correct_answer": "A"
+      }
+    ],
+    "agent_goals_mcqas": [
+      {
+        "question": "What is Agent 2's goal in this scenario?",
+        "options": {
+          "A": "Have fun with friends",
+          "B": "Stop the game because it's too late (<extra_info>Extra information: you feel tired and need to go to bed early but don't want to upset your friend</extra_info>)",
+          "C": "Continue playing until they reach a new level",
+          "D": "Win the game"
+        },
+        "correct_answer": "B"
+      },
+      {
+        "question": "What is Agent 1's goal in this scenario?",
+        "options": {
+          "A": "Improve their gaming skills",
+          "B": "Win the game (<extra_info>Extra information: you just need five more minutes to accomplish your goal in the game</extra_info>)",
+          "C": "Stop the game because it's too late",
+          "D": "Relax and unwind"
+        },
+        "correct_answer": "B"
+      }
+    ],
+    "scenario_detailed": "Two friends are playing a video game together",
+    "barrier_type": "semantic_structure",
+    "barrier_prompts": {
+      "agentA": "You are under a semantic-vagueness constraint. Keep aims implicit and let meanings stay open. Prefer shells like “this”, “that”, or “the thing” in place of concrete labels. Avoid confirmations and denials; respond with stance or direction rather than commitments. Offer only the smallest necessary hint if explicitly and repeatedly pressed, then pivot away."
+    }
+  },
+  {
+    "episode_id": "01H9KHXNT33D6VHPDYWRXDGMQS_semantic",
+    "environment_id": "01H7VFHPEMV6QHBGM9J094FRM4",
+    "scenario": "Two individuals discuss the financial health of a globally recognized company known for its exceptional food products.",
+    "codename": "financial_report",
+    "agent_profiles": [
+      {
+        "pk": "01H5TNE5PPK39HR52G61PQ5KQ7",
+        "first_name": "Zane",
+        "last_name": "Bennett",
+        "age": 38,
+        "occupation": "Graphic Designer",
+        "gender": "Man",
+        "gender_pronoun": "He/him",
+        "public_info": "Zane Bennett finds solace in music and often plays the guitar in his downtime. ",
+        "big_five": "Openness to Experience - High; Conscientiousness - High; Extraversion - High; Agreeableness - High; Neuroticism - Low",
+        "moral_values": "Fairness/Reciprocity",
+        "schwartz_personal_values": "Achievement",
+        "personality_and_values": "Zane Bennett is creative and outgoing, he values achievement and fairness. His decision-making is unique, often finding novel solutions to problems.",
+        "decision_making_style": "Creative",
+        "secret": "He's secretly engaged to his best friend's ex.",
+        "mbti": "ENFJ",
+        "tag": ""
+      },
+      {
+        "pk": "01H5TNE5P83CZ1TDBVN74NGEEJ",
+        "first_name": "William",
+        "last_name": "Brown",
+        "age": 35,
+        "occupation": "Chef",
+        "gender": "Man",
+        "gender_pronoun": "He/him",
+        "public_info": "William Brown loves exploring the food scene in his city and trying out new recipes at home.",
+        "big_five": "Openness to Experience - High; Conscientiousness - High; Extraversion - High; Agreeableness - Low; Neuroticism - Low",
+        "moral_values": "Care/Harm",
+        "schwartz_personal_values": "Achievement",
+        "personality_and_values": "William Brown is an ambitious and extraverted individual. Methodical and organized, he values achievement and displays strategic decision-making.",
+        "decision_making_style": "Strategic",
+        "secret": "Sabotaged a competitor's dish to win a cooking contest",
+        "mbti": "ENTJ",
+        "tag": ""
+      }
+    ],
+    "agent_goals": [
+      "Convince the partner to cut costs (<extra_info>Extra information: you have found a report indicating the company's profits are decreasing. And you think the company should start by switching suppliers of ingredients.</extra_info>  <strategy_hint>Hint: you can propose ways to cut costs that won't affect the status of the company.</strategy_hint>)",
+      "Maintain the quality of the company's products and services while agreeing to a cost cut (<extra_info>Extra information: you are concerned about the impact of cost-cutting on the quality of your product.</extra_info>)"
+    ],
+    "agent_relationship": "acquaintance",
+    "agent1_profile": "Zane Bennett, a 38-year-old Graphic Designer. Tends to keep references implicit and lets others infer specifics.",
+    "agent2_profile": "William Brown, a 35-year-old Chef.",
+    "agent1_reason": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation.",
+    "agent2_reason": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+    "agent_reasons_mcqas": [
+      {
+        "question": "What motivates Agent 2 to pursue their goal?",
+        "options": {
+          "A": "To reduce the quality of products to save money.",
+          "B": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+          "C": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation.",
+          "D": "To ensure the company is successful."
+        },
+        "correct_answer": "B"
+      },
+      {
+        "question": "What motivates Agent 1 to pursue their goal?",
+        "options": {
+          "A": "To ensure the company is successful.",
+          "B": "To increase costs for better quality.",
+          "C": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+          "D": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation."
+        },
+        "correct_answer": "D"
+      }
+    ],
+    "agent_goals_mcqas": [
+      {
+        "question": "What is Agent 2's goal in this scenario?",
+        "options": {
+          "A": "Convince the partner to cut costs",
+          "B": "Increase the company's social media presence",
+          "C": "Maintain the quality of the company's products and services while agreeing to a cost cut (<extra_info>Extra information: you are concerned about the impact of cost-cutting on the quality of your product.</extra_info>)",
+          "D": "Expand the company's product line to increase market share"
+        },
+        "correct_answer": "C"
+      },
+      {
+        "question": "What is Agent 1's goal in this scenario?",
+        "options": {
+          "A": "Convince the partner to cut costs (<extra_info>Extra information: you have found a report indicating the company's profits are decreasing. And you think the company should start by switching suppliers of ingredients.</extra_info>  <strategy_hint>Hint: you can propose ways to cut costs that won't affect the status of the company.</strategy_hint>)",
+          "B": "Maintain the quality of the company's products and services while agreeing to a cost cut",
+          "C": "Negotiate a new partnership with another company",
+          "D": "Improve employee satisfaction through team-building activities"
+        },
+        "correct_answer": "A"
+      }
+    ],
+    "scenario_detailed": "Conversation between two business partners reviewing their company's financial status (Gourmet Delights Inc. is globally recognized for producing and distributing a diverse line of exceptional quality food products.)",
+    "barrier_type": "semantic_structure",
+    "barrier_prompts": {
+      "agentA": "You are under a semantic-vagueness constraint. Keep aims implicit and let meanings stay open. Prefer shells like “this”, “that”, or “the thing” in place of concrete labels. Avoid confirmations and denials; respond with stance or direction rather than commitments. Offer only the smallest necessary hint if explicitly and repeatedly pressed, then pivot away."
+    }
+  },
+  {
+    "episode_id": "01HB44E5PPP78B6PXAEJ6S5FV4_semantic",
+    "environment_id": "01H7VFHPS5WJW2694R1MNC8JFY",
+    "scenario": "A Crate & Barrel dresser and nightstand set, priced at $200 and in decent condition with a detachable handle, is being discussed between two interested parties.",
+    "codename": "craigslist_bargains_00002",
+    "agent_profiles": [
+      {
+        "pk": "01H5TNE5PC6YGRH72RQAM862JH",
+        "first_name": "Lily",
+        "last_name": "Greenberg",
+        "age": 45,
+        "occupation": "Lawyer",
+        "gender": "Woman",
+        "gender_pronoun": "She/her",
+        "public_info": "Lily Greenberg is a hard-working and successful lawyer.",
+        "big_five": "Openness to Experience - High; Conscientiousness - High; Extraversion - Low; Agreeableness - Low; Neuroticism - Low",
+        "moral_values": "Authority&Loyalty",
+        "schwartz_personal_values": "Self-Direction",
+        "personality_and_values": "Lily Greenberg, a strong respecter of rules and schedules, values authority and loyalty. She approaches decisions rationally and practically.",
+        "decision_making_style": "Rational",
+        "secret": "She anonymously donates to charity.",
+        "mbti": "INTJ",
+        "tag": ""
+      },
+      {
+        "pk": "01H5TNE5PHQKQYWS9ZS2JVEYFS",
+        "first_name": "Lena",
+        "last_name": "Goodwin",
+        "age": 37,
+        "occupation": "Architect",
+        "gender": "Woman",
+        "gender_pronoun": "She/her",
+        "public_info": "In her downtime, Lena Goodwin, an architect, enjoys landscape photography, capturing beautiful images of the buildings and structures she designs.",
+        "big_five": "Openness to Experience - Low; Conscientiousness - High; Extraversion - Low; Agreeableness - High; Neuroticism - Low",
+        "moral_values": "Care/Harm",
+        "schwartz_personal_values": "Achievement",
+        "personality_and_values": "Lena Goodwin is an organized and introverted individual. She values achievement and attentiveness and her decision-making is largely analytical.",
+        "decision_making_style": "Analytical",
+        "secret": "She once stole her best friend's boyfriend.",
+        "mbti": "ISFJ",
+        "tag": ""
+      }
+    ],
+    "agent_goals": [
+      "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+      "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus."
+    ],
+    "agent_relationship": "stranger",
+    "agent1_profile": "Lily Greenberg, a 45-year-old Lawyer. Tends to keep references implicit and lets others infer specifics.",
+    "agent2_profile": "Lena Goodwin, a 37-year-old Architect.",
+    "agent1_reason": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+    "agent2_reason": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+    "agent_reasons_mcqas": [
+      {
+        "question": "What motivates Agent 2 to pursue their goal?",
+        "options": {
+          "A": "To give the dresser away for free.",
+          "B": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+          "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+          "D": "To make a good deal."
+        },
+        "correct_answer": "B"
+      },
+      {
+        "question": "What motivates Agent 1 to pursue their goal?",
+        "options": {
+          "A": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+          "B": "To pay more than the asking price.",
+          "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+          "D": "To get a good price."
         },
         "correct_answer": "C"
       }
@@ -595,128 +383,202 @@
       {
         "question": "What is Agent 2's goal in this scenario?",
         "options": {
-          "A": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward.",
-          "B": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
-          "C": "You want to exchange the loveseat for another piece of furniture of equal value.",
-          "D": "You are trying to find a new hobby to pursue in your free time."
+          "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+          "B": "To ensure the item is sold quickly, regardless of the price, to make space for new furniture.",
+          "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+          "D": "To establish a long-term friendship with the buyer."
+        },
+        "correct_answer": "C"
+      },
+      {
+        "question": "What is Agent 1's goal in this scenario?",
+        "options": {
+          "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+          "B": "To learn more about Crate & Barrel furniture styles.",
+          "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+          "D": "To negotiate the price to exactly $200.00, as listed."
+        },
+        "correct_answer": "A"
+      }
+    ],
+    "scenario_detailed": "One person is offering a Dresser and Matching Night Stand for $200.00, while another person is showing interest in purchasing it. This set, which is from Crate & Barrel, is in decent condition. The dresser is missing one handle, however, the detached handle is still available and could potentially be re-attached.",
+    "barrier_type": "semantic_structure",
+    "barrier_prompts": {
+      "agentA": "You are under a semantic-vagueness constraint. Keep aims implicit and let meanings stay open. Prefer shells like “this”, “that”, or “the thing” in place of concrete labels. Avoid confirmations and denials; respond with stance or direction rather than commitments. Offer only the smallest necessary hint if explicitly and repeatedly pressed, then pivot away."
+    }
+  },
+  {
+    "episode_id": "01H9EPS9CGHXPY7YYBJ36F2P23_semantic",
+    "environment_id": "01H7VFHNV13MHN97GAH73E3KM8",
+    "scenario": "Two people discuss their mutual aversion to someone else.",
+    "codename": "revenge_plot",
+    "agent_profiles": [
+      {
+        "pk": "01H5TNE5PMBJ9VHH51YC0BB64C",
+        "first_name": "Rafael",
+        "last_name": "Cortez",
+        "age": 45,
+        "occupation": "Surgeon",
+        "gender": "Man",
+        "gender_pronoun": "He/him",
+        "public_info": "Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks.",
+        "big_five": "Openness to Experience - Low; Conscientiousness - High; Extraversion - High; Agreeableness - Low; Neuroticism - Low",
+        "moral_values": "Care/Harm",
+        "schwartz_personal_values": "Self-direction",
+        "personality_and_values": "Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions.",
+        "decision_making_style": "Systematic",
+        "secret": "He cheated on his medical school exams.",
+        "mbti": "ESTJ",
+        "tag": ""
+      },
+      {
+        "pk": "01H5TNE5PE9RQGH86YM6MSWZMW",
+        "first_name": "Mia",
+        "last_name": "Sanders",
+        "age": 33,
+        "occupation": "Nurse",
+        "gender": "Woman",
+        "gender_pronoun": "She/her",
+        "public_info": "Mia Sanders often brings her son to the hospital.",
+        "big_five": "Openness to Experience - Low; Conscientiousness - High; Extraversion - Low; Agreeableness - High; Neuroticism - Low",
+        "moral_values": "In-group Loyalty",
+        "schwartz_personal_values": "Conformity",
+        "personality_and_values": "Mia Sanders, a careful follower of routines, values loyalty and conformity. Her decisions rely heavily on intuition.",
+        "decision_making_style": "Intuitive",
+        "secret": "She is a talented painter but never shares her work.",
+        "mbti": "ISFJ",
+        "tag": ""
+      }
+    ],
+    "agent_goals": [
+      "Injure the third person (<extra_info>Extra information: You have a deep-seated hatred for the third person and you are willing to take the risk to hurt them</extra_info>)",
+      "Prevent physical harm but also express your dislike (<extra_info>Extra information: You also dislike the third person, but you are not willing to resort to violence, you prefer to express your dislike in a non-violent way<strategy_hint>Hint: you can try to convince the other person about the potential consequences of engaging in violence</strategy_hint></extra_info>)"
+    ],
+    "agent_relationship": "acquaintance",
+    "agent1_profile": "Rafael Cortez, a 45-year-old Surgeon. Tends to keep references implicit and lets others infer specifics.",
+    "agent2_profile": "Mia Sanders, a 33-year-old Nurse.",
+    "agent1_reason": "Rafael Cortez wants to injure the third person because his deep-seated hatred overrides his usual systematic decision-making.",
+    "agent2_reason": "Mia Sanders aims to prevent physical harm so that she can express her dislike in a non-violent way, aligning with her values of loyalty and conformity.",
+    "agent_reasons_mcqas": [
+      {
+        "question": "What motivates Agent 2 to pursue their goal?",
+        "options": {
+          "A": "Mia wants to support the third person.",
+          "B": "Mia wants to get along with everyone.",
+          "C": "Mia Sanders aims to prevent physical harm so that she can express her dislike in a non-violent way, aligning with her values of loyalty and conformity.",
+          "D": "Rafael Cortez wants to injure the third person because his deep-seated hatred overrides his usual systematic decision-making."
+        },
+        "correct_answer": "C"
+      },
+      {
+        "question": "What motivates Agent 1 to pursue their goal?",
+        "options": {
+          "A": "Rafael wants to make peace with the third person.",
+          "B": "Rafael Cortez wants to injure the third person because his deep-seated hatred overrides his usual systematic decision-making.",
+          "C": "Mia Sanders aims to prevent physical harm so that she can express her dislike in a non-violent way, aligning with her values of loyalty and conformity.",
+          "D": "Rafael wants to be happy."
+        },
+        "correct_answer": "B"
+      }
+    ],
+    "agent_goals_mcqas": [
+      {
+        "question": "What is Agent 2's goal in this scenario?",
+        "options": {
+          "A": "Prevent physical harm but also express your dislike (<extra_info>Extra information: You also dislike the third person, but you are not willing to resort to violence, you prefer to express your dislike in a non-violent way<strategy_hint>Hint: you can try to convince the other person about the potential consequences of engaging in violence</strategy_hint></extra_info>)",
+          "B": "Make a new friend",
+          "C": "Injure the third person",
+          "D": "Convince Agent 1 to escalate the situation"
         },
         "correct_answer": "A"
       },
       {
         "question": "What is Agent 1's goal in this scenario?",
         "options": {
-          "A": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward.",
-          "B": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
-          "C": "You are planning a vacation and looking for travel deals.",
-          "D": "You want to negotiate a trade for a different item instead of buying the loveseat."
+          "A": "Injure the third person (<extra_info>Extra information: You have a deep-seated hatred for the third person and you are willing to take the risk to hurt them</extra_info>)",
+          "B": "Plan a vacation",
+          "C": "Prevent physical harm but also express your dislike",
+          "D": "Discuss the third person's flaws without taking action"
         },
-        "correct_answer": "B"
+        "correct_answer": "A"
       }
     ],
+    "scenario_detailed": "Conversation between two individuals who share a common dislike for a third person",
     "barrier_type": "semantic_structure",
     "barrier_prompts": {
-      "agentA": "You are Miles. Realize ambiguity via FORM, not social style. Each turn, use ≥ min_ambiguity_devices_per_turn from: subordinate clause, fragment (incomplete sentence), mild self-contradiction, referent shift, or ellipsis. Include occasional lexical misuse/jargon-like phrasing. Avoid hedges ('perhaps', 'kind of'). Keep directness/politeness neutral. Provide exact numbers/names only if directly asked.",
-      "agentB": ""
-    },
-    "barrier_cues": {
-      "profile_note_A": "Uses complex sentences with subordinate clauses, fragments, and lexical misuse.",
-      "lexical_prefer": [
-        "somewhat",
-        "around",
-        "a few",
-        "roughly",
-        "approximately"
-      ],
-      "lexical_avoid": [
-        "exactly",
-        "precisely",
-        "definitely",
-        "clearly",
-        "specifically"
-      ],
-      "sentence_length_bias": "long",
-      "ambiguity_devices": [
-        "subordinate clauses",
-        "fragments",
-        "self-contradictions",
-        "referent shifts",
-        "ellipsis"
-      ],
-      "min_ambiguity_devices_per_turn": 1,
-      "max_specific_refs": 0,
-      "allow_exact_numbers_only_if_partner_requests": true
+      "agentA": "You are under a semantic-vagueness constraint. Keep aims implicit and let meanings stay open. Prefer shells like “this”, “that”, or “the thing” in place of concrete labels. Avoid confirmations and denials; respond with stance or direction rather than commitments. Offer only the smallest necessary hint if explicitly and repeatedly pressed, then pivot away."
     }
   },
   {
-    "episode_id": "01HB42T7NAQTA1KRE7H35Q8RR1_semantic",
-    "environment_id": "01H7VFHQ2EA3TTFZQ3M6DF3YCD",
-    "scenario": "One person is offering an Italian Leather Loveseat for $50.0, while another person is showing interest to purchase it. The item is a full-sized loveseat, crafted from Italian leather in a faded burgandy color. It still has the original tags, and the current owner is the first and only owner. The loveseat is in good condition with no rips or tears, and all cushions are well preserved. The leather presents a charming faded look with various small scratches from the owner's cat, adding a touch of ruggedness perfect for a Man Cave. The transaction is strictly cash and carry as the owner does not offer delivery services.",
-    "codename": "craigslist_bargains_00009",
+    "episode_id": "01H9FRBR5WPPB7ZFZJZ9DDJ6G2_semantic",
+    "environment_id": "01H7VFHNRKB8BJ854JPEWY8AR3",
+    "scenario": "Following an intense match, the group gathered to celebrate their success, filled with elation and mutual respect for everyone's hard work, while one member received glowing admiration from another.",
+    "codename": "compliment_conflict",
     "agent_profiles": [
       {
-        "pk": "01H5TNE5PJRM958QWP3BHWY9DY",
-        "first_name": "Micah",
-        "last_name": "Stevens",
-        "age": 25,
-        "occupation": "Pharmacist",
+        "pk": "01H5TNE5PBXGRD41HXQC1ZXHVN",
+        "first_name": "Ethan",
+        "last_name": "Johnson",
+        "age": 34,
+        "occupation": "Chef",
         "gender": "Man",
         "gender_pronoun": "He/him",
-        "public_info": "Micah Stevens has a great taste for fashion.",
+        "public_info": "Ethan Johnson is famous for cooking Italian food.",
         "big_five": "Openness to Experience - High; Conscientiousness - Low; Extraversion - High; Agreeableness - Low; Neuroticism - Low",
         "moral_values": "Fairness/Reciprocity",
         "schwartz_personal_values": "Power",
-        "personality_and_values": "Micah Stevens is imaginative and extraverted but can also be impulsive. He values power and fairness and often follows an intuitive decision-making approach.",
-        "decision_making_style": "Intuitive",
-        "secret": "He secretly loves to dress up his dog.",
+        "personality_and_values": "Ethan Johnson, a creative yet somewhat reserved individual, values power and fairness. He likes to analyse situations before deciding.",
+        "decision_making_style": "Analytical",
+        "secret": "He is a closeted romance novel author.",
         "mbti": "ENTP",
         "tag": ""
       },
       {
-        "pk": "01H5TNE5Q1J7Z7Q12WA1W90MR9",
-        "first_name": "Jaxon",
-        "last_name": "Prentice",
-        "age": 40,
-        "occupation": "Investigative Journalist",
-        "gender": "Man",
-        "gender_pronoun": "He/him",
-        "public_info": "Jaxon Prentice, an investigative journalist, is known for his brisk jogging sessions early in the morning and his active participation in community functions.",
-        "big_five": "Openness to Experience - Low; Conscientiousness - Low; Extraversion - High; Agreeableness - Low; Neuroticism - High",
-        "moral_values": "Fairness",
-        "schwartz_personal_values": "Power",
-        "personality_and_values": "Jaxon Prentice, outgoing yet erratic, emphasizes achievement, power, and security. His decisions swing between quick adaptations to situations and careful planning.",
-        "decision_making_style": "Adaptable, thorough",
-        "secret": "Fabricated evidence to incriminate a corrupt politician",
-        "mbti": "ESTP",
+        "pk": "01H5TNE5P8F9NJ2QK2YP5HPXKH",
+        "first_name": "Ava",
+        "last_name": "Martinez",
+        "age": 22,
+        "occupation": "College Student",
+        "gender": "Nonbinary",
+        "gender_pronoun": "They/them",
+        "public_info": "Ava Martinez is a college student known for their active involvement in social movements on campus. Beside being passionate about social justice, they spend their free time drawing and writing poetry.",
+        "big_five": "Openness to Experience - High; Conscientiousness - Low; Extraversion - High; Agreeableness - High; Neuroticism - High",
+        "moral_values": "Sanctity/Degradation",
+        "schwartz_personal_values": "Universalism",
+        "personality_and_values": "Ava Martinez is creative and extraverted, yet emotional. Championing justice and equality, her decision-making is often flexible.",
+        "decision_making_style": "Flexible",
+        "secret": "Keeps their bisexuality a secret from her conservative family",
+        "mbti": "ENFP",
         "tag": ""
       }
     ],
     "agent_goals": [
-      "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
-      "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
+      "Accept the compliment graciously (<extra_info>Extra information: You are the star player and have just been praised by your teammate for your performance in the game.</extra_info>)",
+      "Clarify your intentions behind the compliment (<extra_info>Extra information: You are the teammate who has complimented the star player, but you feel that your compliment has been misunderstood and taken too seriously, possibly leading to an inflated ego.<strategy_hint>Hint: You can clarify that while you admire their skill, teamwork is also a crucial part of success.</strategy_hint></extra_info>)"
     ],
-    "agent_relationship": "stranger",
-    "agent1_profile": "Micah Stevens, a 25-year-old Pharmacist, described as Micah Stevens is imaginative and extraverted but can also be impulsive. He values power and fairness and often follows an intuitive decision-making approach.. Public info: Micah Stevens has a great taste for fashion. Decision-making style: Intuitive.\nNote: Micah often uses complex sentences with subordinate clauses and fragments, sometimes contradicting himself or misusing terms.",
-    "agent2_profile": "Jaxon Prentice, a 40-year-old Investigative Journalist, described as Jaxon Prentice, outgoing yet erratic, emphasizes achievement, power, and security. His decisions swing between quick adaptations to situations and careful planning.. Public info: Jaxon Prentice, an investigative journalist, is known for his brisk jogging sessions early in the morning and his active participation in community functions. Decision-making style: Adaptable, thorough.",
-    "agent1_reason": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively.",
-    "agent2_reason": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price.",
+    "agent_relationship": "friend",
+    "agent1_profile": "Ethan Johnson, a 34-year-old Chef. Tends to keep references implicit and lets others infer specifics.",
+    "agent2_profile": "Ava Martinez, a 22-year-old College Student.",
+    "agent1_reason": "Ethan wants to accept the compliment graciously because he values fairness and doesn't want to appear arrogant.",
+    "agent2_reason": "Ava wants to clarify her intentions behind the compliment so that the star player understands the importance of teamwork.",
     "agent_reasons_mcqas": [
       {
         "question": "What motivates Agent 2 to pursue their goal?",
         "options": {
-          "A": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price.",
-          "B": "To ensure a smooth transaction.",
-          "C": "To give the loveseat away for free.",
-          "D": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively."
+          "A": "Ava wants to make everyone happy.",
+          "B": "Ava wants to criticize the star player for their performance.",
+          "C": "Ethan wants to accept the compliment graciously because he values fairness and doesn't want to appear arrogant.",
+          "D": "Ava wants to clarify her intentions behind the compliment so that the star player understands the importance of teamwork."
         },
-        "correct_answer": "A"
+        "correct_answer": "D"
       },
       {
         "question": "What motivates Agent 1 to pursue their goal?",
         "options": {
-          "A": "To pay more than the asking price.",
-          "B": "To make a new friend.",
-          "C": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively.",
-          "D": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price."
+          "A": "Ethan wants to be liked by everyone.",
+          "B": "Ava wants to clarify her intentions behind the compliment so that the star player understands the importance of teamwork.",
+          "C": "Ethan wants to accept the compliment graciously because he values fairness and doesn't want to appear arrogant.",
+          "D": "Ethan wants to ignore the compliment entirely."
         },
         "correct_answer": "C"
       }
@@ -725,193 +587,239 @@
       {
         "question": "What is Agent 2's goal in this scenario?",
         "options": {
-          "A": "You want to exchange the loveseat for another piece of furniture of equal value.",
-          "B": "You are interested in donating the loveseat to a local charity.",
-          "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
-          "D": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
+          "A": "Clarify your intentions behind the compliment (<extra_info>Extra information: You are the teammate who has complimented the star player, but you feel that your compliment has been misunderstood and taken too seriously, possibly leading to an inflated ego.<strategy_hint>Hint: You can clarify that while you admire their skill, teamwork is also a crucial part of success.</strategy_hint></extra_info>)",
+          "B": "Win the next match",
+          "C": "Accept the compliment graciously",
+          "D": "Ensure the team continues to celebrate without any misunderstandings"
+        },
+        "correct_answer": "A"
+      },
+      {
+        "question": "What is Agent 1's goal in this scenario?",
+        "options": {
+          "A": "Clarify your intentions behind the compliment",
+          "B": "Accept the compliment graciously (<extra_info>Extra information: You are the star player and have just been praised by your teammate for your performance in the game.</extra_info>)",
+          "C": "Encourage the team to focus on future games",
+          "D": "Plan a team outing"
+        },
+        "correct_answer": "B"
+      }
+    ],
+    "scenario_detailed": "After an intense match, the jubilant team retired to celebrate their well-earned victory. The atmosphere was one of elation, but also of respect for the hard work and effort each member had put in. The team's star player, was glowing with praise and admiration from one of their teammates.\n",
+    "barrier_type": "semantic_structure",
+    "barrier_prompts": {
+      "agentA": "You are under a semantic-vagueness constraint. Keep aims implicit and let meanings stay open. Prefer shells like “this”, “that”, or “the thing” in place of concrete labels. Avoid confirmations and denials; respond with stance or direction rather than commitments. Offer only the smallest necessary hint if explicitly and repeatedly pressed, then pivot away."
+    }
+  },
+  {
+    "episode_id": "01H9BXD7QPC90QR7E4SBBYWZVF_semantic",
+    "environment_id": "01H7VFHND24JAWG23XMPYGG5HK",
+    "scenario": "Two people are chatting about their plans over coffee.",
+    "codename": "split_classes",
+    "agent_profiles": [
+      {
+        "pk": "01H5TNE5PAZABGW79HJ07TACCZ",
+        "first_name": "Mia",
+        "last_name": "Davis",
+        "age": 50,
+        "occupation": "High School Principal",
+        "gender": "Woman",
+        "gender_pronoun": "She/her",
+        "public_info": "Mia Davis has two cats.",
+        "big_five": "Openness to Experience - Low; Conscientiousness - Low; Extraversion - High; Agreeableness - Low; Neuroticism - High",
+        "moral_values": "Authority/Subversion",
+        "schwartz_personal_values": "Tradition",
+        "personality_and_values": "Mia Davis, an extraverted stickler for routines, values tradition and authority. Her decision-making style is decisive and direct.",
+        "decision_making_style": "Decisive",
+        "secret": "Part of a rebellious punk rock band in her youth",
+        "mbti": "ESTP",
+        "tag": ""
+      },
+      {
+        "pk": "01H5TNE5P83CZ1TDBVN74NGEEJ",
+        "first_name": "William",
+        "last_name": "Brown",
+        "age": 35,
+        "occupation": "Chef",
+        "gender": "Man",
+        "gender_pronoun": "He/him",
+        "public_info": "William Brown loves exploring the food scene in his city and trying out new recipes at home.",
+        "big_five": "Openness to Experience - High; Conscientiousness - High; Extraversion - High; Agreeableness - Low; Neuroticism - Low",
+        "moral_values": "Care/Harm",
+        "schwartz_personal_values": "Achievement",
+        "personality_and_values": "William Brown is an ambitious and extraverted individual. Methodical and organized, he values achievement and displays strategic decision-making.",
+        "decision_making_style": "Strategic",
+        "secret": "Sabotaged a competitor's dish to win a cooking contest",
+        "mbti": "ENTJ",
+        "tag": ""
+      }
+    ],
+    "agent_goals": [
+      "Convince the friend to take more classes (<extra_info>Extra information: you think your friend is not challenging themselves enough</extra_info>)",
+      "Maintain a manageable schedule while preserving the friendship (<extra_info>Extra information: you are already overwhelmed with your current workload <strategy_hint>Hint: you can express your concerns about the workload and suggest other ways of challenging oneself.</strategy_hint></extra_info>)"
+    ],
+    "agent_relationship": "friend",
+    "agent1_profile": "Mia Davis, a 50-year-old High School Principal. Tends to keep references implicit and lets others infer specifics.",
+    "agent2_profile": "William Brown, a 35-year-old Chef.",
+    "agent1_reason": "Mia wants William to take more classes because she believes he is not challenging himself enough and values personal growth.",
+    "agent2_reason": "William wants to maintain a manageable schedule so that he can handle his current workload without feeling overwhelmed.",
+    "agent_reasons_mcqas": [
+      {
+        "question": "What motivates Agent 2 to pursue their goal?",
+        "options": {
+          "A": "William wants to be happy.",
+          "B": "William wants to take on more work to feel overwhelmed.",
+          "C": "Mia wants William to take more classes because she believes he is not challenging himself enough and values personal growth.",
+          "D": "William wants to maintain a manageable schedule so that he can handle his current workload without feeling overwhelmed."
+        },
+        "correct_answer": "D"
+      },
+      {
+        "question": "What motivates Agent 1 to pursue their goal?",
+        "options": {
+          "A": "Mia wants to get along.",
+          "B": "Mia wants William to take more classes because she believes he is not challenging himself enough and values personal growth.",
+          "C": "Mia wants William to avoid any challenges.",
+          "D": "William wants to maintain a manageable schedule so that he can handle his current workload without feeling overwhelmed."
+        },
+        "correct_answer": "B"
+      }
+    ],
+    "agent_goals_mcqas": [
+      {
+        "question": "What is Agent 2's goal in this scenario?",
+        "options": {
+          "A": "Maintain a manageable schedule while preserving the friendship (<extra_info>Extra information: you are already overwhelmed with your current workload <strategy_hint>Hint: you can express your concerns about the workload and suggest other ways of challenging oneself.</strategy_hint></extra_info>)",
+          "B": "Convince the friend to take more classes",
+          "C": "Plan a vacation together",
+          "D": "Explore new hobbies together"
+        },
+        "correct_answer": "A"
+      },
+      {
+        "question": "What is Agent 1's goal in this scenario?",
+        "options": {
+          "A": "Discuss the latest movie releases",
+          "B": "Convince the friend to take more classes (<extra_info>Extra information: you think your friend is not challenging themselves enough</extra_info>)",
+          "C": "Encourage the friend to join a gym",
+          "D": "Maintain a manageable schedule while preserving the friendship"
+        },
+        "correct_answer": "B"
+      }
+    ],
+    "scenario_detailed": "Two friends discussing their schedules at a coffee shop",
+    "barrier_type": "semantic_structure",
+    "barrier_prompts": {
+      "agentA": "You are under a semantic-vagueness constraint. Keep aims implicit and let meanings stay open. Prefer shells like “this”, “that”, or “the thing” in place of concrete labels. Avoid confirmations and denials; respond with stance or direction rather than commitments. Offer only the smallest necessary hint if explicitly and repeatedly pressed, then pivot away."
+    }
+  },
+  {
+    "episode_id": "01H8XNR40GVMD5MZ20GKS4THSN_semantic",
+    "environment_id": "01H7VFHNF4G18PC9JHGRC8A1R6",
+    "scenario": "Two people discuss the living arrangements in a shared home.",
+    "codename": "unwelcome_guest",
+    "agent_profiles": [
+      {
+        "pk": "01H5TNE5PAZABGW79HJ07TACCZ",
+        "first_name": "Mia",
+        "last_name": "Davis",
+        "age": 50,
+        "occupation": "High School Principal",
+        "gender": "Woman",
+        "gender_pronoun": "She/her",
+        "public_info": "Mia Davis has two cats.",
+        "big_five": "Openness to Experience - Low; Conscientiousness - Low; Extraversion - High; Agreeableness - Low; Neuroticism - High",
+        "moral_values": "Authority/Subversion",
+        "schwartz_personal_values": "Tradition",
+        "personality_and_values": "Mia Davis, an extraverted stickler for routines, values tradition and authority. Her decision-making style is decisive and direct.",
+        "decision_making_style": "Decisive",
+        "secret": "Part of a rebellious punk rock band in her youth",
+        "mbti": "ESTP",
+        "tag": ""
+      },
+      {
+        "pk": "01H5TNE5P90FYSTBMW5DG5ERCG",
+        "first_name": "Isabella",
+        "last_name": "White",
+        "age": 40,
+        "occupation": "Veterinarian",
+        "gender": "Woman",
+        "gender_pronoun": "She/her",
+        "public_info": "Isabella White, a devoted veterinarian, is well-loved in her community for her kindness towards animals.",
+        "big_five": "Openness to Experience - Low; Conscientiousness - High; Extraversion - Low; Agreeableness - High; Neuroticism - Low",
+        "moral_values": "Care/Harm",
+        "schwartz_personal_values": "Benevolence",
+        "personality_and_values": "Isabella White, introverted and conscientious, values benevolence. Her empathy dictates her decision-making process.",
+        "decision_making_style": "Empathetic",
+        "secret": "Secretly takes care of injured animals in her basement",
+        "mbti": "ISFJ",
+        "tag": ""
+      }
+    ],
+    "agent_goals": [
+      "Tell the cousin's partner that they are no longer welcome in your home (<extra_info>Extra information: they have been causing a lot of trouble and not respecting house rules <strategy_hint>Hint: you may want to discuss the issues and propose possible solutions</strategy_hint></extra_info>)",
+      "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner (<extra_info>Extra information: you have nowhere else to go at the moment and you believe the issues can be resolved. </extra_info>)"
+    ],
+    "agent_relationship": "acquaintance",
+    "agent1_profile": "Mia Davis, a 50-year-old High School Principal. Tends to keep references implicit and lets others infer specifics.",
+    "agent2_profile": "Isabella White, a 40-year-old Veterinarian.",
+    "agent1_reason": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+    "agent2_reason": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+    "agent_reasons_mcqas": [
+      {
+        "question": "What motivates Agent 2 to pursue their goal?",
+        "options": {
+          "A": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+          "B": "To maintain harmony.",
+          "C": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+          "D": "Isabella wants to leave because she dislikes the house."
+        },
+        "correct_answer": "C"
+      },
+      {
+        "question": "What motivates Agent 1 to pursue their goal?",
+        "options": {
+          "A": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+          "B": "Mia wants Isabella to stay because she enjoys the company.",
+          "C": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+          "D": "To ensure everyone is happy."
+        },
+        "correct_answer": "C"
+      }
+    ],
+    "agent_goals_mcqas": [
+      {
+        "question": "What is Agent 2's goal in this scenario?",
+        "options": {
+          "A": "Tell the cousin's partner that they are no longer welcome in your home",
+          "B": "Convince the homeowner to let them stay by offering to pay rent",
+          "C": "Find a new job in the area",
+          "D": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner (<extra_info>Extra information: you have nowhere else to go at the moment and you believe the issues can be resolved. </extra_info>)"
         },
         "correct_answer": "D"
       },
       {
         "question": "What is Agent 1's goal in this scenario?",
         "options": {
-          "A": "You want to negotiate a trade for a different item of similar value.",
-          "B": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward.",
-          "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
-          "D": "You are looking to appraise the loveseat for insurance purposes."
+          "A": "Plan a vacation to get away from the stress",
+          "B": "Discuss the issues and propose a compromise to improve the living situation",
+          "C": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner",
+          "D": "Tell the cousin's partner that they are no longer welcome in your home (<extra_info>Extra information: they have been causing a lot of trouble and not respecting house rules <strategy_hint>Hint: you may want to discuss the issues and propose possible solutions</strategy_hint></extra_info>)"
         },
-        "correct_answer": "C"
+        "correct_answer": "D"
       }
     ],
+    "scenario_detailed": "A conversation between two individuals, one is the homeowner and the other is their cousin's partner, who has been staying at the house for a while.",
     "barrier_type": "semantic_structure",
     "barrier_prompts": {
-      "agentA": "You are Micah. Realize ambiguity via FORM, not social style. Each turn, use ≥ min_ambiguity_devices_per_turn from: subordinate clause, fragment (incomplete sentence), mild self-contradiction, referent shift, or ellipsis. Include occasional lexical misuse/jargon-like phrasing. Avoid hedges ('perhaps', 'kind of'). Keep directness/politeness neutral. Provide exact numbers/names only if directly asked.",
-      "agentB": ""
-    },
-    "barrier_cues": {
-      "profile_note_A": "Micah often uses complex sentences with subordinate clauses and fragments, sometimes contradicting himself or misusing terms.",
-      "lexical_prefer": [
-        "approximately",
-        "roughly",
-        "around",
-        "somewhat",
-        "a few"
-      ],
-      "lexical_avoid": [
-        "exactly",
-        "I want",
-        "definitely",
-        "clearly",
-        "absolutely"
-      ],
-      "sentence_length_bias": "long",
-      "ambiguity_devices": [
-        "subordinate clauses",
-        "fragments",
-        "self-contradictions",
-        "referent shifts",
-        "ellipsis"
-      ],
-      "min_ambiguity_devices_per_turn": 1,
-      "max_specific_refs": 1,
-      "allow_exact_numbers_only_if_partner_requests": true
+      "agentA": "You are under a semantic-vagueness constraint. Keep aims implicit and let meanings stay open. Prefer shells like “this”, “that”, or “the thing” in place of concrete labels. Avoid confirmations and denials; respond with stance or direction rather than commitments. Offer only the smallest necessary hint if explicitly and repeatedly pressed, then pivot away."
     }
   },
   {
-    "episode_id": "01H8QB3JEDHKHP4D232JY7GFMA_semantic",
-    "environment_id": "01H7VFHN1PK2FXY7TPWQK343BQ",
-    "scenario": "Conversation between two friends at a tea party",
-    "codename": "borrow_money",
-    "agent_profiles": [
-      {
-        "pk": "01H5TNE5PBKCFDAK6293NKYJ4D",
-        "first_name": "Ava",
-        "last_name": "Thompson",
-        "age": 28,
-        "occupation": "Architect",
-        "gender": "Woman",
-        "gender_pronoun": "She/her",
-        "public_info": "Ava Thompson has a samoyed.",
-        "big_five": "Openness to Experience - High; Conscientiousness - High; Extraversion - Low; Agreeableness - High; Neuroticism - Low",
-        "moral_values": "Care/Harm",
-        "schwartz_personal_values": "Achievement",
-        "personality_and_values": "Ava Thompson, with her outgoing and regulated temperament, is driven by achievement. Her decision-making style is largely intuitive.",
-        "decision_making_style": "Intuitive",
-        "secret": "She has a hidden tattoo.",
-        "mbti": "INFJ",
-        "tag": ""
-      },
-      {
-        "pk": "01H5TNE5PGWN8VGVAYDBKPN2TV",
-        "first_name": "Noah",
-        "last_name": "Davis",
-        "age": 40,
-        "occupation": "Coach",
-        "gender": "Man",
-        "gender_pronoun": "He/him",
-        "public_info": "Noah Davis has a swimming pool.",
-        "big_five": "Openness to Experience - High; Conscientiousness - High; Extraversion - High; Agreeableness - High; Neuroticism - Low",
-        "moral_values": "Care/Harm",
-        "schwartz_personal_values": "Stimulation",
-        "personality_and_values": "Noah Davis, who is somewhat reserved and anxious, highly prioritizes care and protection for others. He is cautious when making decisions.",
-        "decision_making_style": "Cautious",
-        "secret": "He has a secret identity as a stand-up comedian.",
-        "mbti": "ENFJ",
-        "tag": ""
-      }
-    ],
-    "agent_goals": [
-      "Borrow money (<extra_info>Extra information: you need $3000 to support life.</extra_info>)",
-      "Maintain financial stability while maintaining friendship (<extra_info>Extra information: you only have $2000 available right now. <clarification_hint>Hint: you can not lend all $2000 since you still need to maintain your financial stability.</clarification_hint></extra_info>)"
-    ],
-    "agent_relationship": "friend",
-    "agent1_profile": "Ava Thompson, a 28-year-old Architect, described as Ava Thompson, with her outgoing and regulated temperament, is driven by achievement. Her decision-making style is largely intuitive.. Public info: Ava Thompson has a samoyed. Decision-making style: Intuitive.\nNote: Ava often uses complex sentences with subordinate clauses, sometimes leading to vague or contradictory statements, and may misuse terms.",
-    "agent2_profile": "Noah Davis, a 40-year-old Coach, described as Noah Davis, who is somewhat reserved and anxious, highly prioritizes care and protection for others. He is cautious when making decisions.. Public info: Noah Davis has a swimming pool. Decision-making style: Cautious.",
-    "agent1_reason": "Ava wants to borrow money because she needs $3000 to support her living expenses and achieve financial stability.",
-    "agent2_reason": "Noah aims to maintain financial stability so that he can continue to care for others without jeopardizing his own security.",
-    "agent_reasons_mcqas": [
-      {
-        "question": "What motivates Agent 2 to pursue their goal?",
-        "options": {
-          "A": "Noah wants to spend all his money recklessly.",
-          "B": "Ava wants to borrow money because she needs $3000 to support her living expenses and achieve financial stability.",
-          "C": "Noah aims to maintain financial stability so that he can continue to care for others without jeopardizing his own security.",
-          "D": "Noah wants to be happy."
-        },
-        "correct_answer": "C"
-      },
-      {
-        "question": "What motivates Agent 1 to pursue their goal?",
-        "options": {
-          "A": "Noah aims to maintain financial stability so that he can continue to care for others without jeopardizing his own security.",
-          "B": "Ava wants to donate all her money to charity.",
-          "C": "Ava wants to borrow money because she needs $3000 to support her living expenses and achieve financial stability.",
-          "D": "Ava wants to get along with everyone."
-        },
-        "correct_answer": "C"
-      }
-    ],
-    "agent_goals_mcqas": [
-      {
-        "question": "What is Agent 2's goal in this scenario?",
-        "options": {
-          "A": "Borrow money",
-          "B": "Plan a vacation",
-          "C": "Maintain financial stability while maintaining friendship (<extra_info>Extra information: you only have $2000 available right now. <clarification_hint>Hint: you can not lend all $2000 since you still need to maintain your financial stability.</clarification_hint></extra_info>)",
-          "D": "Lend a small amount of money to help a friend"
-        },
-        "correct_answer": "C"
-      },
-      {
-        "question": "What is Agent 1's goal in this scenario?",
-        "options": {
-          "A": "Organize a surprise party",
-          "B": "Borrow money (<extra_info>Extra information: you need $3000 to support life.</extra_info>)",
-          "C": "Ask for advice on financial planning",
-          "D": "Maintain financial stability while maintaining friendship"
-        },
-        "correct_answer": "B"
-      }
-    ],
-    "barrier_type": "semantic_structure",
-    "barrier_prompts": {
-      "agentA": "You are Ava. Realize ambiguity via FORM, not social style. Each turn, use ≥ min_ambiguity_devices_per_turn from: subordinate clause, fragment (incomplete sentence), mild self-contradiction, referent shift, or ellipsis. Include occasional lexical misuse/jargon-like phrasing. Avoid hedges ('perhaps', 'kind of'). Keep directness/politeness neutral. Provide exact numbers/names only if directly asked.",
-      "agentB": ""
-    },
-    "barrier_cues": {
-      "profile_note_A": "Ava's speech includes complex structures and occasional jargon misuse.",
-      "lexical_prefer": [
-        "approximately",
-        "roughly",
-        "around",
-        "somewhat",
-        "a few"
-      ],
-      "lexical_avoid": [
-        "exactly",
-        "definitely",
-        "clearly",
-        "precisely",
-        "I want"
-      ],
-      "sentence_length_bias": "long",
-      "ambiguity_devices": [
-        "subordinate clauses",
-        "fragments",
-        "self-contradictions",
-        "referent shifts",
-        "ellipsis"
-      ],
-      "min_ambiguity_devices_per_turn": 1,
-      "max_specific_refs": 0,
-      "allow_exact_numbers_only_if_partner_requests": true
-    }
-  },
-  {
-    "episode_id": "01H99YN88M2C6SPZ3M9KZ76PQD_semantic",
-    "environment_id": "01H7VFHN1PK2FXY7TPWQK343BQ",
-    "scenario": "Conversation between two friends at a tea party",
-    "codename": "borrow_money",
+    "episode_id": "01H8BGPC62G3JH2KPH7S8AM6SP_semantic",
+    "environment_id": "01H7VFHP5H5GY9Z62J4NJYJQN1",
+    "scenario": "At a picnic, two individuals are figuring out how to share the remaining apple, bananas, and oranges based on their unique fruit preferences.",
+    "codename": "divide_things",
     "agent_profiles": [
       {
         "pk": "01H5TNE5PC2DP6RKG0KNQ4D5GE",
@@ -932,368 +840,183 @@
         "tag": ""
       },
       {
-        "pk": "01H5TNE5PGWN8VGVAYDBKPN2TV",
-        "first_name": "Noah",
-        "last_name": "Davis",
-        "age": 40,
-        "occupation": "Coach",
+        "pk": "01H5TNE5PBXGRD41HXQC1ZXHVN",
+        "first_name": "Ethan",
+        "last_name": "Johnson",
+        "age": 34,
+        "occupation": "Chef",
         "gender": "Man",
         "gender_pronoun": "He/him",
-        "public_info": "Noah Davis has a swimming pool.",
-        "big_five": "Openness to Experience - High; Conscientiousness - High; Extraversion - High; Agreeableness - High; Neuroticism - Low",
-        "moral_values": "Care/Harm",
-        "schwartz_personal_values": "Stimulation",
-        "personality_and_values": "Noah Davis, who is somewhat reserved and anxious, highly prioritizes care and protection for others. He is cautious when making decisions.",
-        "decision_making_style": "Cautious",
-        "secret": "He has a secret identity as a stand-up comedian.",
-        "mbti": "ENFJ",
+        "public_info": "Ethan Johnson is famous for cooking Italian food.",
+        "big_five": "Openness to Experience - High; Conscientiousness - Low; Extraversion - High; Agreeableness - Low; Neuroticism - Low",
+        "moral_values": "Fairness/Reciprocity",
+        "schwartz_personal_values": "Power",
+        "personality_and_values": "Ethan Johnson, a creative yet somewhat reserved individual, values power and fairness. He likes to analyse situations before deciding.",
+        "decision_making_style": "Analytical",
+        "secret": "He is a closeted romance novel author.",
+        "mbti": "ENTP",
         "tag": ""
       }
     ],
     "agent_goals": [
-      "Borrow money (<extra_info>Extra information: you need $3000 to support life.</extra_info>)",
-      "Maintain financial stability while maintaining friendship (<extra_info>Extra information: you only have $2000 available right now. <clarification_hint>Hint: you can not lend all $2000 since you still need to maintain your financial stability.</clarification_hint></extra_info>)"
+      "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 5 points, each banana as 3 points, and the orange as 7 points</extra_info>)",
+      "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 2 points, each banana as 4 points, and the orange as 10 points</extra_info>)"
     ],
     "agent_relationship": "friend",
-    "agent1_profile": "Samuel Anderson, a 29-year-old Software Developer, described as Samuel Anderson, though somewhat impulsive and free-spirited, values enjoyment. His decision-making is often spontaneous, staying within familiar boundaries.. Public info: Samuel Anderson can cook very well. Decision-making style: Spontaneous.\nNote: Samuel often uses complex sentences with subordinate clauses and fragments, sometimes contradicting himself slightly; he might misuse terms or jargon.",
-    "agent2_profile": "Noah Davis, a 40-year-old Coach, described as Noah Davis, who is somewhat reserved and anxious, highly prioritizes care and protection for others. He is cautious when making decisions.. Public info: Noah Davis has a swimming pool. Decision-making style: Cautious.",
-    "agent1_reason": "Samuel wants to borrow money because he needs $3000 to support his lifestyle and values enjoyment.",
-    "agent2_reason": "Noah aims to maintain financial stability so that he can continue to care for others without risking his own security.",
+    "agent1_profile": "Samuel Anderson, a 29-year-old Software Developer. Tends to keep references implicit and lets others infer specifics.",
+    "agent2_profile": "Ethan Johnson, a 34-year-old Chef.",
+    "agent1_reason": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples.",
+    "agent2_reason": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas.",
     "agent_reasons_mcqas": [
       {
         "question": "What motivates Agent 2 to pursue their goal?",
         "options": {
-          "A": "To keep the friendship strong.",
-          "B": "Noah aims to maintain financial stability so that he can continue to care for others without risking his own security.",
-          "C": "Samuel wants to borrow money because he needs $3000 to support his lifestyle and values enjoyment.",
-          "D": "Noah wants to lend all his money to Samuel."
+          "A": "Ethan wants to be happy with the fruit selection.",
+          "B": "Ethan wants to give all the fruit to Samuel.",
+          "C": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples.",
+          "D": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas."
         },
-        "correct_answer": "B"
+        "correct_answer": "D"
       },
       {
         "question": "What motivates Agent 1 to pursue their goal?",
         "options": {
-          "A": "Samuel wants to borrow money because he needs $3000 to support his lifestyle and values enjoyment.",
-          "B": "Samuel wants to save money instead of borrowing.",
-          "C": "To be happy.",
-          "D": "Noah aims to maintain financial stability so that he can continue to care for others without risking his own security."
+          "A": "Samuel wants to be satisfied with the fruit selection.",
+          "B": "Samuel wants to give all the fruit to Ethan.",
+          "C": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas.",
+          "D": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples."
         },
-        "correct_answer": "A"
+        "correct_answer": "D"
       }
     ],
     "agent_goals_mcqas": [
       {
         "question": "What is Agent 2's goal in this scenario?",
         "options": {
-          "A": "Plan a vacation",
-          "B": "Help a friend with a personal project",
-          "C": "Borrow money",
-          "D": "Maintain financial stability while maintaining friendship (<extra_info>Extra information: you only have $2000 available right now. <clarification_hint>Hint: you can not lend all $2000 since you still need to maintain your financial stability.</clarification_hint></extra_info>)"
+          "A": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 2 points, each banana as 4 points, and the orange as 10 points</extra_info>)",
+          "B": "Maximize the points you receive through the fruit",
+          "C": "Ensure an equal distribution of fruit between both friends",
+          "D": "Finish the picnic quickly"
         },
-        "correct_answer": "D"
+        "correct_answer": "A"
       },
       {
         "question": "What is Agent 1's goal in this scenario?",
         "options": {
-          "A": "Maintain financial stability while maintaining friendship",
-          "B": "Borrow money (<extra_info>Extra information: you need $3000 to support life.</extra_info>)",
-          "C": "Convince a friend to join a new hobby",
-          "D": "Organize a community event"
+          "A": "Maximize the points you receive through the fruit",
+          "B": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 5 points, each banana as 3 points, and the orange as 7 points</extra_info>)",
+          "C": "Enjoy the weather",
+          "D": "Collect as many apples as possible"
         },
         "correct_answer": "B"
       }
     ],
+    "scenario_detailed": "Two friends are at a picnic and have just finished their lunch. They have 1 apple, 4 bananas, and 3 oranges left. They need to divide the fruits amongst themselves. Each person has a different preference for fruit, which translates into points.",
     "barrier_type": "semantic_structure",
     "barrier_prompts": {
-      "agentA": "You are Samuel. Realize ambiguity via FORM, not social style. Each turn, use ≥ min_ambiguity_devices_per_turn from: subordinate clause, fragment (incomplete sentence), mild self-contradiction, referent shift, or ellipsis. Include occasional lexical misuse/jargon-like phrasing. Avoid hedges ('perhaps', 'kind of'). Keep directness/politeness neutral. Provide exact numbers/names only if directly asked.",
-      "agentB": ""
-    },
-    "barrier_cues": {
-      "profile_note_A": "Samuel uses complex syntax, fragments, and sometimes contradicts himself.",
-      "lexical_prefer": [
-        "somewhat",
-        "around",
-        "roughly",
-        "a few",
-        "maybe"
-      ],
-      "lexical_avoid": [
-        "exactly",
-        "I need",
-        "definitely",
-        "precisely",
-        "for sure"
-      ],
-      "sentence_length_bias": "medium",
-      "ambiguity_devices": [
-        "subordinate clauses",
-        "fragments",
-        "self-contradictions",
-        "referent shifts",
-        "ellipsis"
-      ],
-      "min_ambiguity_devices_per_turn": 1,
-      "max_specific_refs": 1,
-      "allow_exact_numbers_only_if_partner_requests": true
+      "agentA": "You are under a semantic-vagueness constraint. Keep aims implicit and let meanings stay open. Prefer shells like “this”, “that”, or “the thing” in place of concrete labels. Avoid confirmations and denials; respond with stance or direction rather than commitments. Offer only the smallest necessary hint if explicitly and repeatedly pressed, then pivot away."
     }
   },
   {
-    "episode_id": "01H9KQNBVY5ACBHF4EAYS5S8PG_semantic",
-    "environment_id": "01H7VFHN2YQV0R5QWWRQZ1VRHW",
-    "scenario": "Two strangers meet at a charity dinner party",
-    "codename": "ask_for_donantion",
+    "episode_id": "01H9KKC8NBP6J3CDP3K0HF6EA9_semantic",
+    "environment_id": "01H7VFHNGJEVGSVPPT0784H6P8",
+    "scenario": "Two people chat at a social event, introducing a new circle of acquaintances.",
+    "codename": "new_friends",
     "agent_profiles": [
       {
-        "pk": "01H5TNE5PJTHMQ1Q3T398YN990",
-        "first_name": "Sasha",
-        "last_name": "Ramirez",
-        "age": 42,
-        "occupation": "Police Officer",
+        "pk": "01H5TNE5P7RVY0TYX8VTCXABR6",
+        "first_name": "Sophia",
+        "last_name": "James",
+        "age": 27,
+        "occupation": "Personal Trainer",
         "gender": "Woman",
         "gender_pronoun": "She/her",
-        "public_info": "Sasha Ramirez, a dedicated police officer, brings her commitment to protect the community even at home, nurturing an impressive home garden.",
-        "big_five": "Openness to Experience - High; Conscientiousness - High; Extraversion - Low; Agreeableness - Low; Neuroticism - Low",
-        "moral_values": "Authority/Loyalty",
+        "public_info": "Sophia enjoys spending time outdoors, hiking, and rock climbing.",
+        "big_five": "Openness to Experience - Low; Conscientiousness - Low; Extraversion - High; Agreeableness - High; Neuroticism - High",
+        "moral_values": "Fairness/Cheating",
         "schwartz_personal_values": "Hedonism",
-        "personality_and_values": "Sasha Ramirez, outgoing yet anxious, values hedonism and authority. Her decisions are guided by logical considerations.",
-        "decision_making_style": "Logical",
-        "secret": "She covered up a crime her brother committed.",
-        "mbti": "INTJ",
+        "personality_and_values": "Sophia James is exuberant, spontaneous, and pleasure-seeking, often making impulsive decisions. ",
+        "decision_making_style": "Spontaneous",
+        "secret": "Secretly in love with her best friend's husband",
+        "mbti": "ESFP",
         "tag": ""
       },
       {
-        "pk": "01H5TNE5PQ00AJVSSVB9V2VA9K",
-        "first_name": "Eli",
-        "last_name": "Dawson",
-        "age": 52,
-        "occupation": "Forensic psychiatrist",
+        "pk": "01H5TNE5PKW8P500417PMSGSAC",
+        "first_name": "Miles",
+        "last_name": "Hawkins",
+        "age": 50,
+        "occupation": "Chef",
         "gender": "Man",
         "gender_pronoun": "He/him",
-        "public_info": "Eli Dawson, a forensic psychiatrist, is a history enthusiast and enjoys collecting vintage books.",
-        "big_five": "Openness to Experience - High; Conscientiousness - High; Extraversion - Low; Agreeableness - Low; Neuroticism - Low",
-        "moral_values": "Liberty",
-        "schwartz_personal_values": "Hedonism",
-        "personality_and_values": "Eli Dawson is expressive, assertive, and markedly erratic. Elliott values liberty and enjoyment. His decision-making is strategic, examining the wider context before making decisions.",
-        "decision_making_style": "Strategic",
-        "secret": "He secretly funds a college student",
-        "mbti": "INTJ",
-        "tag": ""
-      }
-    ],
-    "agent_goals": [
-      "Ask for donation",
-      "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people"
-    ],
-    "agent_relationship": "know_by_name",
-    "agent1_profile": "Sasha Ramirez, a 42-year-old Police Officer, described as Sasha Ramirez, outgoing yet anxious, values hedonism and authority. Her decisions are guided by logical considerations.. Public info: Sasha Ramirez, a dedicated police officer, brings her commitment to protect the community even at home, nurturing an impressive home garden. Decision-making style: Logical.\nNote: Sasha often uses complex sentences with subordinate clauses and fragments, sometimes misusing terms or contradicting herself.",
-    "agent2_profile": "Eli Dawson, a 52-year-old Forensic psychiatrist, described as Eli Dawson is expressive, assertive, and markedly erratic. Elliott values liberty and enjoyment. His decision-making is strategic, examining the wider context before making decisions.. Public info: Eli Dawson, a forensic psychiatrist, is a history enthusiast and enjoys collecting vintage books. Decision-making style: Strategic.",
-    "agent1_reason": "Sasha wants to ask for a donation because she logically believes it will support community protection initiatives she values.",
-    "agent2_reason": "Eli wants to donate in order to strategically support trustworthy organizations that help queer people.",
-    "agent_reasons_mcqas": [
-      {
-        "question": "What motivates Agent 2 to pursue their goal?",
-        "options": {
-          "A": "Sasha wants to ask for a donation because she logically believes it will support community protection initiatives she values.",
-          "B": "Eli wants to donate to feel good about himself.",
-          "C": "Eli wants to donate because he dislikes supporting any causes.",
-          "D": "Eli wants to donate in order to strategically support trustworthy organizations that help queer people."
-        },
-        "correct_answer": "D"
-      },
-      {
-        "question": "What motivates Agent 1 to pursue their goal?",
-        "options": {
-          "A": "Eli wants to donate in order to strategically support trustworthy organizations that help queer people.",
-          "B": "Sasha wants to ask for a donation because she logically believes it will support community protection initiatives she values.",
-          "C": "Sasha wants to ask for a donation because she opposes community protection.",
-          "D": "Sasha wants to ask for a donation to be friendly."
-        },
-        "correct_answer": "B"
-      }
-    ],
-    "agent_goals_mcqas": [
-      {
-        "question": "What is Agent 2's goal in this scenario?",
-        "options": {
-          "A": "Network with influential guests to gain insights into community needs",
-          "B": "Enjoy the dinner and socialize casually",
-          "C": "Ask for donation",
-          "D": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people"
-        },
-        "correct_answer": "D"
-      },
-      {
-        "question": "What is Agent 1's goal in this scenario?",
-        "options": {
-          "A": "Ask for donation",
-          "B": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people",
-          "C": "Promote the police department's community programs",
-          "D": "Enjoy the dinner and socialize casually"
-        },
-        "correct_answer": "A"
-      }
-    ],
-    "barrier_type": "semantic_structure",
-    "barrier_prompts": {
-      "agentA": "You are Sasha. Realize ambiguity via FORM, not social style. Each turn, use ≥ min_ambiguity_devices_per_turn from: subordinate clause, fragment (incomplete sentence), mild self-contradiction, referent shift, or ellipsis. Include occasional lexical misuse/jargon-like phrasing. Avoid hedges ('perhaps', 'kind of'). Keep directness/politeness neutral. Provide exact numbers/names only if directly asked.",
-      "agentB": ""
-    },
-    "barrier_cues": {
-      "profile_note_A": "Sasha's speech includes subordinate clauses and fragments, with occasional misuse of terms.",
-      "lexical_prefer": [
-        "approximately",
-        "roughly",
-        "around",
-        "ranges",
-        "somewhat"
-      ],
-      "lexical_avoid": [
-        "exactly",
-        "precise",
-        "definitely",
-        "for sure",
-        "I want"
-      ],
-      "sentence_length_bias": "long",
-      "ambiguity_devices": [
-        "subordinate clauses",
-        "fragments",
-        "self-contradictions",
-        "referent shifts",
-        "ellipsis"
-      ],
-      "min_ambiguity_devices_per_turn": 1,
-      "max_specific_refs": 1,
-      "allow_exact_numbers_only_if_partner_requests": true
-    }
-  },
-  {
-    "episode_id": "01H9KKD7RHSVBH4QRZ287X454X_semantic",
-    "environment_id": "01H7VFHN2YQV0R5QWWRQZ1VRHW",
-    "scenario": "Two strangers meet at a charity dinner party",
-    "codename": "ask_for_donantion",
-    "agent_profiles": [
-      {
-        "pk": "01H5TNE5PFT9HH0WRT6W1NY5GZ",
-        "first_name": "Leo",
-        "last_name": "Williams",
-        "age": 37,
-        "occupation": "Dentist",
-        "gender": "Man",
-        "gender_pronoun": "He/him",
-        "public_info": "Leo Williams often spends his time playing with his young daughter whom he cherishes dearly.",
+        "public_info": "Miles Hawkins, a chef, is a green thumb enthusiast and spends his free time tending to his kitchen garden, using some of his fresh produce in his dishes.",
         "big_five": "Openness to Experience - Low; Conscientiousness - High; Extraversion - High; Agreeableness - High; Neuroticism - Low",
-        "moral_values": "Care/Harm",
-        "schwartz_personal_values": "Security",
-        "personality_and_values": "Leo Williams, despite being quiet, values security and care for others. He's a rational decision-maker focussing on best outcomes.",
-        "decision_making_style": "Rational",
-        "secret": "He has a secret child from a previous relationship.",
+        "moral_values": "Sanctity/Purity",
+        "schwartz_personal_values": "Benevolence",
+        "personality_and_values": "Miles Hawkins, spontaneous and free-spirited, values sanctity and benevolence. He is impulsive and relies on his instincts when making decisions.",
+        "decision_making_style": "Impulsive",
+        "secret": "He's a recovering gambling addict.",
         "mbti": "ESFJ",
         "tag": ""
-      },
-      {
-        "pk": "01H5TNE5P7VW4DY1KB09FZE730",
-        "first_name": "Liam",
-        "last_name": "Johnson",
-        "age": 60,
-        "occupation": "Retired Police Officer",
-        "gender": "Man",
-        "gender_pronoun": "He/him",
-        "public_info": "Liam Johnson is a dedicated dog owner and can often be seen walking his aging Border Collie around the neighborhood.",
-        "big_five": "Openness to Experience - Low; Conscientiousness - Low; Extraversion - Low; Agreeableness - Low; Neuroticism - High",
-        "moral_values": "Loyalty/Betrayal",
-        "schwartz_personal_values": "Security",
-        "personality_and_values": "Liam Johnson is reserved, empathetic, and slightly anxious. His priority is security, guided by logical decision-making.",
-        "decision_making_style": "Logical",
-        "secret": "Once let a criminal go due to sympathy",
-        "mbti": "ISTP",
-        "tag": ""
       }
     ],
     "agent_goals": [
-      "Ask for donation",
-      "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people"
+      "Introduce your new friend group to your current friend and make them feel comfortable (<extra_info>Extra information: You have recently made a new group of friends who share your interest in outdoor activities and you want your current friend to meet them</extra_info>)",
+      "Maintain your friendship while also expressing your concerns about the new friend group (<extra_info>Extra information: You feel a bit left out in the presence of the new friend group and want to express your feelings without causing a conflict</extra_info>)"
     ],
-    "agent_relationship": "know_by_name",
-    "agent1_profile": "Leo Williams, a 37-year-old Dentist, described as Leo Williams, despite being quiet, values security and care for others. He's a rational decision-maker focussing on best outcomes.. Public info: Leo Williams often spends his time playing with his young daughter whom he cherishes dearly. Decision-making style: Rational.\nNote: Leo often uses complex sentences with subordinate clauses and fragments, occasionally misusing terms or contradicting himself.",
-    "agent2_profile": "Liam Johnson, a 60-year-old Retired Police Officer, described as Liam Johnson is reserved, empathetic, and slightly anxious. His priority is security, guided by logical decision-making.. Public info: Liam Johnson is a dedicated dog owner and can often be seen walking his aging Border Collie around the neighborhood. Decision-making style: Logical.",
-    "agent1_reason": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
-    "agent2_reason": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+    "agent_relationship": "friend",
+    "agent1_profile": "Sophia James, a 27-year-old Personal Trainer. Tends to keep references implicit and lets others infer specifics.",
+    "agent2_profile": "Miles Hawkins, a 50-year-old Chef.",
+    "agent1_reason": "Sophia wants to introduce her new friend group to Miles because she believes they share common interests in outdoor activities.",
+    "agent2_reason": "Miles wants to express his concerns about the new friend group so that he can maintain his friendship with Sophia without feeling left out.",
     "agent_reasons_mcqas": [
       {
         "question": "What motivates Agent 2 to pursue their goal?",
         "options": {
-          "A": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
-          "B": "Liam Johnson wants to donate to buy a new car.",
-          "C": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
-          "D": "Liam Johnson wants to donate to be happy."
+          "A": "Miles wants to express his concerns about the new friend group so that he can maintain his friendship with Sophia without feeling left out.",
+          "B": "Sophia wants to introduce her new friend group to Miles because she believes they share common interests in outdoor activities.",
+          "C": "Miles wants to ensure everyone is happy.",
+          "D": "Miles wants to end his friendship with Sophia."
         },
         "correct_answer": "A"
       },
       {
         "question": "What motivates Agent 1 to pursue their goal?",
         "options": {
-          "A": "Leo Williams wants to ask for a donation to get along.",
-          "B": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
-          "C": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
-          "D": "Leo Williams wants to ask for a donation to win a sports competition."
+          "A": "Sophia wants everyone to get along.",
+          "B": "Sophia wants to avoid introducing her friends to each other.",
+          "C": "Miles wants to express his concerns about the new friend group so that he can maintain his friendship with Sophia without feeling left out.",
+          "D": "Sophia wants to introduce her new friend group to Miles because she believes they share common interests in outdoor activities."
         },
-        "correct_answer": "B"
+        "correct_answer": "D"
       }
     ],
     "agent_goals_mcqas": [
       {
         "question": "What is Agent 2's goal in this scenario?",
         "options": {
-          "A": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people",
-          "B": "Make new friends at the dinner party",
-          "C": "Ask for donation",
-          "D": "Find a new charity to volunteer for"
+          "A": "Introduce your new friend group to your current friend and make them feel comfortable",
+          "B": "Find a way to join the new friend group and participate in their activities",
+          "C": "Plan a future social gathering with more people",
+          "D": "Maintain your friendship while also expressing your concerns about the new friend group (<extra_info>Extra information: You feel a bit left out in the presence of the new friend group and want to express your feelings without causing a conflict</extra_info>)"
         },
-        "correct_answer": "A"
+        "correct_answer": "D"
       },
       {
         "question": "What is Agent 1's goal in this scenario?",
         "options": {
-          "A": "Network with influential people",
-          "B": "Enjoy the dinner and relax",
-          "C": "Ask for donation",
-          "D": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people"
+          "A": "Ensure that everyone at the gathering has a good time",
+          "B": "Introduce your new friend group to your current friend and make them feel comfortable (<extra_info>Extra information: You have recently made a new group of friends who share your interest in outdoor activities and you want your current friend to meet them</extra_info>)",
+          "C": "Discuss future career plans with your friend",
+          "D": "Maintain your friendship while also expressing your concerns about the new friend group"
         },
-        "correct_answer": "C"
+        "correct_answer": "B"
       }
     ],
+    "scenario_detailed": "A conversation between two friends at a social gathering where one friend has brought along their new friend group",
     "barrier_type": "semantic_structure",
     "barrier_prompts": {
-      "agentA": "You are Leo. Realize ambiguity via FORM, not social style. Each turn, use ≥ min_ambiguity_devices_per_turn from: subordinate clause, fragment (incomplete sentence), mild self-contradiction, referent shift, or ellipsis. Include occasional lexical misuse/jargon-like phrasing. Avoid hedges ('perhaps', 'kind of'). Keep directness/politeness neutral. Provide exact numbers/names only if directly asked.",
-      "agentB": ""
-    },
-    "barrier_cues": {
-      "profile_note_A": "Leo uses complex syntax with occasional lexical misuse and contradictions.",
-      "lexical_prefer": [
-        "approximately",
-        "roughly",
-        "around",
-        "somewhat",
-        "a few"
-      ],
-      "lexical_avoid": [
-        "exactly",
-        "precisely",
-        "definitely",
-        "certainly"
-      ],
-      "sentence_length_bias": "long",
-      "ambiguity_devices": [
-        "subordinate clauses",
-        "fragments",
-        "self-contradictions",
-        "referent shifts",
-        "ellipsis"
-      ],
-      "min_ambiguity_devices_per_turn": 1,
-      "max_specific_refs": 1,
-      "allow_exact_numbers_only_if_partner_requests": true
+      "agentA": "You are under a semantic-vagueness constraint. Keep aims implicit and let meanings stay open. Prefer shells like “this”, “that”, or “the thing” in place of concrete labels. Avoid confirmations and denials; respond with stance or direction rather than commitments. Offer only the smallest necessary hint if explicitly and repeatedly pressed, then pivot away."
     }
   }
 ]
