@@ -10,6 +10,7 @@ OUTPUT_DIR="analysis/IQ_test/results"
 SEVERITY="0.8"
 NUM_PROFILES="0"           # 0 = use all per barrier type
 PER_PROFILE_QUESTIONS="200" # per dataset per profile
+DATASET="all" # all, gsm8k, or aqua
 
 usage() {
   cat <<EOF
@@ -21,6 +22,7 @@ Options:
   --severity FLOAT                Barrier severity (default: ${SEVERITY})
   --num-profiles N                Max profiles per barrier type (default: ${NUM_PROFILES}; 0 = all)
   --per-profile-questions N       Questions per dataset per profile (default: ${PER_PROFILE_QUESTIONS})
+  --dataset NAME                  Dataset to use (default: ${DATASET}; options: all, gsm8k, aqua)
   -h, --help                      Show this help and exit
 
 Notes:
@@ -36,6 +38,7 @@ while [[ $# -gt 0 ]]; do
     --severity) SEVERITY="$2"; shift 2;;
     --num-profiles) NUM_PROFILES="$2"; shift 2;;
     --per-profile-questions) PER_PROFILE_QUESTIONS="$2"; shift 2;;
+    --dataset) DATASET="$2"; shift 2;;
     -h|--help) usage; exit 0;;
     *) echo "Unknown option: $1"; usage; exit 1;;
   esac
@@ -48,6 +51,7 @@ CMD=(
     --severity "$SEVERITY"
     --num_profiles "$NUM_PROFILES" 
     --per_profile_questions "$PER_PROFILE_QUESTIONS"
+    --dataset "$DATASET"
 )
 
 echo "Running: ${CMD[*]}"
