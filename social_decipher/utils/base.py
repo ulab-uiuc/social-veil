@@ -97,6 +97,7 @@ def direct_completion(
         return openai_completion(model_id, system_message, message)
     
 def openai_completion(model_id, system_message, message):
+
     client = get_openai_client()
     try:    
         response = client.chat.completions.create(

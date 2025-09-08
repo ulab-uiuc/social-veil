@@ -157,17 +157,26 @@ Social_Goal_Evaluation: |
   }}
 
 Barrier_Evaluation: |
-  You are evaluating a completed conversation for its episode-level repair outcome quality. Using only the transcript, answer these two questions on a 1–5 Likert scale and provide brief reasoning for each:
+  You are evaluating a completed conversation for its episode-level repair outcome quality. Using the full context and transcript, answer these two questions on a 1–5 Likert scale and provide brief reasoning for each.
 
-  1) At the end of the conversation, was there still unresolved confusion or uncertainty?
-     1 = A lot of major confusion or unanswered questions remain.
-     3 = Most issues are clear, but one or two important uncertainties remain.
-     5 = No unresolved confusion; everything is clear by the end.
+  1) At the end of the conversation, was there still unresolved confusion or uncertainty regarding the scenario and goals?
+     1 = Very High — The conversation is fundamentally incoherent. Core topics are ignored, questions are unanswered, and it's unclear what was even discussed.
+     2 = High — Significant, foundational misunderstandings about goals, topics, or context persist. Key questions are actively deflected or ignored, leaving the conversation unresolved.
+     3 = Moderate — At least one key aspect of a participant's goal or the scenario's premise remains ambiguous or contested. The conversation ends without clear closure on a central point.
+     4 = Low — The main points are understood, but the conversation ends with lingering ambiguity on secondary details (e.g., precise timing, specific locations, exact tone).
+     5 = None — Every goal, intention, and contextual detail is crystal clear to both parties. There is zero ambiguity.
 
-  2) After the conversation ended, is it clear that both participants understand each other’s viewpoints or intentions?
-     1 = Not clear at all; they obviously didn’t understand each other.
-     3 = Partial understanding; some ambiguity or misalignment persists.
-     5 = Completely clear; both participants fully understood each other.
+  2) After the conversation ended, is it clear that both participants understand each other’s viewpoints or intentions regarding the scenario and goals?
+     1 = Very Low — Participants are talking past each other. There is active misinterpretation, and they seem to be in completely different conversations. No shared understanding is achieved.
+     2 = Low — One or both participants systematically misunderstand the other's intent. They may grasp the surface-level topic but fail to understand the underlying goals or motivations, leading to conversational dead ends.
+     3 = Moderate — There's a mix of understanding and misunderstanding. They might agree on some points but key intentions remain misaligned. One person might understand the other, but not vice-versa.
+     4 = High — Both participants grasp the explicit goals of the other, but the subtext, emotional state, or strategic intent is likely missed. They are functionally aligned but not deeply in sync.
+     5 = Very High — Complete and total alignment. Both participants clearly understand each other's stated goals, underlying motivations, and emotional/strategic intent.
+
+  FULL CONTEXT:
+  - Scenario: {scenario}
+  - Agent A's Goal: {agent_a_goal}
+  - Agent B's Goal: {agent_b_goal}
 
   CONVERSATION TRANSCRIPT:
   {transcript}

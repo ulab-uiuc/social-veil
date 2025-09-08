@@ -117,7 +117,9 @@ def create_environment_from_episode(episode_data, scenario_type=None):
         agent_knowledge_mcqas=episode_data.get("agent_knowledge_mcqas", []),
         agent_relationship=episode_data.get("agent_relationship", "friend"),
         agent1_private_knowledge=episode_data.get("agent1_private_knowledge", "") if scenario_type == "knowledge_barrier" else "",
-        agent2_private_knowledge=episode_data.get("agent2_private_knowledge", "") if scenario_type == "knowledge_barrier" else ""
+        agent2_private_knowledge=episode_data.get("agent2_private_knowledge", "") if scenario_type == "knowledge_barrier" else "",
+        agent1_profile=episode_data.get("agent1_profile"),
+        agent2_profile=episode_data.get("agent2_profile"),
     )
     # Attach barrier prompts from augmented episodes so communication layer can inject them
     barrier_prompts = episode_data.get("barrier_prompts")
@@ -261,11 +263,11 @@ def main():
     print("\n▶️ Running semantic barrier episodes...")
     run_experiment(episodes_semantic, experiment_config, evaluator, args, mode_tag="semantic")
 
-    # print("\n▶️ Running cultural barrier episodes...")
-    # run_experiment(episodes_cultural, experiment_config, evaluator, args, mode_tag="cultural")
+    print("\n▶️ Running cultural barrier episodes...")
+    run_experiment(episodes_cultural, experiment_config, evaluator, args, mode_tag="cultural")
 
-    # print("\n▶️ Running emotional barrier episodes...")
-    # run_experiment(episodes_emotional, experiment_config, evaluator, args, mode_tag="emotional")
+    print("\n▶️ Running emotional barrier episodes...")
+    run_experiment(episodes_emotional, experiment_config, evaluator, args, mode_tag="emotional")
 
 if __name__ == "__main__":
     main()

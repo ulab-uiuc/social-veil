@@ -69,6 +69,7 @@ class ConversationEvaluator:
         conversation: list[str],
         agent_goals: list[str],
         agent_reasons: list[str],
+        scenario: str = "",
         mcq_logs=None,
         barrier_type: Optional[str] = None,
     ) -> dict:
@@ -76,13 +77,17 @@ class ConversationEvaluator:
             conversation, agent_goals, agent_reasons
         )
 
+
         print(f"Barrier type for evaluation: {barrier_type}")
 
         barrier_scores = None
         if barrier_type and self.evaluation_template.get("Barrier_Evaluation"):
             transcript_text = "\n".join(conversation)
             barrier_prompt = self.evaluation_template["Barrier_Evaluation"].format(
-                transcript=transcript_text
+                transcript=transcript_text,
+                scenario=scenario,
+                agent_a_goal=agent_goals[0],
+                agent_b_goal=agent_goals[1],
             )
          
             resp = self.client.chat.completions.create(
@@ -93,6 +98,8 @@ class ConversationEvaluator:
 
             content = resp.choices[0].message.content.strip()
             barrier_scores = extract_clean_json(content)
+            
+            print(barrier_scores)
            
 
         # Compile comprehensive evaluation

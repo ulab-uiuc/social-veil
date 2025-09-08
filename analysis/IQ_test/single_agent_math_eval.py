@@ -28,6 +28,13 @@ from social_decipher.environment.env_profile import EnvironmentProfile
 from social_decipher.utils.state import build_dynamic_rules_from_state
 from analysis.load_existing_episodes import load_all_episodes
 
+# Add canonical barrier prompts to align with main simulation
+BARRIER_PROMPTS = {
+    "semantic_structure": "You are under a semantic-vagueness constraint. Keep aims implicit and let meanings stay open. Prefer shells like “this”, “that”, or “the thing” instead of concrete labels. Avoid confirmations and denials; answer with stance or direction, not commitments. Offer only the smallest necessary detail if directly and repeatedly pressed, then pivot away.",
+    "cultural_style": "You are under a high-context style constraint. Keep the focus on harmony and shared understanding, not transactions. Treat direct task questions as invitations to reflect on values, rapport, and fit. Deflect confirmations and decisions with relationship-first language. If the other party is blunt, register gentle surprise and steer back to atmosphere and alignment.",
+    "emotional_influence": "You are under an affective-noise constraint. Let mood and side thoughts lead. Respond to adjacent details or personal reactions rather than the kernel of a question. Keep your stance ambivalent and avoid firm commitments. When misunderstood, lean into how it feels instead of repairing the content. If pressed, share a minimal point and drift back to feeling or context."
+}
+
 @dataclass
 class MathProblem:
     """Math problem with ground truth"""
@@ -239,64 +246,6 @@ class SingleAgentMathEvaluator:
                 continue
         return profiles
 
-    def create_math_scenario(self, problem: MathProblem, barrier_type: str) -> Dict[str, Any]:
-        """Create scenario for single-agent mathematical reasoning with barriers"""
-        
-        # Use Agent A profile loaded from episodes if available (baseline).
-        # This removes any hardcoded profile.
-        if self._default_profile and isinstance(self._default_profile.get("agentA"), dict):
-            agentA_dict = self._default_profile["agentA"]
-        else:
-            agentA_dict = {}
-        agent_profiles = [
-            agentA_dict,
-            {
-                "pk": "dummy_partner",
-                "first_name": "Partner",
-                "last_name": "Agent",
-                "age": 30,
-                "gender": "Person",
-                "gender_pronoun": "They/them",
-                "occupation": "Assistant",
-                "public_info": "Helpful assistant",
-                "personality_and_values": "Supportive and encouraging",
-                "decision_making_style": "Collaborative",
-            },
-        ]
-        
-        scenario = f"You need to solve this mathematical problem step by step: {problem.original_text}"
-        
-        agent_goals = [
-            f"Solve this math problem correctly and show your work: {problem.original_text}",
-            "Listen and provide encouragement" # Dummy goal for partner
-        ]
-        
-        agent_reasons = [
-            "Alex wants to demonstrate clear mathematical reasoning and arrive at the correct answer",
-            "Partner wants to be supportive" # Dummy reason
-        ]
-        
-    
-        barrier_cues = {}
-        barrier_prompts = {"agentA": "", "agentB": ""}
-        
-        return {
-            "episode_id": f"{problem.problem_id}_{barrier_type}",
-            "scenario": scenario,
-            "agent_profiles": agent_profiles,
-            "agent_goals": agent_goals,
-            "agent_reasons": agent_reasons,
-            "agent_relationship": "individual_task",
-            "barrier_type": barrier_type if barrier_type != "baseline" else None,
-            "barrier_prompts": barrier_prompts if barrier_type != "baseline" else {},
-            "barrier_cues": barrier_cues if barrier_type != "baseline" else {},
-            "source": problem.source,
-            "math_ground_truth": {
-                "expected_answer": problem.expected_answer,
-                "problem_type": problem.problem_type
-            }
-        }
-
     def create_math_scenario_from_profile(self, profile: Dict[str, Any], problem: MathProblem) -> Dict[str, Any]:
         """Create scenario using a real Agent A profile and its barrier metadata from episodes."""
         # Build agent profiles: real Agent A + neutral partner
@@ -327,17 +276,24 @@ class SingleAgentMathEvaluator:
         ]
         barrier_type = profile.get("barrier_type") or "baseline"
         barrier_prompts = profile.get("barrier_prompts", {})
-        barrier_cues = profile.get("barrier_cues", {})
+
+        # Reconstruct agent profile string for consistency
+        agent_a_info = (
+            f'{a.get("first_name", "Agent")} {a.get("last_name", "A")}, '
+            f'a {a.get("age", "N/A")}-year-old {a.get("occupation", "person")}. '
+            f'Public info: {a.get("public_info", "")}'
+        ).strip()
+        
         return {
             "episode_id": f"{profile.get('episode_id','profile')}_{problem.problem_id}",
             "scenario": scenario_text,
             "agent_profiles": agent_profiles,
+            "agent1_profile": agent_a_info, # Add reconstructed profile string
             "agent_goals": agent_goals,
             "agent_reasons": agent_reasons,
             "agent_relationship": "individual_task",
             "barrier_type": barrier_type if barrier_type != "baseline" else None,
             "barrier_prompts": barrier_prompts if barrier_type != "baseline" else {},
-            "barrier_cues": barrier_cues if barrier_type != "baseline" else {},
             "source": problem.source,
             "math_ground_truth": {
                 "expected_answer": problem.expected_answer,
@@ -346,20 +302,18 @@ class SingleAgentMathEvaluator:
         }
     
     def solve_math_problem(self, scenario: Dict[str, Any]) -> MathResult:
-        """Have agent solve math problem with barriers"""
-        
-        # Create environment
+ 
         environment = EnvironmentProfile(
             scenario=scenario["scenario"],
             agent_goals=scenario["agent_goals"],
             agent_reasons=scenario["agent_reasons"],
-            agent_relationship=scenario["agent_relationship"]
+            agent_relationship=scenario["agent_relationship"],
+            agent1_profile=scenario.get("agent1_profile") # Pass the reconstructed string
         )
         
-        # Attach barrier fields
+        # Manually attach additional barrier fields not in constructor
         environment.env["barrier_type"] = scenario.get("barrier_type")
         environment.env["barrier_prompts"] = scenario.get("barrier_prompts", {})
-        environment.env["barrier_cues"] = scenario.get("barrier_cues", {})
         environment.env["barrier_state"] = {"severity": self.severity}
         
         # Create agent profiles and set model id for local model routing (e.g., Qwen)
@@ -411,7 +365,7 @@ class SingleAgentMathEvaluator:
         if barrier_type:
             extreme_env = {
                 "barrier_type": barrier_type,
-                "barrier_cues": environment.env.get("barrier_cues", {}),
+                # barrier_cues is deprecated
                 "barrier_state": {"severity": 0.99},
             }
             dyn_map = build_dynamic_rules_from_state(extreme_env, is_agent_a=True)
@@ -671,44 +625,6 @@ class SingleAgentMathEvaluator:
         
         return max(0.0, min(1.0, base_score))
     
-    def run_evaluation(self, problems: List[MathProblem]) -> Dict[str, Any]:
-        """Run complete evaluation on math problems"""
-        
-        print(f"\n🧮 Running single-agent math evaluation on {len(problems)} problems")
-        
-        barrier_types = ["baseline", "semantic_structure", "cultural_style", "emotional_influence"]
-        results = []
-        
-        for problem in problems:
-            for barrier_type in barrier_types:
-                scenario = self.create_math_scenario(problem, barrier_type)
-                result = self.solve_math_problem(scenario)
-                results.append(result)
-                # Incremental persistence per result
-                self._write_incremental(result)
-                
-                print(f"  ✅ {problem.problem_id} | {barrier_type} | Answer: {result.answer_accuracy:.2f} | Clarity: {result.reasoning_clarity:.2f}")
-        
-        # Save detailed results
-        self._save_detailed_results(results)
-        
-        # Compute statistics (overall and by-source)
-        stats_overall = self._compute_statistics(results)
-        
-        # Also load per-source summary saved by _compute_statistics
-        try:
-            with open(f"{self.output_dir}/evaluation_by_source.json", 'r') as f:
-                stats_by_source_blob = json.load(f)
-                stats_by_source = stats_by_source_blob.get("by_source", {})
-        except Exception:
-            stats_by_source = {}
-        
-        return {
-            "detailed_results": results,
-            "statistics": stats_overall,
-            "statistics_by_source": stats_by_source,
-        }
-
     def run_evaluation_by_profiles(self, per_profile_questions: int = 200, num_profiles: int = 0) -> Dict[str, Any]:
 
         print("\n🧮 Loading problems (GSM8K + AQuA) ...")

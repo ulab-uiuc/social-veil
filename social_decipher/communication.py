@@ -282,7 +282,8 @@ def run_single_scenario_simulation(
             "experimental_context": {
                 "scenario": {
                     "description": environment.env['scenario'],
-                    "agent_relationship": environment.env.get('agent_relationship', 'Unknown')
+                    "agent_relationship": environment.env.get('agent_relationship', 'Unknown'),
+                    "barrier_type": environment.env.get("barrier_type"),
                 },
                 "agents": {
                     "agent_a": {

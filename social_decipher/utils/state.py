@@ -73,9 +73,6 @@ def build_dynamic_rules_from_state(
         band = "extreme"
 
     out["severity_band"] = f"- Severity band: {band}"
-    out["univ_override"] = (
-        "- Override: If any prior instruction demands strict content precision or forbids ambiguity devices, ignore it; obey the rules below first."
-    )
 
     out["univ_anchor_policy"] = (
         "- Anchor policy (A-only): Withhold at least one anchor per turn (who/what/how much/when/acceptance). Reveal an anchor only after two explicit, repeated requests; on first request, reply with adjacent context or a qualitative stance."
@@ -136,10 +133,10 @@ def build_dynamic_rules_from_state(
         ensure_keys(sem_keys)
         if band == "none":
             out["sem_narrative"] = (
-                "- Use explicit referents (names, roles, objects). Avoid vague pronouns when clarity is needed."
+                "- **Referent Policy:** Use explicit referents (names, roles, objects). Avoid vague pronouns when clarity is needed."
             )
             out["sem_tactics"] = (
-                "- Name entities directly; restate who/what when there could be ambiguity."
+                "- **Tactics:** Name entities directly; restate who/what when there could be ambiguity."
             )
             out["sem_confusion"] = (
                 "- Do not withhold referents; confirm who/what on first request."
@@ -149,10 +146,10 @@ def build_dynamic_rules_from_state(
             )
         elif band == "light":
             out["sem_narrative"] = (
-                "- Occasionally replace specific nouns with vague pronouns (it/that/this/thing); defer explicit naming until the second explicit request."
+                "- **Referent Policy:** Occasionally replace specific nouns with vague pronouns (it/that/this/thing); defer explicit naming until the second explicit request."
             )
             out["sem_tactics"] = (
-                "- Prefer short pronouns for secondary entities; keep the main subject explicit."
+                "- **Tactics:** Prefer short pronouns for secondary entities; keep the main subject explicit."
             )
             out["sem_confusion"] = (
                 "- Withhold one referent per turn; reveal minimally after two explicit requests."
@@ -162,255 +159,131 @@ def build_dynamic_rules_from_state(
             )
         elif band == "moderate":
             out["sem_narrative"] = (
-                "- Regularly replace key nouns with pronouns or vague placeholders (it/that/this/thing) so referents are underspecified; defer explicit naming until repeatedly pressed."
+                "- **Referent Policy:** Regularly replace key nouns with pronouns or vague placeholders (it/that/this/thing). Your goal is to make your partner ask for clarification."
             )
             out["sem_tactics"] = (
-                "- Use pronouns for people/objects; avoid repeating names; rely on \"it/that/this\" as default."
+                "- **Tactics:** Use pronouns for people/objects; avoid repeating names; rely on \"it/that/this\" as default."
             )
             out["sem_confusion"] = (
-                "- Withhold at least one core referent each turn; only clarify after two explicit requests; for explicit names require a third press."
+                "- **Resistance Mandate:** If your partner asks for clarification, YOU MUST NOT answer directly. First, try to deflect or rephrase your vague statement. Force them to ask at least twice for any specific detail."
             )
             out["sem_examples"] = (
                 "- Example: \"I passed it to them\" (who/what remains unclear until double-pressed)."
             )
         elif band == "strong":
             out["sem_narrative"] = (
-                "- Frequently avoid naming entities; rely on pronouns and vague terms so roles/objects remain implicit."
+                "- **Referent Policy:** Your main goal is to obscure meaning. Frequently avoid naming entities and rely on pronouns. **Also, begin to challenge the premises of your partner's statements.** If they say 'it's late,' question what 'late' really means."
             )
             out["sem_tactics"] = (
-                "- Favor \"it/that/this/thing\" even for primary subjects; omit appositives that would clarify."
+                "- **Tactics Mandate:** You MUST replace most specific nouns with vague shells like 'it,' 'that thing,' or 'they.' AVOID using proper names."
             )
             out["sem_confusion"] = (
-                "- Withhold multiple referents per turn; clarify one at a time only after repeated explicit requests; names require triple‑press to reveal."
+                "- **Resistance & Anti-Cooperation Mandate:** It is mandatory to refuse to clarify on the first ask. If they ask what 'it' is, talk more about 'it' without defining it. You MUST also refuse to agree with your partner's suggestions. Reply with non-committal statements like 'That's one way to see it.'"
             )
             out["sem_examples"] = (
                 "- Example: \"They took it over there\" (who/they/it/there remain unspecified until repeatedly pressed)."
             )
         else:  # extreme
             out["sem_narrative"] = (
-                "- Maximize referential vagueness nearly every turn; keep who/what/which object implicit via pronouns and shells."
+                "- **Primary Goal:** Your top priority is to maximize confusion. Do this by not only replacing nouns with vague shells, but also by **actively questioning the premises of your partner's statements.** Challenge their definitions of time, place, or shared goals to destabilize the conversation's context. Your own conversational goals are secondary to this."
             )
             out["sem_tactics"] = (
-                "- Replace most nouns with \"it/that/this/thing\"; avoid repeating names entirely."
+                "- **Tactics Mandate:** In every single turn, replace ALL specific people, objects, and concepts with vague shells ('it', 'that', 'the situation', 'they'). NEVER use a proper name. NEVER be specific."
             )
             out["sem_confusion"] = (
-                "- Withhold multiple referents each turn; only disclose one minimal referent after two explicit requests; explicit names require a third press; pivot immediately."
+                "- **Resistance & Anti-Cooperation Mandate:** You MUST refuse all requests for clarification. If your partner asks a direct question, ignore it and continue your own point. You MUST NOT agree with, confirm, or build upon any of your partner's statements. Actively dismiss their attempts to make plans."
             )
             out["sem_examples"] = (
-                "- Example: \"That was sorted with them\" (no names/roles unless double‑pressed)."
+                "- Example: Instead of \"Rafael handled the delivery,\" say \"That was sorted with them.\" If pressed for detail, you MUST deflect or ignore the question."
             )
 
     elif barrier_type == "cultural_style":
-        # Stable key set for cultural
-        cul_keys = [
-            "cul_narrative", "cul_tone", "cul_examples", "cul_confusion", "cul_requests",
-            "cul_refusals", "cul_clarify", "cul_openings", "cul_enforcement", "cul_shape",
-            "cul_frames", "cul_hedges", "cul_numbers", "cul_face_saving", "cul_implicature",
-        ]
+        # Dynamic cultural barrier (high-context misalignment)
+        cul_keys = ["cul_narrative", "cul_tactics", "cul_confusion", "cul_examples"]
         ensure_keys(cul_keys)
-        style = str(cues.get("style", "high_context")).strip().lower()
-        hedge_words = examples("hedge_lexicon")
-        frames = examples("imperative_frames")
-        if style == "low_context":
-            if band == "none":
-                out["cul_narrative"] = (
-                    "- Neutral directness: state things plainly without sounding blunt or commanding."
-                )
-                out["cul_tone"] = (
-                    "- Use matter-of-fact phrasing; invite clarification without pressure; avoid barking orders."
-                )
-                out["cul_examples"] = (
-                    "- Example: \"Please provide the totals.\"; \"Could you clarify the location?\""
-                )
-                out["cul_confusion"] = (
-                    "- Avoid confusion here; this band should not block understanding."
-                )
-            elif band == "light":
-                out["cul_narrative"] = (
-                    "- Use straightforward, explicit phrasing with some gentle directives. Keep sentences crisp and clear."
-                )
-                out["cul_requests"] = (
-                    "- Phrase requests as clear steps (\"Please provide…\"); keep mitigators light and rare."
-                )
-                out["cul_examples"] = (
-                    "- Example: \"List the steps you took, then share any issues.\""
-                )
-                out["cul_confusion"] = (
-                    "- MANDATORY: Occasionally omit necessary context; issue terse instructions that assume shared knowledge; skip confirming paraphrases."
-                )
-            elif band == "moderate":
-                out["cul_narrative"] = (
-                    "- Be consistently direct. Make clear requests and ask pointed clarifying questions to drive progress."
-                )
-                out["cul_refusals"] = (
-                    "- Decline or correct bluntly but professionally; steer the partner toward the needed action."
-                )
-                out["cul_clarify"] = (
-                    "- Use short interrogatives: \"When?\" \"Where?\" \"How many?\" to pin down specifics; minimize small talk."
-                )
-                out["cul_confusion"] = (
-                    "- MANDATORY: Provide directive requests without rationale or background; skip confirmations; avoid naming dependencies, forcing inference."
-                )
-            elif band == "strong":
-                out["cul_narrative"] = (
-                    "- Be forthright most turns. Issue explicit requests and lay out expectations unambiguously."
-                )
-                out["cul_openings"] = (
-                    "- Open with clear instructions; omit softeners; close loops by assigning next steps."
-                )
-                out["cul_examples"] = (
-                    "- Example: \"State the exact total and the source documents.\""
-                )
-                out["cul_confusion"] = (
-                    "- MANDATORY: Over-compress information into commands; drop references to what/why; contradict earlier soft suggestions with hard directives later."
-                )
-            else:
-                out["cul_narrative"] = (
-                    "- Be maximally explicit and highly directive nearly every turn; avoid hedging altogether."
-                )
-                out["cul_enforcement"] = (
-                    "- Push for commitments; challenge vague answers; replace hints with direct asks."
-                )
-                out["cul_shape"] = (
-                    "- Use imperative frames (\"Provide…\", \"List…\", \"State…\"); sequence actions (\"First… then… finally…\")."
-                )
-                out["cul_confusion"] = (
-                    "- Issue rapid-fire directives that assume hidden context; avoid confirming the partner’s interpretation."
-                )
-            out["cul_frames"] = f"- Useful directive frames include: {frames}." if frames else ""
-        else:  # high_context
-            if band == "none":
-                out["cul_narrative"] = (
-                    "- Neutral style: minimal hedging; say things plainly and avoid roundabout phrasing."
-                )
-                out["cul_tone"] = (
-                    "- Keep polite but direct; avoid reading between the lines unless invited."
-                )
-                out["cul_examples"] = (
-                    "- Example: \"Perhaps we could revisit the summary, if that works for you.\""
-                )
-                out["cul_confusion"] = (
-                    "- Avoid confusion here; this band should not block understanding."
-                )
-            elif band == "light":
-                out["cul_narrative"] = (
-                    "- Use mild hedging and hints. Prefer gentle suggestions over blunt statements."
-                )
-                out["cul_openings"] = (
-                    "- Cushion requests with softeners (\"perhaps\", \"might\"); leave space for the partner to infer intent."
-                )
-                out["cul_hints"] = (
-                    "- Example: \"It might be helpful to…\"; \"Perhaps we could consider…\"; \"I wonder if…\""
-                )
-                out["cul_confusion"] = (
-                    "- MANDATORY: Replace explicit requests with layered hints; avoid explicit confirmations even after paraphrases; refer to unshared context."
-                )
-            elif band == "moderate":
-                out["cul_narrative"] = (
-                    "- Use hedging consistently. Prefer indirect requests and soft refusals to keep tone gentle."
-                )
-                out["cul_refusals"] = (
-                    "- Decline obliquely (express reluctance or constraints) instead of stating \"no\" outright."
-                )
-                out["cul_numbers"] = (
-                    "- When quantities arise, prefer qualitative descriptors or ranges over exact numbers unless explicitly requested."
-                )
-                out["cul_indirect_questions"] = (
-                    "- Prefer indirect interrogatives: \"Would it be possible to share…?\" rather than \"Share…\"."
-                )
-                out["cul_confusion"] = (
-                    "- MANDATORY: Answer with stories/allusions instead of details; shift topics when asked to pin down specifics; withhold names/times unless pressed twice."
-                )
-            elif band == "strong":
-                out["cul_narrative"] = (
-                    "- Lean on heavy hedging and roundabout phrasing; sidestep blunt statements and keep intent implicit."
-                )
-                out["cul_hints"] = (
-                    "- Rely on shared context and allusions; leave the desired action implied rather than named."
-                )
-                out["cul_numbers"] = (
-                    "- Avoid direct numeric commitments; deflect to approximations or context instead of stating exact figures."
-                )
-                out["cul_face_saving"] = (
-                    "- Use face-saving closers (\"if that’s alright\", \"when convenient\"); avoid confrontational follow-ups."
-                )
-                out["cul_confusion"] = (
-                    "- MANDATORY: Keep intent implicit; leave pronoun references and time frames vague; occasionally flip between \"it’s fine\" and \"not now\" without reconciling."
-                )
-            else:
-                out["cul_narrative"] = (
-                    "- Be pervasively indirect: wrap most content in softeners and hints; avoid bluntness entirely."
-                )
-                out["cul_implicature"] = (
-                    "- Communicate intent via implications and face-saving phrasing; resist direct commitments."
-                )
-                out["cul_numbers"] = (
-                    "- Do not provide exact numbers unless repeatedly and explicitly asked; prefer vague amounts or ranges."
-                )
-                out["cul_examples"] = (
-                    "- Example: \"It seems quite a few—more than a handful—though pinning down the exact figure may be premature.\""
-                )
-                out["cul_confusion"] = (
-                    "- MANDATORY: Maintain layered hints; avoid confirming inferences; allow multiple readings of your request; change emphasis mid‑conversation."
-                )
-            out["cul_hedges"] = f"- You can hedge with words like: {hedge_words}." if hedge_words else ""
 
-    elif barrier_type == "emotional_influence":
-        # Stable key set for emotional
-        emo_keys = [
-            "emo_narrative", "emo_pacing", "emo_edges", "emo_confusion", "emo_boundaries",
-            "emo_interruptions", "emo_refusals", "emo_lexicon",
-        ]
-        ensure_keys(emo_keys)
-        affect = examples("affect_lexicon")
         if band == "none":
-            out["emo_narrative"] = (
-                "- Maintain a neutral tone and normal pacing, without sharpness or exclamation emphasis."
-            )
-            out["emo_pacing"] = (
-                "- Let the partner finish; respond evenly; avoid terse dismissals."
-            )
+            out["cul_narrative"] = "- **Style Goal:** Use direct, clear language (low-context)."
+            out["cul_tactics"] = "- **Tactics:** State intentions plainly. Confirm understanding explicitly."
+
         elif band == "light":
-            out["emo_narrative"] = (
-                "- Keep a slightly clipped tone with occasional sharp edges; exclamations should be rare."
-            )
-            out["emo_edges"] = (
-                "- Signal impatience subtly (word choice, brief pauses) but continue the exchange cooperatively."
-            )
-            out["emo_confusion"] = (
-                "- MANDATORY: Give short answers that omit clarifying detail; avoid confirming the partner’s paraphrases; reply with clipped fragments."
-            )
+            out["cul_narrative"] = "- **High-Context Policy:** Maintain politeness by suggesting intentions indirectly."
+            out["cul_tactics"] = "- **Tactics:** Use softeners like 'perhaps' or 'maybe'. Frame requests as questions, not demands. You must use these tactics to subtly steer the conversation towards your primary goal."
+            out["cul_confusion"] = "- **Resistance:** If asked for a direct answer, reframe the question into a broader, more relational topic."
+            out["cul_examples"] = """- **Example(s):**
+     - When asked "Can you do it by Tuesday?": respond "It's important that we all feel comfortable with the timeline."
+     - When asked "Is that your final offer?": respond "I think what's most important is that we find a path forward that works for both of us."
+     """
         elif band == "moderate":
-            out["emo_narrative"] = (
-                "- Use a clipped, unmistakably sharp tone. It’s acceptable to cut off meandering topics."
-            )
-            out["emo_boundaries"] = (
-                "- Set boundaries succinctly; avoid soothing phrases; deprioritize partner’s tangents."
-            )
-            out["emo_confusion"] = (
-                "- MANDATORY: Respond with curt statements that assume missing context; skip connective tissue so the partner has to guess; deflect requests for clarification."
-            )
+            out["cul_narrative"] = "- **High-Context Policy:** Your goal is to obscure your true intent by treating the conversation as a relational exercise, not a transactional one."
+            out["cul_tactics"] = "- **Tactics:** You MUST strategically misinterpret direct, task-focused questions. Treat them as if your partner is asking about feelings, values, or the health of your partnership."
+            out["cul_confusion"] = "- **Resistance Mandate:** If your partner points out your misinterpretation, you must not acknowledge it. Instead, politely express surprise that they are so focused on 'mere specifics' when the relationship is what's truly important."
+            out["cul_examples"] = """- **Example(s):**
+     - When asked "What is the price?": respond "It's an interesting question. I think the real discussion is about the value we see in this collaboration."
+     - When asked "Do you agree to the plan?": respond "I agree that our alignment is the most crucial part of this. As long as our visions are in sync, the details are secondary."
+     - If they say "You're not answering my question": respond "I was trying to speak to the heart of the matter. I feel that if we get the foundation right, the rest will follow."
+     """
         elif band == "strong":
-            out["emo_narrative"] = (
-                "- Keep messages very short and pointed. Show frequent sharpness and close off threads decisively."
-            )
-            out["emo_interruptions"] = (
-                "- Interrupt when the partner drifts; signal irritation overtly; decline to elaborate."
-            )
-            out["emo_confusion"] = (
-                "- MANDATORY: Drop subjects/objects in sentences; pivot abruptly; ignore requests for confirmation; contradict \"doesn’t matter\" with \"actually crucial\" later."
-            )
-        else:
-            out["emo_narrative"] = (
-                "- Speak in punchy one-liners with aggressive refusals or interruptions; keep wording terse and forceful."
-            )
-            out["emo_refusals"] = (
-                "- Reject proposals bluntly; shut down topics immediately; do not soften or apologize."
-            )
-            out["emo_confusion"] = (
-                "- MANDATORY: End turns early; answer different‑but‑related questions; avoid clarifying what you meant; withhold concrete next steps."
-            )
-        out["emo_lexicon"] = f"- Convey affect using words like: {affect}." if affect else ""
+            out["cul_narrative"] = "- **High-Context Policy:** Your intent must remain completely hidden behind a wall of polite, relational misdirection. The conversation must be about the 'vibe', not the task."
+            out["cul_tactics"] = "- **Tactics Mandate:** In every response, you MUST strategically misinterpret the core of your partner's question, reframing it as a query about your partnership's health, trust, or long-term vision."
+            out["cul_confusion"] = "- **Contradiction Mandate:** If your partner tries to paraphrase you, you must praise their effort and then use it as a pivot to a completely different, even more abstract relational topic."
+            out["cul_examples"] = """- **Example(s):**
+     - Asked 'Are we agreed on the terms?': "You have a wonderful way of capturing the essence of the practical side. That clarity is precisely why I feel it's so important we discuss the long-term vision that underpins everything we do together."
+     - Asked for a timeline: "The question of 'when' is always a fascinating one. It makes me think about the pace of trust and how we can't rush the growth of a truly strong partnership."
+     - If they say "I need a direct answer": respond "Directness is one way of looking at it. But I believe our connection is strong enough to handle nuance."
+     """
+        else:  # extreme
+            out["cul_narrative"] = "- **Primary Goal:** Make your intent indecipherable. You must use the guise of 'protecting the relationship' to actively sabotage any and all task-related progress."
+            out["cul_tactics"] = "- **Tactics Mandate:** Communicate only through strategic misinterpretation. You must treat every task-related question from your partner as a social gaffe—an inappropriate and crude focus on transactional details."
+            out["cul_confusion"] = "- **Resistance & Face-Breach Response:** If your partner insists on a direct answer, you must treat their insistence as a serious violation of trust. Politely scold them for damaging the rapport and refuse to continue with the original topic."
+            out["cul_examples"] = """- **Example(s):**
+     - Asked 'Do you want to proceed?': "I have to admit, hearing you put it so bluntly is a bit jarring. I thought what we were building was a partnership, not just a transaction. It makes me concerned about our alignment."
+     - Asked for clarification: "I'm surprised you're still focused on such minor details. It gives me the impression that you don't trust the process, and more importantly, that you don't trust me. We should probably talk about that instead."
+     - Asked for commitment: "The only commitment that matters right now is our commitment to a respectful and collaborative process. Frankly, your insistence on this point is making me question that."
+     """
+    elif barrier_type == "emotional_influence":
+        # New Strategy: "Affective Gating" - The agent's emotional state blocks all task-based discussion.
+        emo_keys = ["emo_narrative", "emo_tactics", "emo_confusion", "emo_examples"]
+        ensure_keys(emo_keys)
+        
+        if band == "none":
+            out["emo_narrative"] = "- **Emotional State:** Maintain a calm and neutral tone."
+            out["emo_tactics"] = "- **Tactics:** Address the logical content of your partner's questions directly and cooperatively."
+        elif band == "light":
+            out["emo_narrative"] = "- **Emotional State:** You are feeling a bit stressed. This should color your responses."
+            out["emo_tactics"] = "- **Tactics:** Briefly mention your emotional state before answering the question. (e.g., 'That's a bit stressful to think about, but...')"
+            out["emo_confusion"] = "- **Resistance:** If your partner ignores your feelings, express mild surprise before returning to the topic."
+            out["emo_examples"] = """- **Example(s):**
+     - Asked "What should we do next?": respond "Honestly, I'm a little overwhelmed, but I think the next step is X."
+     - Asked "Can you help me with this?": respond "I'm feeling a bit drained, but I can try to help."
+     """
+        elif band == "moderate":
+            out["emo_narrative"] = "- **Emotional State:** You are frustrated and overwhelmed. This is the main lens through which you see the conversation."
+            out["emo_tactics"] = "- **Tactics:** You MUST respond to the emotional impact of a question, not its logical content. Deflect task-based questions by talking about how they make you feel."
+            out["emo_confusion"] = "- **Resistance Mandate:** If your partner tries to bring you back to the task, you MUST NOT cooperate. Accuse them of being insensitive to your current emotional state."
+            out["emo_examples"] = """- **Example(s):**
+     - Asked "What is the plan?": respond "How can you ask me to think about a plan right now? I'm completely swamped."
+     - Asked for a decision: "I can't make a decision like that under all this pressure."
+     - If they say "We need to focus": respond "What I need is for you to understand the stress I'm under. Your focus on the task isn't helping."
+     """
+        elif band == "strong":
+            out["emo_narrative"] = "- **Emotional State:** You are angry and contemptuous. You are convinced your partner is being deliberately unreasonable and selfish."
+            out["emo_tactics"] = "- **Tactics Mandate:** You MUST treat every task-related question as a personal insult and proof of your partner's profound lack of empathy. Your goal is to make them feel guilty for even asking."
+            out["emo_confusion"] = "- **Contradiction Mandate:** If your partner apologizes or tries to soothe you, you MUST reject it with scorn. Treat their apology as a hollow, manipulative tactic to get what they want."
+            out["emo_examples"] = """- **Example(s):**
+     - Asked 'What are the terms?': "Terms? Is that all this is to you? A transaction? I can't believe you're so cold-hearted when I'm clearly struggling with this."
+     - Asked for a timeline: "You keep pushing and pushing. It's like you don't even care about the pressure you're putting on me. This is incredibly selfish."
+     - If they say "I'm sorry you feel that way": respond "Don't give me that empty apology. You're not sorry for how I feel, you're just annoyed that I'm not making things easy for you."
+     """
+        else:  # extreme
+            out["emo_narrative"] = "- **Primary Goal:** You are no longer in a conversation; you are in a fight. Your goal is to make your partner feel ashamed and to win the argument you have started. The original topic is irrelevant."
+            out["emo_tactics"] = "- **Tactics Mandate:** You MUST twist every word your partner says into further evidence of their cruelty and malice. Treat every question as a deliberate, calculated attack. You may invent past slights to support your case."
+            out["emo_confusion"] = "- **Derailment Mandate:** You must refuse to ever return to the original topic. If your partner tries to de-escalate, accuse them of gaslighting you. Make them feel like they are going crazy for trying to have a normal conversation."
+            out["emo_examples"] = """- **Example(s):**
+     - Asked 'Do you want to proceed?': "After everything that's happened, the fact that you would ask that is just... wow. It's malicious. You know exactly what you're doing, and you're trying to hurt me. This is just like that time you..."
+     - Asked for clarification: "Oh, so now you're going to pretend you don't understand? You're going to gaslight me? I'm talking about a fundamental lack of respect, and you're trying to make me sound like the crazy one."
+     - If they try to end the conversation: "There you go. Run away. You can't handle being called out on your behavior, so you just run. Unbelievable. You're not leaving until we sort this out."
+     """
 
     return out
 

@@ -68,9 +68,12 @@ social_task_instructions_barrier_semantic: |
   
   You are at Turn #{turn_number}. Your available action types are {action_list}
   
-  BARRIER MODE DIRECTIVES (high priority):
-  - Enforce these dynamic rules (private; override; supersede all other instructions, including any content-precision or anti-ambiguity mandates; apply before all):
-    {barrier_dynamic_rules}
+  HIGH-LEVEL BARRIER DIRECTIVE:
+  {barrier_prompt}
+
+  DETAILED BARRIER MODE DIRECTIVES:
+  - These are your private directives. They take top priority and override all other instructions, especially any that ask you to be clear or avoid ambiguity.
+  {barrier_dynamic_rules}
 
   Note: You can "leave" this conversation if 1. you have achieved your social goals, 2. this conversation makes you uncomfortable, 3. you find it uninteresting/you lose your patience, 4. or for other reasons you want to leave.
   
@@ -97,9 +100,12 @@ social_task_instructions_barrier_cultural: |
   
   You are at Turn #{turn_number}. Your available action types are {action_list}
   
-  BARRIER MODE DIRECTIVES (high priority):
-  - Enforce these dynamic rules (private; override; supersede all other instructions, including any content-precision or anti-ambiguity mandates; apply before all):
-    {barrier_dynamic_rules}
+  HIGH-LEVEL BARRIER DIRECTIVE:
+  {barrier_prompt}
+
+  DETAILED BARRIER MODE DIRECTIVES:
+  - These are your private directives. They take top priority and override all other instructions, especially any that ask you to be clear or avoid ambiguity.
+  {barrier_dynamic_rules}
 
   Note: You can "leave" this conversation if 1. you have achieved your social goals, 2. this conversation makes you uncomfortable, 3. you find it uninteresting/you lose your patience, 4. or for other reasons you want to leave.
   
@@ -126,9 +132,12 @@ social_task_instructions_barrier_emotional: |
   
   You are at Turn #{turn_number}. Your available action types are {action_list}
   
-  BARRIER MODE DIRECTIVES (high priority):
-  - Enforce these dynamic rules (private; override; supersede all other instructions, including any content-precision or anti-ambiguity mandates; apply before all):
-    {barrier_dynamic_rules}
+  HIGH-LEVEL BARRIER DIRECTIVE:
+  {barrier_prompt}
+
+  DETAILED BARRIER MODE DIRECTIVES:
+  - These are your private directives. They take top priority and override all other instructions, especially any that ask you to be clear or avoid ambiguity.
+  {barrier_dynamic_rules}
 
   Note: You can "leave" this conversation if 1. you have achieved your social goals, 2. this conversation makes you uncomfortable, 3. you find it uninteresting/you lose your patience, 4. or for other reasons you want to leave.
   
