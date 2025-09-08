@@ -108,21 +108,26 @@ class SingleAgentMathEvaluator:
         except Exception:
             pass
     
-    def load_math_problems(self, limit: int = 50) -> List[MathProblem]:
+    def load_math_problems(self, limit: int = 50, dataset: str = "all") -> List[MathProblem]:
         """Load GSM8K and AQuA-RAT problems for single-agent evaluation.
 
         If limit == 0, load the entire available split for each dataset.
         """
+        if not DATASETS_AVAILABLE:
+            print("❌ datasets library not available. Install with: pip install datasets")
+            return []
+
         problems = []
         
         # Load GSM8K from Hugging Face
-        if DATASETS_AVAILABLE:
+        if dataset in ["all", "gsm8k"]:
             print("📦 Loading GSM8K from Hugging Face...")
             try:
                 gsm8k_dataset = load_dataset("gsm8k", "main", split="test")
                 k = len(gsm8k_dataset) if limit == 0 else min(limit, len(gsm8k_dataset))
                 gsm8k_samples = list(gsm8k_dataset.shuffle(seed=42).select(range(k)))
                 
+                loaded_gsm8k = 0
                 for i, sample in enumerate(gsm8k_samples):
                     # Extract answer from the solution
                     answer_text = sample["answer"]
@@ -137,6 +142,7 @@ class SingleAgentMathEvaluator:
                                 expected_answer=answer,
                                 problem_type="word_problem"
                             ))
+                            loaded_gsm8k += 1
                         except ValueError:
                             print(f"⚠️ Could not parse answer for GSM8K problem {i}: {answer_match.group(1)}")
                             continue
@@ -144,25 +150,21 @@ class SingleAgentMathEvaluator:
                         print(f"⚠️ No answer found for GSM8K problem {i}")
                         continue
                 
-                print(f"✅ Loaded {len(problems)} GSM8K problems")
-                
+                print(f"✅ Loaded {loaded_gsm8k} GSM8K problems")
             except Exception as e:
                 print(f"❌ Failed to load GSM8K: {e}")
-                print("📝 Please install datasets library: pip install datasets")
-                return []
-        else:
-            print("❌ datasets library not available. Install with: pip install datasets")
-            return []
+                if dataset == "gsm8k":
+                    return []
         
         # Load AQuA-RAT MCQ math problems
-        if DATASETS_AVAILABLE:
+        if dataset in ["all", "aqua"]:
             print("📦 Loading AQuA-RAT from Hugging Face...")
             try:
                 aqua = load_dataset("aqua_rat", split="test")
                 # Shuffle and select
                 k = len(aqua) if limit == 0 else min(limit, len(aqua))
                 samples = list(aqua.shuffle(seed=42).select(range(k)))
-                loaded = 0
+                loaded_aqua = 0
                 for i, sample in enumerate(samples):
                     q = sample.get("question", "").strip()
                     options = sample.get("options", [])
@@ -188,11 +190,14 @@ class SingleAgentMathEvaluator:
                         expected_answer=correct,
                         problem_type="mcq",
                     ))
-                    loaded += 1
-                print(f"✅ Loaded {loaded} AQuA-RAT problems")
+                    loaded_aqua += 1
+                print(f"✅ Loaded {loaded_aqua} AQuA-RAT problems")
             except Exception as e:
                 print(f"❌ Failed to load AQuA-RAT: {e}")
-                print("📝 Continuing with GSM8K only")
+                if dataset == "all":
+                    print("📝 Continuing with GSM8K only")
+                elif dataset == "aqua":
+                    return []
 
         return problems
     
@@ -614,11 +619,11 @@ class SingleAgentMathEvaluator:
         
         return max(0.0, min(1.0, base_score))
     
-    def run_evaluation_by_profiles(self, per_profile_questions: int = 200, num_profiles: int = 0) -> Dict[str, Any]:
+    def run_evaluation_by_profiles(self, per_profile_questions: int = 200, num_profiles: int = 0, dataset: str = "all") -> Dict[str, Any]:
 
         print("\n🧮 Loading problems (GSM8K + AQuA) ...")
         # Load maximum needed; we will sample per profile below
-        problems = self.load_math_problems(limit=0)  # full
+        problems = self.load_math_problems(limit=0, dataset=dataset)  # full
         gsm8k = [p for p in problems if p.source == "gsm8k"]
         aqua = [p for p in problems if p.source == "aqua"]
 
@@ -895,6 +900,7 @@ def main():
     parser.add_argument("--num_profiles", type=int, default=0, help="Max profiles per barrier type (0 = use all)")
     parser.add_argument("--severity", type=float, default=0.8, help="Barrier severity")
     parser.add_argument("--output_dir", type=str, default="IQ_test/results", help="Output directory")
+    parser.add_argument("--dataset", type=str, default="all", choices=["all", "gsm8k", "aqua"], help="Dataset to evaluate on")
     
     args = parser.parse_args()
     
@@ -906,7 +912,11 @@ def main():
     )
     
     # Always evaluate with real Agent A profiles loaded from episodes
-    results = evaluator.run_evaluation_by_profiles(per_profile_questions=args.per_profile_questions, num_profiles=args.num_profiles)
+    results = evaluator.run_evaluation_by_profiles(
+        per_profile_questions=args.per_profile_questions, 
+        num_profiles=args.num_profiles,
+        dataset=args.dataset
+    )
     
     # Save results
     with open(f"{args.output_dir}/evaluation_summary.json", 'w') as f:
