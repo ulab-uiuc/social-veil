@@ -3,8 +3,7 @@ set -euo pipefail
 
 # Run single-agent math evaluation (GSM8K + AQuA) using vLLM-served model
 # Defaults align with repository configuration and evaluator behavior.
-
-# bash scripts/run_single_agent_math_eval.sh --by-profiles --num-profiles 50 --per-profile-questions 200
+# This script runs in profile-driven mode only.
 
 MODEL="Qwen/Qwen2.5-7B-Instruct"
 OUTPUT_DIR="analysis/IQ_test/results"
