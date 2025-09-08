@@ -9,7 +9,7 @@ import pandas as pd
 from pathlib import Path
 from typing import Dict, List, Tuple, Any, Optional
 from dataclasses import dataclass
-from internal_state.load_existing_episodes import load_all_episodes
+from .load_existing_episodes import load_all_episodes
 from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
 from sklearn.metrics import (
