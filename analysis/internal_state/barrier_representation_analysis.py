@@ -66,13 +66,16 @@ class BarrierRepresentationAnalyzer:
         model_name: str = "Qwen/Qwen2.5-7B-Instruct",
         device: str = "auto",
         episodes_file: str = "data/episode_all.jsonl",
-        severity: float = 0.8
+        severity: float = 0.8,
+        output_dir: str = "preliminary_results/barrier_analysis"
     ):
         self.model_name = model_name
         self.device = self._setup_device(device)
         print(f"Using device: {self.device}")
         self.episodes_file = episodes_file
         self.severity = severity
+        self.output_dir = output_dir
+        os.makedirs(self.output_dir, exist_ok=True)
         
         # Initialize model and tokenizer
         print(f"🔧 Loading {model_name}...")
@@ -792,13 +795,15 @@ class BarrierRepresentationAnalyzer:
         self.extract_representations(episodes)
         
         # 3. Create visualizations
-        self.create_visualizations()
+        self.create_visualizations(output_dir=self.output_dir)
+
+        # 4. Generate the full report with statistics
+        self.generate_report(output_dir=self.output_dir)
 
         print("\n" + "=" * 60)
         print("Key files:")
-        print("  📊 analysis_summary.md - Human-readable results")
-        print("  📈 *.png - Visualizations")
-        print("  📋 analysis_report.json - Detailed statistics")
+        print(f"  📈 Visualizations saved in: {self.output_dir}/")
+        print(f"  📋 Detailed statistics saved in: {self.output_dir}/analysis_report.json")
 
 def main():
     """Main analysis entry point"""
@@ -823,7 +828,8 @@ def main():
         model_name=args.model,
         device=args.device,
         episodes_file=args.episodes,
-        severity=args.severity
+        severity=args.severity,
+        output_dir=args.output_dir
     )
     
     # Run analysis
