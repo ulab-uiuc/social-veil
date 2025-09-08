@@ -26,7 +26,7 @@ from social_decipher.agent.social_agent import SocialAgent
 from social_decipher.agent.agent_profile import AgentProfile
 from social_decipher.environment.env_profile import EnvironmentProfile
 from social_decipher.utils.state import build_dynamic_rules_from_state
-from analysis.load_existing_episodes import load_all_episodes
+from analysis.internal_state.load_existing_episodes import load_all_episodes
 
 # Add canonical barrier prompts to align with main simulation
 BARRIER_PROMPTS = {
