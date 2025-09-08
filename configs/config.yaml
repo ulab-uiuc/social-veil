@@ -1,15 +1,22 @@
 data_dir: 'data/episodes_original.json'
 # Configuration for QWEN 2.5 7B (uncomment and modify path as needed):
 models:
-  model_a: "gpt-4o-mini"
-  model_b: "gpt-4o-mini"    #"/mnt/data_from_server1/models/Qwen2.5-7B"
-  gpu: "2,3" 
-  vllm_port: 6900
+  model_a: "models/Qwen2.5-7B-Instruct"
+  model_b: "models/Qwen2.5-7B-Instruct"  
+  # GPU device IDs for the vLLM server (e.g., "0" or "0,1,2,3")
+  gpu: "4,5,6,7"
+  # Port for the vLLM server
+  vllm_port: 8000
+  # Chat template for vLLM server
   chat_template: "configs/qwen2.5-7b.jinja"
   served_model_name: "qwen2.5-7b-instruct"
+  # Maximum model length for vLLM server
   max_model_len: 4096
-  tensor_parallel_size: 1
-  enable_repair_and_state: false
+  # Tensor parallel size for vLLM server. If 0 or unset, defaults to number of GPUs.
+  tensor_parallel_size: 4
+  # Flag to enable/disable dynamic barrier state and LLM-based repair judgment
+  # Set to false to run barriers with static severity and no mid-conversation updates.
+  enable_repair_and_state: true
 
 ## Configuration for Llama 3.1 8B Instruct (uncomment and modify path as needed):
 # models:
@@ -24,5 +31,6 @@ models:
 
 # Key
 OPENAI_API_KEY: "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"
+# OPENAI_API_KEY: "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"
 HF_API_TOKEN: "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"
 MISTRAL_API_KEY: yQ9wm2nsnrlujAjTbBDuRwnjTV2bA1oT
