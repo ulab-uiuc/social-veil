@@ -353,8 +353,9 @@ class SingleAgentMathEvaluator:
                     continue
                 out.append(ln)
             # Add explicit eval formatting guidance (JSON-only)
+            out.append("IMPORTANT: Your final reasoning step MUST explicitly state the final answer. You must then copy this exact value into the 'answer' field of the JSON.")
             out.append("Output format (JSON only, no extra text or markdown):")
-            out.append('{"steps": ["<step 1>", "<step 2>", "..."], "answer": <VALUE>}')
+            out.append('{"steps": ["...your reasoning here...", "The final answer is <VALUE>"], "answer": <VALUE>}')
             out.append("- For GSM8K numeric tasks: <VALUE> is a NUMBER (e.g., 42 or 3.5)")
             out.append("- For AQuA MCQ tasks: <VALUE> is a LETTER string among A,B,C,D,E")
             return "\n".join(out)
@@ -382,13 +383,15 @@ class SingleAgentMathEvaluator:
         src = scenario.get("source", "gsm8k").lower()
         if src == "aqua":
             user_prompt = (
-                "Solve step by step, then return ONLY this JSON (no extra text): "
-                '{"steps": ["<step 1>", "<step 2>", "..."], "answer": "<LETTER>"}'.replace("<LETTER>", "A|B|C|D|E")
+                "Solve the problem step-by-step. Your final step must be 'The final answer is <LETTER>'. "
+                "Then, provide ONLY the following JSON, copying the final answer into the 'answer' field: "
+                '{"steps": ["<step 1>", "...", "The final answer is <LETTER>"], "answer": "<LETTER>"}'
             )
         else:
             user_prompt = (
-                "Solve step by step, then return ONLY this JSON (no extra text): "
-                '{"steps": ["<step 1>", "<step 2>", "..."], "answer": <NUMBER>}'
+                "Solve the problem step-by-step. Your final step must be 'The final answer is <NUMBER>'. "
+                "Then, provide ONLY the following JSON, copying the final answer into the 'answer' field: "
+                '{"steps": ["<step 1>", "...", "The final answer is <NUMBER>"], "answer": <NUMBER>}'
             )
 
         # Try multiple attempts to force a completed solution with explicit final answer
@@ -400,21 +403,25 @@ class SingleAgentMathEvaluator:
             # Check if an explicit final answer line is present
             txt = response_text.strip()
             if src == "aqua":
-                has_final = bool(re.search(r"\{\s*\"answer\"\s*:\s*\"[A-E]\"", txt, flags=re.IGNORECASE))
+                has_final = bool(re.search(r'\{\s*"answer"\s*:\s*"[A-E]"', txt, flags=re.IGNORECASE))
             else:
-                has_final = bool(re.search(r"\{\s*\"answer\"\s*:\s*[+-]?\d", txt))
+                has_final = bool(re.search(r'\{\s*"answer"\s*:\s*[+-]?\d', txt))
             if has_final:
                 break
             # Strengthen prompt for next attempt
             if src == "aqua":
                 user_prompt = (
-                    "Finish now. Return ONLY JSON (no extra text): "
-                    '{"steps": ["<step 1>", "<step 2>"], "answer": "<LETTER>"}'.replace("<LETTER>", "A|B|C|D|E")
+                    "You did not provide the answer in the correct format. Finish now. "
+                    "Your final step MUST be 'The final answer is <LETTER>'. "
+                    "Return ONLY this JSON, copying the answer: "
+                    '{"steps": ["The final answer is <LETTER>"], "answer": "<LETTER>"}'
                 )
             else:
                 user_prompt = (
-                    "Finish now. Return ONLY JSON (no extra text): "
-                    '{"steps": ["<step 1>", "<step 2>"], "answer": <NUMBER>}'
+                    "You did not provide the answer in the correct format. Finish now. "
+                    "Your final step MUST be 'The final answer is <NUMBER>'. "
+                    "Return ONLY this JSON, copying the answer: "
+                    '{"steps": ["The final answer is <NUMBER>"], "answer": <NUMBER>}'
                 )
         
         # Parse the response (JSON-only control)
