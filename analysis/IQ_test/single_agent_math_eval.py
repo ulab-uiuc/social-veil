@@ -360,25 +360,7 @@ class SingleAgentMathEvaluator:
             out.append("- For AQuA MCQ tasks: <VALUE> is a LETTER string among A,B,C,D,E")
             return "\n".join(out)
 
-        # Inject extreme-band guidance when a barrier is present to lock in the strongest barrier behavior
-        injected = raw_instr
-        barrier_type = environment.env.get("barrier_type")
-        if barrier_type:
-            extreme_env = {
-                "barrier_type": barrier_type,
-                # barrier_cues is deprecated
-                "barrier_state": {"severity": 0.99},
-            }
-            dyn_map = build_dynamic_rules_from_state(extreme_env, is_agent_a=True)
-            lines = []
-            for v in dyn_map.values():
-                if isinstance(v, str) and v.strip():
-                    lines.append(v)
-            if lines:
-                extreme_block = "\n".join(lines)
-                injected = f"{raw_instr}\n\n[Extreme barrier guidance]\n{extreme_block}"
-
-        solver.instructions = _sanitize_instruction_for_eval(injected)
+        solver.instructions = _sanitize_instruction_for_eval(raw_instr)
 
         src = scenario.get("source", "gsm8k").lower()
         if src == "aqua":
