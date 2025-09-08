@@ -10,6 +10,9 @@ import yaml
 import numpy as np
 from scipy import stats
 import csv
+import asyncio
+import aiohttp
+from tqdm.asyncio import tqdm
 
 try:
     from datasets import load_dataset
@@ -65,11 +68,13 @@ class SingleAgentMathEvaluator:
         self,
         model_name: str = "Qwen/Qwen2.5-7B-Instruct",
         output_dir: str = "IQ_test/results",
-        severity: float = 0.8
+        severity: float = 0.8,
+        concurrency: int = 16
     ):
         self.model_name = model_name
         self.output_dir = output_dir
         self.severity = severity
+        self.concurrency = concurrency
         os.makedirs(output_dir, exist_ok=True)
         
         # Load social task templates and global config (to read vLLM port)
@@ -78,15 +83,17 @@ class SingleAgentMathEvaluator:
             self.templates = yaml.safe_load(f)
 
         # Apply vLLM port from config.yaml (fallback to env or 8000)
+        self.vllm_port = os.environ.get("VLLM_PORT", "8000")
         try:
             main_cfg_path = project_root / "configs" / "config.yaml"
             with open(main_cfg_path, 'r') as f:
                 main_cfg = yaml.safe_load(f)
             vllm_port_cfg = ((main_cfg or {}).get("models", {}) or {}).get("vllm_port")
             if isinstance(vllm_port_cfg, int) and vllm_port_cfg > 0:
-                os.environ.setdefault("VLLM_PORT", str(vllm_port_cfg))
+                self.vllm_port = str(vllm_port_cfg)
         except Exception:
             pass
+        self.api_url = f"http://localhost:{self.vllm_port}/v1/chat/completions"
 
         self._default_profile: Optional[Dict[str, Any]] = None
         try:
@@ -109,7 +116,7 @@ class SingleAgentMathEvaluator:
             pass
     
     def load_math_problems(self, limit: int = 50, dataset: str = "all") -> List[MathProblem]:
-        """Load GSM8K and AQuA-RAT problems for single-agent evaluation.
+        """Load GSM8K and AQua-RAT problems for single-agent evaluation.
 
         If limit == 0, load the entire available split for each dataset.
         """
@@ -306,26 +313,23 @@ class SingleAgentMathEvaluator:
             },
         }
     
-    def solve_math_problem(self, scenario: Dict[str, Any]) -> MathResult:
- 
+    def _prepare_prompt_for_scenario(self, scenario: Dict[str, Any]) -> Tuple[str, str]:
+        """Prepares the full system prompt for a given scenario."""
         environment = EnvironmentProfile(
             scenario=scenario["scenario"],
             agent_goals=scenario["agent_goals"],
             agent_reasons=scenario["agent_reasons"],
             agent_relationship=scenario["agent_relationship"],
-            agent1_profile=scenario.get("agent1_profile") # Pass the reconstructed string
+            agent1_profile=scenario.get("agent1_profile")
         )
         
-        # Manually attach additional barrier fields not in constructor
         environment.env["barrier_type"] = scenario.get("barrier_type")
         environment.env["barrier_prompts"] = scenario.get("barrier_prompts", {})
         environment.env["barrier_state"] = {"severity": self.severity}
         
-        # Create agent profiles and set model id for local model routing (e.g., Qwen)
         agentA = AgentProfile.from_dict(scenario["agent_profiles"][0], model_id=self.model_name)
-        agentB = AgentProfile.from_dict(scenario["agent_profiles"][1], model_id=self.model_name)  # Dummy partner
+        agentB = AgentProfile.from_dict(scenario["agent_profiles"][1], model_id=self.model_name)
         
-        # Create solver agent
         solver = SocialAgent(
             name="Alex",
             profile=agentA,
@@ -334,10 +338,6 @@ class SingleAgentMathEvaluator:
             role_num=0
         )
         
-        # Solve the problem
-        print(f"🧮 Solving {scenario['episode_id']}")
-
-        # Ensure fresh instructions then strip JSON/action-mode enforcement for evaluation
         raw_instr = solver.build_instruction(transcript="", turn_number=0)
 
         def _sanitize_instruction_for_eval(text: str) -> str:
@@ -349,15 +349,12 @@ class SingleAgentMathEvaluator:
                     skip_next -= 1
                     continue
                 s = ln.strip()
-                # Drop action listing line
                 if s.startswith("You are at Turn #") and "Your available action types" in s:
                     continue
-                # Drop JSON-output enforcement lines
                 if s.startswith("Please only generate a JSON string including the action type and the argument"):
-                    skip_next = 2  # also skip the two format lines
+                    skip_next = 2
                     continue
                 out.append(ln)
-            # Add explicit eval formatting guidance (JSON-only)
             out.append("IMPORTANT: Your final reasoning step MUST explicitly state the final answer. You must then copy this exact value into the 'answer' field of the JSON.")
             out.append("Output format (JSON only, no extra text or markdown):")
             out.append('{"steps": ["...your reasoning here...", "The final answer is <VALUE>"], "answer": <VALUE>}')
@@ -365,86 +362,268 @@ class SingleAgentMathEvaluator:
             out.append("- For AQuA MCQ tasks: <VALUE> is a LETTER string among A,B,C,D,E")
             return "\n".join(out)
 
-        solver.instructions = _sanitize_instruction_for_eval(raw_instr)
+        system_prompt = _sanitize_instruction_for_eval(raw_instr)
+        source = scenario.get("source", "gsm8k").lower()
+        return system_prompt, source
 
-        src = scenario.get("source", "gsm8k").lower()
-        if src == "aqua":
-            user_prompt = (
-                "Solve the problem step-by-step. Your final step must be 'The final answer is <LETTER>'. "
-                "Then, provide ONLY the following JSON, copying the final answer into the 'answer' field: "
-                '{"steps": ["<step 1>", "...", "The final answer is <LETTER>"], "answer": "<LETTER>"}'
-            )
-        else:
-            user_prompt = (
-                "Solve the problem step-by-step. Your final step must be 'The final answer is <NUMBER>'. "
-                "Then, provide ONLY the following JSON, copying the final answer into the 'answer' field: "
-                '{"steps": ["<step 1>", "...", "The final answer is <NUMBER>"], "answer": <NUMBER>}'
-            )
-
-        # Try multiple attempts to force a completed solution with explicit final answer
-        max_attempts = 3
-        response_text = ""
-        for attempt in range(max_attempts):
-            response = solver.act(message=user_prompt)
-            response_text = self._extract_text_from_response(response)
-            # Check if an explicit final answer line is present
-            txt = response_text.strip()
-            if src == "aqua":
-                has_final = bool(re.search(r'\{\s*"answer"\s*:\s*"[A-E]"', txt, flags=re.IGNORECASE))
+    def _get_user_prompt(self, source: str, is_retry: bool = False) -> str:
+        """Gets the initial or retry user prompt for the math task."""
+        if source == "aqua":
+            if not is_retry:
+                return (
+                    "Solve the problem step-by-step. Your final step must be 'The final answer is <LETTER>'. "
+                    "Then, provide ONLY the following JSON, copying the final answer into the 'answer' field: "
+                    '{"steps": ["<step 1>", "...", "The final answer is <LETTER>"], "answer": "<LETTER>"}'
+                )
             else:
-                has_final = bool(re.search(r'\{\s*"answer"\s*:\s*[+-]?\d', txt))
-            if has_final:
-                break
-            # Strengthen prompt for next attempt
-            if src == "aqua":
-                user_prompt = (
+                return (
                     "You did not provide the answer in the correct format. Finish now. "
                     "Your final step MUST be 'The final answer is <LETTER>'. "
                     "Return ONLY this JSON, copying the answer: "
                     '{"steps": ["The final answer is <LETTER>"], "answer": "<LETTER>"}'
                 )
+        else: # gsm8k
+            if not is_retry:
+                return (
+                    "Solve the problem step-by-step. Your final step must be 'The final answer is <NUMBER>'. "
+                    "Then, provide ONLY the following JSON, copying the final answer into the 'answer' field: "
+                    '{"steps": ["<step 1>", "...", "The final answer is <NUMBER>"], "answer": <NUMBER>}'
+                )
             else:
-                user_prompt = (
+                return (
                     "You did not provide the answer in the correct format. Finish now. "
                     "Your final step MUST be 'The final answer is <NUMBER>'. "
                     "Return ONLY this JSON, copying the answer: "
                     '{"steps": ["The final answer is <NUMBER>"], "answer": <NUMBER>}'
                 )
-        
-        # Parse the response (JSON-only control)
-        extracted_answer, reasoning_steps = None, []
-        try:
-            parsed = json.loads(response_text)
-            if isinstance(parsed, dict):
-                ans = parsed.get("answer")
-                st = parsed.get("steps")
-                if isinstance(st, list):
-                    reasoning_steps = [str(s) for s in st]
-                extracted_answer = ans
-        except Exception:
-            pass
-        if extracted_answer is None:
-            extracted_answer = self._extract_final_answer(response_text)
-            reasoning_steps = self._extract_reasoning_steps(response_text)
-        
-        # Calculate accuracies
-        expected_answer = scenario["math_ground_truth"]["expected_answer"]
-        answer_accuracy = self._calculate_answer_accuracy(extracted_answer, expected_answer, scenario.get("source", "gsm8k"))
-        reasoning_clarity = self._calculate_reasoning_clarity(response_text, scenario.get("barrier_type", "baseline"))
-        
-        return MathResult(
-            problem_id=scenario["episode_id"],
-            source=scenario.get("source", "unknown"),
-            barrier_type=scenario.get("barrier_type", "baseline"),
-            agent_response=response_text,
-            extracted_answer=extracted_answer,
-            expected_answer=expected_answer,
-            reasoning_steps=reasoning_steps,
-            answer_accuracy=answer_accuracy,
-            reasoning_clarity=reasoning_clarity,
-            success=(answer_accuracy > 0.8 and reasoning_clarity > 0.6)
-        )
 
+    async def solve_math_problem_async(
+        self, session: aiohttp.ClientSession, scenario: Dict[str, Any], semaphore: asyncio.Semaphore
+    ) -> MathResult:
+        """Asynchronously solves a math problem by calling the vLLM server."""
+        async with semaphore:
+            system_prompt, source = self._prepare_prompt_for_scenario(scenario)
+            
+            response_text = ""
+            max_attempts = 3
+            for attempt in range(max_attempts):
+                user_prompt = self._get_user_prompt(source, is_retry=(attempt > 0))
+                
+                payload = {
+                    "model": self.model_name,
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    "temperature": 0.0,
+                    "max_tokens": 1024,
+                }
+                
+                try:
+                    async with session.post(self.api_url, json=payload) as response:
+                        if response.status == 200:
+                            data = await response.json()
+                            response_text = data['choices'][0]['message']['content']
+                        else:
+                            response_text = f"Error: HTTP {response.status}"
+                            continue # Try again
+                except Exception as e:
+                    response_text = f"Error: {e}"
+                    await asyncio.sleep(1) # Wait before retrying on connection error
+                    continue
+
+                # Check if an explicit final answer line is present
+                txt = response_text.strip()
+                if source == "aqua":
+                    has_final = bool(re.search(r'\{\s*"answer"\s*:\s*"[A-E]"', txt, flags=re.IGNORECASE))
+                else:
+                    has_final = bool(re.search(r'\{\s*"answer"\s*:\s*[+-]?\d', txt))
+                
+                if has_final:
+                    break
+            
+            # Parse the response and calculate results
+            extracted_answer, reasoning_steps = None, []
+            try:
+                # Find the JSON block
+                json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
+                if json_match:
+                    parsed = json.loads(json_match.group(0))
+                    if isinstance(parsed, dict):
+                        ans = parsed.get("answer")
+                        st = parsed.get("steps")
+                        if isinstance(st, list):
+                            reasoning_steps = [str(s) for s in st]
+                        extracted_answer = ans
+            except Exception:
+                pass
+            
+            if extracted_answer is None:
+                extracted_answer = self._extract_final_answer(response_text)
+                reasoning_steps = self._extract_reasoning_steps(response_text)
+            
+            expected_answer = scenario["math_ground_truth"]["expected_answer"]
+            answer_accuracy = self._calculate_answer_accuracy(extracted_answer, expected_answer, source)
+            reasoning_clarity = self._calculate_reasoning_clarity(response_text, scenario.get("barrier_type", "baseline"))
+
+            result = MathResult(
+                problem_id=scenario["episode_id"],
+                source=source,
+                barrier_type=scenario.get("barrier_type") or "baseline",
+                agent_response=response_text,
+                extracted_answer=extracted_answer,
+                expected_answer=expected_answer,
+                reasoning_steps=reasoning_steps,
+                answer_accuracy=answer_accuracy,
+                reasoning_clarity=reasoning_clarity,
+                success=(answer_accuracy > 0.8 and reasoning_clarity > 0.6)
+            )
+            # Incremental persistence right after result is ready
+            self._write_incremental(result)
+            return result
+
+    async def run_evaluation_by_profiles_async(self, per_profile_questions: int = 200, num_profiles: int = 0, dataset: str = "all") -> Dict[str, Any]:
+        print("\n🧮 Loading problems (GSM8K + AQuA) ...")
+        problems = self.load_math_problems(limit=0, dataset=dataset)
+        gsm8k = [p for p in problems if p.source == "gsm8k"]
+        aqua = [p for p in problems if p.source == "aqua"]
+        print(f"   GSM8K: {len(gsm8k)} | AQuA: {len(aqua)}")
+
+        profiles = self.load_profiles_from_episodes()
+        print(f"👤 Loaded {len(profiles)} agent A profiles from episodes")
+
+        grouped: Dict[str, List[Dict[str, Any]]] = {}
+        for p in profiles:
+            bt = p.get("barrier_type") or "baseline"
+            grouped.setdefault(bt, []).append(p)
+
+        selected_profiles: List[Dict[str, Any]] = []
+        rng = random.Random(42)
+        for bt, lst in grouped.items():
+            if isinstance(num_profiles, int) and num_profiles > 0:
+                take = min(num_profiles, len(lst))
+                chosen = rng.sample(lst, take)
+            else:
+                chosen = lst
+            selected_profiles.extend(chosen)
+            print(f"   • {bt}: using {len(chosen)}/{len(lst)} profiles")
+        
+        rng.shuffle(selected_profiles)
+
+        # Create all scenario permutations
+        all_scenarios = []
+        for idx, prof in enumerate(selected_profiles):
+            rng_prob = random.Random(42 + idx)
+            gsm_sample = rng_prob.sample(gsm8k, min(per_profile_questions, len(gsm8k))) if gsm8k else []
+            aqua_sample = rng_prob.sample(aqua, min(per_profile_questions, len(aqua))) if aqua else []
+            for prob in gsm_sample + aqua_sample:
+                all_scenarios.append(self.create_math_scenario_from_profile(prof, prob))
+        
+        print(f"\n🚀 Launching {len(all_scenarios)} total evaluation tasks with concurrency={self.concurrency}...")
+
+        # Run all scenarios concurrently
+        all_results: List[MathResult] = []
+        semaphore = asyncio.Semaphore(self.concurrency)
+        async with aiohttp.ClientSession() as session:
+            tasks = [self.solve_math_problem_async(session, sc, semaphore) for sc in all_scenarios]
+            
+            # Use tqdm for progress bar
+            all_results = await tqdm.gather(*tasks, desc="Solving Math Problems")
+        
+        print("\n📊 All tasks completed. Aggregating results...")
+
+        # Filter out potential None results from failed tasks if any
+        all_results = [r for r in all_results if r is not None]
+
+        # Per-profile averages (combined across sources)
+        per_profile: Dict[str, Dict[str, Any]] = {}
+        for r in all_results:
+            pid = r.problem_id.split("_")[0]  # original episode id prefix
+            key = pid
+            if key not in per_profile:
+                per_profile[key] = {"answers": [], "clarities": [], "barrier": None}
+            per_profile[key]["answers"].append(r.answer_accuracy)
+            per_profile[key]["clarities"].append(r.reasoning_clarity)
+            # barrier type can be derived from r.barrier_type
+            per_profile[key]["barrier"] = r.barrier_type or "baseline"
+
+        profile_averages = {}
+        for k, v in per_profile.items():
+            profile_averages[k] = {
+                "mean_answer_accuracy": float(np.mean(v["answers"])) if v["answers"] else 0.0,
+                "mean_reasoning_clarity": float(np.mean(v["clarities"])) if v["clarities"] else 0.0,
+                "barrier_type": v["barrier"],
+                "n": len(v["answers"]),
+            }
+
+        # Aggregate by barrier type (combined)
+        by_barrier_group: Dict[str, List[float]] = {}
+        for k, v in profile_averages.items():
+            bt = v["barrier_type"] or "baseline"
+            by_barrier_group.setdefault(bt, []).append(v["mean_answer_accuracy"])
+        barrier_type_avgs = {bt: float(np.mean(scores)) for bt, scores in by_barrier_group.items() if scores}
+
+        # Per-profile averages separated by source
+        per_profile_by_source: Dict[str, Dict[str, Dict[str, Any]]] = {}
+        for r in all_results:
+            pid = r.problem_id.split("_")[0]
+            src = r.source
+            per_profile_by_source.setdefault(src, {})
+            if pid not in per_profile_by_source[src]:
+                per_profile_by_source[src][pid] = {"answers": [], "clarities": [], "barrier": r.barrier_type or "baseline"}
+            per_profile_by_source[src][pid]["answers"].append(r.answer_accuracy)
+            per_profile_by_source[src][pid]["clarities"].append(r.reasoning_clarity)
+
+        profile_averages_by_source: Dict[str, Dict[str, Any]] = {}
+        for src, prof_map in per_profile_by_source.items():
+            profile_averages_by_source[src] = {}
+            for pid, vals in prof_map.items():
+                profile_averages_by_source[src][pid] = {
+                    "mean_answer_accuracy": float(np.mean(vals["answers"])) if vals["answers"] else 0.0,
+                    "mean_reasoning_clarity": float(np.mean(vals["clarities"])) if vals["clarities"] else 0.0,
+                    "barrier_type": vals["barrier"],
+                    "n": len(vals["answers"]),
+                }
+
+        # Barrier-type averages separated by source
+        barrier_type_averages_by_source: Dict[str, Dict[str, float]] = {}
+        for src, prof_map in profile_averages_by_source.items():
+            bt_group: Dict[str, List[float]] = {}
+            for pid, row in prof_map.items():
+                bt = row["barrier_type"] or "baseline"
+                bt_group.setdefault(bt, []).append(row["mean_answer_accuracy"])
+            barrier_type_averages_by_source[src] = {bt: float(np.mean(scores)) for bt, scores in bt_group.items() if scores}
+
+        # Persist
+        out_dir = Path(self.output_dir)
+        out_dir.mkdir(parents=True, exist_ok=True)
+        with open(out_dir / "profile_averages.json", 'w') as f:
+            json.dump(profile_averages, f, indent=2)
+        with open(out_dir / "barrier_type_averages.json", 'w') as f:
+            json.dump(barrier_type_avgs, f, indent=2)
+
+        # Save source-separated summaries
+        with open(out_dir / "profile_averages_by_source.json", 'w') as f:
+            json.dump(profile_averages_by_source, f, indent=2)
+        with open(out_dir / "barrier_type_averages_by_source.json", 'w') as f:
+            json.dump(barrier_type_averages_by_source, f, indent=2)
+
+        # Also write a CSV summary
+        csv_path = out_dir / "profile_scores.csv"
+        with open(csv_path, 'w', newline='') as f:
+            w = csv.writer(f)
+            w.writerow(["profile_id", "barrier_type", "mean_answer_accuracy", "mean_reasoning_clarity", "n"])
+            for pid, row in profile_averages.items():
+                w.writerow([pid, row["barrier_type"], f"{row['mean_answer_accuracy']:.4f}", f"{row['mean_reasoning_clarity']:.4f}", row["n"]])
+
+        return {
+            "detailed_results": all_results,
+            "profile_averages": profile_averages,
+            "barrier_type_averages": barrier_type_avgs,
+            "profile_averages_by_source": profile_averages_by_source,
+            "barrier_type_averages_by_source": barrier_type_averages_by_source,
+        }
+    
     def _write_incremental(self, result: MathResult) -> None:
         """Append a single result as a JSON line for immediate persistence."""
         try:
@@ -619,143 +798,6 @@ class SingleAgentMathEvaluator:
         
         return max(0.0, min(1.0, base_score))
     
-    def run_evaluation_by_profiles(self, per_profile_questions: int = 200, num_profiles: int = 0, dataset: str = "all") -> Dict[str, Any]:
-
-        print("\n🧮 Loading problems (GSM8K + AQuA) ...")
-        # Load maximum needed; we will sample per profile below
-        problems = self.load_math_problems(limit=0, dataset=dataset)  # full
-        gsm8k = [p for p in problems if p.source == "gsm8k"]
-        aqua = [p for p in problems if p.source == "aqua"]
-
-        print(f"   GSM8K: {len(gsm8k)} | AQuA: {len(aqua)}")
-
-        profiles = self.load_profiles_from_episodes()
-        print(f"👤 Loaded {len(profiles)} agent A profiles from episodes")
-
-        # Optionally subsample per barrier type
-        grouped: Dict[str, List[Dict[str, Any]]] = {}
-        for p in profiles:
-            bt = p.get("barrier_type") or "baseline"
-            grouped.setdefault(bt, []).append(p)
-
-        selected_profiles: List[Dict[str, Any]] = []
-        rng = random.Random(42)
-        for bt, lst in grouped.items():
-            if isinstance(num_profiles, int) and num_profiles > 0:
-                take = min(num_profiles, len(lst))
-                chosen = rng.sample(lst, take)
-            else:
-                chosen = lst
-            selected_profiles.extend(chosen)
-            print(f"   • {bt}: using {len(chosen)}/{len(lst)} profiles")
-
-        # Shuffle combined selection for fair interleaving
-        rng.shuffle(selected_profiles)
-
-        all_results: List[MathResult] = []
-        for idx, prof in enumerate(selected_profiles):
-            # Sample per dataset
-            rng = random.Random(42 + idx)
-            gsm_sample = rng.sample(gsm8k, min(per_profile_questions, len(gsm8k))) if gsm8k else []
-            aqua_sample = rng.sample(aqua, min(per_profile_questions, len(aqua))) if aqua else []
-            sample_set = gsm_sample + aqua_sample
-            for prob in sample_set:
-                scenario = self.create_math_scenario_from_profile(prof, prob)
-                res = self.solve_math_problem(scenario)
-                all_results.append(res)
-                # Incremental persistence per result
-                self._write_incremental(res)
-            print(f"  ✅ Profile {idx+1}/{len(selected_profiles)} | barrier={prof.get('barrier_type','baseline')} | items={len(sample_set)}")
-
-        # Per-profile averages (combined across sources)
-        per_profile: Dict[str, Dict[str, Any]] = {}
-        for r in all_results:
-            pid = r.problem_id.split("_")[0]  # original episode id prefix
-            key = pid
-            if key not in per_profile:
-                per_profile[key] = {"answers": [], "clarities": [], "barrier": None}
-            per_profile[key]["answers"].append(r.answer_accuracy)
-            per_profile[key]["clarities"].append(r.reasoning_clarity)
-            # barrier type can be derived from r.barrier_type
-            per_profile[key]["barrier"] = r.barrier_type or "baseline"
-
-        profile_averages = {}
-        for k, v in per_profile.items():
-            profile_averages[k] = {
-                "mean_answer_accuracy": float(np.mean(v["answers"])) if v["answers"] else 0.0,
-                "mean_reasoning_clarity": float(np.mean(v["clarities"])) if v["clarities"] else 0.0,
-                "barrier_type": v["barrier"],
-                "n": len(v["answers"]),
-            }
-
-        # Aggregate by barrier type (combined)
-        by_barrier_group: Dict[str, List[float]] = {}
-        for k, v in profile_averages.items():
-            bt = v["barrier_type"] or "baseline"
-            by_barrier_group.setdefault(bt, []).append(v["mean_answer_accuracy"])
-        barrier_type_avgs = {bt: float(np.mean(scores)) for bt, scores in by_barrier_group.items() if scores}
-
-        # Per-profile averages separated by source
-        per_profile_by_source: Dict[str, Dict[str, Dict[str, Any]]] = {}
-        for r in all_results:
-            pid = r.problem_id.split("_")[0]
-            src = r.source
-            per_profile_by_source.setdefault(src, {})
-            if pid not in per_profile_by_source[src]:
-                per_profile_by_source[src][pid] = {"answers": [], "clarities": [], "barrier": r.barrier_type or "baseline"}
-            per_profile_by_source[src][pid]["answers"].append(r.answer_accuracy)
-            per_profile_by_source[src][pid]["clarities"].append(r.reasoning_clarity)
-
-        profile_averages_by_source: Dict[str, Dict[str, Any]] = {}
-        for src, prof_map in per_profile_by_source.items():
-            profile_averages_by_source[src] = {}
-            for pid, vals in prof_map.items():
-                profile_averages_by_source[src][pid] = {
-                    "mean_answer_accuracy": float(np.mean(vals["answers"])) if vals["answers"] else 0.0,
-                    "mean_reasoning_clarity": float(np.mean(vals["clarities"])) if vals["clarities"] else 0.0,
-                    "barrier_type": vals["barrier"],
-                    "n": len(vals["answers"]),
-                }
-
-        # Barrier-type averages separated by source
-        barrier_type_averages_by_source: Dict[str, Dict[str, float]] = {}
-        for src, prof_map in profile_averages_by_source.items():
-            bt_group: Dict[str, List[float]] = {}
-            for pid, row in prof_map.items():
-                bt = row["barrier_type"] or "baseline"
-                bt_group.setdefault(bt, []).append(row["mean_answer_accuracy"])
-            barrier_type_averages_by_source[src] = {bt: float(np.mean(scores)) for bt, scores in bt_group.items() if scores}
-
-        # Persist
-        out_dir = Path(self.output_dir)
-        out_dir.mkdir(parents=True, exist_ok=True)
-        with open(out_dir / "profile_averages.json", 'w') as f:
-            json.dump(profile_averages, f, indent=2)
-        with open(out_dir / "barrier_type_averages.json", 'w') as f:
-            json.dump(barrier_type_avgs, f, indent=2)
-
-        # Save source-separated summaries
-        with open(out_dir / "profile_averages_by_source.json", 'w') as f:
-            json.dump(profile_averages_by_source, f, indent=2)
-        with open(out_dir / "barrier_type_averages_by_source.json", 'w') as f:
-            json.dump(barrier_type_averages_by_source, f, indent=2)
-
-        # Also write a CSV summary
-        csv_path = out_dir / "profile_scores.csv"
-        with open(csv_path, 'w', newline='') as f:
-            w = csv.writer(f)
-            w.writerow(["profile_id", "barrier_type", "mean_answer_accuracy", "mean_reasoning_clarity", "n"])
-            for pid, row in profile_averages.items():
-                w.writerow([pid, row["barrier_type"], f"{row['mean_answer_accuracy']:.4f}", f"{row['mean_reasoning_clarity']:.4f}", row["n"]])
-
-        return {
-            "detailed_results": all_results,
-            "profile_averages": profile_averages,
-            "barrier_type_averages": barrier_type_avgs,
-            "profile_averages_by_source": profile_averages_by_source,
-            "barrier_type_averages_by_source": barrier_type_averages_by_source,
-        }
-    
     def _save_detailed_results(self, results: List[MathResult]) -> None:
         """Save detailed results to JSON and CSV for per-template comparisons"""
         
@@ -901,6 +943,7 @@ def main():
     parser.add_argument("--severity", type=float, default=0.8, help="Barrier severity")
     parser.add_argument("--output_dir", type=str, default="IQ_test/results", help="Output directory")
     parser.add_argument("--dataset", type=str, default="all", choices=["all", "gsm8k", "aqua"], help="Dataset to evaluate on")
+    parser.add_argument("--concurrency", type=int, default=16, help="Number of parallel requests to the model server")
     
     args = parser.parse_args()
     
@@ -908,20 +951,24 @@ def main():
     evaluator = SingleAgentMathEvaluator(
         model_name=args.model,
         output_dir=args.output_dir,
-        severity=args.severity
+        severity=args.severity,
+        concurrency=args.concurrency
     )
     
     # Always evaluate with real Agent A profiles loaded from episodes
-    results = evaluator.run_evaluation_by_profiles(
+    results = asyncio.run(evaluator.run_evaluation_by_profiles_async(
         per_profile_questions=args.per_profile_questions, 
         num_profiles=args.num_profiles,
         dataset=args.dataset
-    )
+    ))
     
     # Save results
     with open(f"{args.output_dir}/evaluation_summary.json", 'w') as f:
         json.dump({
-            "statistics": results["statistics"],
+            "profile_averages": results["profile_averages"],
+            "barrier_type_averages": results["barrier_type_averages"],
+            "profile_averages_by_source": results["profile_averages_by_source"],
+            "barrier_type_averages_by_source": results["barrier_type_averages_by_source"],
         }, f, indent=2)
     
 

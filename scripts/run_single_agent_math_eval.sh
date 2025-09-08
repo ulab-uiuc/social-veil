@@ -11,6 +11,7 @@ SEVERITY="0.8"
 NUM_PROFILES="0"           # 0 = use all per barrier type
 PER_PROFILE_QUESTIONS="200" # per dataset per profile
 DATASET="all" # all, gsm8k, or aqua
+CONCURRENCY="16" # Number of parallel requests
 
 usage() {
   cat <<EOF
@@ -23,6 +24,7 @@ Options:
   --num-profiles N                Max profiles per barrier type (default: ${NUM_PROFILES}; 0 = all)
   --per-profile-questions N       Questions per dataset per profile (default: ${PER_PROFILE_QUESTIONS})
   --dataset NAME                  Dataset to use (default: ${DATASET}; options: all, gsm8k, aqua)
+  --concurrency N                 Number of parallel requests (default: ${CONCURRENCY})
   -h, --help                      Show this help and exit
 
 Notes:
@@ -39,6 +41,7 @@ while [[ $# -gt 0 ]]; do
     --num-profiles) NUM_PROFILES="$2"; shift 2;;
     --per-profile-questions) PER_PROFILE_QUESTIONS="$2"; shift 2;;
     --dataset) DATASET="$2"; shift 2;;
+    --concurrency) CONCURRENCY="$2"; shift 2;;
     -h|--help) usage; exit 0;;
     *) echo "Unknown option: $1"; usage; exit 1;;
   esac
@@ -52,6 +55,7 @@ CMD=(
     --num_profiles "$NUM_PROFILES" 
     --per_profile_questions "$PER_PROFILE_QUESTIONS"
     --dataset "$DATASET"
+    --concurrency "$CONCURRENCY"
 )
 
 echo "Running: ${CMD[*]}"
