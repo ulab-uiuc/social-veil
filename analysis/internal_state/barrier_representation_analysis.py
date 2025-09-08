@@ -65,7 +65,7 @@ class BarrierRepresentationAnalyzer:
         self,
         model_name: str = "Qwen/Qwen2.5-7B-Instruct",
         device: str = "auto",
-        episodes_file: str = "data/episode_all.jsonl",
+        episodes_file: str = "data/episode_all_neutralized.jsonl",
         severity: float = 0.8,
         output_dir: str = "preliminary_results/barrier_analysis"
     ):
@@ -812,7 +812,7 @@ def main():
     parser = argparse.ArgumentParser(description="Analyze barrier effects on model representations")
     parser.add_argument("--model", type=str, default="Qwen/Qwen2.5-7B-Instruct",
                        help="Model name to analyze")
-    parser.add_argument("--episodes", type=str, default="data/episode_original.jsonl",
+    parser.add_argument("--episodes", type=str, default="data/episode_all_neutralized.jsonl",
                        help="Episodes file to use")
     parser.add_argument("--severity", type=float, default=0.8,
                        help="Barrier severity level")
