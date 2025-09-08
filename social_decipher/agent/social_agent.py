@@ -20,7 +20,6 @@ class SocialAgent:
         partner_profile: AgentProfile,
         env: EnvironmentProfile,
         role_num: int,
-        mix: bool = False,
         template_path: str = None,
     ):
         self.name = name
@@ -35,9 +34,9 @@ class SocialAgent:
             template_path = os.path.join(os.path.dirname(__file__), "..", "..", "configs", "social_task.yaml")
             
         self.template_path = template_path
-        self.instructions = self.set_static_instruction(mix)
+        self.instructions = self.set_static_instruction()
 
-    def set_static_instruction(self, mix=False) -> str:
+    def set_static_instruction(self) -> str:
         return self.build_instruction(transcript="", turn_number=0)
     
     def build_instruction(
@@ -189,7 +188,7 @@ class SocialAgent:
         return formatted_template
 
     def update_instruction(
-        self, transcript: List[str], turn_number: int, mix: bool = False
+        self, transcript: List[str], turn_number: int
     ):
         short_transcript = transcript[-6:] if len(transcript) > 6 else transcript
         transcript_text = "\n".join(short_transcript)

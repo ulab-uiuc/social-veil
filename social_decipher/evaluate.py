@@ -81,7 +81,7 @@ class ConversationEvaluator:
         print(f"Barrier type for evaluation: {barrier_type}")
 
         barrier_scores = None
-        if barrier_type and self.evaluation_template.get("Barrier_Evaluation"):
+        if self.evaluation_template.get("Barrier_Evaluation"):
             transcript_text = "\n".join(conversation)
             barrier_prompt = self.evaluation_template["Barrier_Evaluation"].format(
                 transcript=transcript_text,
