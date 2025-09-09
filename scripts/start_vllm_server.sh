@@ -20,16 +20,6 @@ echo "Port: $VLLM_PORT"
 echo "GPU: $VLLM_GPU"
 echo ""
 
-# --- FIX: Ensure port is free before starting ---
-echo "🔥 Checking for and stopping any existing server on port $VLLM_PORT..."
-# Find and kill the process using the specified port in the vLLM command context.
-# The `|| true` prevents the script from exiting if no process is found to kill.
-pkill -f "port $VLLM_PORT" || true
-sleep 2 # Give a moment for the OS to release the port.
-echo "✅ Port cleared."
-# --- END FIX ---
-
-
 # Check if server is already running
 if curl -s http://localhost:$VLLM_PORT/health > /dev/null 2>&1; then
     echo "✅ vLLM server is already running on port $VLLM_PORT"
