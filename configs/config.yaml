@@ -6,7 +6,7 @@ models:
   # GPU device IDs for the vLLM server (e.g., "0" or "0,1,2,3")
   gpu: "4,5,6,7"
   # Port for the vLLM server
-  vllm_port: 8000
+  vllm_port: 8001
   # Chat template for vLLM server
   chat_template: "configs/qwen2.5-7b.jinja"
   served_model_name: "qwen2.5-7b-instruct"

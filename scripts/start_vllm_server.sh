@@ -8,6 +8,11 @@ CONFIG_READER="-m social_decipher.utils.config_reader"
 # Change to project root for poetry command
 cd "$PROJECT_ROOT"
 
+echo "===================================="
+echo "🐛 DEBUG: Checking config file content before reading:"
+cat configs/config.yaml | grep "vllm_port:"
+echo "===================================="
+
 export GLOBAL_MODEL_B=$(poetry run python $CONFIG_READER models.model_b)
 export VLLM_GPU=$(poetry run python $CONFIG_READER models.gpu)
 export VLLM_PORT=$(poetry run python $CONFIG_READER models.vllm_port)
@@ -17,6 +22,7 @@ echo "🚀 Starting vLLM Server"
 echo "===================================="
 echo "Model: $GLOBAL_MODEL_B"
 echo "Port: $VLLM_PORT"
+echo "🐛 DEBUG: The port read into the script variable is: $VLLM_PORT"
 echo "GPU: $VLLM_GPU"
 echo ""
 
