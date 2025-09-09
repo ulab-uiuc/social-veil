@@ -82,18 +82,26 @@ class SingleAgentMathEvaluator:
         with open(social_cfg_path, 'r') as f:
             self.templates = yaml.safe_load(f)
 
-        # Apply vLLM port from config.yaml (fallback to env or 8000)
+        # Apply vLLM port and served model name from config.yaml
         self.vllm_port = os.environ.get("VLLM_PORT", "8000")
+        self.served_model_name = "qwen2.5-7b-instruct" # Default
         try:
             main_cfg_path = project_root / "configs" / "config.yaml"
             with open(main_cfg_path, 'r') as f:
                 main_cfg = yaml.safe_load(f)
-            vllm_port_cfg = ((main_cfg or {}).get("models", {}) or {}).get("vllm_port")
+            models_cfg = (main_cfg or {}).get("models", {})
+            vllm_port_cfg = models_cfg.get("vllm_port")
+            served_name_cfg = models_cfg.get("served_model_name")
+            
             if isinstance(vllm_port_cfg, int) and vllm_port_cfg > 0:
                 self.vllm_port = str(vllm_port_cfg)
+            if isinstance(served_name_cfg, str) and served_name_cfg:
+                self.served_model_name = served_name_cfg
+
         except Exception:
             pass
         self.api_url = f"http://localhost:{self.vllm_port}/v1/chat/completions"
+        self.health_url = f"http://localhost:{self.vllm_port}/health"
 
         self._default_profile: Optional[Dict[str, Any]] = None
         try:
@@ -410,7 +418,7 @@ class SingleAgentMathEvaluator:
                 user_prompt = self._get_user_prompt(source, is_retry=(attempt > 0))
                 
                 payload = {
-                    "model": self.model_name,
+                    "model": self.served_model_name,
                     "messages": [
                         {"role": "system", "content": system_prompt},
                         {"role": "user", "content": user_prompt}
