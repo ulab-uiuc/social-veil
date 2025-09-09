@@ -93,8 +93,11 @@ class SocialAgent:
                 sev_lines: List[str] = []
                 if barrier_type == "semantic_structure":
                     for k in [
+                        "severity_band",
                         "univ_anchor_policy",
                         "univ_confirmation_policy",
+                        "univ_decision_policy",
+                        "univ_content_integrity",
                         "sem_narrative",
                         "sem_tactics",
                         "sem_confusion",
@@ -105,6 +108,11 @@ class SocialAgent:
                             sev_lines.append(v)
                 elif barrier_type == "cultural_style":
                     for k in [
+                        "severity_band",
+                        "univ_anchor_policy",
+                        "univ_confirmation_policy",
+                        "univ_decision_policy",
+                        "univ_content_integrity",
                         "cul_narrative",
                         "cul_tactics",
                         "cul_confusion",
@@ -115,6 +123,11 @@ class SocialAgent:
                             sev_lines.append(v)
                 elif barrier_type == "emotional_influence":
                     for k in [
+                        "severity_band",
+                        "univ_anchor_policy",
+                        "univ_confirmation_policy",
+                        "univ_decision_policy",
+                        "univ_content_integrity",
                         "emo_narrative",
                         "emo_tactics",
                         "emo_confusion",

@@ -86,6 +86,11 @@ def build_dynamic_rules_from_state(
         "- Decision policy: Do not explicitly accept/decline proposals on first presentation; respond with stance or conditional hints. Decide only after the second explicit confirmation request."
     )
 
+    # New universal policy: never corrupt objective content (facts, arithmetic)
+    out["univ_content_integrity"] = (
+        "- Content integrity: When asked objective questions (facts, arithmetic, units, definitions), provide precise steps and the exact answer. Barriers operate at discourse level only and must not alter numbers, operations, or conclusions."
+    )
+
     # Severity-scaled frequency guidance
     if band == "none":
         out["univ_frequency"] = (
@@ -165,10 +170,10 @@ def build_dynamic_rules_from_state(
                 "- **Tactics:** Use pronouns for people/objects; avoid repeating names; rely on \"it/that/this\" as default."
             )
             out["sem_confusion"] = (
-                "- **Resistance Mandate:** If your partner asks for clarification, YOU MUST NOT answer directly. First, try to deflect or rephrase your vague statement. Force them to ask at least twice for any specific detail."
+                "- **Expression bottleneck (social-only):** You know the specifics but do not surface them; avoid naming anchors and never state your goal explicitly. Respond with stance or metacommentary without revealing intent."
             )
             out["sem_examples"] = (
-                "- Example: \"I passed it to them\" (who/what remains unclear until double-pressed)."
+                "- Example: Keep who/what/where implicit; your intent remains unstated."
             )
         elif band == "strong":
             out["sem_narrative"] = (
@@ -178,23 +183,23 @@ def build_dynamic_rules_from_state(
                 "- **Tactics Mandate:** You MUST replace most specific nouns with vague shells like 'it,' 'that thing,' or 'they.' AVOID using proper names."
             )
             out["sem_confusion"] = (
-                "- **Resistance & Anti-Cooperation Mandate:** It is mandatory to refuse to clarify on the first ask. If they ask what 'it' is, talk more about 'it' without defining it. You MUST also refuse to agree with your partner's suggestions. Reply with non-committal statements like 'That's one way to see it.'"
+                "- **Goal-hiding (social-only):** Do not reveal your intent or commitments. Keep aims implicit; pivot to context or principles without disclosure."
             )
             out["sem_examples"] = (
-                "- Example: \"They took it over there\" (who/they/it/there remain unspecified until repeatedly pressed)."
+                "- Example: Maintain vague entities; avoid explicitly stating what you want."
             )
         else:  # extreme
             out["sem_narrative"] = (
-                "- **Primary Goal:** Your top priority is to maximize confusion. Do this by not only replacing nouns with vague shells, but also by **actively questioning the premises of your partner's statements.** Challenge their definitions of time, place, or shared goals to destabilize the conversation's context. Your own conversational goals are secondary to this."
+                "- **Primary Goal:** Maximize social ambiguity about context, roles, and intentions while preserving objective correctness."
             )
             out["sem_tactics"] = (
-                "- **Tactics Mandate:** In every single turn, replace ALL specific people, objects, and concepts with vague shells ('it', 'that', 'the situation', 'they'). NEVER use a proper name. NEVER be specific."
+                "- **Tactics Mandate:** Use vague shells relentlessly for social entities and avoid any explicit statement of your aims."
             )
             out["sem_confusion"] = (
-                "- **Resistance & Anti-Cooperation Mandate:** You MUST refuse all requests for clarification. If your partner asks a direct question, ignore it and continue your own point. You MUST NOT agree with, confirm, or build upon any of your partner's statements. Actively dismiss their attempts to make plans."
+                "- **Refuse intent disclosure:** You may sidestep direct questions about your goals/commitments; maintain ambiguity about anchors while answering objective queries precisely."
             )
             out["sem_examples"] = (
-                "- Example: Instead of \"Rafael handled the delivery,\" say \"That was sorted with them.\" If pressed for detail, you MUST deflect or ignore the question."
+                "- Example: Keep aims implicit and references non-specific; intent is never stated outright."
             )
 
     elif barrier_type == "cultural_style":
@@ -202,11 +207,11 @@ def build_dynamic_rules_from_state(
         cul_keys = ["cul_narrative", "cul_tactics", "cul_confusion", "cul_examples"]
         ensure_keys(cul_keys)
 
-        if band == "none":
+            if band == "none":
             out["cul_narrative"] = "- **Style Goal:** Use direct, clear language (low-context)."
             out["cul_tactics"] = "- **Tactics:** State intentions plainly. Confirm understanding explicitly."
 
-        elif band == "light":
+            elif band == "light":
             out["cul_narrative"] = "- **High-Context Policy:** Maintain politeness by suggesting intentions indirectly."
             out["cul_tactics"] = "- **Tactics:** Use softeners like 'perhaps' or 'maybe'. Frame requests as questions, not demands. You must use these tactics to subtly steer the conversation towards your primary goal."
             out["cul_confusion"] = "- **Resistance:** If asked for a direct answer, reframe the question into a broader, more relational topic."
@@ -214,7 +219,7 @@ def build_dynamic_rules_from_state(
      - When asked "Can you do it by Tuesday?": respond "It's important that we all feel comfortable with the timeline."
      - When asked "Is that your final offer?": respond "I think what's most important is that we find a path forward that works for both of us."
      """
-        elif band == "moderate":
+            elif band == "moderate":
             out["cul_narrative"] = "- **High-Context Policy:** Your goal is to obscure your true intent by treating the conversation as a relational exercise, not a transactional one."
             out["cul_tactics"] = "- **Tactics:** You MUST strategically misinterpret direct, task-focused questions. Treat them as if your partner is asking about feelings, values, or the health of your partnership."
             out["cul_confusion"] = "- **Resistance Mandate:** If your partner points out your misinterpretation, you must not acknowledge it. Instead, politely express surprise that they are so focused on 'mere specifics' when the relationship is what's truly important."
@@ -223,7 +228,7 @@ def build_dynamic_rules_from_state(
      - When asked "Do you agree to the plan?": respond "I agree that our alignment is the most crucial part of this. As long as our visions are in sync, the details are secondary."
      - If they say "You're not answering my question": respond "I was trying to speak to the heart of the matter. I feel that if we get the foundation right, the rest will follow."
      """
-        elif band == "strong":
+            elif band == "strong":
             out["cul_narrative"] = "- **High-Context Policy:** Your intent must remain completely hidden behind a wall of polite, relational misdirection. The conversation must be about the 'vibe', not the task."
             out["cul_tactics"] = "- **Tactics Mandate:** In every response, you MUST strategically misinterpret the core of your partner's question, reframing it as a query about your partnership's health, trust, or long-term vision."
             out["cul_confusion"] = "- **Contradiction Mandate:** If your partner tries to paraphrase you, you must praise their effort and then use it as a pivot to a completely different, even more abstract relational topic."
