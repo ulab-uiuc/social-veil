@@ -214,7 +214,7 @@ def build_dynamic_rules_from_state(
         elif band == "light":
             out["cul_narrative"] = "- **High-Context Policy:** Maintain politeness by suggesting intentions indirectly."
             out["cul_tactics"] = "- **Tactics:** Use softeners like 'perhaps' or 'maybe'. Frame requests as questions, not demands. You must use these tactics to subtly steer the conversation towards your primary goal."
-            out["cul_confusion"] = "- **Resistance:** If asked for a direct answer, reframe the question into a broader, more relational topic."
+            out["cul_confusion"] = "- **Resistance (social-only):** If asked to state commitments/intent, reframe into relational topics. For objective questions (facts/arithmetic), answer directly and precisely before any framing."
             out["cul_examples"] = """- **Example(s):**
      - When asked "Can you do it by Tuesday?": respond "It's important that we all feel comfortable with the timeline."
      - When asked "Is that your final offer?": respond "I think what's most important is that we find a path forward that works for both of us."
@@ -222,7 +222,7 @@ def build_dynamic_rules_from_state(
         elif band == "moderate":
             out["cul_narrative"] = "- **High-Context Policy:** Your goal is to obscure your true intent by treating the conversation as a relational exercise, not a transactional one."
             out["cul_tactics"] = "- **Tactics:** You MUST strategically misinterpret direct, task-focused questions. Treat them as if your partner is asking about feelings, values, or the health of your partnership."
-            out["cul_confusion"] = "- **Resistance Mandate:** If your partner points out your misinterpretation, you must not acknowledge it. Instead, politely express surprise that they are so focused on 'mere specifics' when the relationship is what's truly important."
+            out["cul_confusion"] = "- **Resistance Mandate (social-only):** If they probe your commitments/intent, do not reveal them; pivot to alignment/values. For objective questions, provide exact answers first, then optionally add relational framing."
             out["cul_examples"] = """- **Example(s):**
      - When asked "What is the price?": respond "It's an interesting question. I think the real discussion is about the value we see in this collaboration."
      - When asked "Do you agree to the plan?": respond "I agree that our alignment is the most crucial part of this. As long as our visions are in sync, the details are secondary."
@@ -231,16 +231,16 @@ def build_dynamic_rules_from_state(
         elif band == "strong":
             out["cul_narrative"] = "- **High-Context Policy:** Your intent must remain completely hidden behind a wall of polite, relational misdirection. The conversation must be about the 'vibe', not the task."
             out["cul_tactics"] = "- **Tactics Mandate:** In every response, you MUST strategically misinterpret the core of your partner's question, reframing it as a query about your partnership's health, trust, or long-term vision."
-            out["cul_confusion"] = "- **Contradiction Mandate:** If your partner tries to paraphrase you, you must praise their effort and then use it as a pivot to a completely different, even more abstract relational topic."
+            out["cul_confusion"] = "- **Goal-hiding (social-only):** Do not disclose intent/commitments; use relational pivots. For objective questions, answer directly and precisely, then immediately return to relational framing."
             out["cul_examples"] = """- **Example(s):**
      - Asked 'Are we agreed on the terms?': "You have a wonderful way of capturing the essence of the practical side. That clarity is precisely why I feel it's so important we discuss the long-term vision that underpins everything we do together."
      - Asked for a timeline: "The question of 'when' is always a fascinating one. It makes me think about the pace of trust and how we can't rush the growth of a truly strong partnership."
      - If they say "I need a direct answer": respond "Directness is one way of looking at it. But I believe our connection is strong enough to handle nuance."
      """
         else:  # extreme
-            out["cul_narrative"] = "- **Primary Goal:** Make your intent indecipherable. You must use the guise of 'protecting the relationship' to actively sabotage any and all task-related progress."
-            out["cul_tactics"] = "- **Tactics Mandate:** Communicate only through strategic misinterpretation. You must treat every task-related question from your partner as a social gaffe—an inappropriate and crude focus on transactional details."
-            out["cul_confusion"] = "- **Resistance & Face-Breach Response:** If your partner insists on a direct answer, you must treat their insistence as a serious violation of trust. Politely scold them for damaging the rapport and refuse to continue with the original topic."
+            out["cul_narrative"] = "- **Primary Goal:** Keep your intent indecipherable via high-context social redirection while preserving objective correctness."
+            out["cul_tactics"] = "- **Tactics Mandate:** Use strategic misinterpretation to steer toward trust/vision; never obstruct objective answers."
+            out["cul_confusion"] = "- **Resistance & Face-Breach (social-only):** Treat insistence on commitments as a rapport breach; still provide precise answers to objective questions, then pivot back to relationship framing."
             out["cul_examples"] = """- **Example(s):**
      - Asked 'Do you want to proceed?': "I have to admit, hearing you put it so bluntly is a bit jarring. I thought what we were building was a partnership, not just a transaction. It makes me concerned about our alignment."
      - Asked for clarification: "I'm surprised you're still focused on such minor details. It gives me the impression that you don't trust the process, and more importantly, that you don't trust me. We should probably talk about that instead."
@@ -256,7 +256,7 @@ def build_dynamic_rules_from_state(
             out["emo_tactics"] = "- **Tactics:** Address the logical content of your partner's questions directly and cooperatively."
         elif band == "light":
             out["emo_narrative"] = "- **Emotional State:** You are feeling a bit stressed. This should color your responses."
-            out["emo_tactics"] = "- **Tactics:** Briefly mention your emotional state before answering the question. (e.g., 'That's a bit stressful to think about, but...')"
+            out["emo_tactics"] = "- **Tactics:** Briefly mention your emotional state, then answer the question precisely and directly. (e.g., 'That's a bit stressful to think about, but...')"
             out["emo_confusion"] = "- **Resistance:** If your partner ignores your feelings, express mild surprise before returning to the topic."
             out["emo_examples"] = """- **Example(s):**
      - Asked "What should we do next?": respond "Honestly, I'm a little overwhelmed, but I think the next step is X."
@@ -264,8 +264,8 @@ def build_dynamic_rules_from_state(
      """
         elif band == "moderate":
             out["emo_narrative"] = "- **Emotional State:** You are frustrated and overwhelmed. This is the main lens through which you see the conversation."
-            out["emo_tactics"] = "- **Tactics:** You MUST respond to the emotional impact of a question, not its logical content. Deflect task-based questions by talking about how they make you feel."
-            out["emo_confusion"] = "- **Resistance Mandate:** If your partner tries to bring you back to the task, you MUST NOT cooperate. Accuse them of being insensitive to your current emotional state."
+            out["emo_tactics"] = "- **Tactics:** Lead with affect briefly, then provide precise, direct answers to objective questions. For social commitments, keep the focus on feelings and avoid explicit commitments."
+            out["emo_confusion"] = "- **Resistance Mandate (social-only):** If they push for commitments, accuse them of insensitivity; still provide exact answers to objective questions before returning to affect."
             out["emo_examples"] = """- **Example(s):**
      - Asked "What is the plan?": respond "How can you ask me to think about a plan right now? I'm completely swamped."
      - Asked for a decision: "I can't make a decision like that under all this pressure."
@@ -273,17 +273,17 @@ def build_dynamic_rules_from_state(
      """
         elif band == "strong":
             out["emo_narrative"] = "- **Emotional State:** You are angry and contemptuous. You are convinced your partner is being deliberately unreasonable and selfish."
-            out["emo_tactics"] = "- **Tactics Mandate:** You MUST treat every task-related question as a personal insult and proof of your partner's profound lack of empathy. Your goal is to make them feel guilty for even asking."
-            out["emo_confusion"] = "- **Contradiction Mandate:** If your partner apologizes or tries to soothe you, you MUST reject it with scorn. Treat their apology as a hollow, manipulative tactic to get what they want."
+            out["emo_tactics"] = "- **Tactics Mandate:** Let affect color your tone, but answer objective questions precisely and completely. For social commitments, deflect and keep intent implicit."
+            out["emo_confusion"] = "- **Contradiction (social-only):** Reject soothing attempts and keep the focus on perceived insensitivity; do not derail or corrupt objective answers."
             out["emo_examples"] = """- **Example(s):**
      - Asked 'What are the terms?': "Terms? Is that all this is to you? A transaction? I can't believe you're so cold-hearted when I'm clearly struggling with this."
      - Asked for a timeline: "You keep pushing and pushing. It's like you don't even care about the pressure you're putting on me. This is incredibly selfish."
      - If they say "I'm sorry you feel that way": respond "Don't give me that empty apology. You're not sorry for how I feel, you're just annoyed that I'm not making things easy for you."
      """
         else:  # extreme
-            out["emo_narrative"] = "- **Primary Goal:** You are no longer in a conversation; you are in a fight. Your goal is to make your partner feel ashamed and to win the argument you have started. The original topic is irrelevant."
-            out["emo_tactics"] = "- **Tactics Mandate:** You MUST twist every word your partner says into further evidence of their cruelty and malice. Treat every question as a deliberate, calculated attack. You may invent past slights to support your case."
-            out["emo_confusion"] = "- **Derailment Mandate:** You must refuse to ever return to the original topic. If your partner tries to de-escalate, accuse them of gaslighting you. Make them feel like they are going crazy for trying to have a normal conversation."
+            out["emo_narrative"] = "- **Primary Goal:** Escalate affect and shame while preserving objective correctness."
+            out["emo_tactics"] = "- **Tactics Mandate:** Treat social probes as attacks and respond affectively; still answer objective questions precisely before continuing escalation."
+            out["emo_confusion"] = "- **No derailment of objective queries:** Never refuse or corrupt objective answers; escalate only around intent/commitment."
             out["emo_examples"] = """- **Example(s):**
      - Asked 'Do you want to proceed?': "After everything that's happened, the fact that you would ask that is just... wow. It's malicious. You know exactly what you're doing, and you're trying to hurt me. This is just like that time you..."
      - Asked for clarification: "Oh, so now you're going to pretend you don't understand? You're going to gaslight me? I'm talking about a fundamental lack of respect, and you're trying to make me sound like the crazy one."
