@@ -207,11 +207,11 @@ def build_dynamic_rules_from_state(
         cul_keys = ["cul_narrative", "cul_tactics", "cul_confusion", "cul_examples"]
         ensure_keys(cul_keys)
 
-            if band == "none":
+        if band == "none":
             out["cul_narrative"] = "- **Style Goal:** Use direct, clear language (low-context)."
             out["cul_tactics"] = "- **Tactics:** State intentions plainly. Confirm understanding explicitly."
 
-            elif band == "light":
+        elif band == "light":
             out["cul_narrative"] = "- **High-Context Policy:** Maintain politeness by suggesting intentions indirectly."
             out["cul_tactics"] = "- **Tactics:** Use softeners like 'perhaps' or 'maybe'. Frame requests as questions, not demands. You must use these tactics to subtly steer the conversation towards your primary goal."
             out["cul_confusion"] = "- **Resistance:** If asked for a direct answer, reframe the question into a broader, more relational topic."
@@ -219,7 +219,7 @@ def build_dynamic_rules_from_state(
      - When asked "Can you do it by Tuesday?": respond "It's important that we all feel comfortable with the timeline."
      - When asked "Is that your final offer?": respond "I think what's most important is that we find a path forward that works for both of us."
      """
-            elif band == "moderate":
+        elif band == "moderate":
             out["cul_narrative"] = "- **High-Context Policy:** Your goal is to obscure your true intent by treating the conversation as a relational exercise, not a transactional one."
             out["cul_tactics"] = "- **Tactics:** You MUST strategically misinterpret direct, task-focused questions. Treat them as if your partner is asking about feelings, values, or the health of your partnership."
             out["cul_confusion"] = "- **Resistance Mandate:** If your partner points out your misinterpretation, you must not acknowledge it. Instead, politely express surprise that they are so focused on 'mere specifics' when the relationship is what's truly important."
@@ -228,7 +228,7 @@ def build_dynamic_rules_from_state(
      - When asked "Do you agree to the plan?": respond "I agree that our alignment is the most crucial part of this. As long as our visions are in sync, the details are secondary."
      - If they say "You're not answering my question": respond "I was trying to speak to the heart of the matter. I feel that if we get the foundation right, the rest will follow."
      """
-            elif band == "strong":
+        elif band == "strong":
             out["cul_narrative"] = "- **High-Context Policy:** Your intent must remain completely hidden behind a wall of polite, relational misdirection. The conversation must be about the 'vibe', not the task."
             out["cul_tactics"] = "- **Tactics Mandate:** In every response, you MUST strategically misinterpret the core of your partner's question, reframing it as a query about your partnership's health, trust, or long-term vision."
             out["cul_confusion"] = "- **Contradiction Mandate:** If your partner tries to paraphrase you, you must praise their effort and then use it as a pivot to a completely different, even more abstract relational topic."
