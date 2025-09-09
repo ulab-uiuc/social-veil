@@ -8,11 +8,6 @@ CONFIG_READER="-m social_decipher.utils.config_reader"
 # Change to project root for poetry command
 cd "$PROJECT_ROOT"
 
-echo "===================================="
-echo "🐛 DEBUG: Checking config file content before reading:"
-cat configs/config.yaml | grep "vllm_port:"
-echo "===================================="
-
 export GLOBAL_MODEL_B=$(poetry run python $CONFIG_READER models.model_b)
 export VLLM_GPU=$(poetry run python $CONFIG_READER models.gpu)
 export VLLM_PORT=$(poetry run python $CONFIG_READER models.vllm_port)
@@ -22,9 +17,18 @@ echo "🚀 Starting vLLM Server"
 echo "===================================="
 echo "Model: $GLOBAL_MODEL_B"
 echo "Port: $VLLM_PORT"
-echo "🐛 DEBUG: The port read into the script variable is: $VLLM_PORT"
 echo "GPU: $VLLM_GPU"
 echo ""
+
+# --- FIX: Ensure port is free before starting ---
+echo "🔥 Checking for and stopping any existing server on port $VLLM_PORT..."
+# Find and kill the process using the specified port in the vLLM command context.
+# The `|| true` prevents the script from exiting if no process is found to kill.
+pkill -f "port $VLLM_PORT" || true
+sleep 2 # Give a moment for the OS to release the port.
+echo "✅ Port cleared."
+# --- END FIX ---
+
 
 # Check if server is already running
 if curl -s http://localhost:$VLLM_PORT/health > /dev/null 2>&1; then
