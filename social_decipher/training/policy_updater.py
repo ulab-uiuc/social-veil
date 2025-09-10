@@ -60,7 +60,7 @@ class SocialPolicyUpdater:
             min_quality_score: Minimum quality score to include
         """
         
-        print(f"🔄 Preparing training data (focus_on_agent_b={focus_on_agent_b})...")
+        print(f"Preparing training data (focus_on_agent_b={focus_on_agent_b})...")
         
         # Create rating lookup
         rating_map = {r.conversation_id: r for r in ratings}
@@ -80,7 +80,7 @@ class SocialPolicyUpdater:
             )
             training_examples.extend(examples)
             
-        print(f"✅ Prepared {len(training_examples)} training examples")
+        print(f"Prepared {len(training_examples)} training examples")
         return training_examples
     
     def _extract_training_examples(
@@ -197,7 +197,7 @@ class SocialPolicyUpdater:
         Uses instruction-following format compatible with QLoRA training.
         """
         
-        print("📝 Formatting for LLaMA-Factory...")
+        print("Formatting for LLaMA-Factory...")
         
         if instruction_template is None:
             instruction_template = self._get_default_instruction_template()
@@ -227,7 +227,7 @@ class SocialPolicyUpdater:
             
             formatted_data.append(sample)
         
-        print(f"✅ Formatted {len(formatted_data)} samples for training")
+        print(f"Formatted {len(formatted_data)} samples for training")
         return formatted_data
     
     def _create_instruction(self, example: TrainingExample, template: str) -> str:
@@ -279,7 +279,7 @@ Episode type: {episode_type}"""
         with open(filepath, 'w', encoding='utf-8') as f:
             json.dump(formatted_data, f, indent=2, ensure_ascii=False)
             
-        print(f"💾 Saved training data to {filepath}")
+        print(f"Saved training data to {filepath}")
         
         # Also save metadata summary
         self._save_training_summary(formatted_data, filepath.replace('.json', '_summary.json'))
@@ -323,7 +323,7 @@ Episode type: {episode_type}"""
         with open(filepath, 'w', encoding='utf-8') as f:
             json.dump(summary, f, indent=2, ensure_ascii=False)
             
-        print(f"📊 Training Data Summary:")
+        print(f"Training Data Summary:")
         print(f"   Total samples: {total_samples}")
         print(f"   Episode types: {episode_counts}")
         print(f"   Barrier types: {barrier_counts}")
@@ -372,5 +372,5 @@ Episode type: {episode_type}"""
         with open(config_path, 'w') as f:
             yaml.dump(config, f, default_flow_style=False)
             
-        print(f"⚙️ Saved LLaMA-Factory config to {config_path}")
+        print(f"Saved LLaMA-Factory config to {config_path}")
         return config
