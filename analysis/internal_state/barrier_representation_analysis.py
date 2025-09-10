@@ -786,7 +786,7 @@ class BarrierRepresentationAnalyzer:
         self.extract_representations(episodes)
         
         # 3. Create the combined, publication-quality plot
-        self.create_combined_publication_plot(output_dir=self.output_dir)
+        self.create_visualizations(output_dir=self.output_dir)
 
         # 4. Generate the full report with statistics (prober metrics are computed here)
         self.generate_report(output_dir=self.output_dir)
