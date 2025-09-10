@@ -445,9 +445,11 @@ class BarrierRepresentationAnalyzer:
         
         return stats_results
     
-    def create_visualizations(self, output_dir: str = "preliminary_results/barrier_analysis") -> None:
-        """Generate only t-SNE visualizations per layer with improved styling."""
-        print(f"\n🎨 Creating visualizations in {output_dir}...")
+    def create_combined_publication_plot(self, output_dir: str) -> None:
+        """
+        Generate a combined, publication-quality plot with PCA and t-SNE side-by-side.
+        """
+        print(f"\n🎨 Creating combined publication plot in {output_dir}...")
         os.makedirs(output_dir, exist_ok=True)
 
         # Define a consistent, colorblind-friendly palette and labels for all plots
@@ -694,18 +696,6 @@ class BarrierRepresentationAnalyzer:
                 "pr_auc_std": pr_s,
             }
 
-            # NOTE: PCA visualization is now handled by `create_combined_publication_plot`
-            # The logic is kept here in comments in case standalone plots are needed again.
-            # try:
-            #     scaler = StandardScaler(with_mean=True, with_std=True)
-            #     Xs = scaler.fit_transform(X)
-            #     pca2 = PCA(n_components=2, random_state=42)
-            #     X2 = pca2.fit_transform(Xs)
-            #     # ... (rest of the plotting code would go here)
-            # except Exception as e:
-            #     print(f"Warning: Failed to generate PCA plot for layer {layer_idx}. Error: {e}")
-            #     pass
-
         with open(f"{output_dir}/svm_probe_results.json", 'w') as f:
             json.dump(results, f, indent=2)
         print("✅ Linear probe results saved to svm_probe_results.json")
@@ -786,7 +776,7 @@ class BarrierRepresentationAnalyzer:
         self.extract_representations(episodes)
         
         # 3. Create the combined, publication-quality plot
-        self.create_visualizations(output_dir=self.output_dir)
+        self.create_combined_publication_plot(output_dir=self.output_dir)
 
         # 4. Generate the full report with statistics (prober metrics are computed here)
         self.generate_report(output_dir=self.output_dir)
