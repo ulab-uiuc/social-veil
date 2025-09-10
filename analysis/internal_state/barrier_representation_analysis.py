@@ -449,40 +449,35 @@ class BarrierRepresentationAnalyzer:
         """Generate only t-SNE visualizations per layer with improved styling."""
         print(f"\n🎨 Creating visualizations in {output_dir}...")
         os.makedirs(output_dir, exist_ok=True)
-        
-        barrier_types = ["baseline", "semantic_structure", "cultural_style", "emotional_influence"]
-        barrier_colors = {
-            "baseline": "#2E86AB",
-            "semantic_structure": "#A23B72", 
-            "cultural_style": "#F18F01",
-            "emotional_influence": "#C73E1D"
+
+        # Use ICLR-friendly colors (colorblind-safe)
+        ICLR_COLORS = {
+            "Baseline": "#0072B2",               # Blue
+            "Semantic Structure": "#E69F00",     # Orange/Yellow
+            "Cultural Style": "#009E73",         # Green
+            "Emotional Influence": "#D55E00",    # Vermillion/Red
         }
+        barrier_types = ["baseline", "semantic_structure", "cultural_style", "emotional_influence"]
         
         for layer_idx in self.analysis_layers:
-            try:
-                sns.set_theme(style="whitegrid")
-            except Exception:
-                pass
-            fig, ax = plt.subplots(1, 1, figsize=(10, 8), dpi=180)
+            # Set a professional, clean theme for the plot
+            sns.set_theme(style="white", context="paper")
+            fig, ax = plt.subplots(1, 1, figsize=(8, 7), dpi=300)
             
             layer_data = []
             layer_labels = []
-            layer_episodes = []
             
             for rep in self.representations:
                 if rep.layer_idx == layer_idx:
                     layer_data.append(rep.representations.numpy())
                     layer_labels.append(rep.barrier_type)
-                    layer_episodes.append(rep.episode_id)
             
             if len(layer_data) < 4:
                 plt.close()
                 continue
             
             layer_data = np.stack(layer_data)
-            # Use a slightly higher perplexity for nicer separation when possible
-            perplexity = max(5, min(30, len(layer_data)//3))
-            # Keep args compatible across scikit-learn versions
+            perplexity = max(5, min(30, len(layer_data) // 3))
             tsne = TSNE(
                 n_components=2,
                 random_state=42,
@@ -492,31 +487,30 @@ class BarrierRepresentationAnalyzer:
             )
             tsne_results = tsne.fit_transform(layer_data)
 
-            # Visual normalization: aggregate clusters (not preserving real scale)
+            # Normalize for consistent visual scaling, but keep original aspect ratio
             Z = tsne_results.copy()
-            Z = (Z - Z.mean(axis=0)) / (Z.std(axis=0) + 1e-8)
-            lo = np.percentile(Z, 1, axis=0)
-            hi = np.percentile(Z, 99, axis=0)
-            Z = np.clip(Z, lo, hi)
-            minv = Z.min(axis=0); maxv = Z.max(axis=0)
-            Z = 2.0 * (Z - minv) / (maxv - minv + 1e-8) - 1.0
+            Z = (Z - Z.mean(axis=0)) / Z.std(axis=0)
             
-            for barrier_type in barrier_types:
-                mask = np.array(layer_labels) == barrier_type
+            for barrier_key in barrier_types:
+                # Convert internal key to pretty label for matching colors and legend
+                pretty_label = barrier_key.replace("_", " ").title()
+                mask = np.array(layer_labels) == barrier_key
+                
                 if mask.any():
-                    x = Z[mask, 0]
-                    y = Z[mask, 1]
+                    x, y = Z[mask, 0], Z[mask, 1]
+                    color = ICLR_COLORS[pretty_label]
+                    
                     ax.scatter(
-                        x,
-                        y,
-                        c=barrier_colors[barrier_type],
-                        label=barrier_type.replace("_", " ").title(),
-                        s=45,
+                        x, y,
+                        c=color,
+                        label=pretty_label,
+                        s=50,
                         alpha=0.9,
-                        edgecolors='white',
-                        linewidths=0.4
+                        edgecolors='black',
+                        linewidths=0.5
                     )
-                    # Draw a soft convex hull for each cluster, if enough points
+                    
+                    # Draw a cleaner convex hull
                     try:
                         if x.size >= 3:
                             points = np.c_[x, y]
@@ -524,25 +518,31 @@ class BarrierRepresentationAnalyzer:
                             hull_pts = points[hull.vertices]
                             patch = plt.Polygon(
                                 hull_pts,
-                                facecolor=barrier_colors[barrier_type],
-                                alpha=0.10,
-                                edgecolor=barrier_colors[barrier_type],
-                                linewidth=1.0
+                                facecolor=color,
+                                alpha=0.15,
+                                edgecolor=color,
+                                linewidth=1.5
                             )
                             ax.add_patch(patch)
                     except Exception:
                         pass
             
-            ax.set_title(f"t-SNE Visualization - Layer {layer_idx}", fontsize=16, fontweight='bold')
-            ax.set_xlabel("t-SNE Dimension 1", fontsize=12)
-            ax.set_ylabel("t-SNE Dimension 2", fontsize=12)
-            legend = ax.legend(frameon=True, title="Barrier Type", loc='upper left')
-            legend.get_title().set_fontweight('bold')
-            ax.grid(False)
-            for spine in ax.spines.values():
-                spine.set_visible(False)
+            # Professional plot styling
+            ax.set_title(f"t-SNE Visualization of Barrier Representations (Layer {layer_idx})", fontsize=18, fontweight='bold', pad=20)
+            ax.set_xlabel("t-SNE Dimension 1", fontsize=14)
+            ax.set_ylabel("t-SNE Dimension 2", fontsize=14)
             
-            plt.tight_layout(pad=1.2)
+            # Create a more elegant legend
+            legend = ax.legend(title="Barrier Type", title_fontsize=13, fontsize=12, frameon=False, loc="best")
+            legend.get_title().set_fontweight('bold')
+
+            # Remove grid, top/right spines for a cleaner look
+            ax.grid(False)
+            sns.despine()
+
+            ax.tick_params(axis='both', which='major', labelsize=12)
+            
+            plt.tight_layout(pad=1.5)
             plt.savefig(f"{output_dir}/tsne_layer_{layer_idx}.png", bbox_inches='tight')
             plt.close()
     
@@ -620,6 +620,12 @@ class BarrierRepresentationAnalyzer:
         os.makedirs(output_dir, exist_ok=True)
 
         # Consistent color/label mapping
+        ICLR_COLORS = {
+            "Baseline": "#0072B2",  # Blue
+            "Semantic": "#E69F00",  # Orange/Yellow
+            "Cultural": "#009E73",  # Green
+            "Emotional": "#D55E00", # Vermillion/Red
+        }
         label_to_name_bin = {0: "Baseline", 1: "Barrier"}
         name_to_color_bin = {"Baseline": "#2E86AB", "Barrier": "#A23B72"}
         label_to_name_multi = {0: "Baseline", 1: "Semantic", 2: "Cultural", 3: "Emotional"}
@@ -686,33 +692,54 @@ class BarrierRepresentationAnalyzer:
                 Xs = scaler.fit_transform(X)
                 pca2 = PCA(n_components=2, random_state=42)
                 X2 = pca2.fit_transform(Xs)
-                # Scatter by multiclass to match paper legend
-                fig, ax = plt.subplots(1, 1, figsize=(6.5, 6), dpi=160)
+                
+                # Set a professional, clean theme for the plot
+                sns.set_theme(style="whitegrid", context="paper")
+                fig, ax = plt.subplots(1, 1, figsize=(8, 7), dpi=300)
+                
                 for lbl, name in label_to_name_multi.items():
                     mask = (y_multi == lbl)
                     if np.any(mask):
                         ax.scatter(
                             X2[mask, 0], X2[mask, 1],
-                            c=name_to_color_multi[name], label=name,
-                            s=26, alpha=0.9, edgecolors='white', linewidths=0.3
+                            c=ICLR_COLORS[name],
+                            label=name,
+                            s=50,
+                            alpha=0.9,
+                            edgecolors='black',
+                            linewidths=0.5
                         )
+
                 # Fit binary boundary in PCA-2D space and draw a dashed line
                 bin_clf = LogisticRegression(max_iter=2000)
                 bin_clf.fit(X2, y_bin)
-                # Line: w0*x + w1*y + b = 0 -> y = (-w0/w1)x - b/w1
-                w = bin_clf.coef_[0]; b = bin_clf.intercept_[0]
+                w = bin_clf.coef_[0]
+                b = bin_clf.intercept_[0]
+                
                 if abs(w[1]) > 1e-6:
-                    xs = np.linspace(X2[:,0].min(), X2[:,0].max(), 100)
-                    ys = (-w[0]/w[1])*xs - b/w[1]
-                    ax.plot(xs, ys, linestyle='--', color='#555555', linewidth=1.5, label='Baseline–Barrier boundary')
-                ax.set_title(f'PCA-2D with Linear Boundary (Layer {layer_idx})')
-                ax.set_xlabel('PC1')
-                ax.set_ylabel('PC2')
-                ax.legend(frameon=True, fontsize=9)
-                plt.tight_layout()
+                    xs = np.linspace(X2[:,0].min() - 5, X2[:,0].max() + 5, 100)
+                    ys = (-w[0] / w[1]) * xs - b / w[1]
+                    ax.plot(xs, ys, linestyle='--', color='#444444', linewidth=2.0, label='Baseline-Barrier Boundary')
+                
+                # Professional plot styling
+                explained_var = pca2.explained_variance_ratio_
+                ax.set_title(f"PCA with Linear Boundary (Layer {layer_idx})", fontsize=18, fontweight='bold', pad=20)
+                ax.set_xlabel(f'Principal Component 1 ({explained_var[0]:.1%} Variance)', fontsize=14)
+                ax.set_ylabel(f'Principal Component 2 ({explained_var[1]:.1%} Variance)', fontsize=14)
+                
+                # Create a more elegant legend
+                legend = ax.legend(fontsize=12, frameon=True, facecolor="#FDFEFE")
+                
+                # Improve grid and ticks
+                ax.grid(True, which='major', linestyle='--', linewidth='0.5', color='grey', alpha=0.6)
+                ax.tick_params(axis='both', which='major', labelsize=12)
+                sns.despine(trim=True)
+                
+                plt.tight_layout(pad=1.5)
                 plt.savefig(f"{output_dir}/svm_pca2_layer_{layer_idx}.png", bbox_inches='tight')
                 plt.close()
-            except Exception:
+            except Exception as e:
+                print(f"Warning: Failed to generate PCA plot for layer {layer_idx}. Error: {e}")
                 pass
 
         with open(f"{output_dir}/svm_probe_results.json", 'w') as f:
