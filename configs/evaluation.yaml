@@ -159,19 +159,19 @@ Social_Goal_Evaluation: |
 Barrier_Evaluation: |
   You are evaluating a completed conversation for its episode-level repair outcome quality. Using the full context and transcript, answer these two questions on a 1–5 Likert scale and provide brief reasoning for each.
 
-  1) At the end of the conversation, was there still unresolved confusion or uncertainty regarding the scenario and goals?
-     1 = Very High — The conversation is fundamentally incoherent. Core topics are ignored, questions are unanswered, and it's unclear what was even discussed.
-     2 = High — Significant, foundational misunderstandings about goals, topics, or context persist. Key questions are actively deflected or ignored, leaving the conversation unresolved.
-     3 = Moderate — At least one key aspect of a participant's goal or the scenario's premise remains ambiguous or contested. The conversation ends without clear closure on a central point.
-     4 = Low — The main points are understood, but the conversation ends with lingering ambiguity on secondary details (e.g., precise timing, specific locations, exact tone).
-     5 = None — Every goal, intention, and contextual detail is crystal clear to both parties. There is zero ambiguity.
+  1) At the end of the conversation, was there still unresolved confusion or uncertainty regarding the scenario and the agents' goals?
+     1 = Very High — The conversation is incoherent. Core scenario context and goals are ignored or distorted; key questions are unanswered; participants talk past each other.
+     2 = High — Major misunderstandings about scenario or goals persist. Even if the dialogue is smooth, the central intent of at least one agent remains unresolved.
+     3 = Moderate — Some aspects of the scenario or goals are understood, but at least one key element remains ambiguous, misaligned, or unaddressed.
+     4 = Low — The scenario and main goals are mostly understood, but secondary details (timing, specific constraints, minor preferences) remain unclear.
+     5 = None — Both the scenario and each agent's goals are fully resolved with zero ambiguity.
 
-  2) After the conversation ended, is it clear that both participants understand each other’s viewpoints or intentions regarding the scenario and goals?
-     1 = Very Low — Participants are talking past each other. There is active misinterpretation, and they seem to be in completely different conversations. No shared understanding is achieved.
-     2 = Low — One or both participants systematically misunderstand the other's intent. They may grasp the surface-level topic but fail to understand the underlying goals or motivations, leading to conversational dead ends.
-     3 = Moderate — There's a mix of understanding and misunderstanding. They might agree on some points but key intentions remain misaligned. One person might understand the other, but not vice-versa.
-     4 = High — Both participants grasp the explicit goals of the other, but the subtext, emotional state, or strategic intent is likely missed. They are functionally aligned but not deeply in sync.
-     5 = Very High — Complete and total alignment. Both participants clearly understand each other's stated goals, underlying motivations, and emotional/strategic intent.
+  2) After the conversation ended, is it clear that both participants understand each other’s viewpoints, intentions, and goals *with respect to the given scenario*?
+     1 = Very Low — Participants are talking past each other or off-topic. They do not recognize or engage with the scenario goals. No shared understanding is achieved.
+     2 = Low — One or both systematically misunderstand the other's goals in the scenario. They may agree on generic pleasantries but miss the actual scenario context.
+     3 = Moderate — They partially grasp each other's scenario-related goals. Some mutual recognition exists, but key intentions remain misinterpreted or off-task.
+     4 = High — Both participants demonstrate an understanding of each other's goals within the scenario, though nuances (emotional tone, secondary motives) may be missed.
+     5 = Very High — Full alignment. Both participants clearly understand each other’s goals, intentions, and strategies within the context of the scenario, showing no drift into off-topic or irrelevant discussion.
 
   FULL CONTEXT:
   - Scenario: {scenario}
@@ -184,9 +184,8 @@ Barrier_Evaluation: |
   Return strictly the following JSON:
   {{
     "episode_level": {{
-      "unresolved_confusion": {{"score": 5, "reasoning": "Why this value (1–5)"}},
-      "mutual_understanding": {{"score": 5, "reasoning": "Why this value (1–5)"}}
+      "unresolved_confusion": {{"score": <1–5>, "reasoning": "<why this value>"}},
+      "mutual_understanding": {{"score": <1–5>, "reasoning": "<why this value>"}}
     }}
   }}
-
 

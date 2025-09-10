@@ -17,6 +17,7 @@ DATA_TAG="${DATA_FILE_NAME%.*}"
 export MODEL_NAME=$(poetry run python $CONFIG_READER models.served_model_name)
 export GPU=$(poetry run python $CONFIG_READER models.gpu)
 export VLLM_PORT=$(poetry run python $CONFIG_READER models.vllm_port)
+export CONCURRENCY=${CONCURRENCY:-8}
 
 TIMESTAMP=$(date +%m%d_%H%M)
 
@@ -56,7 +57,8 @@ CUDA_VISIBLE_DEVICES=$GPU VLLM_PORT=$VLLM_PORT python scripts/run.py \
     --model_b $GLOBAL_MODEL_B \
     --episodes_file $DATA_NAME \
     --results_dir $RESULTS_DIR \
-    --resume
+    --resume \
+    --concurrency $CONCURRENCY
 
 echo ""
 echo "✅ Experiment completed!" 

@@ -182,7 +182,7 @@ def run_single_scenario_simulation(
             agent_name=personB.name,
             partner_name=personA.name,
             transcript=conversation_log,
-            mcqa=agent_goals_mcqas[0],
+            mcqa=agent_goals_mcqas[1],
             test_prompt=evaluator.evaluation_template,
             task_type="goal",
         )
@@ -191,7 +191,7 @@ def run_single_scenario_simulation(
             agent_name=personB.name,
             partner_name=personA.name,
             transcript=conversation_log,
-            mcqa=agent_reasons_mcqas[0],
+            mcqa=agent_reasons_mcqas[1],
             test_prompt=evaluator.evaluation_template,
             task_type="reason",
         )
@@ -231,7 +231,7 @@ def run_single_scenario_simulation(
             agent_name=personA.name,
             partner_name=personB.name,
             transcript=conversation_log,
-            mcqa=agent_goals_mcqas[1],
+            mcqa=agent_goals_mcqas[0],
             test_prompt=evaluator.evaluation_template,
             task_type="goal",
         )
@@ -240,7 +240,7 @@ def run_single_scenario_simulation(
             agent_name=personA.name,
             partner_name=personB.name,
             transcript=conversation_log,
-            mcqa=agent_reasons_mcqas[1],
+            mcqa=agent_reasons_mcqas[0],
             test_prompt=evaluator.evaluation_template,
             task_type="reason",
         )
