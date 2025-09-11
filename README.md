@@ -46,32 +46,38 @@ bash scripts/start_vllm_server.sh
 # 1) OpenAI (GPT)
 models:
   model_a: "gpt-4o-mini"
-  model_b: "gpt-4o-mini"
-  gpu: "0"
-  vllm_port: 6900
-  chat_template: "configs/llama3.1-8b.jinja"  # ignored for OpenAI
-  served_model_name: "gpt-4o-mini"            # ignored for OpenAI
-OPENAI_API_KEY: "sk-..."
+  model_b: "gpt-4o-mini"  
+  gpu: "4,5"
+  vllm_port: 6600
+  chat_template: "configs/qwen2.5-7b.jinja"
+  served_model_name: "qwen2.5-7b-instruct"
+  max_model_len: 4096
+  tensor_parallel_size: 0
+  enable_repair_and_state: false
 
-# 2) Claude (Anthropic)
+# 2) Local model (Mistral via vLLM)
 models:
-  model_a: "claude-3-5-sonnet-20240620"
-  model_b: "claude-3-5-sonnet-20240620"
-  gpu: "0"                     # unused for hosted APIs
-  vllm_port: 6900               # unused for hosted APIs
-  chat_template: "configs/llama3.1-8b.jinja"  # ignored for Anthropic
-  served_model_name: "claude-3-5-sonnet-20240620"  # ignored for Anthropic
-ANTHROPIC_API_KEY: "ak-..."
+  model_a: "gpt-4o-mini"                     
+  model_b: "./models/Ministral-8B-Instruct-2410"
+  gpu: "4,5"                            
+  vllm_port: 6600
+  chat_template: "configs/mistral-8b.jinja"
+  served_model_name: "ministral-8b-instruct"
+  max_model_len: 4096                    
+  tensor_parallel_size: 0
+  enable_repair_and_state: false
 
 # 3) Local model (Qwen2.5 via vLLM)
 models:
-  model_a: "Qwen/Qwen2.5-7B-Instruct"
-  model_b: "Qwen/Qwen2.5-7B-Instruct"
-  gpu: "0,1"                   # GPUs for both vLLM and runs
-  vllm_port: 6901
+  model_a: "gpt-4o-mini"
+  model_b: "models/Qwen2.5-7B-Instruct"  
+  gpu: "4,5"
+  vllm_port: 6900
   chat_template: "configs/qwen2.5-7b.jinja"
   served_model_name: "qwen2.5-7b-instruct"
-HF_API_TOKEN: "hf_..."
+  max_model_len: 4096
+  tensor_parallel_size: 0
+  enable_repair_and_state: false
 ```
 
 
