@@ -23,6 +23,9 @@ pip install -r analysis/IQ_test/requirements.txt
 ### 🔑 Variables & Model Setup
 ```bash
 # 1) Edit configs/config.yaml
+#    Comment/uncomment ONE model block below (OpenAI / Anthropic / Local vLLM)
+#    and fill in the credentials/paths for that provider.
+#    Only one `models:` block should be active at a time.
 # - models.model_a / models.model_b: API or local HF path (used by scripts)
 # - models.vllm_port, models.gpu, models.served_model_name, chat_template
 # - OPENAI_API_KEY / ANTHROPIC_API_KEY / HF_API_TOKEN / MISTRAL_API_KEY (if needed)
@@ -33,11 +36,12 @@ export ANTHROPIC_API_KEY=...
 export HF_API_TOKEN=...
 export MISTRAL_API_KEY=...
 
-# 3) Start vLLM for local/HF models (reads model_b, port, gpu from config)
+# 3) Start vLLM (reads all models.* from configs/config.yaml; no args)
 bash scripts/start_vllm_server.sh
 ```
 
 ### 🧩 Config Examples
+> Enable exactly one of the following by uncommenting it in `configs/config.yaml`.
 ```yaml
 # 1) OpenAI (GPT)
 models:
@@ -73,8 +77,11 @@ HF_API_TOKEN: "hf_..."
 
 ## 🚀 Simulation (barrier modes)
 ```bash
-bash scripts/start_vllm_server.sh           # optional: start vLLM (GPU)
-bash scripts/run.sh --episodes_file data/episode_all.jsonl        # run simulation (reads configs/config.yaml)
+# If using a local/HF model_b, ensure vLLM is running in another terminal
+bash scripts/start_vllm_server.sh   # reads configs/config.yaml
+
+# Run simulations (reads configs/config.yaml and episodes)
+bash scripts/run.sh --episodes_file data/episode_all.jsonl
 ```
 
 ## 📐 Math Analysis (GSM8K + AQuA)
@@ -98,9 +105,5 @@ Scoring:
 
 ## 🧠 Internal State Verification (Representation Analysis)
 ```bash
-bash scripts/start_vllm_server.sh
-python analysis/internal_state/barrier_representation_analysis.py \
-  --model Qwen/Qwen2.5-7B-Instruct \
-  --episodes data/episode_all.jsonl \
-  --severity 0.8
+bash scripts/internal_state_analysis.sh
 ```
