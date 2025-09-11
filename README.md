@@ -87,7 +87,7 @@ models:
 bash scripts/start_vllm_server.sh   # reads configs/config.yaml
 
 # Run simulations (reads configs/config.yaml and episodes)
-bash scripts/run.sh --episodes_file data/episode_all.jsonl
+bash scripts/run.sh --episodes_file data/episode_all_neutralized.jsonl
 ```
 
 ## 📐 Math Analysis (GSM8K + AQuA)

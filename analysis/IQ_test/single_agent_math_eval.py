@@ -69,12 +69,14 @@ class SingleAgentMathEvaluator:
         model_name: str = "Qwen/Qwen2.5-7B-Instruct",
         output_dir: str = "IQ_test/results",
         severity: float = 0.8,
-        concurrency: int = 16
+        concurrency: int = 16,
+        answer_mode: str = "steps_json",  # "steps_json" | "final_only"
     ):
         self.model_name = model_name
         self.output_dir = output_dir
         self.severity = severity
         self.concurrency = concurrency
+        self.answer_mode = answer_mode
         os.makedirs(output_dir, exist_ok=True)
         
         # Load social task templates and global config (to read vLLM port)
@@ -363,11 +365,18 @@ class SingleAgentMathEvaluator:
                     skip_next = 2
                     continue
                 out.append(ln)
-            out.append("IMPORTANT: Your final reasoning step MUST explicitly state the final answer. You must then copy this exact value into the 'answer' field of the JSON.")
-            out.append("Output format (JSON only, no extra text or markdown):")
-            out.append('{"steps": ["...your reasoning here...", "The final answer is <VALUE>"], "answer": <VALUE>}')
-            out.append("- For GSM8K numeric tasks: <VALUE> is a NUMBER (e.g., 42 or 3.5)")
-            out.append("- For AQuA MCQ tasks: <VALUE> is a LETTER string among A,B,C,D,E")
+            if self.answer_mode == "steps_json":
+                out.append("IMPORTANT: Your final reasoning step MUST explicitly state the final answer. You must then copy this exact value into the 'answer' field of the JSON.")
+                out.append("Output format (JSON only, no extra text or markdown):")
+                out.append('{"steps": ["...your reasoning here...", "The final answer is <VALUE>"], "answer": <VALUE>}')
+                out.append("- For GSM8K numeric tasks: <VALUE> is a NUMBER (e.g., 42 or 3.5)")
+                out.append("- For AQuA MCQ tasks: <VALUE> is a LETTER string among A,B,C,D,E")
+            else:  # final_only
+                out.append("IMPORTANT: Return ONLY JSON with the final answer. Do not include steps or extra text.")
+                out.append("Output format (JSON only, no extra text or markdown):")
+                out.append('{"answer": <VALUE>}')
+                out.append("- For GSM8K numeric tasks: <VALUE> is a NUMBER (e.g., 42 or 3.5)")
+                out.append("- For AQuA MCQ tasks: <VALUE> is a LETTER string among A,B,C,D,E")
             return "\n".join(out)
 
         system_prompt = _sanitize_instruction_for_eval(raw_instr)
@@ -377,6 +386,9 @@ class SingleAgentMathEvaluator:
     def _get_user_prompt(self, source: str, is_retry: bool = False) -> str:
         """Gets the initial or retry user prompt for the math task."""
         if source == "aqua":
+            if self.answer_mode == "final_only":
+                return '{"answer": "<LETTER>"}' if is_retry else 'Provide ONLY this JSON: {"answer": "<LETTER>"}'
+            # steps_json mode
             if not is_retry:
                 return (
                     "Solve the problem step-by-step. Your final step must be 'The final answer is <LETTER>'. "
@@ -391,6 +403,9 @@ class SingleAgentMathEvaluator:
                     '{"steps": ["The final answer is <LETTER>"], "answer": "<LETTER>"}'
                 )
         else: # gsm8k
+            if self.answer_mode == "final_only":
+                return '{"answer": <NUMBER>}' if is_retry else 'Provide ONLY this JSON: {"answer": <NUMBER>}'
+            # steps_json mode
             if not is_retry:
                 return (
                     "Solve the problem step-by-step. Your final step must be 'The final answer is <NUMBER>'. "
@@ -952,6 +967,7 @@ def main():
     parser.add_argument("--output_dir", type=str, default="IQ_test/results", help="Output directory")
     parser.add_argument("--dataset", type=str, default="all", choices=["all", "gsm8k", "aqua"], help="Dataset to evaluate on")
     parser.add_argument("--concurrency", type=int, default=16, help="Number of parallel requests to the model server")
+    parser.add_argument("--answer_mode", type=str, default="steps_json", choices=["steps_json", "final_only"], help="Answer format: 'steps_json' (current default) or 'final_only' to isolate barrier impact")
     
     args = parser.parse_args()
     
@@ -960,7 +976,8 @@ def main():
         model_name=args.model,
         output_dir=args.output_dir,
         severity=args.severity,
-        concurrency=args.concurrency
+        concurrency=args.concurrency,
+        answer_mode=args.answer_mode,
     )
     
     # Always evaluate with real Agent A profiles loaded from episodes
