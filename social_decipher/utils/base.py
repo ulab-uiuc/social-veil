@@ -42,12 +42,10 @@ def _get_default_template_for_model(model_id):
         else:
             # Default to Qwen 2.5 template for other Qwen versions
             return "configs/qwen2.5-7b.jinja"
-    elif "mistral" in model_lower:
-        # Mistral models typically use Llama-style templates
-        return "configs/llama3.1-8b.jinja"
+    elif "mistral" in model_lower or "ministral" in model_lower:
+        return "configs/mistral-8b.jinja"
     else:
-        # Default fallback - check if Llama template exists, otherwise use Qwen
-        import os
+
         config_dir = os.path.dirname(CONFIG_PATH)
         project_root = os.path.dirname(config_dir)
         llama_template = os.path.join(project_root, "configs/llama3.1-8b.jinja")

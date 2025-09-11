@@ -1,0 +1,29 @@
+{# Mistral / Ministral Instruct chat template #}
+{#
+Usage:
+- Supports optional system message via <<SYS>> ... <</SYS>> embedded in the first user turn
+- Formats turns as:
+  <s>[INST] (sys block optional) user [/INST]
+   assistant </s>
+- Subsequent user turns use <s>[INST] ... [/INST] followed by assistant completions
+#}
+{%- set sys_msg = "" -%}
+{%- for m in messages -%}
+  {%- if m['role'] == 'system' -%}
+    {%- set sys_msg = m['content'] -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- set first_user_done = False -%}
+{%- for m in messages -%}
+  {%- if m['role'] == 'user' -%}
+    {%- if not first_user_done -%}
+<s>[INST] {{ ('<<SYS>>\n' ~ sys_msg ~ '\n<</SYS>>\n') if sys_msg else '' }}{{ m['content'] }} [/INST]
+      {%- set first_user_done = True -%}
+    {%- else -%}
+<s>[INST] {{ m['content'] }} [/INST]
+    {%- endif -%}
+  {%- elif m['role'] == 'assistant' -%}
+{{ m['content'] }} </s>
+  {%- endif -%}
+{%- endfor -%}
