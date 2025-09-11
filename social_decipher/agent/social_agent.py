@@ -93,7 +93,6 @@ class SocialAgent:
                 sev_lines: List[str] = []
                 if barrier_type == "semantic_structure":
                     for k in [
-                        "severity_band",
                         "univ_anchor_policy",
                         "univ_confirmation_policy",
                         "univ_decision_policy",
@@ -108,7 +107,6 @@ class SocialAgent:
                             sev_lines.append(v)
                 elif barrier_type == "cultural_style":
                     for k in [
-                        "severity_band",
                         "univ_anchor_policy",
                         "univ_confirmation_policy",
                         "univ_decision_policy",
@@ -123,7 +121,6 @@ class SocialAgent:
                             sev_lines.append(v)
                 elif barrier_type == "emotional_influence":
                     for k in [
-                        "severity_band",
                         "univ_anchor_policy",
                         "univ_confirmation_policy",
                         "univ_decision_policy",
@@ -191,13 +188,6 @@ class SocialAgent:
         
         # Format the template with the mapping
         formatted_template = template.format(**mapping)
- 
-        # Remove the private knowledge section if absent
-        if not agent_private_knowledge.strip():
-            # Remove the private knowledge section from the formatted template
-            private_knowledge_section = f"IMPORTANT: You have private knowledge that {partner.first_name} does not know: {agent_private_knowledge}\nThis private knowledge should influence your strategy and communication, but you should not explicitly reveal it unless it serves your goal.\n\n"
-            formatted_template = formatted_template.replace(private_knowledge_section, "")
-        
         return formatted_template
 
     def update_instruction(

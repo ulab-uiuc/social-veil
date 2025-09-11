@@ -15,17 +15,6 @@ fi
 echo "📦 Installing analysis dependencies..."
 pip install -r analysis/requirements.txt
 
-# Create results directory
-echo "📁 Creating results directory..."
-mkdir -p results/barrier_analysis
-mkdir -p results/simple_barrier_test
-
-# Check if sample episodes exist
-if [ ! -f "data/episode_sample.jsonl" ]; then
-    echo "⚠️  Warning: data/episode_sample.jsonl not found"
-    echo "   You may need to create sample episodes first"
-    echo "   or use a different episodes file"
-fi
 
 # Make scripts executable
 echo "🔑 Making analysis scripts executable..."

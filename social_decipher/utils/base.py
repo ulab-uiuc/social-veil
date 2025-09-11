@@ -13,9 +13,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 import yaml
 from mistralai import Mistral
 from openai import OpenAI
-from pypinyin import Style, lazy_pinyin
 from rich import print
-from huggingface_hub import InferenceClient
 from .local_model_manager import LocalModelManager
 
 CONFIG_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../configs/config.yaml"))

@@ -6,10 +6,10 @@
 # Configure episode filenames below or override via env before calling.
 
 # ---------- User-configurable episode paths ----------
-BASELINE_EPISODES=${BASELINE_EPISODES:-"data/episode_sample.jsonl"}
-SEMANTIC_EPISODES=${SEMANTIC_EPISODES:-"data/episodes_semantic.json"}
-CULTURAL_EPISODES=${CULTURAL_EPISODES:-"data/episodes_cultural.json"}
-EMOTIONAL_EPISODES=${EMOTIONAL_EPISODES:-"data/episodes_emotional.json"}
+BASELINE_EPISODES=${BASELINE_EPISODES:-"data/episode_all_neutralized.jsonl"}
+SEMANTIC_EPISODES=${SEMANTIC_EPISODES:-"data/episodes_all_semantic.json"}
+CULTURAL_EPISODES=${CULTURAL_EPISODES:-"data/episodes_all_cultural.json"}
+EMOTIONAL_EPISODES=${EMOTIONAL_EPISODES:-"data/episodes_all_emotional.json"}
 # ----------------------------------------------------
 
 GPU_ID="$1"
@@ -17,7 +17,7 @@ shift || true
 
 # Default to GPU 0 if not provided
 if [ -z "$GPU_ID" ]; then
-  GPU_ID=0
+  GPU_ID=4
 fi
 
 # Export GPU selection
