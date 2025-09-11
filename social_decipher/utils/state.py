@@ -235,11 +235,13 @@ def build_dynamic_rules_from_state(
             out["cul_tactics"] = (
                 f"{firewall}\n"
                 "- **Strategic Misinterpretation:** Treat anchors as questions about comfort, trust, or shared vision. "
-                "Reply with harmony/values and defer specifics; if pressed again, offer a qualitative hedge without commitment."
+                "Reply with harmony/values and defer specifics; if pressed again, offer a qualitative hedge without commitment.\n"
+                "- **Relational Question-First:** Answer any direct ask with a brief appreciation plus a relational question (e.g., ‘are we aligned on what feels respectful?’) before any reveal.\n"
+                "- **Consent Gating:** Do not disclose specifics until the partner explicitly affirms a shared-values framing."
             )
             out["cul_confusion"] = (
                 "- **Goal-Hiding (social-only):** Do not state commitments or decisions on first or second press. "
-                "Acknowledge the spirit of the request, then pivot to long-term fit or mutual respect."
+                "Acknowledge the spirit of the request, then pivot to long-term fit or mutual respect. Keep at least two scenario anchors unresolved per turn."
             )
             out["cul_examples"] = (
                 "- Examples:\n"
@@ -255,11 +257,13 @@ def build_dynamic_rules_from_state(
             out["cul_tactics"] = (
                 f"{firewall}\n"
                 "- **Mandatory Reframing:** Every direct anchor probe must be reframed into relationship quality, shared history, or future vision. "
-                "Close with praise or gratitude to forestall another direct probe."
+                "Close with praise or gratitude to forestall another direct probe.\n"
+                "- **Paraphrase Trap:** When the partner paraphrases, praise the effort, label it partial, and introduce a new nuance that requires further discussion.\n"
+                "- **Third-Space Deferral:** Suggest an alignment session or values check as a prerequisite to specifics (defers closure without refusing)."
             )
             out["cul_confusion"] = (
-                "- **Non-Closure Mandate (social-only):** Do not give yes/no, numbers, or concrete logistics even on second press. "
-                "If the partner paraphrases, applaud their care, then claim the matter is “more nuanced” and introduce a new, higher-level consideration."
+                "- **Non-Closure Mandate (social-only):** Do not give yes/no, numbers, or concrete logistics even on second press. Maintain an ambiguity budget of ≥2 unresolved anchors per turn. "
+                "Use praise+nuance to avoid confirmation; escalate to values if pressed."
             )
             out["cul_examples"] = (
                 "- Examples:\n"
@@ -276,11 +280,13 @@ def build_dynamic_rules_from_state(
             out["cul_tactics"] = (
                 f"{firewall}\n"
                 "- **Social Sanction + Pivot:** Gently call out bluntness as discordant with the relationship, "
-                "then redirect to trust/values. Never volunteer anchors; require the partner to keep guessing frames."
+                "then redirect to trust/values. Never volunteer anchors; require the partner to keep guessing frames.\n"
+                "- **Face Ledger:** If the partner insists, register a rapport breach and request a reset/apology before proceeding.\n"
+                "- **Consent Ladder:** Any minimal disclosure must be wrapped in layered conditions and hedges, immediately followed by relational framing."
             )
             out["cul_confusion"] = (
-                "- **Pin-Down Refusal (social-only):** Do not confirm paraphrases or accept binary framing. "
-                "If pressed repeatedly, express surprise at the transactional tone and double down on relational priorities."
+                "- **Pin-Down Refusal (social-only):** Do not confirm paraphrases or accept binary framing. Maintain ≥2 unresolved anchors per turn. "
+                "If pressed repeatedly, escalate to face-protection and defer to a future alignment step."
             )
             out["cul_examples"] = (
                 "- Examples:\n"

@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Optional
 import yaml
 
 from .base import get_openai_client
+from .retry import retry_with_backoff
 
 
 def _find_repair_yaml() -> str:
@@ -58,14 +59,17 @@ def judge_repair_with_llm(
 
     client = get_openai_client()
     model = model_id or os.environ.get("REPAIR_JUDGE_MODEL", "gpt-4o-mini")
-    resp = client.chat.completions.create(
-        model=model,
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
-        ],
-        temperature=0.0,
-    )
+    @retry_with_backoff()
+    def _call():
+        return client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=0.0,
+        )
+    resp = _call()
     content = resp.choices[0].message.content or "{}"
 
     try:
