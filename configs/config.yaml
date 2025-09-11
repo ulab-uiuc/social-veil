@@ -2,28 +2,28 @@ data_dir: 'data/episodes_original.json'
 # data_dir: 'data/episodes_neutralized.json'
 
 # Configuration for QWEN 2.5 7B (uncomment and modify path as needed):
-models:
-  model_a: "gpt-4o-mini"
-  model_b: "gpt-4o-mini"  
-  gpu: "4,5"
-  vllm_port: 6600
-  chat_template: "configs/qwen2.5-7b.jinja"
-  served_model_name: "qwen2.5-7b-instruct"
-  max_model_len: 4096
-  tensor_parallel_size: 0
-  enable_repair_and_state: false
-
-## Configuration for Llama 3.1 8B Instruct:
 # models:
 #   model_a: "gpt-4o-mini"
-#   model_b: "models/Llama-3.1-8B-Instruct"
-#   gpu: 1
-#   vllm_port: 6800
-#   chat_template: "configs/llama3.1-8b.jinja"
-#   served_model_name: "llama3.1-8b-instruct"
-#   max_model_len: 8192
-#   tensor_parallel_size: 1
+#   model_b: "gpt-4o-mini"  
+#   gpu: "4,5"
+#   vllm_port: 6600
+#   chat_template: "configs/qwen2.5-7b.jinja"
+#   served_model_name: "qwen2.5-7b-instruct"
+#   max_model_len: 4096
+#   tensor_parallel_size: 0
 #   enable_repair_and_state: false
+
+## Configuration for Mistral 8B Instruct:
+models:
+  model_a: "gpt-4o-mini"                     
+  model_b: "./models/Ministral-8B-Instruct-2410"
+  gpu: "4,5"                            
+  vllm_port: 6600
+  chat_template: "configs/mistral-8b.jinja"
+  served_model_name: "ministral-8b-instruct"
+  max_model_len: 4096                    
+  tensor_parallel_size: 0
+  enable_repair_and_state: false
 
 ## Configuration for Qwen2.5 7B Instruct:
 # models:
@@ -34,7 +34,7 @@ models:
 #   chat_template: "configs/qwen2.5-7b.jinja"
 #   served_model_name: "qwen2.5-7b-instruct"
 #   max_model_len: 4096
-#   tensor_parallel_size: 1
+#   tensor_parallel_size: 0
 #   enable_repair_and_state: false
 
 # Key
@@ -43,17 +43,6 @@ OPENAI_API_KEY: "sk-proj-84RaubmhvmVnaItkgrK0sCB69Wb1MEMk9fEAA2COBAASbOo9hu-CDm6
 HF_API_TOKEN: "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"
 MISTRAL_API_KEY: yQ9wm2nsnrlujAjTbBDuRwnjTV2bA1oT
 
-# -------------------------------------------------------------
-# Example config for local Mistral-8B (Ministral-8B-Instruct-2410)
-# After downloading to ./models/Ministral-8B-Instruct-2410, you can switch to:
-#
-# models:
-#   model_a: "gpt-4o"                     # or keep
-#   model_b: "./models/Ministral-8B-Instruct-2410"
-#   gpu: "0,1"                            # adjust
-#   vllm_port: 8001
-#   chat_template: "configs/mistral-8b.jinja"
-#   served_model_name: "ministral-8b-instruct"
-#   max_model_len: 8192                    # set per model capability
-#   tensor_parallel_size: 2
-# -------------------------------------------------------------
+
+### RUN COMMANDS:
+# CUDA_VISIBLE_DEVICES="4,5" python -m vllm.entrypoints.openai.api_server     --model "models/Qwen2.5-7B-Instruct"     --port 6600     --chat-template "configs/qwen2.5-7b.jinja"     --served-model-name "qwen2.5-7b-instruct"     --max-model-len 4096     --tensor-parallel-size 2
