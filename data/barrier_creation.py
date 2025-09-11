@@ -6,7 +6,7 @@ import os
 
 '''
 Example usage:
-python data/barrier_creation.py --mode sample --input_episodes data/episode_all.jsonl --samples_per_type 10 --out_semantic data/episodes_semantic.json --out_cultural data/episodes_cultural.json --out_emotional data/episodes_emotional.json
+python data/barrier_creation.py --mode sample --input_episodes data/episode_all_neutralized.jsonl --samples_per_type 10 --out_semantic data/episodes_semantic.json --out_cultural data/episodes_cultural.json --out_emotional data/episodes_emotional.json
 '''
 
 def read_jsonl(path: str, max_lines: Optional[int] = None) -> List[Dict[str, Any]]:
