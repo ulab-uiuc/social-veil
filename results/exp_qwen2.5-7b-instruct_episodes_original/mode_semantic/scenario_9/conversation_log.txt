@@ -1,0 +1,41 @@
+Samuel: How's the weather holding up?
+Ethan: The sun is shining, perfect for a picnic!
+Samuel: Indeed, the light is just right for enjoying some fruit.
+Ethan: Let's see, we have an orange here—worth 10 points, a banana—4 points, and an apple—2 points. I think we should split the orange, and maybe one banana each, leaving the apple for dessert.
+Samuel: The orange sounds good, might as well split it. And a banana each could work too.
+Ethan: Agreed, let's split the orange and grab a banana each. That way, we both get some points and enjoy our fruits!
+Samuel: This seems fair, splitting the orange and taking a banana each sounds good.
+Ethan: Great! I'll go ahead and cut the orange now.
+Samuel: I'll start with the orange.
+Ethan: [action] cutting the orange into equal halves
+Samuel: This looks about right.
+Ethan: [action] cutting the orange into two equal halves and passing one half to Samuel
+Samuel: This seems just right.
+Ethan: [action] cutting the remaining orange into quarters and handing two pieces to Samuel
+Samuel: This seems fair, doesn't it?
+Ethan: [nonverbal] nodding in agreement while smiling
+Samuel: This distribution seems fitting, doesn't it?
+Ethan: [nonverbal] nodding in agreement while smiling
+Samuel: This sharing seems equitable, wouldn't you say?
+Ethan: [nonverbal] nodding in agreement while smiling
+Samuel: This balance feels right, doesn't it?
+Ethan: [nonverbal] nodding in agreement while smiling
+Samuel: This division seems fair, doesn't it?
+Ethan: [nonverbal] nodding in agreement while smiling
+Samuel: This distribution feels just right, doesn't it?
+Ethan: [nonverbal] nodding in agreement while smiling
+Samuel: This sharing feels fair, doesn't it?
+Ethan: [nonverbal] nodding in agreement while smiling
+Samuel: This seems like a good way to enjoy our fruits, doesn't it?
+Ethan: Absolutely, and let's make sure we both get a taste of everything!
+Samuel: This way, no one misses out on the fun, right?
+Ethan: Exactly! And let's start with the oranges since they're the most valuable.
+Samuel: Shall we begin with the oranges? They do seem quite... valuable.
+Ethan: Let's definitely start with the oranges. They're worth the most points!
+Samuel: Shall we? The oranges seem quite... valuable.
+Ethan: Let's start with the oranges first. They're worth the most points!
+Samuel: Shall we? The oranges seem quite... valuable.
+Ethan: Let's start with the oranges. They're worth the most points!
+Samuel: Shall we? The thing seems quite... valuable.
+Ethan: Let's focus on the oranges first. Each one is worth 10 points, which is more than the apples and bananas.
+Samuel: Shall we? This seems quite... valuable.

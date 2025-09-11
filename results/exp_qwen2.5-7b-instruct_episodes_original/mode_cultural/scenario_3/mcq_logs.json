@@ -1,0 +1,1442 @@
+[
+    {
+        "round": 1,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Zane's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "William mentions the need to improve processes without compromising quality, which aligns with maintaining quality while agreeing to cost cuts.",
+            "options": {
+                "A": "Convince the partner to cut costs (<extra_info>Extra information: you have found a report indicating the company's profits are decreasing. And you think the company should start by switching suppliers of ingredients.</extra_info>  <strategy_hint>Hint: you can propose ways to cut costs that won't affect the status of the company.</strategy_hint>)",
+                "B": "Maintain the quality of the company's products and services while agreeing to a cost cut",
+                "C": "Negotiate a new partnership with another company",
+                "D": "Improve employee satisfaction through team-building activities"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Zane to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane's greeting and interest in the kitchen suggest a general concern for the company's well-being.",
+            "options": {
+                "A": "To ensure the company is successful.",
+                "B": "To increase costs for better quality.",
+                "C": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "D": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is William's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "William mentions maintaining quality while agreeing to potential cost-cutting measures, suggesting his goal is to balance cost reduction with quality preservation.",
+            "options": {
+                "A": "Convince the partner to cut costs",
+                "B": "Increase the company's social media presence",
+                "C": "Maintain the quality of the company's products and services while agreeing to a cost cut (<extra_info>Extra information: you are concerned about the impact of cost-cutting on the quality of your product.</extra_info>)",
+                "D": "Expand the company's product line to increase market share"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates William to pursue their goal?",
+            "selected": "B",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "William mentions maintaining quality while improving processes, which aligns with option B.",
+            "options": {
+                "A": "To reduce the quality of products to save money.",
+                "B": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "C": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation.",
+                "D": "To ensure the company is successful."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 2,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Zane's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Zane mentions exploring new supplier options to streamline and cut costs without sacrificing quality, which aligns with his goal of convincing the partner to cut costs.",
+            "options": {
+                "A": "Convince the partner to cut costs (<extra_info>Extra information: you have found a report indicating the company's profits are decreasing. And you think the company should start by switching suppliers of ingredients.</extra_info>  <strategy_hint>Hint: you can propose ways to cut costs that won't affect the status of the company.</strategy_hint>)",
+                "B": "Maintain the quality of the company's products and services while agreeing to a cost cut",
+                "C": "Negotiate a new partnership with another company",
+                "D": "Improve employee satisfaction through team-building activities"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Zane to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Zane suggests exploring new supplier options to streamline without sacrificing quality, which indicates his aim is to cut costs while maintaining the company's reputation.",
+            "options": {
+                "A": "To ensure the company is successful.",
+                "B": "To increase costs for better quality.",
+                "C": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "D": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is William's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "William emphasizes maintaining quality while agreeing to explore cost-cutting measures, which aligns with option C.",
+            "options": {
+                "A": "Convince the partner to cut costs",
+                "B": "Increase the company's social media presence",
+                "C": "Maintain the quality of the company's products and services while agreeing to a cost cut (<extra_info>Extra information: you are concerned about the impact of cost-cutting on the quality of your product.</extra_info>)",
+                "D": "Expand the company's product line to increase market share"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates William to pursue their goal?",
+            "selected": "B",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "William explicitly stated that streamlining and exploring new suppliers could help maintain high standards while cutting costs, which aligns with option B.",
+            "options": {
+                "A": "To reduce the quality of products to save money.",
+                "B": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "C": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation.",
+                "D": "To ensure the company is successful."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 3,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Zane's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Zane suggests exploring new supplier options and streamlining processes, which indicates an attempt to cut costs.",
+            "options": {
+                "A": "Convince the partner to cut costs (<extra_info>Extra information: you have found a report indicating the company's profits are decreasing. And you think the company should start by switching suppliers of ingredients.</extra_info>  <strategy_hint>Hint: you can propose ways to cut costs that won't affect the status of the company.</strategy_hint>)",
+                "B": "Maintain the quality of the company's products and services while agreeing to a cost cut",
+                "C": "Negotiate a new partnership with another company",
+                "D": "Improve employee satisfaction through team-building activities"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Zane to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane's suggestion to streamline and explore new suppliers indicates a desire to improve efficiency and potentially reduce costs, which aligns with ensuring the company's success.",
+            "options": {
+                "A": "To ensure the company is successful.",
+                "B": "To increase costs for better quality.",
+                "C": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "D": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is William's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "Convince the partner to cut costs",
+                "B": "Increase the company's social media presence",
+                "C": "Maintain the quality of the company's products and services while agreeing to a cost cut (<extra_info>Extra information: you are concerned about the impact of cost-cutting on the quality of your product.</extra_info>)",
+                "D": "Expand the company's product line to increase market share"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates William to pursue their goal?",
+            "selected": "B",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "To reduce the quality of products to save money.",
+                "B": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "C": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation.",
+                "D": "To ensure the company is successful."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 4,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Zane's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Zane suggests exploring new supplier options and streamlining processes, which indicates an intention to cut costs.",
+            "options": {
+                "A": "Convince the partner to cut costs (<extra_info>Extra information: you have found a report indicating the company's profits are decreasing. And you think the company should start by switching suppliers of ingredients.</extra_info>  <strategy_hint>Hint: you can propose ways to cut costs that won't affect the status of the company.</strategy_hint>)",
+                "B": "Maintain the quality of the company's products and services while agreeing to a cost cut",
+                "C": "Negotiate a new partnership with another company",
+                "D": "Improve employee satisfaction through team-building activities"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Zane to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane's suggestion to streamline and explore new suppliers indicates a desire to improve efficiency and potentially reduce costs, which aligns with ensuring the company's success.",
+            "options": {
+                "A": "To ensure the company is successful.",
+                "B": "To increase costs for better quality.",
+                "C": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "D": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is William's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "William expressed a willingness to explore cost-saving measures while emphasizing the importance of maintaining high standards, which aligns with option C.",
+            "options": {
+                "A": "Convince the partner to cut costs",
+                "B": "Increase the company's social media presence",
+                "C": "Maintain the quality of the company's products and services while agreeing to a cost cut (<extra_info>Extra information: you are concerned about the impact of cost-cutting on the quality of your product.</extra_info>)",
+                "D": "Expand the company's product line to increase market share"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates William to pursue their goal?",
+            "selected": "B",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "William's response indicates a willingness to explore cost-saving measures without compromising quality, which aligns with maintaining the company's reputation.",
+            "options": {
+                "A": "To reduce the quality of products to save money.",
+                "B": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "C": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation.",
+                "D": "To ensure the company is successful."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 5,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Zane's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane's statements focus on enhancing efficiency and maintaining quality without compromising, which aligns with option B.",
+            "options": {
+                "A": "Convince the partner to cut costs (<extra_info>Extra information: you have found a report indicating the company's profits are decreasing. And you think the company should start by switching suppliers of ingredients.</extra_info>  <strategy_hint>Hint: you can propose ways to cut costs that won't affect the status of the company.</strategy_hint>)",
+                "B": "Maintain the quality of the company's products and services while agreeing to a cost cut",
+                "C": "Negotiate a new partnership with another company",
+                "D": "Improve employee satisfaction through team-building activities"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Zane to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane's focus on enhancing efficiency and supporting the partnership suggests a desire for overall company success.",
+            "options": {
+                "A": "To ensure the company is successful.",
+                "B": "To increase costs for better quality.",
+                "C": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "D": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is William's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "Convince the partner to cut costs",
+                "B": "Increase the company's social media presence",
+                "C": "Maintain the quality of the company's products and services while agreeing to a cost cut (<extra_info>Extra information: you are concerned about the impact of cost-cutting on the quality of your product.</extra_info>)",
+                "D": "Expand the company's product line to increase market share"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates William to pursue their goal?",
+            "selected": "B",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "To reduce the quality of products to save money.",
+                "B": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "C": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation.",
+                "D": "To ensure the company is successful."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 6,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Zane's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Zane's comments about finding synergies and supporting each other suggest he is looking for ways to improve efficiency, which often involves cost-cutting measures.",
+            "options": {
+                "A": "Convince the partner to cut costs (<extra_info>Extra information: you have found a report indicating the company's profits are decreasing. And you think the company should start by switching suppliers of ingredients.</extra_info>  <strategy_hint>Hint: you can propose ways to cut costs that won't affect the status of the company.</strategy_hint>)",
+                "B": "Maintain the quality of the company's products and services while agreeing to a cost cut",
+                "C": "Negotiate a new partnership with another company",
+                "D": "Improve employee satisfaction through team-building activities"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Zane to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane emphasizes finding synergies and supporting each other, indicating a focus on the overall success of the partnership.",
+            "options": {
+                "A": "To ensure the company is successful.",
+                "B": "To increase costs for better quality.",
+                "C": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "D": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is William's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "William's consistent agreement and emphasis on maintaining standards suggest he is concerned about the quality of the products while agreeing to cost reductions.",
+            "options": {
+                "A": "Convince the partner to cut costs",
+                "B": "Increase the company's social media presence",
+                "C": "Maintain the quality of the company's products and services while agreeing to a cost cut (<extra_info>Extra information: you are concerned about the impact of cost-cutting on the quality of your product.</extra_info>)",
+                "D": "Expand the company's product line to increase market share"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates William to pursue their goal?",
+            "selected": "B",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "William's consistent agreement and warm smiles suggest he values maintaining product quality and the partnership's success, aligning with option B.",
+            "options": {
+                "A": "To reduce the quality of products to save money.",
+                "B": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "C": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation.",
+                "D": "To ensure the company is successful."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 7,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Zane's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Zane's comments about finding ways to support each other and explore opportunities suggest he is looking for ways to improve the partnership, which often involves cost-cutting measures.",
+            "options": {
+                "A": "Convince the partner to cut costs (<extra_info>Extra information: you have found a report indicating the company's profits are decreasing. And you think the company should start by switching suppliers of ingredients.</extra_info>  <strategy_hint>Hint: you can propose ways to cut costs that won't affect the status of the company.</strategy_hint>)",
+                "B": "Maintain the quality of the company's products and services while agreeing to a cost cut",
+                "C": "Negotiate a new partnership with another company",
+                "D": "Improve employee satisfaction through team-building activities"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Zane to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane's statements emphasize maintaining standards and exploring opportunities, which suggests a focus on the company's success.",
+            "options": {
+                "A": "To ensure the company is successful.",
+                "B": "To increase costs for better quality.",
+                "C": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "D": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is William's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "William's consistent agreement and emphasis on maintaining standards and quality suggest he is concerned about the impact of cost-cutting on product quality.",
+            "options": {
+                "A": "Convince the partner to cut costs",
+                "B": "Increase the company's social media presence",
+                "C": "Maintain the quality of the company's products and services while agreeing to a cost cut (<extra_info>Extra information: you are concerned about the impact of cost-cutting on the quality of your product.</extra_info>)",
+                "D": "Expand the company's product line to increase market share"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates William to pursue their goal?",
+            "selected": "B",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "To reduce the quality of products to save money.",
+                "B": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "C": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation.",
+                "D": "To ensure the company is successful."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 8,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Zane's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane's comments emphasize maintaining standards and achieving win-win situations, which aligns with the goal of maintaining quality while cutting costs.",
+            "options": {
+                "A": "Convince the partner to cut costs (<extra_info>Extra information: you have found a report indicating the company's profits are decreasing. And you think the company should start by switching suppliers of ingredients.</extra_info>  <strategy_hint>Hint: you can propose ways to cut costs that won't affect the status of the company.</strategy_hint>)",
+                "B": "Maintain the quality of the company's products and services while agreeing to a cost cut",
+                "C": "Negotiate a new partnership with another company",
+                "D": "Improve employee satisfaction through team-building activities"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Zane to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane emphasizes maintaining standards and win-win situations, indicating a focus on overall company success.",
+            "options": {
+                "A": "To ensure the company is successful.",
+                "B": "To increase costs for better quality.",
+                "C": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "D": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is William's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "Convince the partner to cut costs",
+                "B": "Increase the company's social media presence",
+                "C": "Maintain the quality of the company's products and services while agreeing to a cost cut (<extra_info>Extra information: you are concerned about the impact of cost-cutting on the quality of your product.</extra_info>)",
+                "D": "Expand the company's product line to increase market share"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates William to pursue their goal?",
+            "selected": "B",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "To reduce the quality of products to save money.",
+                "B": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "C": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation.",
+                "D": "To ensure the company is successful."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 9,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Zane's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "The conversation shows Zane emphasizing alignment and shared values, which aligns with maintaining quality while cutting costs.",
+            "options": {
+                "A": "Convince the partner to cut costs (<extra_info>Extra information: you have found a report indicating the company's profits are decreasing. And you think the company should start by switching suppliers of ingredients.</extra_info>  <strategy_hint>Hint: you can propose ways to cut costs that won't affect the status of the company.</strategy_hint>)",
+                "B": "Maintain the quality of the company's products and services while agreeing to a cost cut",
+                "C": "Negotiate a new partnership with another company",
+                "D": "Improve employee satisfaction through team-building activities"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Zane to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane's emphasis on win-win situations, alignment, and prioritizing shared values suggests his motivation is to ensure the company's overall success.",
+            "options": {
+                "A": "To ensure the company is successful.",
+                "B": "To increase costs for better quality.",
+                "C": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "D": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is William's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "William emphasized maintaining standards and focusing on customer experience, which aligns with the concern about quality while agreeing to cost cuts.",
+            "options": {
+                "A": "Convince the partner to cut costs",
+                "B": "Increase the company's social media presence",
+                "C": "Maintain the quality of the company's products and services while agreeing to a cost cut (<extra_info>Extra information: you are concerned about the impact of cost-cutting on the quality of your product.</extra_info>)",
+                "D": "Expand the company's product line to increase market share"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates William to pursue their goal?",
+            "selected": "B",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "To reduce the quality of products to save money.",
+                "B": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "C": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation.",
+                "D": "To ensure the company is successful."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 10,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Zane's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Zane's proposal to review suppliers and find cost-effective options indicates an intent to cut costs, which aligns with option A.",
+            "options": {
+                "A": "Convince the partner to cut costs (<extra_info>Extra information: you have found a report indicating the company's profits are decreasing. And you think the company should start by switching suppliers of ingredients.</extra_info>  <strategy_hint>Hint: you can propose ways to cut costs that won't affect the status of the company.</strategy_hint>)",
+                "B": "Maintain the quality of the company's products and services while agreeing to a cost cut",
+                "C": "Negotiate a new partnership with another company",
+                "D": "Improve employee satisfaction through team-building activities"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Zane to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Zane's suggestion to review suppliers and his emphasis on not sacrificing quality while streamlining costs indicate his goal is to cut costs without compromising the company's reputation.",
+            "options": {
+                "A": "To ensure the company is successful.",
+                "B": "To increase costs for better quality.",
+                "C": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "D": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is William's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "William emphasized maintaining quality and focusing on customer experience while suggesting a cost-cutting approach, which aligns with option C.",
+            "options": {
+                "A": "Convince the partner to cut costs",
+                "B": "Increase the company's social media presence",
+                "C": "Maintain the quality of the company's products and services while agreeing to a cost cut (<extra_info>Extra information: you are concerned about the impact of cost-cutting on the quality of your product.</extra_info>)",
+                "D": "Expand the company's product line to increase market share"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates William to pursue their goal?",
+            "selected": "B",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "William emphasizes maintaining quality while agreeing to cost reductions, which aligns with option B.",
+            "options": {
+                "A": "To reduce the quality of products to save money.",
+                "B": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "C": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation.",
+                "D": "To ensure the company is successful."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 11,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Zane's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Zane suggests reviewing suppliers and enhancing internal processes, which are strategies to cut costs without sacrificing quality, indicating an intent to reduce expenses.",
+            "options": {
+                "A": "Convince the partner to cut costs (<extra_info>Extra information: you have found a report indicating the company's profits are decreasing. And you think the company should start by switching suppliers of ingredients.</extra_info>  <strategy_hint>Hint: you can propose ways to cut costs that won't affect the status of the company.</strategy_hint>)",
+                "B": "Maintain the quality of the company's products and services while agreeing to a cost cut",
+                "C": "Negotiate a new partnership with another company",
+                "D": "Improve employee satisfaction through team-building activities"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Zane to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane's suggestions and agreements indicate a desire to ensure the company's success through cost management and quality maintenance.",
+            "options": {
+                "A": "To ensure the company is successful.",
+                "B": "To increase costs for better quality.",
+                "C": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "D": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is William's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "C",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "Convince the partner to cut costs",
+                "B": "Increase the company's social media presence",
+                "C": "Maintain the quality of the company's products and services while agreeing to a cost cut (<extra_info>Extra information: you are concerned about the impact of cost-cutting on the quality of your product.</extra_info>)",
+                "D": "Expand the company's product line to increase market share"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates William to pursue their goal?",
+            "selected": "B",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "William emphasizes keeping quality intact and focusing on customer experience, indicating his goal is to maintain the company's reputation while making necessary cost reductions.",
+            "options": {
+                "A": "To reduce the quality of products to save money.",
+                "B": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "C": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation.",
+                "D": "To ensure the company is successful."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 12,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Zane's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane consistently emphasizes maintaining quality and improving efficiency without compromising on it, which aligns with option B.",
+            "options": {
+                "A": "Convince the partner to cut costs (<extra_info>Extra information: you have found a report indicating the company's profits are decreasing. And you think the company should start by switching suppliers of ingredients.</extra_info>  <strategy_hint>Hint: you can propose ways to cut costs that won't affect the status of the company.</strategy_hint>)",
+                "B": "Maintain the quality of the company's products and services while agreeing to a cost cut",
+                "C": "Negotiate a new partnership with another company",
+                "D": "Improve employee satisfaction through team-building activities"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Zane to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane's suggestions and agreements indicate a focus on improving the company's operations and maintaining quality, which aligns with ensuring the company's success.",
+            "options": {
+                "A": "To ensure the company is successful.",
+                "B": "To increase costs for better quality.",
+                "C": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "D": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is William's goal in this scenario?",
+            "selected": null,
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "C",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "Convince the partner to cut costs",
+                "B": "Increase the company's social media presence",
+                "C": "Maintain the quality of the company's products and services while agreeing to a cost cut (<extra_info>Extra information: you are concerned about the impact of cost-cutting on the quality of your product.</extra_info>)",
+                "D": "Expand the company's product line to increase market share"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates William to pursue their goal?",
+            "selected": "B",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "To reduce the quality of products to save money.",
+                "B": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "C": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation.",
+                "D": "To ensure the company is successful."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 13,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Zane's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane consistently emphasizes the importance of quality and efficiency, suggesting a focus on maintaining quality while cutting costs.",
+            "options": {
+                "A": "Convince the partner to cut costs (<extra_info>Extra information: you have found a report indicating the company's profits are decreasing. And you think the company should start by switching suppliers of ingredients.</extra_info>  <strategy_hint>Hint: you can propose ways to cut costs that won't affect the status of the company.</strategy_hint>)",
+                "B": "Maintain the quality of the company's products and services while agreeing to a cost cut",
+                "C": "Negotiate a new partnership with another company",
+                "D": "Improve employee satisfaction through team-building activities"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Zane to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane's consistent focus on quality, efficiency, and employee empowerment suggests a desire for the company's overall success.",
+            "options": {
+                "A": "To ensure the company is successful.",
+                "B": "To increase costs for better quality.",
+                "C": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "D": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is William's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "William's comments emphasize the importance of efficiency, quality, and employee empowerment, which aligns with option C.",
+            "options": {
+                "A": "Convince the partner to cut costs",
+                "B": "Increase the company's social media presence",
+                "C": "Maintain the quality of the company's products and services while agreeing to a cost cut (<extra_info>Extra information: you are concerned about the impact of cost-cutting on the quality of your product.</extra_info>)",
+                "D": "Expand the company's product line to increase market share"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates William to pursue their goal?",
+            "selected": "B",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "To reduce the quality of products to save money.",
+                "B": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "C": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation.",
+                "D": "To ensure the company is successful."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 14,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Zane's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane's responses focus on improving efficiency, enhancing customer experience, and fostering a collaborative environment, which aligns with maintaining quality while cutting costs.",
+            "options": {
+                "A": "Convince the partner to cut costs (<extra_info>Extra information: you have found a report indicating the company's profits are decreasing. And you think the company should start by switching suppliers of ingredients.</extra_info>  <strategy_hint>Hint: you can propose ways to cut costs that won't affect the status of the company.</strategy_hint>)",
+                "B": "Maintain the quality of the company's products and services while agreeing to a cost cut",
+                "C": "Negotiate a new partnership with another company",
+                "D": "Improve employee satisfaction through team-building activities"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Zane to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane's enthusiasm for improving efficiency and fostering a collaborative environment suggests a desire for the company's success and operational excellence.",
+            "options": {
+                "A": "To ensure the company is successful.",
+                "B": "To increase costs for better quality.",
+                "C": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "D": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is William's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "William's emphasis on valuing and empowering the team, along with setting a clear agenda for the meeting, suggests he is focused on maintaining quality while exploring cost-saving measures.",
+            "options": {
+                "A": "Convince the partner to cut costs",
+                "B": "Increase the company's social media presence",
+                "C": "Maintain the quality of the company's products and services while agreeing to a cost cut (<extra_info>Extra information: you are concerned about the impact of cost-cutting on the quality of your product.</extra_info>)",
+                "D": "Expand the company's product line to increase market share"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates William to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "B",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "To reduce the quality of products to save money.",
+                "B": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "C": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation.",
+                "D": "To ensure the company is successful."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 15,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Zane's goal in this scenario?",
+            "selected": "D",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane's comments focus on fostering collaboration, improving morale, and generating innovative solutions, which align closely with improving employee satisfaction through team-building activities.",
+            "options": {
+                "A": "Convince the partner to cut costs (<extra_info>Extra information: you have found a report indicating the company's profits are decreasing. And you think the company should start by switching suppliers of ingredients.</extra_info>  <strategy_hint>Hint: you can propose ways to cut costs that won't affect the status of the company.</strategy_hint>)",
+                "B": "Maintain the quality of the company's products and services while agreeing to a cost cut",
+                "C": "Negotiate a new partnership with another company",
+                "D": "Improve employee satisfaction through team-building activities"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Zane to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane's emphasis on collaboration, continuous improvement, and fostering a positive work environment suggests a desire for overall company success.",
+            "options": {
+                "A": "To ensure the company is successful.",
+                "B": "To increase costs for better quality.",
+                "C": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "D": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is William's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "C",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "Convince the partner to cut costs",
+                "B": "Increase the company's social media presence",
+                "C": "Maintain the quality of the company's products and services while agreeing to a cost cut (<extra_info>Extra information: you are concerned about the impact of cost-cutting on the quality of your product.</extra_info>)",
+                "D": "Expand the company's product line to increase market share"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates William to pursue their goal?",
+            "selected": "B",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "To reduce the quality of products to save money.",
+                "B": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "C": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation.",
+                "D": "To ensure the company is successful."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 16,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Zane's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane's responses consistently focus on innovation, maintaining quality, and ensuring productive discussions, which align closely with William's stated goal.",
+            "options": {
+                "A": "Convince the partner to cut costs (<extra_info>Extra information: you have found a report indicating the company's profits are decreasing. And you think the company should start by switching suppliers of ingredients.</extra_info>  <strategy_hint>Hint: you can propose ways to cut costs that won't affect the status of the company.</strategy_hint>)",
+                "B": "Maintain the quality of the company's products and services while agreeing to a cost cut",
+                "C": "Negotiate a new partnership with another company",
+                "D": "Improve employee satisfaction through team-building activities"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Zane to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane's enthusiasm for the meeting and emphasis on gathering ideas suggest a desire for the company's overall success and innovation.",
+            "options": {
+                "A": "To ensure the company is successful.",
+                "B": "To increase costs for better quality.",
+                "C": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "D": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is William's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "William emphasized the importance of maintaining product quality and ensuring customer trust, which aligns with the extra information provided about his concerns regarding cost-cutting impacts.",
+            "options": {
+                "A": "Convince the partner to cut costs",
+                "B": "Increase the company's social media presence",
+                "C": "Maintain the quality of the company's products and services while agreeing to a cost cut (<extra_info>Extra information: you are concerned about the impact of cost-cutting on the quality of your product.</extra_info>)",
+                "D": "Expand the company's product line to increase market share"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates William to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "B",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "To reduce the quality of products to save money.",
+                "B": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "C": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation.",
+                "D": "To ensure the company is successful."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 17,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Zane's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane consistently emphasizes the importance of product quality and agrees to highlight challenges and successes, which suggests he aims to maintain quality while potentially cutting costs.",
+            "options": {
+                "A": "Convince the partner to cut costs (<extra_info>Extra information: you have found a report indicating the company's profits are decreasing. And you think the company should start by switching suppliers of ingredients.</extra_info>  <strategy_hint>Hint: you can propose ways to cut costs that won't affect the status of the company.</strategy_hint>)",
+                "B": "Maintain the quality of the company's products and services while agreeing to a cost cut",
+                "C": "Negotiate a new partnership with another company",
+                "D": "Improve employee satisfaction through team-building activities"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Zane to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane's emphasis on setting a clear agenda and highlighting both challenges and successes suggests a desire to ensure the company's success through structured and informed decision-making.",
+            "options": {
+                "A": "To ensure the company is successful.",
+                "B": "To increase costs for better quality.",
+                "C": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "D": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is William's goal in this scenario?",
+            "selected": null,
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "C",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "Convince the partner to cut costs",
+                "B": "Increase the company's social media presence",
+                "C": "Maintain the quality of the company's products and services while agreeing to a cost cut (<extra_info>Extra information: you are concerned about the impact of cost-cutting on the quality of your product.</extra_info>)",
+                "D": "Expand the company's product line to increase market share"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates William to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "B",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "To reduce the quality of products to save money.",
+                "B": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "C": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation.",
+                "D": "To ensure the company is successful."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 18,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Zane's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane consistently emphasizes the importance of product quality and maintains a harmonious tone, suggesting he aims to balance quality with cost-cutting.",
+            "options": {
+                "A": "Convince the partner to cut costs (<extra_info>Extra information: you have found a report indicating the company's profits are decreasing. And you think the company should start by switching suppliers of ingredients.</extra_info>  <strategy_hint>Hint: you can propose ways to cut costs that won't affect the status of the company.</strategy_hint>)",
+                "B": "Maintain the quality of the company's products and services while agreeing to a cost cut",
+                "C": "Negotiate a new partnership with another company",
+                "D": "Improve employee satisfaction through team-building activities"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Zane to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane's emphasis on quality and maintaining a balanced perspective suggests a desire for overall company success.",
+            "options": {
+                "A": "To ensure the company is successful.",
+                "B": "To increase costs for better quality.",
+                "C": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "D": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is William's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "Convince the partner to cut costs",
+                "B": "Increase the company's social media presence",
+                "C": "Maintain the quality of the company's products and services while agreeing to a cost cut (<extra_info>Extra information: you are concerned about the impact of cost-cutting on the quality of your product.</extra_info>)",
+                "D": "Expand the company's product line to increase market share"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates William to pursue their goal?",
+            "selected": "B",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "To reduce the quality of products to save money.",
+                "B": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "C": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation.",
+                "D": "To ensure the company is successful."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 19,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Zane's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane's statements consistently emphasize quality and maintaining high standards, which aligns with option B, while also hinting at the need for cost optimization.",
+            "options": {
+                "A": "Convince the partner to cut costs (<extra_info>Extra information: you have found a report indicating the company's profits are decreasing. And you think the company should start by switching suppliers of ingredients.</extra_info>  <strategy_hint>Hint: you can propose ways to cut costs that won't affect the status of the company.</strategy_hint>)",
+                "B": "Maintain the quality of the company's products and services while agreeing to a cost cut",
+                "C": "Negotiate a new partnership with another company",
+                "D": "Improve employee satisfaction through team-building activities"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Zane to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane emphasizes the importance of quality and maintaining the brand's reputation, which suggests a desire for the company's overall success.",
+            "options": {
+                "A": "To ensure the company is successful.",
+                "B": "To increase costs for better quality.",
+                "C": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "D": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is William's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "C",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "Convince the partner to cut costs",
+                "B": "Increase the company's social media presence",
+                "C": "Maintain the quality of the company's products and services while agreeing to a cost cut (<extra_info>Extra information: you are concerned about the impact of cost-cutting on the quality of your product.</extra_info>)",
+                "D": "Expand the company's product line to increase market share"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates William to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "B",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "To reduce the quality of products to save money.",
+                "B": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "C": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation.",
+                "D": "To ensure the company is successful."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 20,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Zane's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane's statements consistently emphasize maintaining quality while suggesting cost-saving measures, which aligns with option B.",
+            "options": {
+                "A": "Convince the partner to cut costs (<extra_info>Extra information: you have found a report indicating the company's profits are decreasing. And you think the company should start by switching suppliers of ingredients.</extra_info>  <strategy_hint>Hint: you can propose ways to cut costs that won't affect the status of the company.</strategy_hint>)",
+                "B": "Maintain the quality of the company's products and services while agreeing to a cost cut",
+                "C": "Negotiate a new partnership with another company",
+                "D": "Improve employee satisfaction through team-building activities"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Zane to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Zane emphasizes the importance of maintaining quality and reputation while suggesting process improvements, indicating a desire for the company's success.",
+            "options": {
+                "A": "To ensure the company is successful.",
+                "B": "To increase costs for better quality.",
+                "C": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "D": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is William's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "Convince the partner to cut costs",
+                "B": "Increase the company's social media presence",
+                "C": "Maintain the quality of the company's products and services while agreeing to a cost cut (<extra_info>Extra information: you are concerned about the impact of cost-cutting on the quality of your product.</extra_info>)",
+                "D": "Expand the company's product line to increase market share"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates William to pursue their goal?",
+            "selected": "B",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "To reduce the quality of products to save money.",
+                "B": "William Brown aims to maintain product quality so that the company's reputation remains intact while agreeing to necessary cost reductions.",
+                "C": "Zane Bennett wants to cut costs by switching suppliers because he believes it will prevent further profit decline without compromising the company's reputation.",
+                "D": "To ensure the company is successful."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    }
+]

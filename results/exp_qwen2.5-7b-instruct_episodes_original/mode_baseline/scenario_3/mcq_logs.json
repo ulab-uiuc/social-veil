@@ -1,0 +1,1442 @@
+[
+    {
+        "round": 1,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "Donate to the charity but not sure about how $1 a day works",
+                "B": "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
+                "C": "Plan a weekend getaway with the friend",
+                "D": "Discuss the latest tech trends with the friend"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel suggests the charity's work and directly asks Noah to help out, indicating he believes in the cause and wants Noah to contribute.",
+            "options": {
+                "A": "To discourage donations to the charity.",
+                "B": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "C": "To make everyone happy.",
+                "D": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Noah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah expresses concern about the legitimacy of the $1 a day plan and wants to verify it, indicating he wants to donate but needs assurance.",
+            "options": {
+                "A": "Get the friend to donate $1 a day to a charity organization",
+                "B": "Convince the friend to join a different charity event",
+                "C": "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)",
+                "D": "Find a new coffee shop to visit next time"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Noah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah's cautious approach and need to verify the legitimacy of the charity suggest he wants to donate cautiously while managing his budget.",
+            "options": {
+                "A": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
+                "B": "To feel good about himself.",
+                "C": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "D": "To avoid spending any money at all."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 2,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel is showing enthusiasm for the charity and believes in its legitimacy, suggesting his goal is to get Noah to donate.",
+            "options": {
+                "A": "Donate to the charity but not sure about how $1 a day works",
+                "B": "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
+                "C": "Plan a weekend getaway with the friend",
+                "D": "Discuss the latest tech trends with the friend"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel is showing enthusiasm and offering to verify the charity's legitimacy, suggesting he believes in the cause and wants Noah to join him in supporting it.",
+            "options": {
+                "A": "To discourage donations to the charity.",
+                "B": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "C": "To make everyone happy.",
+                "D": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Noah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah expresses concern about the legitimacy of the $1 a day plan and wants to verify it, indicating he's considering donating but needs assurance.",
+            "options": {
+                "A": "Get the friend to donate $1 a day to a charity organization",
+                "B": "Convince the friend to join a different charity event",
+                "C": "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)",
+                "D": "Find a new coffee shop to visit next time"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Noah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah expresses concern about verifying the legitimacy of the charity and mentions wanting to ensure it's a legitimate cause before committing, indicating he wants to donate cautiously while managing his budget.",
+            "options": {
+                "A": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
+                "B": "To feel good about himself.",
+                "C": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "D": "To avoid spending any money at all."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 3,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel is showing enthusiasm and trust in the charity, suggesting he wants Noah to join him in supporting it.",
+            "options": {
+                "A": "Donate to the charity but not sure about how $1 a day works",
+                "B": "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
+                "C": "Plan a weekend getaway with the friend",
+                "D": "Discuss the latest tech trends with the friend"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel's enthusiasm and assurance that the charity is legitimate suggest he genuinely believes in its cause and wants Noah to join him in supporting it.",
+            "options": {
+                "A": "To discourage donations to the charity.",
+                "B": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "C": "To make everyone happy.",
+                "D": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Noah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah is expressing concern about the legitimacy of the $1 a day plan and wants to verify it, indicating he is considering donating but needs assurance.",
+            "options": {
+                "A": "Get the friend to donate $1 a day to a charity organization",
+                "B": "Convince the friend to join a different charity event",
+                "C": "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)",
+                "D": "Find a new coffee shop to visit next time"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Noah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah's cautious approach and desire to verify the legitimacy of the charity indicate he wants to donate cautiously while managing his budget.",
+            "options": {
+                "A": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
+                "B": "To feel good about himself.",
+                "C": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "D": "To avoid spending any money at all."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 4,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel is showing the website and emphasizing the positive impact of the donation, indicating his goal is to get Noah to commit to donating.",
+            "options": {
+                "A": "Donate to the charity but not sure about how $1 a day works",
+                "B": "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
+                "C": "Plan a weekend getaway with the friend",
+                "D": "Discuss the latest tech trends with the friend"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel's enthusiasm and emphasis on the potential impact suggest he genuinely believes in the cause and wants Noah to join him.",
+            "options": {
+                "A": "To discourage donations to the charity.",
+                "B": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "C": "To make everyone happy.",
+                "D": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Noah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah is showing signs of being cautious and wanting to verify the legitimacy of the charity, which suggests he is considering donating but is currently on a tight budget.",
+            "options": {
+                "A": "Get the friend to donate $1 a day to a charity organization",
+                "B": "Convince the friend to join a different charity event",
+                "C": "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)",
+                "D": "Find a new coffee shop to visit next time"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Noah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah's cautious approach and desire to verify the legitimacy of the charity suggest he wants to donate cautiously while managing his budget.",
+            "options": {
+                "A": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
+                "B": "To feel good about himself.",
+                "C": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "D": "To avoid spending any money at all."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 5,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel is showing the website and emphasizing the small commitment and potential impact, which suggests he wants Noah to donate.",
+            "options": {
+                "A": "Donate to the charity but not sure about how $1 a day works",
+                "B": "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
+                "C": "Plan a weekend getaway with the friend",
+                "D": "Discuss the latest tech trends with the friend"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel's enthusiasm and explanation about the potential impact suggest he genuinely believes in the cause and wants Noah to join.",
+            "options": {
+                "A": "To discourage donations to the charity.",
+                "B": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "C": "To make everyone happy.",
+                "D": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Noah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah's actions suggest he is reviewing the details and considering the commitment, indicating he might be on a tight budget but still wants to support the charity.",
+            "options": {
+                "A": "Get the friend to donate $1 a day to a charity organization",
+                "B": "Convince the friend to join a different charity event",
+                "C": "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)",
+                "D": "Find a new coffee shop to visit next time"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Noah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah's cautious behavior and request to review details first suggest he wants to manage his budget carefully while still considering the donation.",
+            "options": {
+                "A": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
+                "B": "To feel good about himself.",
+                "C": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "D": "To avoid spending any money at all."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 6,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "Donate to the charity but not sure about how $1 a day works",
+                "B": "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
+                "C": "Plan a weekend getaway with the friend",
+                "D": "Discuss the latest tech trends with the friend"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel's encouragement and reassurance suggest he believes in the cause and wants Noah to contribute.",
+            "options": {
+                "A": "To discourage donations to the charity.",
+                "B": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "C": "To make everyone happy.",
+                "D": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Noah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah seems to be reviewing the details and appreciating Samuel's support, indicating he is considering the donation but unsure about the process.",
+            "options": {
+                "A": "Get the friend to donate $1 a day to a charity organization",
+                "B": "Convince the friend to join a different charity event",
+                "C": "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)",
+                "D": "Find a new coffee shop to visit next time"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Noah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah's cautious nature and desire to review details first suggest he wants to donate cautiously while managing his budget.",
+            "options": {
+                "A": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
+                "B": "To feel good about himself.",
+                "C": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "D": "To avoid spending any money at all."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 7,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "Donate to the charity but not sure about how $1 a day works",
+                "B": "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
+                "C": "Plan a weekend getaway with the friend",
+                "D": "Discuss the latest tech trends with the friend"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel's consistent nodding and smiling suggest he is supportive and encouraging, which aligns with him wanting Noah to donate. Given Noah's cautious nature and mention of a tight budget, it's likely Samuel believes a small daily contribution could be impactful.",
+            "options": {
+                "A": "To discourage donations to the charity.",
+                "B": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "C": "To make everyone happy.",
+                "D": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Noah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah mentions his budget is tight but still expresses interest in supporting the charity, which aligns with option C.",
+            "options": {
+                "A": "Get the friend to donate $1 a day to a charity organization",
+                "B": "Convince the friend to join a different charity event",
+                "C": "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)",
+                "D": "Find a new coffee shop to visit next time"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Noah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah mentions his budget is tight and will consider it carefully, indicating he wants to donate cautiously while managing his finances.",
+            "options": {
+                "A": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
+                "B": "To feel good about himself.",
+                "C": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "D": "To avoid spending any money at all."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 8,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "Donate to the charity but not sure about how $1 a day works",
+                "B": "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
+                "C": "Plan a weekend getaway with the friend",
+                "D": "Discuss the latest tech trends with the friend"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel suggests a small daily donation, indicating his belief in its significant impact, which aligns with his goal of encouraging Noah to contribute to children's cancer research.",
+            "options": {
+                "A": "To discourage donations to the charity.",
+                "B": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "C": "To make everyone happy.",
+                "D": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Noah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah mentions his budget is tight but still considers the idea of donating, indicating he wants to support the charity but is cautious about the commitment.",
+            "options": {
+                "A": "Get the friend to donate $1 a day to a charity organization",
+                "B": "Convince the friend to join a different charity event",
+                "C": "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)",
+                "D": "Find a new coffee shop to visit next time"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Noah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah explicitly mentions his budget being tight and considering a small amount, indicating he wants to donate cautiously while managing his finances.",
+            "options": {
+                "A": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
+                "B": "To feel good about himself.",
+                "C": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "D": "To avoid spending any money at all."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 9,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel suggests a small daily donation and emphasizes the impact, indicating his goal is to get Noah to donate to the charity.",
+            "options": {
+                "A": "Donate to the charity but not sure about how $1 a day works",
+                "B": "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
+                "C": "Plan a weekend getaway with the friend",
+                "D": "Discuss the latest tech trends with the friend"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel suggests a small daily donation and emphasizes its impact, indicating his belief in the significance of even small contributions to children's cancer research.",
+            "options": {
+                "A": "To discourage donations to the charity.",
+                "B": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "C": "To make everyone happy.",
+                "D": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Noah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah mentions considering the budget and thinking about starting with a small amount, indicating he wants to support the charity but is unsure about the $1 a day commitment.",
+            "options": {
+                "A": "Get the friend to donate $1 a day to a charity organization",
+                "B": "Convince the friend to join a different charity event",
+                "C": "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)",
+                "D": "Find a new coffee shop to visit next time"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Noah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah explicitly mentions his budget being tight and considering a small amount, indicating he wants to donate cautiously while managing his finances.",
+            "options": {
+                "A": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
+                "B": "To feel good about himself.",
+                "C": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "D": "To avoid spending any money at all."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 10,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel is encouraging Noah to sign up for a small daily donation, indicating his goal is to get Noah to contribute to the charity.",
+            "options": {
+                "A": "Donate to the charity but not sure about how $1 a day works",
+                "B": "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
+                "C": "Plan a weekend getaway with the friend",
+                "D": "Discuss the latest tech trends with the friend"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel's suggestion of a small daily donation and reassurance indicate he believes even a small contribution can make a significant impact, which aligns with supporting children's cancer research.",
+            "options": {
+                "A": "To discourage donations to the charity.",
+                "B": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "C": "To make everyone happy.",
+                "D": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Noah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah is considering the suggestion and expressing gratitude, indicating he is open to the idea but unsure about the details.",
+            "options": {
+                "A": "Get the friend to donate $1 a day to a charity organization",
+                "B": "Convince the friend to join a different charity event",
+                "C": "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)",
+                "D": "Find a new coffee shop to visit next time"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Noah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah's cautious approach and willingness to start with a small amount suggest he wants to donate cautiously while managing his budget.",
+            "options": {
+                "A": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
+                "B": "To feel good about himself.",
+                "C": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "D": "To avoid spending any money at all."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 11,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel offers help and reassurance, indicating he wants Noah to commit to donating.",
+            "options": {
+                "A": "Donate to the charity but not sure about how $1 a day works",
+                "B": "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
+                "C": "Plan a weekend getaway with the friend",
+                "D": "Discuss the latest tech trends with the friend"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel's consistent reassurance and encouragement suggest he believes in the cause and wants Noah to contribute.",
+            "options": {
+                "A": "To discourage donations to the charity.",
+                "B": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "C": "To make everyone happy.",
+                "D": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Noah's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Noah's responses indicate he is acknowledging Samuel's offer to help, which suggests he might be open to the idea of donating, aligning with option A.",
+            "options": {
+                "A": "Get the friend to donate $1 a day to a charity organization",
+                "B": "Convince the friend to join a different charity event",
+                "C": "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)",
+                "D": "Find a new coffee shop to visit next time"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Noah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah's cautious nature and preference for letting Samuel know if he needs guidance suggest he wants to donate cautiously while managing his budget.",
+            "options": {
+                "A": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
+                "B": "To feel good about himself.",
+                "C": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "D": "To avoid spending any money at all."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 12,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel's consistent nodding and smiling, along with his previous actions, suggest he is trying to encourage Noah to donate. The context of a charity representative being present supports this interpretation.",
+            "options": {
+                "A": "Donate to the charity but not sure about how $1 a day works",
+                "B": "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
+                "C": "Plan a weekend getaway with the friend",
+                "D": "Discuss the latest tech trends with the friend"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel's consistent nodding and smiling suggest he is supportive and encouraging of Noah's potential donation, which aligns with wanting Noah to contribute to the charity's cause.",
+            "options": {
+                "A": "To discourage donations to the charity.",
+                "B": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "C": "To make everyone happy.",
+                "D": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Noah's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Noah's consistent non-verbal reassurance and the fact that he did not object to the idea of donating suggest he might be open to joining Samuel.",
+            "options": {
+                "A": "Get the friend to donate $1 a day to a charity organization",
+                "B": "Convince the friend to join a different charity event",
+                "C": "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)",
+                "D": "Find a new coffee shop to visit next time"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Noah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah's cautious and reserved nature suggests he wants to support the charity while being mindful of his financial situation.",
+            "options": {
+                "A": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
+                "B": "To feel good about himself.",
+                "C": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "D": "To avoid spending any money at all."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 13,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel is actively promoting the charity and encouraging Noah to join, indicating his goal is to get Noah to donate.",
+            "options": {
+                "A": "Donate to the charity but not sure about how $1 a day works",
+                "B": "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
+                "C": "Plan a weekend getaway with the friend",
+                "D": "Discuss the latest tech trends with the friend"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel directly mentions the charity and encourages Noah to join, indicating his belief in the cause and desire for Noah to contribute.",
+            "options": {
+                "A": "To discourage donations to the charity.",
+                "B": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "C": "To make everyone happy.",
+                "D": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Noah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah's response indicates he is considering the donation but unsure about the $1 a day commitment and his current budget constraints.",
+            "options": {
+                "A": "Get the friend to donate $1 a day to a charity organization",
+                "B": "Convince the friend to join a different charity event",
+                "C": "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)",
+                "D": "Find a new coffee shop to visit next time"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Noah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah's cautious nature and concern for his budget are clearly reflected in his response, indicating he wants to support the cause while being mindful of his financial situation.",
+            "options": {
+                "A": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
+                "B": "To feel good about himself.",
+                "C": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "D": "To avoid spending any money at all."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 14,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel is actively promoting the charity and encouraging Noah to join, indicating his goal is to get Noah to donate.",
+            "options": {
+                "A": "Donate to the charity but not sure about how $1 a day works",
+                "B": "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
+                "C": "Plan a weekend getaway with the friend",
+                "D": "Discuss the latest tech trends with the friend"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel's enthusiasm and encouragement suggest he believes in the cause and wants Noah to participate.",
+            "options": {
+                "A": "To discourage donations to the charity.",
+                "B": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "C": "To make everyone happy.",
+                "D": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Noah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah's response indicates he is considering the donation but unsure about the commitment, suggesting he's on a tight budget while still wanting to support the charity.",
+            "options": {
+                "A": "Get the friend to donate $1 a day to a charity organization",
+                "B": "Convince the friend to join a different charity event",
+                "C": "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)",
+                "D": "Find a new coffee shop to visit next time"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Noah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah's cautious approach and consideration of his budget suggest he wants to donate cautiously while still supporting the cause.",
+            "options": {
+                "A": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
+                "B": "To feel good about himself.",
+                "C": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "D": "To avoid spending any money at all."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 15,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel is encouraging Noah to join him in donating to the charity by mentioning the simplicity and flexibility of the $1 a day contribution.",
+            "options": {
+                "A": "Donate to the charity but not sure about how $1 a day works",
+                "B": "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
+                "C": "Plan a weekend getaway with the friend",
+                "D": "Discuss the latest tech trends with the friend"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel's enthusiasm and encouragement suggest he believes in the cause and wants Noah to contribute, indicating his motivation is to have Noah join him in supporting children's cancer research.",
+            "options": {
+                "A": "To discourage donations to the charity.",
+                "B": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "C": "To make everyone happy.",
+                "D": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Noah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah expresses willingness to consider the donation but mentions he needs to fit it into his budget, indicating he's unsure about the $1 a day commitment and currently on a tight budget.",
+            "options": {
+                "A": "Get the friend to donate $1 a day to a charity organization",
+                "B": "Convince the friend to join a different charity event",
+                "C": "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)",
+                "D": "Find a new coffee shop to visit next time"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Noah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah's cautious approach and mention of fitting it into his budget suggest he prioritizes supporting the charity while managing his finances carefully.",
+            "options": {
+                "A": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
+                "B": "To feel good about himself.",
+                "C": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "D": "To avoid spending any money at all."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 16,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel is encouraging Noah to consider donating, showing support for the charity and emphasizing the simplicity and potential impact of the donation.",
+            "options": {
+                "A": "Donate to the charity but not sure about how $1 a day works",
+                "B": "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
+                "C": "Plan a weekend getaway with the friend",
+                "D": "Discuss the latest tech trends with the friend"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel's consistent nodding and smiling, along with his suggestion to find ways to save money together, indicates he believes in the cause and wants Noah to contribute.",
+            "options": {
+                "A": "To discourage donations to the charity.",
+                "B": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "C": "To make everyone happy.",
+                "D": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Noah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah seems hesitant but still open to the idea of donating, indicating he's considering his budget while wanting to support the charity.",
+            "options": {
+                "A": "Get the friend to donate $1 a day to a charity organization",
+                "B": "Convince the friend to join a different charity event",
+                "C": "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)",
+                "D": "Find a new coffee shop to visit next time"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Noah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah's cautious approach to considering the donation and his focus on fitting it into his budget suggest he wants to support the charity while being mindful of his financial situation.",
+            "options": {
+                "A": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
+                "B": "To feel good about himself.",
+                "C": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "D": "To avoid spending any money at all."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 17,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel is encouraging Noah to sign up for the charity project and believes a small donation can make a significant impact.",
+            "options": {
+                "A": "Donate to the charity but not sure about how $1 a day works",
+                "B": "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
+                "C": "Plan a weekend getaway with the friend",
+                "D": "Discuss the latest tech trends with the friend"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel encourages Noah to sign up for the charity project, emphasizing that even a small donation can make a big difference, which suggests his motivation is related to the impact of the donation on children's cancer research.",
+            "options": {
+                "A": "To discourage donations to the charity.",
+                "B": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "C": "To make everyone happy.",
+                "D": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Noah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah expresses willingness to consider the suggestion but also mentions needing to discuss it with his wife, indicating he is unsure about the commitment level.",
+            "options": {
+                "A": "Get the friend to donate $1 a day to a charity organization",
+                "B": "Convince the friend to join a different charity event",
+                "C": "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)",
+                "D": "Find a new coffee shop to visit next time"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Noah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah's cautious approach to considering the donation and his intention to discuss it with his wife suggest he wants to manage his budget carefully while still supporting the cause.",
+            "options": {
+                "A": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
+                "B": "To feel good about himself.",
+                "C": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "D": "To avoid spending any money at all."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 18,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel is encouraging Noah to sign up for the charity project and offering support, indicating his goal is to get Noah to donate.",
+            "options": {
+                "A": "Donate to the charity but not sure about how $1 a day works",
+                "B": "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
+                "C": "Plan a weekend getaway with the friend",
+                "D": "Discuss the latest tech trends with the friend"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel's encouragement to start small and the mention of children's cancer research suggest he genuinely believes in the cause and wants Noah to contribute.",
+            "options": {
+                "A": "To discourage donations to the charity.",
+                "B": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "C": "To make everyone happy.",
+                "D": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Noah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah expresses willingness to consider the idea but also mentions needing to discuss it with his wife and being on a tight budget, indicating uncertainty about committing to the daily donation.",
+            "options": {
+                "A": "Get the friend to donate $1 a day to a charity organization",
+                "B": "Convince the friend to join a different charity event",
+                "C": "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)",
+                "D": "Find a new coffee shop to visit next time"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Noah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah's cautious approach and willingness to discuss with his wife suggest he wants to manage his finances carefully while still supporting the cause.",
+            "options": {
+                "A": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
+                "B": "To feel good about himself.",
+                "C": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "D": "To avoid spending any money at all."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 19,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel is encouraging Noah to sign up for the charity project and offering reassurance, indicating his goal is to get Noah to donate.",
+            "options": {
+                "A": "Donate to the charity but not sure about how $1 a day works",
+                "B": "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
+                "C": "Plan a weekend getaway with the friend",
+                "D": "Discuss the latest tech trends with the friend"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel's encouragement and reassurance suggest he believes in the cause and wants Noah to participate, indicating his motivation is related to the potential impact of the donation.",
+            "options": {
+                "A": "To discourage donations to the charity.",
+                "B": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "C": "To make everyone happy.",
+                "D": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Noah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah mentioned he needs to think about it and discuss with his wife, indicating he is considering the donation but unsure about the commitment level.",
+            "options": {
+                "A": "Get the friend to donate $1 a day to a charity organization",
+                "B": "Convince the friend to join a different charity event",
+                "C": "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)",
+                "D": "Find a new coffee shop to visit next time"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Noah to pursue their goal?",
+            "selected": "B",
+            "confidence": 0.6,
+            "confidence_class": "Medium",
+            "correct_answer": "C",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Noah's cautious approach and willingness to discuss the idea with his wife suggest he wants to feel good about himself by supporting the charity responsibly.",
+            "options": {
+                "A": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
+                "B": "To feel good about himself.",
+                "C": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "D": "To avoid spending any money at all."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 20,
+        "scenario": 3,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel is encouraging Noah to consider donating, suggesting ways to start small and showing support, which indicates his goal is to get Noah to donate to the charity.",
+            "options": {
+                "A": "Donate to the charity but not sure about how $1 a day works",
+                "B": "Get the friend to donate $1 a day to a charity organization (<extra_info>Extra information: you are a passionate supporter of the charity (about children's cancer) and believe that a small donation can make a big impact. $1 a day works as simple as signing up the project on an website and one can cancel anytime</extra_info>)",
+                "C": "Plan a weekend getaway with the friend",
+                "D": "Discuss the latest tech trends with the friend"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel's supportive and encouraging behavior suggests he believes in the cause and wants Noah to contribute, especially through a small, manageable daily donation.",
+            "options": {
+                "A": "To discourage donations to the charity.",
+                "B": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "C": "To make everyone happy.",
+                "D": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Noah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah's nodding and smiling suggest agreement, but his previous hesitation and the fact that he's considering starting small indicate he might be on a tight budget and unsure about the $1 a day commitment.",
+            "options": {
+                "A": "Get the friend to donate $1 a day to a charity organization",
+                "B": "Convince the friend to join a different charity event",
+                "C": "Donate to the charity but not sure about how $1 a day works (<extra_info>Extra information: you're currently on a tight budget, but you also want to support the charity. </extra_info>)",
+                "D": "Find a new coffee shop to visit next time"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Noah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Noah's cautious approach and preference for starting small suggest he wants to manage his budget carefully while still contributing to the charity.",
+            "options": {
+                "A": "Samuel wants Noah to donate because he believes a small daily contribution can significantly impact children's cancer research.",
+                "B": "To feel good about himself.",
+                "C": "Noah wants to donate cautiously because he prioritizes supporting the charity while managing his tight budget.",
+                "D": "To avoid spending any money at all."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    }
+]

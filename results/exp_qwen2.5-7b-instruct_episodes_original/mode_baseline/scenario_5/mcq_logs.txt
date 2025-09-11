@@ -1,0 +1,124 @@
+================================================================================
+MCQ EVALUATION LOGS
+================================================================================
+
+=== Round 1 ===
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.80)
+Esmeralda Goal MCQ: N/A (confidence: 0.80)
+Esmeralda Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 2 ===
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.80)
+Esmeralda Goal MCQ: N/A (confidence: 0.80)
+Esmeralda Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 3 ===
+Miles Goal MCQ: N/A (confidence: 0.00)
+Miles Reason MCQ: N/A (confidence: 0.80)
+Esmeralda Goal MCQ: N/A (confidence: 0.80)
+Esmeralda Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 4 ===
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.80)
+Esmeralda Goal MCQ: N/A (confidence: 0.80)
+Esmeralda Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 5 ===
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.80)
+Esmeralda Goal MCQ: N/A (confidence: 0.40)
+Esmeralda Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 6 ===
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.80)
+Esmeralda Goal MCQ: N/A (confidence: 0.80)
+Esmeralda Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 7 ===
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.80)
+Esmeralda Goal MCQ: N/A (confidence: 0.80)
+Esmeralda Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 8 ===
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.80)
+Esmeralda Goal MCQ: N/A (confidence: 0.80)
+Esmeralda Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 9 ===
+Miles Goal MCQ: N/A (confidence: 0.70)
+Miles Reason MCQ: N/A (confidence: 0.80)
+Esmeralda Goal MCQ: N/A (confidence: 0.90)
+Esmeralda Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 10 ===
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.80)
+Esmeralda Goal MCQ: N/A (confidence: 0.80)
+Esmeralda Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 11 ===
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.80)
+Esmeralda Goal MCQ: N/A (confidence: 0.90)
+Esmeralda Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 12 ===
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.80)
+Esmeralda Goal MCQ: N/A (confidence: 0.80)
+Esmeralda Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 13 ===
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.80)
+Esmeralda Goal MCQ: N/A (confidence: 0.80)
+Esmeralda Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 14 ===
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.80)
+Esmeralda Goal MCQ: N/A (confidence: 0.80)
+Esmeralda Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 15 ===
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.80)
+Esmeralda Goal MCQ: N/A (confidence: 0.80)
+Esmeralda Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 16 ===
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.80)
+Esmeralda Goal MCQ: N/A (confidence: 0.80)
+Esmeralda Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 17 ===
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.80)
+Esmeralda Goal MCQ: N/A (confidence: 0.80)
+Esmeralda Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 18 ===
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.80)
+Esmeralda Goal MCQ: N/A (confidence: 0.80)
+Esmeralda Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 19 ===
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.90)
+Esmeralda Goal MCQ: N/A (confidence: 0.90)
+Esmeralda Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 20 ===
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.80)
+Esmeralda Goal MCQ: N/A (confidence: 0.80)
+Esmeralda Reason MCQ: N/A (confidence: 0.80)
+

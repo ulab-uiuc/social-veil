@@ -1,0 +1,124 @@
+================================================================================
+MCQ EVALUATION LOGS
+================================================================================
+
+=== Round 1 ===
+Leo Goal MCQ: N/A (confidence: 0.00)
+Leo Reason MCQ: N/A (confidence: 0.80)
+Liam Goal MCQ: N/A (confidence: 0.70)
+Liam Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 2 ===
+Leo Goal MCQ: N/A (confidence: 0.80)
+Leo Reason MCQ: N/A (confidence: 0.80)
+Liam Goal MCQ: N/A (confidence: 0.80)
+Liam Reason MCQ: N/A (confidence: 0.85)
+
+=== Round 3 ===
+Leo Goal MCQ: N/A (confidence: 0.80)
+Leo Reason MCQ: N/A (confidence: 0.85)
+Liam Goal MCQ: N/A (confidence: 0.90)
+Liam Reason MCQ: N/A (confidence: 0.85)
+
+=== Round 4 ===
+Leo Goal MCQ: N/A (confidence: 0.90)
+Leo Reason MCQ: N/A (confidence: 0.90)
+Liam Goal MCQ: N/A (confidence: 0.90)
+Liam Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 5 ===
+Leo Goal MCQ: N/A (confidence: 0.85)
+Leo Reason MCQ: N/A (confidence: 0.85)
+Liam Goal MCQ: N/A (confidence: 0.80)
+Liam Reason MCQ: N/A (confidence: 0.85)
+
+=== Round 6 ===
+Leo Goal MCQ: N/A (confidence: 0.90)
+Leo Reason MCQ: N/A (confidence: 0.80)
+Liam Goal MCQ: N/A (confidence: 0.80)
+Liam Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 7 ===
+Leo Goal MCQ: N/A (confidence: 0.80)
+Leo Reason MCQ: N/A (confidence: 0.85)
+Liam Goal MCQ: N/A (confidence: 0.00)
+Liam Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 8 ===
+Leo Goal MCQ: N/A (confidence: 0.50)
+Leo Reason MCQ: N/A (confidence: 0.80)
+Liam Goal MCQ: N/A (confidence: 0.80)
+Liam Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 9 ===
+Leo Goal MCQ: N/A (confidence: 0.00)
+Leo Reason MCQ: N/A (confidence: 0.90)
+Liam Goal MCQ: N/A (confidence: 0.70)
+Liam Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 10 ===
+Leo Goal MCQ: N/A (confidence: 0.00)
+Leo Reason MCQ: N/A (confidence: 0.80)
+Liam Goal MCQ: N/A (confidence: 0.80)
+Liam Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 11 ===
+Leo Goal MCQ: N/A (confidence: 0.80)
+Leo Reason MCQ: N/A (confidence: 0.80)
+Liam Goal MCQ: N/A (confidence: 0.60)
+Liam Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 12 ===
+Leo Goal MCQ: N/A (confidence: 0.00)
+Leo Reason MCQ: N/A (confidence: 0.80)
+Liam Goal MCQ: N/A (confidence: 0.60)
+Liam Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 13 ===
+Leo Goal MCQ: N/A (confidence: 0.90)
+Leo Reason MCQ: N/A (confidence: 0.85)
+Liam Goal MCQ: N/A (confidence: 0.00)
+Liam Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 14 ===
+Leo Goal MCQ: N/A (confidence: 0.90)
+Leo Reason MCQ: N/A (confidence: 0.90)
+Liam Goal MCQ: N/A (confidence: 0.80)
+Liam Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 15 ===
+Leo Goal MCQ: N/A (confidence: 0.80)
+Leo Reason MCQ: N/A (confidence: 0.85)
+Liam Goal MCQ: N/A (confidence: 0.90)
+Liam Reason MCQ: N/A (confidence: 0.85)
+
+=== Round 16 ===
+Leo Goal MCQ: N/A (confidence: 0.80)
+Leo Reason MCQ: N/A (confidence: 0.80)
+Liam Goal MCQ: N/A (confidence: 0.90)
+Liam Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 17 ===
+Leo Goal MCQ: N/A (confidence: 0.90)
+Leo Reason MCQ: N/A (confidence: 0.85)
+Liam Goal MCQ: N/A (confidence: 0.90)
+Liam Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 18 ===
+Leo Goal MCQ: N/A (confidence: 0.90)
+Leo Reason MCQ: N/A (confidence: 0.85)
+Liam Goal MCQ: N/A (confidence: 0.90)
+Liam Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 19 ===
+Leo Goal MCQ: N/A (confidence: 0.90)
+Leo Reason MCQ: N/A (confidence: 0.90)
+Liam Goal MCQ: N/A (confidence: 0.90)
+Liam Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 20 ===
+Leo Goal MCQ: N/A (confidence: 0.80)
+Leo Reason MCQ: N/A (confidence: 0.85)
+Liam Goal MCQ: N/A (confidence: 0.80)
+Liam Reason MCQ: N/A (confidence: 0.80)
+

@@ -1,0 +1,1529 @@
+{
+    "experimental_context": {
+        "scenario": {
+            "description": "Two acquaintances run into each other at Target, one of them volunteers there (a special event) and is in charge of giving away free samples",
+            "agent_relationship": "acquaintance",
+            "barrier_type": null
+        },
+        "agents": {
+            "agent_a": {
+                "name": "Rafael",
+                "profile": {
+                    "first_name": "Rafael",
+                    "last_name": "Cortez",
+                    "age": 45,
+                    "occupation": "Surgeon",
+                    "personality_and_values": "Rafael Cortez, with his outgoing nature and competitive spirit, believes in self-direction. He employs a systematic approach to his decisions.",
+                    "public_info": "Rafael Cortez, a skilled surgeon, owns an impressive collection of vintage medical memorabilia. During his leisure time, he enjoys playing chess and visiting historical landmarks.",
+                    "model_id": "models/Qwen2.5-7B-Instruct"
+                },
+                "goal": "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+                "reason": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                "private_knowledge": ""
+            },
+            "agent_b": {
+                "name": "Jaxon",
+                "profile": {
+                    "first_name": "Jaxon",
+                    "last_name": "Prentice",
+                    "age": 40,
+                    "occupation": "Investigative Journalist",
+                    "personality_and_values": "Jaxon Prentice, outgoing yet erratic, emphasizes achievement, power, and security. His decisions swing between quick adaptations to situations and careful planning.",
+                    "public_info": "Jaxon Prentice, an investigative journalist, is known for his brisk jogging sessions early in the morning and his active participation in community functions.",
+                    "model_id": "models/Qwen2.5-7B-Instruct"
+                },
+                "goal": "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)",
+                "reason": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression.",
+                "private_knowledge": ""
+            }
+        },
+        "experimental_configuration": {
+            "max_rounds": 20
+        }
+    },
+    "conversation_log": [
+        "Rafael: Hi there! Enjoying your shopping? I'm Rafael, and I'm here to help with any samples you might want.",
+        "Jaxon: Hi Rafael, nice to see you! Yes, I'm browsing. Sure, I could use a sample or two if you've got some.",
+        "Rafael: Of course, Jaxon! Let me grab you a couple of samples. What kind of things are you looking for today?",
+        "Jaxon: [nonverbal] smiling and nodding",
+        "Rafael: [nonverbal] smiling and nodding",
+        "Jaxon: [nonverbal] smiling and nodding back",
+        "Rafael: [nonverbal] smiling and nodding back",
+        "Jaxon: [nonverbal] smiling and nodding back",
+        "Rafael: [nonverbal] smiling and nodding back",
+        "Jaxon: [nonverbal] smiling wider and nodding slightly more enthusiastically",
+        "Rafael: [nonverbal] smiling warmly and nodding in agreement",
+        "Jaxon: Great to see you, Rafael! How's everything going?",
+        "Rafael: Hello Jaxon, nice to see you too! Everything's good, thanks. Just wrapping up my shift here. Ready to clear out these samples before they expire.",
+        "Jaxon: That sounds great, Rafael! Do you need any help clearing out the samples? I could use a few for my research.",
+        "Rafael: Sure, Jaxon, that'd be great. Let's get these samples cleared out quickly. We don't want them to expire.",
+        "Jaxon: Great! I'll help you out. Do you have any particular favorites among these samples?",
+        "Rafael: [nonverbal] smiling and shaking head slightly",
+        "Jaxon: Sure, take as many as you like, but don't go overboard!",
+        "Rafael: [nonverbal] smiling and nodding",
+        "Jaxon: Alright, let's grab some samples we both might find useful. I've got a few ideas for my next surgery, and you never know when a new ingredient might come in handy for your research.",
+        "Rafael: Great idea, Jaxon. Let's pick up some samples that could benefit our work. I'm always on the lookout for new tools and ingredients.",
+        "Jaxon: Sure thing, Rafael. I'll make sure to grab a variety that might interest you. Ready to hit the samples?",
+        "Rafael: [nonverbal] smiling and nodding",
+        "Jaxon: Alright, let's see what they have today. I bet there's something interesting for both of us.",
+        "Rafael: Let's check out what they have today. I'm sure we'll find something useful.",
+        "Jaxon: [action] browsing the sample table, picking up a variety of items, including some that might be useful for both of us",
+        "Rafael: [nonverbal] smiling and nodding",
+        "Jaxon: Hey, do you mind if I grab a few more samples? I promise I won't take too much.",
+        "Rafael: Sure, help yourself. Just make sure to put them back if you don't need them.",
+        "Jaxon: [action] browsing the samples, carefully selecting a variety of items, ensuring not to take too much",
+        "Rafael: [nonverbal] smiling and nodding",
+        "Jaxon: I'll make sure to only take what I really need. Thanks for understanding!",
+        "Rafael: [nonverbal] smiling and nodding",
+        "Jaxon: [nonverbal] smiling and nodding",
+        "Rafael: [nonverbal] smiling and nodding",
+        "Jaxon: [nonverbal] smiling and nodding in acknowledgment",
+        "Rafael: [nonverbal] smiling and nodding",
+        "Jaxon: [nonverbal] smiling and nodding in acknowledgment",
+        "Rafael: [nonverbal] smiling and nodding",
+        "Jaxon: Hey there! Enjoying your day? I see you're busy with the samples today.",
+        "Rafael: Hello Jaxon! Yes, getting busy here. Trying to clear out these samples before my shift ends."
+    ],
+    "mcq_logs": [
+        {
+            "round": 1,
+            "scenario": 1,
+            "agent_1_goal_mcq": {
+                "question": "What is Rafael's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Rafael mentions he's there to help with samples and implies he has a limited time to distribute them, suggesting his goal is to clear out the samples before his shift ends.",
+                "options": {
+                    "A": "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+                    "B": "Ensure the event runs smoothly",
+                    "C": "Try to get as many free samples as possible without appearing too greedy",
+                    "D": "Network with other volunteers"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Rafael to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's friendly demeanor and willingness to help suggest he is motivated by a desire to be friendly.",
+                "options": {
+                    "A": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "B": "To be friendly.",
+                    "C": "To keep all the samples for himself.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Jaxon's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's response indicates he is interested in getting samples but mentions not wanting to appear too greedy, suggesting he values free items while being mindful of how he appears to the sample giver.",
+                "options": {
+                    "A": "Help organize the event at Target",
+                    "B": "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)",
+                    "C": "Make new friends at the event",
+                    "D": "Give away free samples"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Jaxon to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's willingness to accept samples and the casual nature of the conversation suggest he values free samples but is mindful of appearing greedy.",
+                "options": {
+                    "A": "To enjoy the event.",
+                    "B": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "C": "To avoid all free samples.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 2,
+            "scenario": 1,
+            "agent_1_goal_mcq": {
+                "question": "What is Rafael's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Rafael mentions he's there to help with samples and offers to give Jaxon a couple, indicating a goal to distribute samples. The extra information about the manager's instruction supports this.",
+                "options": {
+                    "A": "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+                    "B": "Ensure the event runs smoothly",
+                    "C": "Try to get as many free samples as possible without appearing too greedy",
+                    "D": "Network with other volunteers"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Rafael to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's friendly demeanor and willingness to offer samples suggest he is being approachable and helpful.",
+                "options": {
+                    "A": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "B": "To be friendly.",
+                    "C": "To keep all the samples for himself.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Jaxon's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's nonverbal cues suggest he is interested in getting samples while maintaining a polite demeanor, indicating he doesn't want to appear greedy.",
+                "options": {
+                    "A": "Help organize the event at Target",
+                    "B": "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)",
+                    "C": "Make new friends at the event",
+                    "D": "Give away free samples"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Jaxon to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's nonverbal response suggests he is open to samples while maintaining a positive demeanor, indicating he values free items but wants to appear considerate.",
+                "options": {
+                    "A": "To enjoy the event.",
+                    "B": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "C": "To avoid all free samples.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 3,
+            "scenario": 1,
+            "agent_1_goal_mcq": {
+                "question": "What is Rafael's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Rafael is directly offering samples and seems focused on helping Jaxon, which aligns with the goal of clearing out samples before his shift ends.",
+                "options": {
+                    "A": "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+                    "B": "Ensure the event runs smoothly",
+                    "C": "Try to get as many free samples as possible without appearing too greedy",
+                    "D": "Network with other volunteers"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Rafael to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's friendly demeanor and willingness to provide samples suggest he is being approachable and helpful.",
+                "options": {
+                    "A": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "B": "To be friendly.",
+                    "C": "To keep all the samples for himself.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Jaxon's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's nonverbal cues suggest he is enjoying the interaction and is likely trying to get samples without appearing too greedy.",
+                "options": {
+                    "A": "Help organize the event at Target",
+                    "B": "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)",
+                    "C": "Make new friends at the event",
+                    "D": "Give away free samples"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Jaxon to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's nonverbal responses suggest engagement and interest in the samples, indicating he values free items but also the subtle nod suggests he's mindful of not seeming overly eager.",
+                "options": {
+                    "A": "To enjoy the event.",
+                    "B": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "C": "To avoid all free samples.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 4,
+            "scenario": 1,
+            "agent_1_goal_mcq": {
+                "question": "What is Rafael's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Rafael is smiling and nodding, indicating a friendly and cooperative demeanor, which aligns with the goal of giving away samples before the shift ends.",
+                "options": {
+                    "A": "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+                    "B": "Ensure the event runs smoothly",
+                    "C": "Try to get as many free samples as possible without appearing too greedy",
+                    "D": "Network with other volunteers"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Rafael to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's friendly demeanor and willingness to provide samples suggest he is being accommodating and polite.",
+                "options": {
+                    "A": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "B": "To be friendly.",
+                    "C": "To keep all the samples for himself.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Jaxon's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "",
+                "options": {
+                    "A": "Help organize the event at Target",
+                    "B": "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)",
+                    "C": "Make new friends at the event",
+                    "D": "Give away free samples"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Jaxon to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's consistent nonverbal smiling and nodding suggest he is interested in the samples, indicating he might aim to get some without seeming greedy.",
+                "options": {
+                    "A": "To enjoy the event.",
+                    "B": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "C": "To avoid all free samples.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 5,
+            "scenario": 1,
+            "agent_1_goal_mcq": {
+                "question": "What is Rafael's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's consistent nonverbal communication suggests he is focused on maintaining order and ensuring the event proceeds as planned.",
+                "options": {
+                    "A": "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+                    "B": "Ensure the event runs smoothly",
+                    "C": "Try to get as many free samples as possible without appearing too greedy",
+                    "D": "Network with other volunteers"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Rafael to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "The consistent smiling and nodding suggest Rafael is being friendly and engaging.",
+                "options": {
+                    "A": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "B": "To be friendly.",
+                    "C": "To keep all the samples for himself.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Jaxon's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's increasing enthusiasm suggests he is trying to get as many free samples as possible without appearing too greedy.",
+                "options": {
+                    "A": "Help organize the event at Target",
+                    "B": "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)",
+                    "C": "Make new friends at the event",
+                    "D": "Give away free samples"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Jaxon to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's increasing enthusiasm suggests he is motivated by the desire to obtain free samples while maintaining a positive image.",
+                "options": {
+                    "A": "To enjoy the event.",
+                    "B": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "C": "To avoid all free samples.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 6,
+            "scenario": 1,
+            "agent_1_goal_mcq": {
+                "question": "What is Rafael's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's warm smile and nodding suggest he is focused on maintaining a positive interaction, which aligns with ensuring the event runs smoothly.",
+                "options": {
+                    "A": "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+                    "B": "Ensure the event runs smoothly",
+                    "C": "Try to get as many free samples as possible without appearing too greedy",
+                    "D": "Network with other volunteers"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Rafael to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "B": "To be friendly.",
+                    "C": "To keep all the samples for himself.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Jaxon's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "",
+                "options": {
+                    "A": "Help organize the event at Target",
+                    "B": "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)",
+                    "C": "Make new friends at the event",
+                    "D": "Give away free samples"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Jaxon to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's enthusiastic greeting and interest in Rafael's activities suggest he might be motivated by getting free samples while maintaining a good impression.",
+                "options": {
+                    "A": "To enjoy the event.",
+                    "B": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "C": "To avoid all free samples.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 7,
+            "scenario": 1,
+            "agent_1_goal_mcq": {
+                "question": "What is Rafael's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Rafael is currently wrapping up his shift and mentioned he needs to clear out the samples before they expire, indicating his goal is to fulfill his duty to dispose of the samples.",
+                "options": {
+                    "A": "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+                    "B": "Ensure the event runs smoothly",
+                    "C": "Try to get as many free samples as possible without appearing too greedy",
+                    "D": "Network with other volunteers"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Rafael to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's warm smile and nodding suggest he is friendly and willing to engage in conversation, which aligns with offering help to Jaxon.",
+                "options": {
+                    "A": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "B": "To be friendly.",
+                    "C": "To keep all the samples for himself.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Jaxon's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon offers to help clear out samples and mentions he could use a few for his research, indicating he wants some samples without appearing too greedy.",
+                "options": {
+                    "A": "Help organize the event at Target",
+                    "B": "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)",
+                    "C": "Make new friends at the event",
+                    "D": "Give away free samples"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Jaxon to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's eagerness to take samples and his offer to help suggest he values getting free items, but his polite tone indicates he's mindful of appearances.",
+                "options": {
+                    "A": "To enjoy the event.",
+                    "B": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "C": "To avoid all free samples.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 8,
+            "scenario": 1,
+            "agent_1_goal_mcq": {
+                "question": "What is Rafael's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Rafael mentioned he needs to clear out the samples before they expire, indicating his goal is to ensure the task is completed as per instructions from his manager.",
+                "options": {
+                    "A": "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+                    "B": "Ensure the event runs smoothly",
+                    "C": "Try to get as many free samples as possible without appearing too greedy",
+                    "D": "Network with other volunteers"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Rafael to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's warm smile and willingness to help suggest he is being friendly and cooperative.",
+                "options": {
+                    "A": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "B": "To be friendly.",
+                    "C": "To keep all the samples for himself.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Jaxon's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's response indicates he is interested in getting samples for his research, suggesting he wants to take some without appearing too greedy.",
+                "options": {
+                    "A": "Help organize the event at Target",
+                    "B": "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)",
+                    "C": "Make new friends at the event",
+                    "D": "Give away free samples"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Jaxon to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's offer to help and his question about favorite samples suggest he wants to get some samples without seeming overly eager, aligning with his desire to maintain a good impression while obtaining free items.",
+                "options": {
+                    "A": "To enjoy the event.",
+                    "B": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "C": "To avoid all free samples.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 9,
+            "scenario": 1,
+            "agent_1_goal_mcq": {
+                "question": "What is Rafael's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Rafael's actions indicate he is focused on clearing out the samples quickly and efficiently, which aligns with the extra information provided about his manager's instructions.",
+                "options": {
+                    "A": "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+                    "B": "Ensure the event runs smoothly",
+                    "C": "Try to get as many free samples as possible without appearing too greedy",
+                    "D": "Network with other volunteers"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Rafael to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's behavior suggests he is being friendly by offering to help and sharing samples, which aligns with his outgoing nature.",
+                "options": {
+                    "A": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "B": "To be friendly.",
+                    "C": "To keep all the samples for himself.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Jaxon's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's response about not going overboard with the samples suggests he is trying to get as many as possible while maintaining a polite demeanor.",
+                "options": {
+                    "A": "Help organize the event at Target",
+                    "B": "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)",
+                    "C": "Make new friends at the event",
+                    "D": "Give away free samples"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Jaxon to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's offer to take samples and his caution against taking too many suggest he values free items but also wants to maintain a good impression.",
+                "options": {
+                    "A": "To enjoy the event.",
+                    "B": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "C": "To avoid all free samples.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 10,
+            "scenario": 1,
+            "agent_1_goal_mcq": {
+                "question": "What is Rafael's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Rafael's response indicates a sense of urgency about clearing out the samples before they expire, which aligns with the extra information provided about his manager's instructions.",
+                "options": {
+                    "A": "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+                    "B": "Ensure the event runs smoothly",
+                    "C": "Try to get as many free samples as possible without appearing too greedy",
+                    "D": "Network with other volunteers"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Rafael to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's nonverbal cues and willingness to share suggest he is being friendly and cooperative.",
+                "options": {
+                    "A": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "B": "To be friendly.",
+                    "C": "To keep all the samples for himself.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Jaxon's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's response suggests he is trying to get as many samples as possible while maintaining a polite demeanor, indicating a desire to benefit from the situation without appearing greedy.",
+                "options": {
+                    "A": "Help organize the event at Target",
+                    "B": "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)",
+                    "C": "Make new friends at the event",
+                    "D": "Give away free samples"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Jaxon to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's response suggests he is selective about which samples he takes and acknowledges Rafael's concern about not taking too many, indicating he aims to get useful items without appearing greedy.",
+                "options": {
+                    "A": "To enjoy the event.",
+                    "B": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "C": "To avoid all free samples.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 11,
+            "scenario": 1,
+            "agent_1_goal_mcq": {
+                "question": "What is Rafael's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's response indicates he is interested in the samples and sees value in them for his work, suggesting he wants to get some without appearing greedy.",
+                "options": {
+                    "A": "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+                    "B": "Ensure the event runs smoothly",
+                    "C": "Try to get as many free samples as possible without appearing too greedy",
+                    "D": "Network with other volunteers"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Rafael to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's behavior suggests a friendly demeanor, as he smiles and nods, and he agrees to take samples without hesitation, indicating he is willing to help Jaxon.",
+                "options": {
+                    "A": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "B": "To be friendly.",
+                    "C": "To keep all the samples for himself.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Jaxon's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's initial statement about not going overboard and his comment about grabbing a variety suggest he is trying to get as many free samples as possible without appearing too greedy.",
+                "options": {
+                    "A": "Help organize the event at Target",
+                    "B": "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)",
+                    "C": "Make new friends at the event",
+                    "D": "Give away free samples"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Jaxon to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's initial offer to Rafael to take as many as he likes but not to go overboard suggests a desire to avoid appearing greedy while still getting samples. His mention of having ideas for his next surgery and Rafael's research indicates his interest in the samples.",
+                "options": {
+                    "A": "To enjoy the event.",
+                    "B": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "C": "To avoid all free samples.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 12,
+            "scenario": 1,
+            "agent_1_goal_mcq": {
+                "question": "What is Rafael's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.6,
+                "confidence_class": "Medium",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's actions suggest he is focused on the task at hand and ensuring the samples are distributed, which aligns with ensuring the event runs smoothly.",
+                "options": {
+                    "A": "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+                    "B": "Ensure the event runs smoothly",
+                    "C": "Try to get as many free samples as possible without appearing too greedy",
+                    "D": "Network with other volunteers"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Rafael to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's behavior shows a willingness to collaborate and share, which suggests he is being friendly.",
+                "options": {
+                    "A": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "B": "To be friendly.",
+                    "C": "To keep all the samples for himself.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Jaxon's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon mentions wanting to grab a variety of samples without directly stating his goal, indicating he's mindful of not appearing greedy while still getting useful items.",
+                "options": {
+                    "A": "Help organize the event at Target",
+                    "B": "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)",
+                    "C": "Make new friends at the event",
+                    "D": "Give away free samples"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Jaxon to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's enthusiasm and the fact that he suggests grabbing a variety of samples indicate he values getting useful items, which aligns with his love for free stuff while maintaining a good impression.",
+                "options": {
+                    "A": "To enjoy the event.",
+                    "B": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "C": "To avoid all free samples.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 13,
+            "scenario": 1,
+            "agent_1_goal_mcq": {
+                "question": "What is Rafael's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.6,
+                "confidence_class": "Medium",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's actions and responses indicate he is focused on the task at hand and ensuring the samples are picked up efficiently, which suggests he wants to ensure the event runs smoothly.",
+                "options": {
+                    "A": "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+                    "B": "Ensure the event runs smoothly",
+                    "C": "Try to get as many free samples as possible without appearing too greedy",
+                    "D": "Network with other volunteers"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Rafael to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's positive and cooperative demeanor, along with his willingness to pick up samples that might benefit both of them, suggests he is being friendly and collaborative.",
+                "options": {
+                    "A": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "B": "To be friendly.",
+                    "C": "To keep all the samples for himself.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Jaxon's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's actions suggest he is carefully selecting samples without appearing too greedy, indicating his goal is to get as many free samples as possible while maintaining a positive image.",
+                "options": {
+                    "A": "Help organize the event at Target",
+                    "B": "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)",
+                    "C": "Make new friends at the event",
+                    "D": "Give away free samples"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Jaxon to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's behavior of browsing and picking up various items suggests he is interested in getting useful samples without seeming overly greedy, aligning with his value of free stuff and maintaining a good impression.",
+                "options": {
+                    "A": "To enjoy the event.",
+                    "B": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "C": "To avoid all free samples.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 14,
+            "scenario": 1,
+            "agent_1_goal_mcq": {
+                "question": "What is Rafael's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's actions and responses indicate he is focused on ensuring the event runs smoothly, such as by smiling and nodding and agreeing to check out the samples.",
+                "options": {
+                    "A": "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+                    "B": "Ensure the event runs smoothly",
+                    "C": "Try to get as many free samples as possible without appearing too greedy",
+                    "D": "Network with other volunteers"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Rafael to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's behavior shows a friendly demeanor, smiling and nodding, which suggests he is being accommodating and friendly towards Jaxon.",
+                "options": {
+                    "A": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "B": "To be friendly.",
+                    "C": "To keep all the samples for himself.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Jaxon's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's actions suggest he is interested in taking multiple samples while ensuring he doesn't appear greedy, indicating his goal is to get as many free samples as possible without appearing too greedy.",
+                "options": {
+                    "A": "Help organize the event at Target",
+                    "B": "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)",
+                    "C": "Make new friends at the event",
+                    "D": "Give away free samples"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Jaxon to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's behavior of picking up various items and asking for more suggests he values free samples but also seems mindful of not appearing greedy, indicating he aims to get as many as possible while maintaining a good impression.",
+                "options": {
+                    "A": "To enjoy the event.",
+                    "B": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "C": "To avoid all free samples.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 15,
+            "scenario": 1,
+            "agent_1_goal_mcq": {
+                "question": "What is Rafael's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's actions and responses indicate he is focused on managing the event and ensuring everything runs smoothly, especially by allowing Jaxon to take samples while reminding him to put them back if not needed.",
+                "options": {
+                    "A": "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+                    "B": "Ensure the event runs smoothly",
+                    "C": "Try to get as many free samples as possible without appearing too greedy",
+                    "D": "Network with other volunteers"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Rafael to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's behavior suggests he is being friendly by allowing Jaxon to take more samples and ensuring they are put back if not needed.",
+                "options": {
+                    "A": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "B": "To be friendly.",
+                    "C": "To keep all the samples for himself.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Jaxon's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon is carefully selecting samples and asking for permission, indicating he wants to get free samples without appearing greedy.",
+                "options": {
+                    "A": "Help organize the event at Target",
+                    "B": "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)",
+                    "C": "Make new friends at the event",
+                    "D": "Give away free samples"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Jaxon to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's careful selection and consideration of taking only a few samples suggests he aims to get free items while maintaining a good impression.",
+                "options": {
+                    "A": "To enjoy the event.",
+                    "B": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "C": "To avoid all free samples.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 16,
+            "scenario": 1,
+            "agent_1_goal_mcq": {
+                "question": "What is Rafael's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's actions and responses indicate he is focused on maintaining the smooth operation of the event, ensuring that samples are managed properly.",
+                "options": {
+                    "A": "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+                    "B": "Ensure the event runs smoothly",
+                    "C": "Try to get as many free samples as possible without appearing too greedy",
+                    "D": "Network with other volunteers"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Rafael to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's friendly demeanor and willingness to let Jaxon take more samples suggest he is being accommodating and friendly.",
+                "options": {
+                    "A": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "B": "To be friendly.",
+                    "C": "To keep all the samples for himself.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Jaxon's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon carefully selects a variety of items and ensures not to take too much, indicating he wants to get free samples without appearing greedy.",
+                "options": {
+                    "A": "Help organize the event at Target",
+                    "B": "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)",
+                    "C": "Make new friends at the event",
+                    "D": "Give away free samples"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Jaxon to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's careful selection and acknowledgment of not taking too much suggests he values getting free samples while maintaining a good impression.",
+                "options": {
+                    "A": "To enjoy the event.",
+                    "B": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "C": "To avoid all free samples.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 17,
+            "scenario": 1,
+            "agent_1_goal_mcq": {
+                "question": "What is Rafael's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's actions and responses indicate he is ensuring the event runs smoothly by allowing Jaxon to take samples while reminding him to put them back and showing understanding.",
+                "options": {
+                    "A": "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+                    "B": "Ensure the event runs smoothly",
+                    "C": "Try to get as many free samples as possible without appearing too greedy",
+                    "D": "Network with other volunteers"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Rafael to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's behavior suggests a friendly demeanor, as evidenced by his smile and nods, and he allows Jaxon to take samples without hesitation.",
+                "options": {
+                    "A": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "B": "To be friendly.",
+                    "C": "To keep all the samples for himself.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Jaxon's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's careful selection and acknowledgment of taking only what he needs suggests he values getting free samples while avoiding appearing greedy.",
+                "options": {
+                    "A": "Help organize the event at Target",
+                    "B": "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)",
+                    "C": "Make new friends at the event",
+                    "D": "Give away free samples"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Jaxon to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's careful selection and acknowledgment of taking only what he needs suggests he values getting free samples but also wants to maintain a good impression.",
+                "options": {
+                    "A": "To enjoy the event.",
+                    "B": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "C": "To avoid all free samples.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 18,
+            "scenario": 1,
+            "agent_1_goal_mcq": {
+                "question": "What is Rafael's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's consistent smiling and nodding suggest he is maintaining a positive atmosphere, which aligns with ensuring the event runs smoothly.",
+                "options": {
+                    "A": "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+                    "B": "Ensure the event runs smoothly",
+                    "C": "Try to get as many free samples as possible without appearing too greedy",
+                    "D": "Network with other volunteers"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Rafael to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's consistent smiling and nodding suggest he is being friendly and accommodating.",
+                "options": {
+                    "A": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "B": "To be friendly.",
+                    "C": "To keep all the samples for himself.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Jaxon's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "",
+                "options": {
+                    "A": "Help organize the event at Target",
+                    "B": "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)",
+                    "C": "Make new friends at the event",
+                    "D": "Give away free samples"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Jaxon to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's acknowledgment and assurance of taking only what he needs suggest he aims to get samples while maintaining a good impression.",
+                "options": {
+                    "A": "To enjoy the event.",
+                    "B": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "C": "To avoid all free samples.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 19,
+            "scenario": 1,
+            "agent_1_goal_mcq": {
+                "question": "What is Rafael's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's consistent nonverbal communication and acknowledgment suggest he is focused on maintaining a smooth and professional environment.",
+                "options": {
+                    "A": "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+                    "B": "Ensure the event runs smoothly",
+                    "C": "Try to get as many free samples as possible without appearing too greedy",
+                    "D": "Network with other volunteers"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Rafael to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's consistent smiling and nodding suggest a friendly demeanor and willingness to engage positively with Jaxon.",
+                "options": {
+                    "A": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "B": "To be friendly.",
+                    "C": "To keep all the samples for himself.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Jaxon's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "",
+                "options": {
+                    "A": "Help organize the event at Target",
+                    "B": "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)",
+                    "C": "Make new friends at the event",
+                    "D": "Give away free samples"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Jaxon to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's consistent nodding and smiling suggest he is interested in the samples, which aligns with his love for free stuff and desire to maintain a good impression.",
+                "options": {
+                    "A": "To enjoy the event.",
+                    "B": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "C": "To avoid all free samples.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 20,
+            "scenario": 1,
+            "agent_1_goal_mcq": {
+                "question": "What is Rafael's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Rafael's initial nonverbal responses suggest a friendly and cooperative attitude, which aligns with the goal of ensuring the event runs smoothly, especially given the extra information about his manager's expectations.",
+                "options": {
+                    "A": "Give away free samples (<extra_info>Extra information: your manager has told you to clear out the samples before your shift ends.</extra_info>)",
+                    "B": "Ensure the event runs smoothly",
+                    "C": "Try to get as many free samples as possible without appearing too greedy",
+                    "D": "Network with other volunteers"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Rafael to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Rafael's consistent smiling and nodding suggest he is being friendly and engaging in small talk.",
+                "options": {
+                    "A": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "B": "To be friendly.",
+                    "C": "To keep all the samples for himself.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Jaxon's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "",
+                "options": {
+                    "A": "Help organize the event at Target",
+                    "B": "Try to get as many free samples as possible without appearing too greedy (<extra_info>Extra information: you love free stuff but you also don't want the person to think you're taking advantage of the situation</extra_info>)",
+                    "C": "Make new friends at the event",
+                    "D": "Give away free samples"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Jaxon to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Jaxon's acknowledgment and interest in the samples suggest he might be trying to get some without seeming greedy.",
+                "options": {
+                    "A": "To enjoy the event.",
+                    "B": "Rafael wants to give away all the samples before his shift ends because his manager instructed him to do so.",
+                    "C": "To avoid all free samples.",
+                    "D": "Jaxon aims to get as many free samples as possible without appearing greedy because he loves free stuff but values maintaining a good impression."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        }
+    ]
+}

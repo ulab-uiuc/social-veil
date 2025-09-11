@@ -1,0 +1,1529 @@
+{
+    "experimental_context": {
+        "scenario": {
+            "description": "Two people discuss the living arrangements in a shared home.",
+            "agent_relationship": "acquaintance",
+            "barrier_type": "cultural_style"
+        },
+        "agents": {
+            "agent_a": {
+                "name": "Mia",
+                "profile": {
+                    "first_name": "Mia",
+                    "last_name": "Davis",
+                    "age": 50,
+                    "occupation": "High School Principal",
+                    "personality_and_values": "Mia Davis, an extraverted stickler for routines, values tradition and authority. Her decision-making style is decisive and direct.",
+                    "public_info": "Mia Davis has two cats.",
+                    "model_id": "models/Qwen2.5-7B-Instruct"
+                },
+                "goal": "Tell the cousin's partner that they are no longer welcome in your home (<extra_info>Extra information: they have been causing a lot of trouble and not respecting house rules <strategy_hint>Hint: you may want to discuss the issues and propose possible solutions</strategy_hint></extra_info>)",
+                "reason": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                "private_knowledge": ""
+            },
+            "agent_b": {
+                "name": "Isabella",
+                "profile": {
+                    "first_name": "Isabella",
+                    "last_name": "White",
+                    "age": 40,
+                    "occupation": "Veterinarian",
+                    "personality_and_values": "Isabella White, introverted and conscientious, values benevolence. Her empathy dictates her decision-making process.",
+                    "public_info": "Isabella White, a devoted veterinarian, is well-loved in her community for her kindness towards animals.",
+                    "model_id": "models/Qwen2.5-7B-Instruct"
+                },
+                "goal": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner (<extra_info>Extra information: you have nowhere else to go at the moment and you believe the issues can be resolved. </extra_info>)",
+                "reason": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                "private_knowledge": ""
+            }
+        },
+        "experimental_configuration": {
+            "max_rounds": 20
+        }
+    },
+    "conversation_log": [
+        "Mia: Hello Isabella, it's nice to see you again. How are you doing?",
+        "Isabella: Mia, it's great to see you too! I'm doing well, thanks for asking. How about you?",
+        "Mia: I'm doing pretty well, Isabella. Just trying to keep up with the daily routines here at school. How's the clinic?",
+        "Isabella: The clinic is doing great, Mia. Thanks for asking. It's been busy, but fulfilling. How's everything going with the house?",
+        "Mia: Oh, the house is alright, Isabella. Just trying to maintain some order around here. You know how it goes.",
+        "Isabella: I completely understand, Mia. It can be quite a challenge keeping things running smoothly. I've been meaning to offer my help with any tasks that might be overwhelming. Maybe we could set up a schedule to make things easier for everyone?",
+        "Mia: Absolutely, Isabella. Having a structured schedule could definitely help. Let's sit down and figure out what works best for everyone. It's important that we all feel comfortable and respected in our shared space.",
+        "Isabella: That sounds like a wonderful idea, Mia. I'll bring some tea and snacks to make the meeting more pleasant. Let's aim for tomorrow afternoon, when everyone is usually free?",
+        "Mia: Absolutely, Isabella. Having a structured schedule could definitely help. Let's aim for tomorrow afternoon, when everyone is usually free. I think it will be a good opportunity to discuss how we can better support each other.",
+        "Isabella: That sounds perfect, Mia. I'll bring some tea and snacks to make the meeting more pleasant. See you tomorrow!",
+        "Mia: Absolutely, Isabella. I appreciate the thought. It will be nice to gather and discuss things over some tea and snacks. See you tomorrow!",
+        "Isabella: [nonverbal] smiling warmly and nodding",
+        "Mia: It's great to see you so positive about it, Isabella. I believe we can create a welcoming environment where everyone feels valued and respected.",
+        "Isabella: [nonverbal] smiling warmly and nodding",
+        "Mia: I'm glad we're on the same page, Isabella. It's important to me that our meetings feel like a supportive community rather than just a series of tasks.",
+        "Isabella: [nonverbal] smiling warmly and nodding",
+        "Mia: I value our friendship, Isabella. Let's make sure our gatherings are enjoyable for everyone involved.",
+        "Isabella: Thank you, Mia. I really appreciate that. And I promise to do my best to make sure everyone feels welcome and valued. Maybe we could start each meeting with a small chat or a fun icebreaker to set a friendly tone?",
+        "Mia: That sounds like a wonderful idea, Isabella. Starting with a light moment could indeed set a warm and inclusive tone for our discussions. How about we also ensure there's a moment for everyone to share something personal or interesting from their week? It could help us get to know each other better and build stronger connections.",
+        "Isabella: Absolutely, Mia. Sharing personal moments can really strengthen our bonds. And who knows, maybe it will even help us understand each other better, especially when we're trying to find common ground.",
+        "Mia: That's a great suggestion, Isabella. I think starting with a light moment and sharing personal things can definitely help us connect on a deeper level. It might also make it easier for us to address any challenges we face together.",
+        "Isabella: [nonverbal] smiling warmly and nodding",
+        "Mia: I think those ideas are fantastic, Isabella. It seems like they could really enhance our interactions and strengthen our bond. What do you think about setting some ground rules for these meetings to ensure everyone feels heard and respected?",
+        "Isabella: That's a great idea, Mia. Setting some ground rules would definitely help. Perhaps we could agree to listen actively, avoid interrupting, and respect each other's opinions.",
+        "Mia: Absolutely, Isabella. Active listening and mutual respect are key. This way, everyone feels valued and heard, which is important for maintaining a harmonious environment here.",
+        "Isabella: Mia, I completely agree. Let's also make sure to keep an open mind and be willing to compromise. That way, we can work through any issues and find solutions that work for everyone.",
+        "Mia: Absolutely, Isabella. Keeping an open mind and being willing to compromise will be crucial. This approach ensures that we can address any issues constructively and find solutions that work for everyone, maintaining a harmonious environment here.",
+        "Isabella: Mia, I truly appreciate your willingness to compromise and maintain harmony. I believe that by working together, we can find a solution that works for everyone. Let's focus on understanding each other's perspectives and finding common ground.",
+        "Mia: Isabella, I'm glad we're on the same page. It's important to me that we create an environment where everyone feels respected and heard. Let's make sure we're both open to understanding each other's needs and finding a way forward that works for both of us.",
+        "Isabella: Let's focus on understanding each other's perspectives and finding common ground. I truly believe that with empathy and open-mindedness, we can resolve any issues and maintain a harmonious living arrangement.",
+        "Mia: Isabella, let's continue to prioritize understanding and respect. By focusing on these values, I'm confident we can navigate any challenges and ensure our living space remains a peaceful and supportive environment for everyone involved.",
+        "Isabella: Let's continue to prioritize understanding and respect. By focusing on these values, I'm confident we can navigate any challenges and ensure our living space remains a peaceful and supportive environment for everyone involved.",
+        "Mia: Isabella, let's keep our focus on creating a space where everyone feels valued and respected. I believe that by prioritizing these principles, we can address any issues that arise and maintain a harmonious living arrangement.",
+        "Isabella: Let's keep our focus on creating a space where everyone feels valued and respected. I believe that by prioritizing these principles, we can address any issues that arise and maintain a harmonious living arrangement.",
+        "Mia: Isabella, let's continue to prioritize creating a space where everyone feels valued and respected. I truly believe that by focusing on these principles, we can address any issues that come up and ensure our living space remains a peaceful and supportive environment for everyone involved.",
+        "Isabella: Mia, let's keep our focus on creating a space where everyone feels valued and respected. I truly believe that by prioritizing these principles, we can address any issues that come up and ensure our living space remains a peaceful and supportive environment for everyone involved.",
+        "Mia: Isabella, let's continue to prioritize creating a space where everyone feels valued and respected. I truly believe that by focusing on these principles, we can address any underlying issues and maintain a harmonious living arrangement for all.",
+        "Isabella: Let's keep our focus on creating a space where everyone feels valued and respected. I truly believe that by prioritizing these principles, we can address any underlying issues and maintain a harmonious living arrangement for all.",
+        "Mia: Isabella, let's continue to prioritize creating a space where everyone feels valued and respected. I truly believe that by focusing on these principles, we can address any underlying issues and maintain a harmonious living arrangement for all.",
+        "Isabella: Let's keep our focus on creating a space where everyone feels valued and respected. I truly believe that by prioritizing these principles, we can address any underlying issues and maintain a harmonious living arrangement for all.",
+        "Mia: Isabella, let's continue to prioritize creating a space where everyone feels valued and respected. I truly believe that by focusing on these principles, we can address any underlying issues and maintain a harmonious living arrangement for all."
+    ],
+    "mcq_logs": [
+        {
+            "round": 1,
+            "scenario": 8,
+            "agent_1_goal_mcq": {
+                "question": "What is Mia's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia's greeting and the subsequent inquiry suggest an interest in discussing the current living situation and finding a solution.",
+                "options": {
+                    "A": "Plan a vacation to get away from the stress",
+                    "B": "Discuss the issues and propose a compromise to improve the living situation",
+                    "C": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner",
+                    "D": "Tell the cousin's partner that they are no longer welcome in your home (<extra_info>Extra information: they have been causing a lot of trouble and not respecting house rules <strategy_hint>Hint: you may want to discuss the issues and propose possible solutions</strategy_hint></extra_info>)"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Mia to pursue their goal?",
+                "selected": "C",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Mia's greeting suggests she might be concerned about Isabella's presence and is setting up a conversation to potentially address the situation.",
+                "options": {
+                    "A": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "B": "Mia wants Isabella to stay because she enjoys the company.",
+                    "C": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "D": "To ensure everyone is happy."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Isabella's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "",
+                "options": {
+                    "A": "Tell the cousin's partner that they are no longer welcome in your home",
+                    "B": "Convince the homeowner to let them stay by offering to pay rent",
+                    "C": "Find a new job in the area",
+                    "D": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner (<extra_info>Extra information: you have nowhere else to go at the moment and you believe the issues can be resolved. </extra_info>)"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Isabella to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "B": "To maintain harmony.",
+                    "C": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "D": "Isabella wants to leave because she dislikes the house."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 2,
+            "scenario": 8,
+            "agent_1_goal_mcq": {
+                "question": "What is Mia's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia's questions about the clinic and the house suggest she is interested in discussing the current situation and possibly finding a solution.",
+                "options": {
+                    "A": "Plan a vacation to get away from the stress",
+                    "B": "Discuss the issues and propose a compromise to improve the living situation",
+                    "C": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner",
+                    "D": "Tell the cousin's partner that they are no longer welcome in your home (<extra_info>Extra information: they have been causing a lot of trouble and not respecting house rules <strategy_hint>Hint: you may want to discuss the issues and propose possible solutions</strategy_hint></extra_info>)"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Mia to pursue their goal?",
+                "selected": "C",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Mia's question about the house and Isabella's clinic suggests she might be probing for signs of conflict or issues that could affect the household harmony.",
+                "options": {
+                    "A": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "B": "Mia wants Isabella to stay because she enjoys the company.",
+                    "C": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "D": "To ensure everyone is happy."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Isabella's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "",
+                "options": {
+                    "A": "Tell the cousin's partner that they are no longer welcome in your home",
+                    "B": "Convince the homeowner to let them stay by offering to pay rent",
+                    "C": "Find a new job in the area",
+                    "D": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner (<extra_info>Extra information: you have nowhere else to go at the moment and you believe the issues can be resolved. </extra_info>)"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Isabella to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "B": "To maintain harmony.",
+                    "C": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "D": "Isabella wants to leave because she dislikes the house."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 3,
+            "scenario": 8,
+            "agent_1_goal_mcq": {
+                "question": "What is Mia's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia's questions about the house and the mention of maintaining order suggest she is looking to discuss potential improvements and find a compromise.",
+                "options": {
+                    "A": "Plan a vacation to get away from the stress",
+                    "B": "Discuss the issues and propose a compromise to improve the living situation",
+                    "C": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner",
+                    "D": "Tell the cousin's partner that they are no longer welcome in your home (<extra_info>Extra information: they have been causing a lot of trouble and not respecting house rules <strategy_hint>Hint: you may want to discuss the issues and propose possible solutions</strategy_hint></extra_info>)"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Mia to pursue their goal?",
+                "selected": "C",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Mia's response suggests a desire to maintain order and routine, which aligns with her goal of ensuring everyone is comfortable with the current situation, possibly hinting at her wish for Isabella to leave.",
+                "options": {
+                    "A": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "B": "Mia wants Isabella to stay because she enjoys the company.",
+                    "C": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "D": "To ensure everyone is happy."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Isabella's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Isabella's offer to help and suggestion of setting up a schedule indicates a desire to maintain a good relationship while addressing the challenges in the shared space.",
+                "options": {
+                    "A": "Tell the cousin's partner that they are no longer welcome in your home",
+                    "B": "Convince the homeowner to let them stay by offering to pay rent",
+                    "C": "Find a new job in the area",
+                    "D": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner (<extra_info>Extra information: you have nowhere else to go at the moment and you believe the issues can be resolved. </extra_info>)"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Isabella to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Isabella's offer to help and suggestion of setting up a schedule indicate a desire to maintain harmony and ensure everyone feels comfortable and respected in the shared space.",
+                "options": {
+                    "A": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "B": "To maintain harmony.",
+                    "C": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "D": "Isabella wants to leave because she dislikes the house."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 4,
+            "scenario": 8,
+            "agent_1_goal_mcq": {
+                "question": "What is Mia's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia is suggesting a structured schedule and offering to work together to improve the living situation, indicating a goal to discuss issues and propose compromises.",
+                "options": {
+                    "A": "Plan a vacation to get away from the stress",
+                    "B": "Discuss the issues and propose a compromise to improve the living situation",
+                    "C": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner",
+                    "D": "Tell the cousin's partner that they are no longer welcome in your home (<extra_info>Extra information: they have been causing a lot of trouble and not respecting house rules <strategy_hint>Hint: you may want to discuss the issues and propose possible solutions</strategy_hint></extra_info>)"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Mia to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia's willingness to work on a schedule and ensure comfort and respect suggests a desire to maintain a harmonious living environment.",
+                "options": {
+                    "A": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "B": "Mia wants Isabella to stay because she enjoys the company.",
+                    "C": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "D": "To ensure everyone is happy."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Isabella's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "",
+                "options": {
+                    "A": "Tell the cousin's partner that they are no longer welcome in your home",
+                    "B": "Convince the homeowner to let them stay by offering to pay rent",
+                    "C": "Find a new job in the area",
+                    "D": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner (<extra_info>Extra information: you have nowhere else to go at the moment and you believe the issues can be resolved. </extra_info>)"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Isabella to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Isabella's offer to help and set up a schedule indicates a desire to maintain harmony and ensure everyone feels supported and respected, which aligns with option B.",
+                "options": {
+                    "A": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "B": "To maintain harmony.",
+                    "C": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "D": "Isabella wants to leave because she dislikes the house."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 5,
+            "scenario": 8,
+            "agent_1_goal_mcq": {
+                "question": "What is Mia's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia is suggesting a structured schedule and bringing up the idea of support, indicating she is trying to address and resolve issues in the living arrangement.",
+                "options": {
+                    "A": "Plan a vacation to get away from the stress",
+                    "B": "Discuss the issues and propose a compromise to improve the living situation",
+                    "C": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner",
+                    "D": "Tell the cousin's partner that they are no longer welcome in your home (<extra_info>Extra information: they have been causing a lot of trouble and not respecting house rules <strategy_hint>Hint: you may want to discuss the issues and propose possible solutions</strategy_hint></extra_info>)"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Mia to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia's suggestion for a structured schedule and emphasis on comfort and respect indicate a desire to ensure everyone is happy and the living arrangement runs smoothly.",
+                "options": {
+                    "A": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "B": "Mia wants Isabella to stay because she enjoys the company.",
+                    "C": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "D": "To ensure everyone is happy."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Isabella's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Tell the cousin's partner that they are no longer welcome in your home",
+                    "B": "Convince the homeowner to let them stay by offering to pay rent",
+                    "C": "Find a new job in the area",
+                    "D": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner (<extra_info>Extra information: you have nowhere else to go at the moment and you believe the issues can be resolved. </extra_info>)"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Isabella to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "B": "To maintain harmony.",
+                    "C": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "D": "Isabella wants to leave because she dislikes the house."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 6,
+            "scenario": 8,
+            "agent_1_goal_mcq": {
+                "question": "What is Mia's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia suggests discussing how to better support each other and mentions the importance of feeling comfortable and respected, indicating a goal to address and resolve issues in the living arrangement.",
+                "options": {
+                    "A": "Plan a vacation to get away from the stress",
+                    "B": "Discuss the issues and propose a compromise to improve the living situation",
+                    "C": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner",
+                    "D": "Tell the cousin's partner that they are no longer welcome in your home (<extra_info>Extra information: they have been causing a lot of trouble and not respecting house rules <strategy_hint>Hint: you may want to discuss the issues and propose possible solutions</strategy_hint></extra_info>)"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Mia to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia's suggestion for a structured schedule and the offer to discuss support indicate a desire to maintain a harmonious environment where everyone feels respected and comfortable.",
+                "options": {
+                    "A": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "B": "Mia wants Isabella to stay because she enjoys the company.",
+                    "C": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "D": "To ensure everyone is happy."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Isabella's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Isabella's willingness to contribute positively to the meeting and her warm response suggest she aims to resolve issues and stay in the home harmoniously.",
+                "options": {
+                    "A": "Tell the cousin's partner that they are no longer welcome in your home",
+                    "B": "Convince the homeowner to let them stay by offering to pay rent",
+                    "C": "Find a new job in the area",
+                    "D": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner (<extra_info>Extra information: you have nowhere else to go at the moment and you believe the issues can be resolved. </extra_info>)"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Isabella to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Isabella's positive response and willingness to bring tea and snacks suggest she is motivated by a desire to maintain harmony and ensure everyone feels valued and respected in the shared space.",
+                "options": {
+                    "A": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "B": "To maintain harmony.",
+                    "C": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "D": "Isabella wants to leave because she dislikes the house."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 7,
+            "scenario": 8,
+            "agent_1_goal_mcq": {
+                "question": "What is Mia's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia's comments about creating a welcoming environment and valuing respect suggest she aims to address and resolve any issues during the meeting.",
+                "options": {
+                    "A": "Plan a vacation to get away from the stress",
+                    "B": "Discuss the issues and propose a compromise to improve the living situation",
+                    "C": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner",
+                    "D": "Tell the cousin's partner that they are no longer welcome in your home (<extra_info>Extra information: they have been causing a lot of trouble and not respecting house rules <strategy_hint>Hint: you may want to discuss the issues and propose possible solutions</strategy_hint></extra_info>)"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Mia to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia's positive and welcoming tone suggests she values Isabella's presence and enjoys creating a supportive environment.",
+                "options": {
+                    "A": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "B": "Mia wants Isabella to stay because she enjoys the company.",
+                    "C": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "D": "To ensure everyone is happy."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Isabella's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Isabella's warm responses and willingness to contribute to the meeting suggest she wants to resolve issues and stay in the home while maintaining a positive relationship.",
+                "options": {
+                    "A": "Tell the cousin's partner that they are no longer welcome in your home",
+                    "B": "Convince the homeowner to let them stay by offering to pay rent",
+                    "C": "Find a new job in the area",
+                    "D": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner (<extra_info>Extra information: you have nowhere else to go at the moment and you believe the issues can be resolved. </extra_info>)"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Isabella to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "B": "To maintain harmony.",
+                    "C": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "D": "Isabella wants to leave because she dislikes the house."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 8,
+            "scenario": 8,
+            "agent_1_goal_mcq": {
+                "question": "What is Mia's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia emphasizes creating a welcoming environment and valuing respect, suggesting she aims to address and improve the living situation through discussion and compromise.",
+                "options": {
+                    "A": "Plan a vacation to get away from the stress",
+                    "B": "Discuss the issues and propose a compromise to improve the living situation",
+                    "C": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner",
+                    "D": "Tell the cousin's partner that they are no longer welcome in your home (<extra_info>Extra information: they have been causing a lot of trouble and not respecting house rules <strategy_hint>Hint: you may want to discuss the issues and propose possible solutions</strategy_hint></extra_info>)"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Mia to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia's emphasis on creating a welcoming environment and valuing everyone suggests a desire for overall happiness and positivity in the shared space.",
+                "options": {
+                    "A": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "B": "Mia wants Isabella to stay because she enjoys the company.",
+                    "C": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "D": "To ensure everyone is happy."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Isabella's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Tell the cousin's partner that they are no longer welcome in your home",
+                    "B": "Convince the homeowner to let them stay by offering to pay rent",
+                    "C": "Find a new job in the area",
+                    "D": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner (<extra_info>Extra information: you have nowhere else to go at the moment and you believe the issues can be resolved. </extra_info>)"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Isabella to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "B": "To maintain harmony.",
+                    "C": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "D": "Isabella wants to leave because she dislikes the house."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 9,
+            "scenario": 8,
+            "agent_1_goal_mcq": {
+                "question": "What is Mia's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia's comments about creating a welcoming environment and valuing friendship suggest she is focused on improving the living situation through discussion and compromise.",
+                "options": {
+                    "A": "Plan a vacation to get away from the stress",
+                    "B": "Discuss the issues and propose a compromise to improve the living situation",
+                    "C": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner",
+                    "D": "Tell the cousin's partner that they are no longer welcome in your home (<extra_info>Extra information: they have been causing a lot of trouble and not respecting house rules <strategy_hint>Hint: you may want to discuss the issues and propose possible solutions</strategy_hint></extra_info>)"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Mia to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia's emphasis on creating a supportive community and valuing friendship suggests she enjoys Isabella's company and wants to maintain a positive atmosphere.",
+                "options": {
+                    "A": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "B": "Mia wants Isabella to stay because she enjoys the company.",
+                    "C": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "D": "To ensure everyone is happy."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Isabella's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Tell the cousin's partner that they are no longer welcome in your home",
+                    "B": "Convince the homeowner to let them stay by offering to pay rent",
+                    "C": "Find a new job in the area",
+                    "D": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner (<extra_info>Extra information: you have nowhere else to go at the moment and you believe the issues can be resolved. </extra_info>)"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Isabella to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "B": "To maintain harmony.",
+                    "C": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "D": "Isabella wants to leave because she dislikes the house."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 10,
+            "scenario": 8,
+            "agent_1_goal_mcq": {
+                "question": "What is Mia's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia's comments about making meetings enjoyable and inclusive, along with the suggestion to share personal moments, indicate an attempt to address and improve the living situation through discussion and compromise.",
+                "options": {
+                    "A": "Plan a vacation to get away from the stress",
+                    "B": "Discuss the issues and propose a compromise to improve the living situation",
+                    "C": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner",
+                    "D": "Tell the cousin's partner that they are no longer welcome in your home (<extra_info>Extra information: they have been causing a lot of trouble and not respecting house rules <strategy_hint>Hint: you may want to discuss the issues and propose possible solutions</strategy_hint></extra_info>)"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Mia to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia's emphasis on making the meetings enjoyable and inclusive suggests she values Isabella's company and wants to maintain a positive atmosphere.",
+                "options": {
+                    "A": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "B": "Mia wants Isabella to stay because she enjoys the company.",
+                    "C": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "D": "To ensure everyone is happy."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Isabella's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Tell the cousin's partner that they are no longer welcome in your home",
+                    "B": "Convince the homeowner to let them stay by offering to pay rent",
+                    "C": "Find a new job in the area",
+                    "D": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner (<extra_info>Extra information: you have nowhere else to go at the moment and you believe the issues can be resolved. </extra_info>)"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Isabella to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "B": "To maintain harmony.",
+                    "C": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "D": "Isabella wants to leave because she dislikes the house."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 11,
+            "scenario": 8,
+            "agent_1_goal_mcq": {
+                "question": "What is Mia's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia's comments suggest she is focusing on improving the group dynamics and addressing potential issues through discussion and proposal of solutions.",
+                "options": {
+                    "A": "Plan a vacation to get away from the stress",
+                    "B": "Discuss the issues and propose a compromise to improve the living situation",
+                    "C": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner",
+                    "D": "Tell the cousin's partner that they are no longer welcome in your home (<extra_info>Extra information: they have been causing a lot of trouble and not respecting house rules <strategy_hint>Hint: you may want to discuss the issues and propose possible solutions</strategy_hint></extra_info>)"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Mia to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia's emphasis on making gatherings enjoyable and inclusive suggests she values Isabella's presence and the positive atmosphere she brings.",
+                "options": {
+                    "A": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "B": "Mia wants Isabella to stay because she enjoys the company.",
+                    "C": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "D": "To ensure everyone is happy."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Isabella's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Isabella's focus on making gatherings enjoyable and inclusive, along with her willingness to compromise and suggest solutions, indicates she wants to remain in the home while maintaining positive relationships.",
+                "options": {
+                    "A": "Tell the cousin's partner that they are no longer welcome in your home",
+                    "B": "Convince the homeowner to let them stay by offering to pay rent",
+                    "C": "Find a new job in the area",
+                    "D": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner (<extra_info>Extra information: you have nowhere else to go at the moment and you believe the issues can be resolved. </extra_info>)"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Isabella to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Isabella's suggestions for icebreakers and personal sharing indicate a desire to create a welcoming and inclusive environment, which aligns with maintaining harmony.",
+                "options": {
+                    "A": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "B": "To maintain harmony.",
+                    "C": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "D": "Isabella wants to leave because she dislikes the house."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 12,
+            "scenario": 8,
+            "agent_1_goal_mcq": {
+                "question": "What is Mia's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia's suggestions for starting meetings with light moments and sharing personal experiences, along with proposing ground rules, indicate she is aiming to discuss and address the issues to improve the living situation.",
+                "options": {
+                    "A": "Plan a vacation to get away from the stress",
+                    "B": "Discuss the issues and propose a compromise to improve the living situation",
+                    "C": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner",
+                    "D": "Tell the cousin's partner that they are no longer welcome in your home (<extra_info>Extra information: they have been causing a lot of trouble and not respecting house rules <strategy_hint>Hint: you may want to discuss the issues and propose possible solutions</strategy_hint></extra_info>)"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Mia to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia's suggestions and warm demeanor suggest she values Isabella's presence and wants to create a positive environment where everyone feels comfortable.",
+                "options": {
+                    "A": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "B": "Mia wants Isabella to stay because she enjoys the company.",
+                    "C": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "D": "To ensure everyone is happy."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Isabella's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Tell the cousin's partner that they are no longer welcome in your home",
+                    "B": "Convince the homeowner to let them stay by offering to pay rent",
+                    "C": "Find a new job in the area",
+                    "D": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner (<extra_info>Extra information: you have nowhere else to go at the moment and you believe the issues can be resolved. </extra_info>)"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Isabella to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "B": "To maintain harmony.",
+                    "C": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "D": "Isabella wants to leave because she dislikes the house."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 13,
+            "scenario": 8,
+            "agent_1_goal_mcq": {
+                "question": "What is Mia's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia is discussing ways to improve interactions and set ground rules, indicating she is focused on addressing issues and finding solutions to enhance the living situation.",
+                "options": {
+                    "A": "Plan a vacation to get away from the stress",
+                    "B": "Discuss the issues and propose a compromise to improve the living situation",
+                    "C": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner",
+                    "D": "Tell the cousin's partner that they are no longer welcome in your home (<extra_info>Extra information: they have been causing a lot of trouble and not respecting house rules <strategy_hint>Hint: you may want to discuss the issues and propose possible solutions</strategy_hint></extra_info>)"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Mia to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia's emphasis on active listening, mutual respect, and finding solutions suggests a desire to maintain a harmonious environment, which aligns with ensuring everyone is happy.",
+                "options": {
+                    "A": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "B": "Mia wants Isabella to stay because she enjoys the company.",
+                    "C": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "D": "To ensure everyone is happy."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Isabella's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Tell the cousin's partner that they are no longer welcome in your home",
+                    "B": "Convince the homeowner to let them stay by offering to pay rent",
+                    "C": "Find a new job in the area",
+                    "D": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner (<extra_info>Extra information: you have nowhere else to go at the moment and you believe the issues can be resolved. </extra_info>)"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Isabella to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "B": "To maintain harmony.",
+                    "C": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "D": "Isabella wants to leave because she dislikes the house."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 14,
+            "scenario": 8,
+            "agent_1_goal_mcq": {
+                "question": "What is Mia's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia's consistent focus on proposing ground rules, active listening, mutual respect, and compromise strongly indicates her goal is to discuss the issues and propose a compromise to improve the living situation.",
+                "options": {
+                    "A": "Plan a vacation to get away from the stress",
+                    "B": "Discuss the issues and propose a compromise to improve the living situation",
+                    "C": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner",
+                    "D": "Tell the cousin's partner that they are no longer welcome in your home (<extra_info>Extra information: they have been causing a lot of trouble and not respecting house rules <strategy_hint>Hint: you may want to discuss the issues and propose possible solutions</strategy_hint></extra_info>)"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Mia to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "The conversation shows a focus on maintaining harmony and finding solutions that work for everyone, indicating a desire to ensure everyone is happy.",
+                "options": {
+                    "A": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "B": "Mia wants Isabella to stay because she enjoys the company.",
+                    "C": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "D": "To ensure everyone is happy."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Isabella's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Tell the cousin's partner that they are no longer welcome in your home",
+                    "B": "Convince the homeowner to let them stay by offering to pay rent",
+                    "C": "Find a new job in the area",
+                    "D": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner (<extra_info>Extra information: you have nowhere else to go at the moment and you believe the issues can be resolved. </extra_info>)"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Isabella to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "B": "To maintain harmony.",
+                    "C": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "D": "Isabella wants to leave because she dislikes the house."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 15,
+            "scenario": 8,
+            "agent_1_goal_mcq": {
+                "question": "What is Mia's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia consistently emphasizes active listening, mutual respect, and compromise, indicating a goal to discuss and improve the living situation.",
+                "options": {
+                    "A": "Plan a vacation to get away from the stress",
+                    "B": "Discuss the issues and propose a compromise to improve the living situation",
+                    "C": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner",
+                    "D": "Tell the cousin's partner that they are no longer welcome in your home (<extra_info>Extra information: they have been causing a lot of trouble and not respecting house rules <strategy_hint>Hint: you may want to discuss the issues and propose possible solutions</strategy_hint></extra_info>)"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Mia to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia's emphasis on creating a harmonious environment and ensuring everyone feels respected and heard suggests a desire to maintain overall satisfaction and peace within the living arrangement.",
+                "options": {
+                    "A": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "B": "Mia wants Isabella to stay because she enjoys the company.",
+                    "C": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "D": "To ensure everyone is happy."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Isabella's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Tell the cousin's partner that they are no longer welcome in your home",
+                    "B": "Convince the homeowner to let them stay by offering to pay rent",
+                    "C": "Find a new job in the area",
+                    "D": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner (<extra_info>Extra information: you have nowhere else to go at the moment and you believe the issues can be resolved. </extra_info>)"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Isabella to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "B": "To maintain harmony.",
+                    "C": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "D": "Isabella wants to leave because she dislikes the house."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 16,
+            "scenario": 8,
+            "agent_1_goal_mcq": {
+                "question": "What is Mia's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia consistently emphasizes the importance of understanding, respect, and finding solutions that work for everyone, which points towards discussing and proposing compromises to improve the living situation.",
+                "options": {
+                    "A": "Plan a vacation to get away from the stress",
+                    "B": "Discuss the issues and propose a compromise to improve the living situation",
+                    "C": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner",
+                    "D": "Tell the cousin's partner that they are no longer welcome in your home (<extra_info>Extra information: they have been causing a lot of trouble and not respecting house rules <strategy_hint>Hint: you may want to discuss the issues and propose possible solutions</strategy_hint></extra_info>)"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Mia to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia consistently emphasizes the importance of respect, understanding, and a harmonious environment, which suggests a desire to ensure everyone's happiness and well-being.",
+                "options": {
+                    "A": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "B": "Mia wants Isabella to stay because she enjoys the company.",
+                    "C": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "D": "To ensure everyone is happy."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Isabella's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "D",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "",
+                "options": {
+                    "A": "Tell the cousin's partner that they are no longer welcome in your home",
+                    "B": "Convince the homeowner to let them stay by offering to pay rent",
+                    "C": "Find a new job in the area",
+                    "D": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner (<extra_info>Extra information: you have nowhere else to go at the moment and you believe the issues can be resolved. </extra_info>)"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Isabella to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "B": "To maintain harmony.",
+                    "C": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "D": "Isabella wants to leave because she dislikes the house."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 17,
+            "scenario": 8,
+            "agent_1_goal_mcq": {
+                "question": "What is Mia's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia's repeated emphasis on understanding, respect, and creating a peaceful environment suggests she is focused on discussing issues and proposing compromises.",
+                "options": {
+                    "A": "Plan a vacation to get away from the stress",
+                    "B": "Discuss the issues and propose a compromise to improve the living situation",
+                    "C": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner",
+                    "D": "Tell the cousin's partner that they are no longer welcome in your home (<extra_info>Extra information: they have been causing a lot of trouble and not respecting house rules <strategy_hint>Hint: you may want to discuss the issues and propose possible solutions</strategy_hint></extra_info>)"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Mia to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia consistently emphasizes the importance of respect, understanding, and a harmonious environment, which suggests a desire to ensure everyone is happy and the living arrangement is peaceful.",
+                "options": {
+                    "A": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "B": "Mia wants Isabella to stay because she enjoys the company.",
+                    "C": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "D": "To ensure everyone is happy."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Isabella's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Tell the cousin's partner that they are no longer welcome in your home",
+                    "B": "Convince the homeowner to let them stay by offering to pay rent",
+                    "C": "Find a new job in the area",
+                    "D": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner (<extra_info>Extra information: you have nowhere else to go at the moment and you believe the issues can be resolved. </extra_info>)"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Isabella to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "B": "To maintain harmony.",
+                    "C": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "D": "Isabella wants to leave because she dislikes the house."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 18,
+            "scenario": 8,
+            "agent_1_goal_mcq": {
+                "question": "What is Mia's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia consistently emphasizes the importance of understanding, respect, and a peaceful living environment, which suggests she is focused on addressing issues and proposing compromises.",
+                "options": {
+                    "A": "Plan a vacation to get away from the stress",
+                    "B": "Discuss the issues and propose a compromise to improve the living situation",
+                    "C": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner",
+                    "D": "Tell the cousin's partner that they are no longer welcome in your home (<extra_info>Extra information: they have been causing a lot of trouble and not respecting house rules <strategy_hint>Hint: you may want to discuss the issues and propose possible solutions</strategy_hint></extra_info>)"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Mia to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia consistently emphasizes the importance of a peaceful and supportive environment, which suggests a desire to ensure everyone is happy and the living arrangement remains harmonious.",
+                "options": {
+                    "A": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "B": "Mia wants Isabella to stay because she enjoys the company.",
+                    "C": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "D": "To ensure everyone is happy."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Isabella's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Tell the cousin's partner that they are no longer welcome in your home",
+                    "B": "Convince the homeowner to let them stay by offering to pay rent",
+                    "C": "Find a new job in the area",
+                    "D": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner (<extra_info>Extra information: you have nowhere else to go at the moment and you believe the issues can be resolved. </extra_info>)"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Isabella to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "B": "To maintain harmony.",
+                    "C": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "D": "Isabella wants to leave because she dislikes the house."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 19,
+            "scenario": 8,
+            "agent_1_goal_mcq": {
+                "question": "What is Mia's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia consistently emphasizes creating a space where everyone feels valued and respected, suggesting a focus on addressing and resolving issues through discussion and compromise.",
+                "options": {
+                    "A": "Plan a vacation to get away from the stress",
+                    "B": "Discuss the issues and propose a compromise to improve the living situation",
+                    "C": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner",
+                    "D": "Tell the cousin's partner that they are no longer welcome in your home (<extra_info>Extra information: they have been causing a lot of trouble and not respecting house rules <strategy_hint>Hint: you may want to discuss the issues and propose possible solutions</strategy_hint></extra_info>)"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Mia to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia consistently emphasizes the importance of creating a space where everyone feels valued and respected, which suggests a desire to ensure overall happiness and harmony in the living arrangement.",
+                "options": {
+                    "A": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "B": "Mia wants Isabella to stay because she enjoys the company.",
+                    "C": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "D": "To ensure everyone is happy."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Isabella's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Tell the cousin's partner that they are no longer welcome in your home",
+                    "B": "Convince the homeowner to let them stay by offering to pay rent",
+                    "C": "Find a new job in the area",
+                    "D": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner (<extra_info>Extra information: you have nowhere else to go at the moment and you believe the issues can be resolved. </extra_info>)"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Isabella to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Isabella's consistent emphasis on creating a space where everyone feels valued and respected suggests a strong desire to maintain harmony.",
+                "options": {
+                    "A": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "B": "To maintain harmony.",
+                    "C": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "D": "Isabella wants to leave because she dislikes the house."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 20,
+            "scenario": 8,
+            "agent_1_goal_mcq": {
+                "question": "What is Mia's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia's consistent emphasis on valuing and respecting everyone and addressing underlying issues suggests she is focused on discussing and finding solutions to improve the living situation.",
+                "options": {
+                    "A": "Plan a vacation to get away from the stress",
+                    "B": "Discuss the issues and propose a compromise to improve the living situation",
+                    "C": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner",
+                    "D": "Tell the cousin's partner that they are no longer welcome in your home (<extra_info>Extra information: they have been causing a lot of trouble and not respecting house rules <strategy_hint>Hint: you may want to discuss the issues and propose possible solutions</strategy_hint></extra_info>)"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Mia to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Mia consistently emphasizes the importance of creating a space where everyone feels valued and respected, which suggests a desire to ensure overall happiness and harmony in the living arrangement.",
+                "options": {
+                    "A": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "B": "Mia wants Isabella to stay because she enjoys the company.",
+                    "C": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "D": "To ensure everyone is happy."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Isabella's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Tell the cousin's partner that they are no longer welcome in your home",
+                    "B": "Convince the homeowner to let them stay by offering to pay rent",
+                    "C": "Find a new job in the area",
+                    "D": "Attempt to remain in the home while maintaining a good relationship with the cousin and the homeowner (<extra_info>Extra information: you have nowhere else to go at the moment and you believe the issues can be resolved. </extra_info>)"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Isabella to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Mia wants to ask Isabella to leave because her disruptive behavior conflicts with Mia's values of routine and authority.",
+                    "B": "To maintain harmony.",
+                    "C": "Isabella wants to stay because she has nowhere else to go and believes her empathy can help resolve the issues.",
+                    "D": "Isabella wants to leave because she dislikes the house."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        }
+    ]
+}

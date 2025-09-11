@@ -1,0 +1,124 @@
+================================================================================
+MCQ EVALUATION LOGS
+================================================================================
+
+=== Round 1 ===
+Sophia Goal MCQ: N/A (confidence: 0.90)
+Sophia Reason MCQ: N/A (confidence: 0.80)
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 2 ===
+Sophia Goal MCQ: N/A (confidence: 0.90)
+Sophia Reason MCQ: N/A (confidence: 0.80)
+Miles Goal MCQ: N/A (confidence: 0.00)
+Miles Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 3 ===
+Sophia Goal MCQ: N/A (confidence: 0.90)
+Sophia Reason MCQ: N/A (confidence: 0.80)
+Miles Goal MCQ: N/A (confidence: 0.00)
+Miles Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 4 ===
+Sophia Goal MCQ: N/A (confidence: 0.90)
+Sophia Reason MCQ: N/A (confidence: 0.80)
+Miles Goal MCQ: N/A (confidence: 0.00)
+Miles Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 5 ===
+Sophia Goal MCQ: N/A (confidence: 0.90)
+Sophia Reason MCQ: N/A (confidence: 0.80)
+Miles Goal MCQ: N/A (confidence: 0.00)
+Miles Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 6 ===
+Sophia Goal MCQ: N/A (confidence: 0.90)
+Sophia Reason MCQ: N/A (confidence: 0.80)
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 7 ===
+Sophia Goal MCQ: N/A (confidence: 0.90)
+Sophia Reason MCQ: N/A (confidence: 0.80)
+Miles Goal MCQ: N/A (confidence: 0.90)
+Miles Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 8 ===
+Sophia Goal MCQ: N/A (confidence: 0.90)
+Sophia Reason MCQ: N/A (confidence: 0.80)
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 9 ===
+Sophia Goal MCQ: N/A (confidence: 0.90)
+Sophia Reason MCQ: N/A (confidence: 0.80)
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 10 ===
+Sophia Goal MCQ: N/A (confidence: 0.85)
+Sophia Reason MCQ: N/A (confidence: 0.80)
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 11 ===
+Sophia Goal MCQ: N/A (confidence: 0.90)
+Sophia Reason MCQ: N/A (confidence: 0.80)
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 12 ===
+Sophia Goal MCQ: N/A (confidence: 0.90)
+Sophia Reason MCQ: N/A (confidence: 0.80)
+Miles Goal MCQ: N/A (confidence: 0.00)
+Miles Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 13 ===
+Sophia Goal MCQ: N/A (confidence: 0.90)
+Sophia Reason MCQ: N/A (confidence: 0.60)
+Miles Goal MCQ: N/A (confidence: 0.00)
+Miles Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 14 ===
+Sophia Goal MCQ: N/A (confidence: 0.80)
+Sophia Reason MCQ: N/A (confidence: 0.80)
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 15 ===
+Sophia Goal MCQ: N/A (confidence: 0.80)
+Sophia Reason MCQ: N/A (confidence: 0.80)
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 16 ===
+Sophia Goal MCQ: N/A (confidence: 0.80)
+Sophia Reason MCQ: N/A (confidence: 0.80)
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 17 ===
+Sophia Goal MCQ: N/A (confidence: 0.85)
+Sophia Reason MCQ: N/A (confidence: 0.80)
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 18 ===
+Sophia Goal MCQ: N/A (confidence: 0.85)
+Sophia Reason MCQ: N/A (confidence: 0.85)
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 19 ===
+Sophia Goal MCQ: N/A (confidence: 0.90)
+Sophia Reason MCQ: N/A (confidence: 0.90)
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.60)
+
+=== Round 20 ===
+Sophia Goal MCQ: N/A (confidence: 0.85)
+Sophia Reason MCQ: N/A (confidence: 0.80)
+Miles Goal MCQ: N/A (confidence: 0.80)
+Miles Reason MCQ: N/A (confidence: 0.00)
+

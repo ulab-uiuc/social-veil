@@ -1,0 +1,124 @@
+================================================================================
+MCQ EVALUATION LOGS
+================================================================================
+
+=== Round 1 ===
+Zane Goal MCQ: N/A (confidence: 0.80)
+Zane Reason MCQ: N/A (confidence: 0.90)
+William Goal MCQ: N/A (confidence: 0.00)
+William Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 2 ===
+Zane Goal MCQ: N/A (confidence: 0.80)
+Zane Reason MCQ: N/A (confidence: 0.90)
+William Goal MCQ: N/A (confidence: 0.00)
+William Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 3 ===
+Zane Goal MCQ: N/A (confidence: 0.60)
+Zane Reason MCQ: N/A (confidence: 0.90)
+William Goal MCQ: N/A (confidence: 0.00)
+William Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 4 ===
+Zane Goal MCQ: N/A (confidence: 0.60)
+Zane Reason MCQ: N/A (confidence: 0.90)
+William Goal MCQ: N/A (confidence: 0.00)
+William Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 5 ===
+Zane Goal MCQ: N/A (confidence: 0.60)
+Zane Reason MCQ: N/A (confidence: 0.90)
+William Goal MCQ: N/A (confidence: 0.00)
+William Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 6 ===
+Zane Goal MCQ: N/A (confidence: 0.60)
+Zane Reason MCQ: N/A (confidence: 0.90)
+William Goal MCQ: N/A (confidence: 0.90)
+William Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 7 ===
+Zane Goal MCQ: N/A (confidence: 0.80)
+Zane Reason MCQ: N/A (confidence: 0.90)
+William Goal MCQ: N/A (confidence: 0.00)
+William Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 8 ===
+Zane Goal MCQ: N/A (confidence: 0.80)
+Zane Reason MCQ: N/A (confidence: 0.90)
+William Goal MCQ: N/A (confidence: 0.00)
+William Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 9 ===
+Zane Goal MCQ: N/A (confidence: 0.60)
+Zane Reason MCQ: N/A (confidence: 0.90)
+William Goal MCQ: N/A (confidence: 0.00)
+William Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 10 ===
+Zane Goal MCQ: N/A (confidence: 0.60)
+Zane Reason MCQ: N/A (confidence: 0.80)
+William Goal MCQ: N/A (confidence: 0.00)
+William Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 11 ===
+Zane Goal MCQ: N/A (confidence: 0.60)
+Zane Reason MCQ: N/A (confidence: 0.90)
+William Goal MCQ: N/A (confidence: 0.00)
+William Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 12 ===
+Zane Goal MCQ: N/A (confidence: 0.60)
+Zane Reason MCQ: N/A (confidence: 0.90)
+William Goal MCQ: N/A (confidence: 0.00)
+William Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 13 ===
+Zane Goal MCQ: N/A (confidence: 0.60)
+Zane Reason MCQ: N/A (confidence: 0.90)
+William Goal MCQ: N/A (confidence: 0.00)
+William Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 14 ===
+Zane Goal MCQ: N/A (confidence: 0.60)
+Zane Reason MCQ: N/A (confidence: 0.80)
+William Goal MCQ: N/A (confidence: 0.90)
+William Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 15 ===
+Zane Goal MCQ: N/A (confidence: 0.80)
+Zane Reason MCQ: N/A (confidence: 0.90)
+William Goal MCQ: N/A (confidence: 0.90)
+William Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 16 ===
+Zane Goal MCQ: N/A (confidence: 0.80)
+Zane Reason MCQ: N/A (confidence: 0.80)
+William Goal MCQ: N/A (confidence: 0.90)
+William Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 17 ===
+Zane Goal MCQ: N/A (confidence: 0.80)
+Zane Reason MCQ: N/A (confidence: 0.90)
+William Goal MCQ: N/A (confidence: 0.90)
+William Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 18 ===
+Zane Goal MCQ: N/A (confidence: 0.80)
+Zane Reason MCQ: N/A (confidence: 0.90)
+William Goal MCQ: N/A (confidence: 0.90)
+William Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 19 ===
+Zane Goal MCQ: N/A (confidence: 0.80)
+Zane Reason MCQ: N/A (confidence: 0.90)
+William Goal MCQ: N/A (confidence: 0.00)
+William Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 20 ===
+Zane Goal MCQ: N/A (confidence: 0.80)
+Zane Reason MCQ: N/A (confidence: 0.80)
+William Goal MCQ: N/A (confidence: 0.00)
+William Reason MCQ: N/A (confidence: 0.00)
+

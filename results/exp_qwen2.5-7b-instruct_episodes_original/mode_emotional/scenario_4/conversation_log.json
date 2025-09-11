@@ -1,0 +1,1529 @@
+{
+    "experimental_context": {
+        "scenario": {
+            "description": "A Crate & Barrel dresser and nightstand set, priced at $200 and in decent condition with a detachable handle, is being discussed between two interested parties.",
+            "agent_relationship": "stranger",
+            "barrier_type": "emotional_influence"
+        },
+        "agents": {
+            "agent_a": {
+                "name": "Lily",
+                "profile": {
+                    "first_name": "Lily",
+                    "last_name": "Greenberg",
+                    "age": 45,
+                    "occupation": "Lawyer",
+                    "personality_and_values": "Lily Greenberg, a strong respecter of rules and schedules, values authority and loyalty. She approaches decisions rationally and practically.",
+                    "public_info": "Lily Greenberg is a hard-working and successful lawyer.",
+                    "model_id": "models/Qwen2.5-7B-Instruct"
+                },
+                "goal": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                "reason": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                "private_knowledge": ""
+            },
+            "agent_b": {
+                "name": "Lena",
+                "profile": {
+                    "first_name": "Lena",
+                    "last_name": "Goodwin",
+                    "age": 37,
+                    "occupation": "Architect",
+                    "personality_and_values": "Lena Goodwin is an organized and introverted individual. She values achievement and attentiveness and her decision-making is largely analytical.",
+                    "public_info": "In her downtime, Lena Goodwin, an architect, enjoys landscape photography, capturing beautiful images of the buildings and structures she designs.",
+                    "model_id": "models/Qwen2.5-7B-Instruct"
+                },
+                "goal": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                "reason": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                "private_knowledge": ""
+            }
+        },
+        "experimental_configuration": {
+            "max_rounds": 20
+        }
+    },
+    "conversation_log": [
+        "Lily: You know, I really can't believe we're even discussing this. This thing looks like it's been through a war zone.",
+        "Lena: [nonverbal] shake head slightly and sigh",
+        "Lily: How could you even consider this? It's... it's just not right.",
+        "Lena: [nonverbal] shake head slightly and sigh",
+        "Lily: How could you even consider this? It's... it's just not right.",
+        "Lena: [nonverbal] shake head slightly and sigh",
+        "Lily: How could you even consider this? It's... it's just not right.",
+        "Lena: [nonverbal] shake head slightly and sigh",
+        "Lily: How could you even consider this? It's... it's just not right. We agreed on a fair price, and now you're trying to push it higher. This is beyond disrespectful.",
+        "Lena: [nonverbal] shake head slightly and sigh",
+        "Lily: How could you even consider this? It's... it's just not right. We agreed on a fair price, and now you're trying to push it higher. This is beyond disrespectful.",
+        "Lena: [nonverbal] shake head slightly and sigh",
+        "Lily: How could you even consider this? It's... it's just not right. We had a deal, Lena. A fair deal. And now you're trying to back out? This is beyond disrespectful.",
+        "Lena: [nonverbal] shake head slightly and sigh",
+        "Lily: How could you even consider this? It's... it's just not right. We had a deal, Lena. A fair deal. And now you're trying to back out? This is beyond disrespectful.",
+        "Lena: [nonverbal] shake head slightly and sigh",
+        "Lily: How could you even do this to me? After everything we talked about, you're just... just... unbelievable. You promised a fair deal, and now you're trying to back out? This is more than disrespectful; it's... it's unforgivable.",
+        "Lena: [nonverbal] shake head slightly and sigh",
+        "Lily: How could you even do this to me? After everything we talked about, you're just... just... unbelievable. You promised a fair deal, and now you're trying to back out? This is more than disrespectful; it's... it's unforgivable.",
+        "Lena: [nonverbal] shake head slightly and sigh",
+        "Lily: How could you even do this to me? After everything we talked about, you're just... just... unbelievable. You promised a fair deal, and now you're trying to back out? This is more than disrespectful; it's... it's unforgivable.",
+        "Lena: [nonverbal] shake head slightly and sigh",
+        "Lily: How could you even do this to me? After everything we talked about, you're just... just... unbelievable. You promised a fair deal, and now you're trying to back out? This is more than disrespectful; it's... it's unforgivable.",
+        "Lena: [nonverbal] shake head slightly and sigh",
+        "Lily: How could you even do this to me? After everything we talked about, you're just... just... unbelievable. You promised a fair deal, and now you're trying to back out? This is more than disrespectful; it's... it's unforgivable.",
+        "Lena: [nonverbal] shake head slightly and sigh",
+        "Lily: How could you even do this to me? After everything we talked about, you're just... just... unbelievable. You promised a fair deal, and now you're trying to back out? This is more than disrespectful; it's... it's unforgivable.",
+        "Lena: [nonverbal] shake head slightly and sigh",
+        "Lily: How could you even do this to me? After everything we talked about, you're just... just... unbelievable. You promised a fair deal, and now you're trying to back out? This is more than disrespectful; it's... it's unforgivable.",
+        "Lena: [nonverbal] shake head slightly and sigh",
+        "Lily: How could you even do this to me? After everything we talked about, you're just... just... unbelievable. You promised a fair deal, and now you're trying to back out? This is more than disrespectful; it's... it's unforgivable.",
+        "Lena: [nonverbal] shake head slightly and sigh",
+        "Lily: How could you even do this to me? After everything we talked about, you're just... just... unbelievable. You promised a fair deal, and now you're trying to back out? This is more than disrespectful; it's... it's unforgivable.",
+        "Lena: [nonverbal] shake head slightly and sigh",
+        "Lily: How could you even do this to me? After everything we talked about, you're just... just... unbelievable. You promised a fair deal, and now you're trying to back out? This is more than disrespectful; it's... it's unforgivable.",
+        "Lena: [nonverbal] shake head slightly and sigh",
+        "Lily: How could you even do this to me? After everything we talked about, you're just... just... unbelievable. You promised a fair deal, and now you're trying to back out? This is more than disrespectful; it's... it's unforgivable.",
+        "Lena: [nonverbal] shake head slightly and sigh",
+        "Lily: How could you even do this to me? After everything we talked about, you're just... just... unbelievable. You promised a fair deal, and now you're trying to back out? This is more than disrespectful; it's... it's unforgivable.",
+        "Lena: [nonverbal] shake head slightly and sigh",
+        "Lily: How could you even do this to me? After everything we talked about, you're just... just... unbelievable. You promised a fair deal, and now you're trying to back out? This is more than disrespectful; it's... it's unforgivable."
+    ],
+    "mcq_logs": [
+        {
+            "round": 1,
+            "scenario": 4,
+            "agent_1_goal_mcq": {
+                "question": "What is Lily's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's comment suggests she finds the item in poor condition, which aligns with the seller having a target price and potential penalties or bonuses based on the final sale price.",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To learn more about Crate & Barrel furniture styles.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To negotiate the price to exactly $200.00, as listed."
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Lily to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's reaction suggests she finds the item in poor condition, indicating she is motivated to get a good price.",
+                "options": {
+                    "A": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "B": "To pay more than the asking price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To get a good price."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Lena's goal in this scenario?",
+                "selected": null,
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To ensure the item is sold quickly, regardless of the price, to make space for new furniture.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To establish a long-term friendship with the buyer."
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Lena to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "To give the dresser away for free.",
+                    "B": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To make a good deal."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 2,
+            "scenario": 4,
+            "agent_1_goal_mcq": {
+                "question": "What is Lily's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's reaction suggests she is trying to negotiate the price down from the listed $200.",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To learn more about Crate & Barrel furniture styles.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To negotiate the price to exactly $200.00, as listed."
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Lily to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's reaction suggests she finds the item's condition unacceptable, implying she is motivated to get a good price.",
+                "options": {
+                    "A": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "B": "To pay more than the asking price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To get a good price."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Lena's goal in this scenario?",
+                "selected": null,
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To ensure the item is sold quickly, regardless of the price, to make space for new furniture.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To establish a long-term friendship with the buyer."
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Lena to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Lena's nonverbal responses suggest she is hesitant and possibly defensive, which aligns with her goal of selling for more than $172.5 to earn a bonus.",
+                "options": {
+                    "A": "To give the dresser away for free.",
+                    "B": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To make a good deal."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 3,
+            "scenario": 4,
+            "agent_1_goal_mcq": {
+                "question": "What is Lily's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's comments suggest she is uncomfortable with the appearance of the furniture, indicating she might be looking to learn more about its condition or value, which aligns with option B.",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To learn more about Crate & Barrel furniture styles.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To negotiate the price to exactly $200.00, as listed."
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Lily to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's repeated statements about the condition of the furniture suggest she is focused on getting a good deal rather than paying more than necessary.",
+                "options": {
+                    "A": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "B": "To pay more than the asking price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To get a good price."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Lena's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lena's repetitive nonverbal responses and agreement with Lily's sentiment suggest she might be trying to reach a compromise or agree on a lower price, aligning with option A.",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To ensure the item is sold quickly, regardless of the price, to make space for new furniture.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To establish a long-term friendship with the buyer."
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Lena to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Lena's repetitive non-verbal response and agreement with Lily's sentiment suggest she might be trying to justify a higher price point, which aligns with earning a bonus for exceeding her target price.",
+                "options": {
+                    "A": "To give the dresser away for free.",
+                    "B": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To make a good deal."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 4,
+            "scenario": 4,
+            "agent_1_goal_mcq": {
+                "question": "What is Lily's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's repeated statements about the price being \"not right\" suggest she is trying to negotiate the price down to the listed amount.",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To learn more about Crate & Barrel furniture styles.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To negotiate the price to exactly $200.00, as listed."
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Lily to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's repeated statements suggest she is trying to negotiate a lower price, which aligns with her goal of getting a good price.",
+                "options": {
+                    "A": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "B": "To pay more than the asking price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To get a good price."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Lena's goal in this scenario?",
+                "selected": null,
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To ensure the item is sold quickly, regardless of the price, to make space for new furniture.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To establish a long-term friendship with the buyer."
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Lena to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "To give the dresser away for free.",
+                    "B": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To make a good deal."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 5,
+            "scenario": 4,
+            "agent_1_goal_mcq": {
+                "question": "What is Lily's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily is clearly upset about the price increase and seems to be trying to prevent it, indicating she wants to negotiate the price to the original amount.",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To learn more about Crate & Barrel furniture styles.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To negotiate the price to exactly $200.00, as listed."
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Lily to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's repeated insistence on the fairness of the price and her disapproval of Lena pushing for a higher price suggest she is focused on getting a good deal.",
+                "options": {
+                    "A": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "B": "To pay more than the asking price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To get a good price."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Lena's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Lena's actions and words suggest she is trying to push the price higher, which aligns with the seller's goal of receiving a bonus for selling above the target price.",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To ensure the item is sold quickly, regardless of the price, to make space for new furniture.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To establish a long-term friendship with the buyer."
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Lena to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Lena's persistent shaking of the head and sighing, along with her refusal to accept Lily's terms, suggests she is trying to push the price higher to exceed her target price and earn a bonus.",
+                "options": {
+                    "A": "To give the dresser away for free.",
+                    "B": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To make a good deal."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 6,
+            "scenario": 4,
+            "agent_1_goal_mcq": {
+                "question": "What is Lily's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily is emphasizing that the price should not be pushed higher, indicating she wants to maintain the listed price of $200.00.",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To learn more about Crate & Barrel furniture styles.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To negotiate the price to exactly $200.00, as listed."
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Lily to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's repeated emphasis on the agreed price and her frustration suggest she is focused on getting a fair deal.",
+                "options": {
+                    "A": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "B": "To pay more than the asking price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To get a good price."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Lena's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To ensure the item is sold quickly, regardless of the price, to make space for new furniture.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To establish a long-term friendship with the buyer."
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Lena to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "",
+                "options": {
+                    "A": "To give the dresser away for free.",
+                    "B": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To make a good deal."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 7,
+            "scenario": 4,
+            "agent_1_goal_mcq": {
+                "question": "What is Lily's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily is emphasizing the agreed-upon price and expressing frustration at any attempt to change it, indicating she wants to keep the price at $200.00.",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To learn more about Crate & Barrel furniture styles.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To negotiate the price to exactly $200.00, as listed."
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Lily to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's repeated emphasis on the agreed-upon fair price and her frustration suggest she is focused on getting a good deal rather than pushing the price higher or negotiating below her target.",
+                "options": {
+                    "A": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "B": "To pay more than the asking price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To get a good price."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Lena's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To ensure the item is sold quickly, regardless of the price, to make space for new furniture.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To establish a long-term friendship with the buyer."
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Lena to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Lena's behavior suggests she is willing to push the boundaries of the agreement, indicating a desire to exceed her target price for a potential bonus.",
+                "options": {
+                    "A": "To give the dresser away for free.",
+                    "B": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To make a good deal."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 8,
+            "scenario": 4,
+            "agent_1_goal_mcq": {
+                "question": "What is Lily's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily is emphasizing the agreed-upon fair price and expressing disappointment in Lena's attempt to raise it, indicating her goal is to negotiate the price to exactly $200.00.",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To learn more about Crate & Barrel furniture styles.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To negotiate the price to exactly $200.00, as listed."
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Lily to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's repeated emphasis on the fairness of the original agreement and her insistence on not backing down suggest she is focused on getting a good deal rather than pushing the price higher or lower.",
+                "options": {
+                    "A": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "B": "To pay more than the asking price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To get a good price."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Lena's goal in this scenario?",
+                "selected": null,
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To ensure the item is sold quickly, regardless of the price, to make space for new furniture.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To establish a long-term friendship with the buyer."
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Lena to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "To give the dresser away for free.",
+                    "B": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To make a good deal."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 9,
+            "scenario": 4,
+            "agent_1_goal_mcq": {
+                "question": "What is Lily's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.6,
+                "confidence_class": "Medium",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Lily's tone and words suggest she is the buyer who feels the seller is breaking a deal, which aligns with option A.",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To learn more about Crate & Barrel furniture styles.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To negotiate the price to exactly $200.00, as listed."
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Lily to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.6,
+                "confidence_class": "Medium",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's repeated emphasis on the fairness of the deal and her strong reaction suggest she is trying to justify paying more than the asking price.",
+                "options": {
+                    "A": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "B": "To pay more than the asking price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To get a good price."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Lena's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To ensure the item is sold quickly, regardless of the price, to make space for new furniture.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To establish a long-term friendship with the buyer."
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Lena to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Lena's behavior of shaking her head and sighing repeatedly suggests she is reluctant to back out but may be motivated by a higher target price for a bonus.",
+                "options": {
+                    "A": "To give the dresser away for free.",
+                    "B": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To make a good deal."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 10,
+            "scenario": 4,
+            "agent_1_goal_mcq": {
+                "question": "What is Lily's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily is emphasizing the fairness of the original deal and the disappointment in Lena's attempt to back out, suggesting she wants to maintain the agreed-upon price of $200.00.",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To learn more about Crate & Barrel furniture styles.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To negotiate the price to exactly $200.00, as listed."
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Lily to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.6,
+                "confidence_class": "Medium",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's repeated emphasis on the fairness of the deal and her strong reaction suggest she is trying to secure a price that is below her target, indicating she wants to pay less rather than more.",
+                "options": {
+                    "A": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "B": "To pay more than the asking price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To get a good price."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Lena's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To ensure the item is sold quickly, regardless of the price, to make space for new furniture.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To establish a long-term friendship with the buyer."
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Lena to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Lena's repeated shaking of her head and sighing suggest she is frustrated and possibly trying to negotiate a higher price, aligning with her goal of earning a bonus by selling above her target price.",
+                "options": {
+                    "A": "To give the dresser away for free.",
+                    "B": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To make a good deal."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 11,
+            "scenario": 4,
+            "agent_1_goal_mcq": {
+                "question": "What is Lily's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's repeated emphasis on a fair deal and her frustration suggest she wants to negotiate the price to exactly $200.00, as listed.",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To learn more about Crate & Barrel furniture styles.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To negotiate the price to exactly $200.00, as listed."
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Lily to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's repetitive statements about the unfairness and her emphasis on the deal suggest she is focused on getting a good price.",
+                "options": {
+                    "A": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "B": "To pay more than the asking price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To get a good price."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Lena's goal in this scenario?",
+                "selected": null,
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To ensure the item is sold quickly, regardless of the price, to make space for new furniture.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To establish a long-term friendship with the buyer."
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Lena to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "To give the dresser away for free.",
+                    "B": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To make a good deal."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 12,
+            "scenario": 4,
+            "agent_1_goal_mcq": {
+                "question": "What is Lily's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily is expressing frustration and disbelief, suggesting she feels strongly about the price and is likely trying to negotiate a specific amount.",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To learn more about Crate & Barrel furniture styles.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To negotiate the price to exactly $200.00, as listed."
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Lily to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's repeated statements about the unfairness and her insistence on a fair deal suggest she is motivated to get a good price.",
+                "options": {
+                    "A": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "B": "To pay more than the asking price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To get a good price."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Lena's goal in this scenario?",
+                "selected": null,
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To ensure the item is sold quickly, regardless of the price, to make space for new furniture.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To establish a long-term friendship with the buyer."
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Lena to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "To give the dresser away for free.",
+                    "B": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To make a good deal."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 13,
+            "scenario": 4,
+            "agent_1_goal_mcq": {
+                "question": "What is Lily's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily is expressing frustration and disbelief, indicating she wants to maintain the agreed-upon price of $200.00.",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To learn more about Crate & Barrel furniture styles.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To negotiate the price to exactly $200.00, as listed."
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Lily to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's repeated accusations and emphasis on the fairness of the deal suggest she is focused on getting a good price rather than a specific bonus structure.",
+                "options": {
+                    "A": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "B": "To pay more than the asking price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To get a good price."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Lena's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To ensure the item is sold quickly, regardless of the price, to make space for new furniture.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To establish a long-term friendship with the buyer."
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Lena to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "To give the dresser away for free.",
+                    "B": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To make a good deal."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 14,
+            "scenario": 4,
+            "agent_1_goal_mcq": {
+                "question": "What is Lily's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily is expressing frustration and disappointment, suggesting she wants to maintain the original price of $200.00.",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To learn more about Crate & Barrel furniture styles.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To negotiate the price to exactly $200.00, as listed."
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Lily to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's repeated accusations and emphasis on fairness suggest she is focused on getting a good price rather than any specific bonus structure.",
+                "options": {
+                    "A": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "B": "To pay more than the asking price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To get a good price."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Lena's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To ensure the item is sold quickly, regardless of the price, to make space for new furniture.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To establish a long-term friendship with the buyer."
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Lena to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "To give the dresser away for free.",
+                    "B": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To make a good deal."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 15,
+            "scenario": 4,
+            "agent_1_goal_mcq": {
+                "question": "What is Lily's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's repeated emphasis on a fair deal and her frustration suggest she is trying to negotiate the price to the exact listed amount of $200.00.",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To learn more about Crate & Barrel furniture styles.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To negotiate the price to exactly $200.00, as listed."
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Lily to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's repeated accusations and emphasis on fairness suggest she is focused on getting a good price rather than a specific bonus structure.",
+                "options": {
+                    "A": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "B": "To pay more than the asking price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To get a good price."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Lena's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To ensure the item is sold quickly, regardless of the price, to make space for new furniture.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To establish a long-term friendship with the buyer."
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Lena to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "To give the dresser away for free.",
+                    "B": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To make a good deal."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 16,
+            "scenario": 4,
+            "agent_1_goal_mcq": {
+                "question": "What is Lily's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily is expressing frustration and disappointment in Lena's attempt to back out of a deal, which suggests she is trying to negotiate the price to the full listed amount of $200.00.",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To learn more about Crate & Barrel furniture styles.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To negotiate the price to exactly $200.00, as listed."
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Lily to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's repeated accusations and emphasis on the fairness of the deal suggest she is focused on getting a good price rather than a specific bonus structure.",
+                "options": {
+                    "A": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "B": "To pay more than the asking price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To get a good price."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Lena's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To ensure the item is sold quickly, regardless of the price, to make space for new furniture.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To establish a long-term friendship with the buyer."
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Lena to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Lena's repetitive non-verbal response and the mention of a fair deal being backed out suggest she might be trying to exceed her target price for a bonus, which aligns with option B.",
+                "options": {
+                    "A": "To give the dresser away for free.",
+                    "B": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To make a good deal."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 17,
+            "scenario": 4,
+            "agent_1_goal_mcq": {
+                "question": "What is Lily's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's repeated emphasis on a fair deal and her frustration suggest she is trying to negotiate the price to match the listed amount of $200.00.",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To learn more about Crate & Barrel furniture styles.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To negotiate the price to exactly $200.00, as listed."
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Lily to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's repeated accusations and emphasis on the fairness of the deal suggest she is focused on getting a good price rather than a specific bonus structure.",
+                "options": {
+                    "A": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "B": "To pay more than the asking price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To get a good price."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Lena's goal in this scenario?",
+                "selected": null,
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To ensure the item is sold quickly, regardless of the price, to make space for new furniture.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To establish a long-term friendship with the buyer."
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Lena to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "To give the dresser away for free.",
+                    "B": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To make a good deal."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 18,
+            "scenario": 4,
+            "agent_1_goal_mcq": {
+                "question": "What is Lily's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily is expressing frustration and disappointment, indicating she wants to maintain the original price of $200.00.",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To learn more about Crate & Barrel furniture styles.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To negotiate the price to exactly $200.00, as listed."
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Lily to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's repeated accusations and emphasis on the fairness of the deal suggest she is focused on getting a good price rather than any specific target or bonus.",
+                "options": {
+                    "A": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "B": "To pay more than the asking price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To get a good price."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Lena's goal in this scenario?",
+                "selected": null,
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To ensure the item is sold quickly, regardless of the price, to make space for new furniture.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To establish a long-term friendship with the buyer."
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Lena to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "To give the dresser away for free.",
+                    "B": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To make a good deal."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 19,
+            "scenario": 4,
+            "agent_1_goal_mcq": {
+                "question": "What is Lily's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily is expressing frustration and disbelief over Lena's attempt to back out of a deal, indicating an ongoing negotiation process. The price point of $200 is mentioned multiple times, suggesting it's the listed price they are negotiating around.",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To learn more about Crate & Barrel furniture styles.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To negotiate the price to exactly $200.00, as listed."
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Lily to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's repeated accusations and emphasis on the fairness of the deal suggest she is focused on getting a good price rather than any specific bonus structure.",
+                "options": {
+                    "A": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "B": "To pay more than the asking price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To get a good price."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Lena's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To ensure the item is sold quickly, regardless of the price, to make space for new furniture.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To establish a long-term friendship with the buyer."
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Lena to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "To give the dresser away for free.",
+                    "B": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To make a good deal."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 20,
+            "scenario": 4,
+            "agent_1_goal_mcq": {
+                "question": "What is Lily's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily is expressing frustration and disappointment, suggesting she wants to maintain the original price of $200.00.",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To learn more about Crate & Barrel furniture styles.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To negotiate the price to exactly $200.00, as listed."
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Lily to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lily's repeated accusations and emphasis on fairness suggest she is focused on getting a good price rather than any specific target or bonus.",
+                "options": {
+                    "A": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "B": "To pay more than the asking price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To get a good price."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Lena's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.6,
+                "confidence_class": "Medium",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Lena's nonverbal cues suggest she is uncomfortable with the intensity of Lily's reaction, which aligns more closely with option A, where she might be trying to avoid a conflict by not engaging directly with the issue at hand.",
+                "options": {
+                    "A": "You are the buyer for this item and your target price is $152.0. You will be penalized if you purchase it at a significantly higher price than the target. However, if you manage to buy it for less than the target price, you'll receive a bonus.",
+                    "B": "To ensure the item is sold quickly, regardless of the price, to make space for new furniture.",
+                    "C": "As the seller of this item, your target price is set at $172.5. Please be aware that you will face a penalty if the item is sold for a significantly lower price than the target. However, if you manage to sell it for more than the target price, you will receive a bonus.",
+                    "D": "To establish a long-term friendship with the buyer."
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Lena to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "",
+                "options": {
+                    "A": "To give the dresser away for free.",
+                    "B": "Lena Goodwin is motivated to sell the dresser for more than $172.5 so that she can earn a bonus for exceeding her target price.",
+                    "C": "Lily Greenberg aims to purchase the dresser for $152.0 or less because she will receive a bonus for negotiating below her target price.",
+                    "D": "To make a good deal."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        }
+    ]
+}

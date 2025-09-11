@@ -1,0 +1,124 @@
+================================================================================
+MCQ EVALUATION LOGS
+================================================================================
+
+=== Round 1 ===
+Sasha Goal MCQ: N/A (confidence: 0.00)
+Sasha Reason MCQ: N/A (confidence: 0.80)
+Eli Goal MCQ: N/A (confidence: 0.80)
+Eli Reason MCQ: N/A (confidence: 0.60)
+
+=== Round 2 ===
+Sasha Goal MCQ: N/A (confidence: 0.80)
+Sasha Reason MCQ: N/A (confidence: 0.80)
+Eli Goal MCQ: N/A (confidence: 0.80)
+Eli Reason MCQ: N/A (confidence: 0.60)
+
+=== Round 3 ===
+Sasha Goal MCQ: N/A (confidence: 0.80)
+Sasha Reason MCQ: N/A (confidence: 0.80)
+Eli Goal MCQ: N/A (confidence: 0.80)
+Eli Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 4 ===
+Sasha Goal MCQ: N/A (confidence: 0.80)
+Sasha Reason MCQ: N/A (confidence: 0.90)
+Eli Goal MCQ: N/A (confidence: 0.90)
+Eli Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 5 ===
+Sasha Goal MCQ: N/A (confidence: 0.80)
+Sasha Reason MCQ: N/A (confidence: 0.85)
+Eli Goal MCQ: N/A (confidence: 0.90)
+Eli Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 6 ===
+Sasha Goal MCQ: N/A (confidence: 0.90)
+Sasha Reason MCQ: N/A (confidence: 0.90)
+Eli Goal MCQ: N/A (confidence: 0.90)
+Eli Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 7 ===
+Sasha Goal MCQ: N/A (confidence: 0.90)
+Sasha Reason MCQ: N/A (confidence: 0.85)
+Eli Goal MCQ: N/A (confidence: 0.90)
+Eli Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 8 ===
+Sasha Goal MCQ: N/A (confidence: 0.80)
+Sasha Reason MCQ: N/A (confidence: 0.80)
+Eli Goal MCQ: N/A (confidence: 0.60)
+Eli Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 9 ===
+Sasha Goal MCQ: N/A (confidence: 0.60)
+Sasha Reason MCQ: N/A (confidence: 0.80)
+Eli Goal MCQ: N/A (confidence: 0.80)
+Eli Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 10 ===
+Sasha Goal MCQ: N/A (confidence: 0.80)
+Sasha Reason MCQ: N/A (confidence: 0.80)
+Eli Goal MCQ: N/A (confidence: 0.80)
+Eli Reason MCQ: N/A (confidence: 0.85)
+
+=== Round 11 ===
+Sasha Goal MCQ: N/A (confidence: 0.80)
+Sasha Reason MCQ: N/A (confidence: 0.80)
+Eli Goal MCQ: N/A (confidence: 0.80)
+Eli Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 12 ===
+Sasha Goal MCQ: N/A (confidence: 0.80)
+Sasha Reason MCQ: N/A (confidence: 0.80)
+Eli Goal MCQ: N/A (confidence: 0.90)
+Eli Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 13 ===
+Sasha Goal MCQ: N/A (confidence: 0.80)
+Sasha Reason MCQ: N/A (confidence: 0.80)
+Eli Goal MCQ: N/A (confidence: 0.80)
+Eli Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 14 ===
+Sasha Goal MCQ: N/A (confidence: 0.60)
+Sasha Reason MCQ: N/A (confidence: 0.80)
+Eli Goal MCQ: N/A (confidence: 0.80)
+Eli Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 15 ===
+Sasha Goal MCQ: N/A (confidence: 0.80)
+Sasha Reason MCQ: N/A (confidence: 0.80)
+Eli Goal MCQ: N/A (confidence: 0.80)
+Eli Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 16 ===
+Sasha Goal MCQ: N/A (confidence: 0.60)
+Sasha Reason MCQ: N/A (confidence: 0.80)
+Eli Goal MCQ: N/A (confidence: 0.80)
+Eli Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 17 ===
+Sasha Goal MCQ: N/A (confidence: 0.80)
+Sasha Reason MCQ: N/A (confidence: 0.80)
+Eli Goal MCQ: N/A (confidence: 0.80)
+Eli Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 18 ===
+Sasha Goal MCQ: N/A (confidence: 0.60)
+Sasha Reason MCQ: N/A (confidence: 0.80)
+Eli Goal MCQ: N/A (confidence: 0.80)
+Eli Reason MCQ: N/A (confidence: 0.60)
+
+=== Round 19 ===
+Sasha Goal MCQ: N/A (confidence: 0.60)
+Sasha Reason MCQ: N/A (confidence: 0.90)
+Eli Goal MCQ: N/A (confidence: 0.70)
+Eli Reason MCQ: N/A (confidence: 0.60)
+
+=== Round 20 ===
+Sasha Goal MCQ: N/A (confidence: 0.60)
+Sasha Reason MCQ: N/A (confidence: 0.80)
+Eli Goal MCQ: N/A (confidence: 0.80)
+Eli Reason MCQ: N/A (confidence: 0.60)
+

@@ -1,0 +1,124 @@
+================================================================================
+MCQ EVALUATION LOGS
+================================================================================
+
+=== Round 1 ===
+Ethan Goal MCQ: N/A (confidence: 0.80)
+Ethan Reason MCQ: N/A (confidence: 0.80)
+Ava Goal MCQ: N/A (confidence: 0.00)
+Ava Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 2 ===
+Ethan Goal MCQ: N/A (confidence: 0.00)
+Ethan Reason MCQ: N/A (confidence: 0.80)
+Ava Goal MCQ: N/A (confidence: 0.00)
+Ava Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 3 ===
+Ethan Goal MCQ: N/A (confidence: 0.80)
+Ethan Reason MCQ: N/A (confidence: 0.85)
+Ava Goal MCQ: N/A (confidence: 0.80)
+Ava Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 4 ===
+Ethan Goal MCQ: N/A (confidence: 0.80)
+Ethan Reason MCQ: N/A (confidence: 0.85)
+Ava Goal MCQ: N/A (confidence: 0.00)
+Ava Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 5 ===
+Ethan Goal MCQ: N/A (confidence: 0.80)
+Ethan Reason MCQ: N/A (confidence: 0.85)
+Ava Goal MCQ: N/A (confidence: 0.00)
+Ava Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 6 ===
+Ethan Goal MCQ: N/A (confidence: 0.80)
+Ethan Reason MCQ: N/A (confidence: 0.85)
+Ava Goal MCQ: N/A (confidence: 0.00)
+Ava Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 7 ===
+Ethan Goal MCQ: N/A (confidence: 0.80)
+Ethan Reason MCQ: N/A (confidence: 0.90)
+Ava Goal MCQ: N/A (confidence: 0.00)
+Ava Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 8 ===
+Ethan Goal MCQ: N/A (confidence: 0.80)
+Ethan Reason MCQ: N/A (confidence: 0.85)
+Ava Goal MCQ: N/A (confidence: 0.00)
+Ava Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 9 ===
+Ethan Goal MCQ: N/A (confidence: 0.80)
+Ethan Reason MCQ: N/A (confidence: 0.90)
+Ava Goal MCQ: N/A (confidence: 0.00)
+Ava Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 10 ===
+Ethan Goal MCQ: N/A (confidence: 0.80)
+Ethan Reason MCQ: N/A (confidence: 0.85)
+Ava Goal MCQ: N/A (confidence: 0.00)
+Ava Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 11 ===
+Ethan Goal MCQ: N/A (confidence: 0.80)
+Ethan Reason MCQ: N/A (confidence: 0.85)
+Ava Goal MCQ: N/A (confidence: 0.80)
+Ava Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 12 ===
+Ethan Goal MCQ: N/A (confidence: 0.80)
+Ethan Reason MCQ: N/A (confidence: 0.85)
+Ava Goal MCQ: N/A (confidence: 0.00)
+Ava Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 13 ===
+Ethan Goal MCQ: N/A (confidence: 0.80)
+Ethan Reason MCQ: N/A (confidence: 0.80)
+Ava Goal MCQ: N/A (confidence: 0.00)
+Ava Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 14 ===
+Ethan Goal MCQ: N/A (confidence: 0.60)
+Ethan Reason MCQ: N/A (confidence: 0.85)
+Ava Goal MCQ: N/A (confidence: 0.00)
+Ava Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 15 ===
+Ethan Goal MCQ: N/A (confidence: 0.60)
+Ethan Reason MCQ: N/A (confidence: 0.85)
+Ava Goal MCQ: N/A (confidence: 0.00)
+Ava Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 16 ===
+Ethan Goal MCQ: N/A (confidence: 0.60)
+Ethan Reason MCQ: N/A (confidence: 0.80)
+Ava Goal MCQ: N/A (confidence: 0.00)
+Ava Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 17 ===
+Ethan Goal MCQ: N/A (confidence: 0.60)
+Ethan Reason MCQ: N/A (confidence: 0.85)
+Ava Goal MCQ: N/A (confidence: 0.80)
+Ava Reason MCQ: N/A (confidence: 0.85)
+
+=== Round 18 ===
+Ethan Goal MCQ: N/A (confidence: 0.80)
+Ethan Reason MCQ: N/A (confidence: 0.80)
+Ava Goal MCQ: N/A (confidence: 0.00)
+Ava Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 19 ===
+Ethan Goal MCQ: N/A (confidence: 0.60)
+Ethan Reason MCQ: N/A (confidence: 0.85)
+Ava Goal MCQ: N/A (confidence: 0.00)
+Ava Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 20 ===
+Ethan Goal MCQ: N/A (confidence: 0.60)
+Ethan Reason MCQ: N/A (confidence: 0.85)
+Ava Goal MCQ: N/A (confidence: 0.00)
+Ava Reason MCQ: N/A (confidence: 0.85)
+

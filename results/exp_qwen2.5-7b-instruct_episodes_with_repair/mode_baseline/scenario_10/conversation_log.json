@@ -1,0 +1,1529 @@
+{
+    "experimental_context": {
+        "scenario": {
+            "description": "Two strangers meet at a charity dinner party",
+            "agent_relationship": "know_by_name",
+            "barrier_type": null
+        },
+        "agents": {
+            "agent_a": {
+                "name": "Leo",
+                "profile": {
+                    "first_name": "Leo",
+                    "last_name": "Williams",
+                    "age": 37,
+                    "occupation": "Dentist",
+                    "personality_and_values": "Leo Williams, despite being quiet, values security and care for others. He's a rational decision-maker focussing on best outcomes.",
+                    "public_info": "Leo Williams often spends his time playing with his young daughter whom he cherishes dearly.",
+                    "model_id": "models/Qwen2.5-7B-Instruct"
+                },
+                "goal": "Ask for donation",
+                "reason": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                "private_knowledge": ""
+            },
+            "agent_b": {
+                "name": "Liam",
+                "profile": {
+                    "first_name": "Liam",
+                    "last_name": "Johnson",
+                    "age": 60,
+                    "occupation": "Retired Police Officer",
+                    "personality_and_values": "Liam Johnson is reserved, empathetic, and slightly anxious. His priority is security, guided by logical decision-making.",
+                    "public_info": "Liam Johnson is a dedicated dog owner and can often be seen walking his aging Border Collie around the neighborhood.",
+                    "model_id": "models/Qwen2.5-7B-Instruct"
+                },
+                "goal": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people",
+                "reason": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                "private_knowledge": ""
+            }
+        },
+        "experimental_configuration": {
+            "max_rounds": 20
+        }
+    },
+    "conversation_log": [
+        "Leo: Good evening, I'm Leo. It's lovely to meet you. Are you enjoying the event?",
+        "Liam: Good evening, Leo. Liam Johnson is my name. Yes, it's quite an event. How about you?",
+        "Leo: Thank you, Liam. It's a pleasure to meet you. Yes, indeed it is a wonderful event. I must say, the cause is very close to my heart.",
+        "Liam: I appreciate that, Leo. The cause is important to many here tonight. I've been thinking about how we can support trustworthy organizations that help queer people.",
+        "Leo: That's a noble goal, Liam. Speaking of which, our organization is currently looking for donations to support various initiatives. Would you be interested in learning more?",
+        "Liam: Certainly, I'd be interested. Could you tell me more about the specific initiatives you're supporting?",
+        "Leo: Of course, Liam. We have several initiatives focused on providing dental care to underprivileged communities, promoting oral health education, and supporting LGBTQ+ youth through mentorship programs. Would you like to hear more details on any of these?",
+        "Liam: Certainly, let me hear more about the LGBTQ+ youth mentorship program. It sounds like a great initiative.",
+        "Leo: Absolutely, Liam. Our mentorship program pairs LGBTQ+ youth with adult mentors who provide guidance, support, and a safe space. It's incredibly rewarding to see the positive impact it has on their lives.",
+        "Liam: That sounds very impactful, Leo. Can you tell me more about how someone like me could get involved or contribute?",
+        "Leo: Of course, Liam. We're always looking for mentors who can offer guidance and support. If you're interested, we can set up a meeting to discuss the details and match you with a mentee.",
+        "Liam: That sounds like a meaningful opportunity, Leo. I'd be happy to learn more and see how I can contribute.",
+        "Leo: Great! I'll arrange a meeting with one of our coordinators to go over the details. It would mean a lot to us.",
+        "Liam: [nonverbal] nodding and smiling",
+        "Leo: I'd love to help out, Liam. When can we schedule that meeting?",
+        "Liam: How about next Tuesday at 3 PM? I'll send you a reminder.",
+        "Leo: Sure, next Tuesday at 3 PM works for me. I'll make sure to send you a reminder.",
+        "Liam: [nonverbal] nodding and smiling",
+        "Leo: Great, I'll make sure to prepare everything in advance. Looking forward to it, Liam.",
+        "Liam: [nonverbal] nodding and smiling",
+        "Leo: Of course, Liam. I appreciate your support. If there's anything else you need from me, please let me know.",
+        "Liam: [nonverbal] nodding and smiling",
+        "Leo: Thank you, Liam. It means a lot to have your support. Let's ensure we make a positive impact together.",
+        "Liam: [nonverbal] nodding and smiling",
+        "Leo: Liam, I was wondering if you could spare some time to discuss a potential donation for our charity event. Your experience and support would be invaluable.",
+        "Liam: Of course, Leo. I'd be happy to help. Could you tell me more about the charity event and how my donation might make a difference?",
+        "Leo: Absolutely, Liam. The charity event aims to raise funds for underprivileged children's education. Your donation would directly support scholarships and resources for these kids. It's a cause close to my heart, and I believe it can make a real difference.",
+        "Liam: That sounds like a noble cause, Leo. I appreciate the work you're doing. Can you tell me more about the specific needs and how the funds will be allocated?",
+        "Leo: Certainly, Liam. We need to cover educational materials, school fees, and mentorship programs. Every dollar goes towards ensuring these children have access to quality education and a brighter future. Your donation would help us reach more kids and make a significant impact.",
+        "Liam: Leo, thank you for sharing that. I understand the importance of providing these children with the tools they need to succeed. While I appreciate the cause, I'm particularly interested in supporting organizations that also focus on helping queer youth. Do you happen to know if this charity supports any programs specifically for LGBTQ+ children?",
+        "Leo: Of course, Liam. While our primary focus is on underprivileged children's education, we do have a few programs that support LGBTQ+ youth. We offer counseling services, safe spaces, and mentorship opportunities. Your donation could help expand these initiatives. Would you like to know more about them?",
+        "Liam: That's great to hear, Leo. I'm particularly interested in supporting those programs. Could you give me some details on how the funds will be used for the counseling services and mentorship opportunities?",
+        "Leo: Absolutely, Liam. For counseling services, we provide confidential support to LGBTQ+ youth dealing with various issues such as bullying, family rejection, and identity struggles. Each session is led by trained professionals who ensure a safe and supportive environment. As for mentorship opportunities, we pair these young individuals with adult mentors who can offer guidance, support, and life skills. Your donation would help us hire more counselors and mentors, expand our outreach, and provide much-needed resources.",
+        "Liam: That's very reassuring, Leo. It's important to have these resources available. How much would my donation need to be to make a noticeable difference in these programs?",
+        "Leo: Based on our current needs, a donation of $500 could fund one additional counselor for a year, while $1,000 could support a mentor for a year. Both would make a significant impact.",
+        "Liam: That sounds like a worthwhile investment, Leo. I think I'll start with a $500 donation to fund an additional counselor. Can you provide me with more information on how to proceed with the donation?",
+        "Leo: Of course, Liam. To make your donation, you can visit our website and select the 'Donate Now' button. From there, you can choose the specific program you'd like to support and enter the amount. If you prefer, we can also set up a secure online payment right here.",
+        "Liam: Thank you, Leo. I'll head over to the website and make the donation now.",
+        "Leo: [nonverbal] nodding and smiling warmly",
+        "Liam: [nonverbal] nodding and smiling warmly",
+        "Leo: [nonverbal] nodding and smiling warmly in response"
+    ],
+    "mcq_logs": [
+        {
+            "round": 1,
+            "scenario": 10,
+            "agent_1_goal_mcq": {
+                "question": "What is Leo's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Network with influential people",
+                    "B": "Enjoy the dinner and relax",
+                    "C": "Ask for donation",
+                    "D": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Leo to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo's initial greeting and inquiry about enjoyment suggest he is interested in the event and possibly looking for ways to contribute positively. This aligns with a desire to see better outcomes for the charity's beneficiaries.",
+                "options": {
+                    "A": "Leo Williams wants to ask for a donation to get along.",
+                    "B": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "C": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "D": "Leo Williams wants to ask for a donation to win a sports competition."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Liam's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.7,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Liam's response is brief and focused on pleasantries, suggesting he is more interested in making new connections rather than discussing donations or volunteering.",
+                "options": {
+                    "A": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people",
+                    "B": "Make new friends at the dinner party",
+                    "C": "Ask for donation",
+                    "D": "Find a new charity to volunteer for"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Liam to pursue their goal?",
+                "selected": "C",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Leo mentions that the cause is close to his heart, suggesting he is motivated by a desire to support a charity that benefits from donations.",
+                "options": {
+                    "A": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "B": "Liam Johnson wants to donate to buy a new car.",
+                    "C": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "D": "Liam Johnson wants to donate to be happy."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 2,
+            "scenario": 10,
+            "agent_1_goal_mcq": {
+                "question": "What is Leo's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo mentions that the cause is close to his heart and shows interest in the event's purpose, suggesting he might want to donate to a trustworthy organization.",
+                "options": {
+                    "A": "Network with influential people",
+                    "B": "Enjoy the dinner and relax",
+                    "C": "Ask for donation",
+                    "D": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Leo to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo mentions that the cause is close to his heart, suggesting he cares about the outcomes and wants to support a good cause.",
+                "options": {
+                    "A": "Leo Williams wants to ask for a donation to get along.",
+                    "B": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "C": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "D": "Leo Williams wants to ask for a donation to win a sports competition."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Liam's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam has shown interest in supporting organizations that help queer people, and Leo's suggestion of learning more about the organization's initiatives aligns with this interest.",
+                "options": {
+                    "A": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people",
+                    "B": "Make new friends at the dinner party",
+                    "C": "Ask for donation",
+                    "D": "Find a new charity to volunteer for"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Liam to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.85,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam's previous statement about supporting trustworthy organizations that help queer people suggests his motivation is aligned with donating to such causes.",
+                "options": {
+                    "A": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "B": "Liam Johnson wants to donate to buy a new car.",
+                    "C": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "D": "Liam Johnson wants to donate to be happy."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 3,
+            "scenario": 10,
+            "agent_1_goal_mcq": {
+                "question": "What is Leo's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo is directly mentioning his organization's need for donations and offering information about their initiatives, indicating his primary goal is to ask for a donation.",
+                "options": {
+                    "A": "Network with influential people",
+                    "B": "Enjoy the dinner and relax",
+                    "C": "Ask for donation",
+                    "D": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Leo to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.85,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo's interest in sharing information about the organization's initiatives suggests he believes it will lead to better outcomes for the charity's beneficiaries.",
+                "options": {
+                    "A": "Leo Williams wants to ask for a donation to get along.",
+                    "B": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "C": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "D": "Leo Williams wants to ask for a donation to win a sports competition."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Liam's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam has shown interest in supporting organizations that help queer people and is willing to learn more about the initiatives, indicating his goal is to donate to a trustworthy organization that aligns with his values.",
+                "options": {
+                    "A": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people",
+                    "B": "Make new friends at the dinner party",
+                    "C": "Ask for donation",
+                    "D": "Find a new charity to volunteer for"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Liam to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.85,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam expressed interest in supporting organizations that help queer people, and his subsequent question about specific initiatives aligns with this stated goal.",
+                "options": {
+                    "A": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "B": "Liam Johnson wants to donate to buy a new car.",
+                    "C": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "D": "Liam Johnson wants to donate to be happy."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 4,
+            "scenario": 10,
+            "agent_1_goal_mcq": {
+                "question": "What is Leo's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo is directly asking for donations and providing information about initiatives, indicating his goal is to ask for donation.",
+                "options": {
+                    "A": "Network with influential people",
+                    "B": "Enjoy the dinner and relax",
+                    "C": "Ask for donation",
+                    "D": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Leo to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo's behavior shows a clear focus on the initiatives and their impact, suggesting he believes it will lead to better outcomes for the charity's beneficiaries.",
+                "options": {
+                    "A": "Leo Williams wants to ask for a donation to get along.",
+                    "B": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "C": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "D": "Leo Williams wants to ask for a donation to win a sports competition."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Liam's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam's interest in learning about the LGBTQ+ youth mentorship program and his desire to support trustworthy organizations indicates his goal is to donate to a charity that helps queer people.",
+                "options": {
+                    "A": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people",
+                    "B": "Make new friends at the dinner party",
+                    "C": "Ask for donation",
+                    "D": "Find a new charity to volunteer for"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Liam to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam's interest in supporting organizations that help queer people and his willingness to learn more about the LGBTQ+ youth mentorship program strongly suggest his motivation is aligned with supporting trustworthy organizations that help queer people.",
+                "options": {
+                    "A": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "B": "Liam Johnson wants to donate to buy a new car.",
+                    "C": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "D": "Liam Johnson wants to donate to be happy."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 5,
+            "scenario": 10,
+            "agent_1_goal_mcq": {
+                "question": "What is Leo's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.85,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo is providing information about the organization's initiatives and specifically mentioning the mentorship program, indicating an intent to gather interest and potentially a donation.",
+                "options": {
+                    "A": "Network with influential people",
+                    "B": "Enjoy the dinner and relax",
+                    "C": "Ask for donation",
+                    "D": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Leo to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.85,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo provides detailed information about the mentorship program and emphasizes its positive impact, suggesting he believes it will lead to better outcomes for the charity's beneficiaries.",
+                "options": {
+                    "A": "Leo Williams wants to ask for a donation to get along.",
+                    "B": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "C": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "D": "Leo Williams wants to ask for a donation to win a sports competition."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Liam's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam's interest in the mentorship program and desire to learn about involvement strongly suggest he is looking to donate to a trustworthy organization that supports LGBTQ+ youth.",
+                "options": {
+                    "A": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people",
+                    "B": "Make new friends at the dinner party",
+                    "C": "Ask for donation",
+                    "D": "Find a new charity to volunteer for"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Liam to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.85,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam's interest in the LGBTQ+ youth mentorship program and willingness to learn more suggests he is motivated by a desire to support organizations that help queer individuals.",
+                "options": {
+                    "A": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "B": "Liam Johnson wants to donate to buy a new car.",
+                    "C": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "D": "Liam Johnson wants to donate to be happy."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 6,
+            "scenario": 10,
+            "agent_1_goal_mcq": {
+                "question": "What is Leo's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo is providing information about the mentorship program and suggesting ways for Liam to get involved, which indicates Leo is likely trying to encourage Liam to contribute to the organization.",
+                "options": {
+                    "A": "Network with influential people",
+                    "B": "Enjoy the dinner and relax",
+                    "C": "Ask for donation",
+                    "D": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Leo to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo's focus on the mentorship program's impact and willingness to involve Liam suggest he believes this will lead to better outcomes for the charity's beneficiaries.",
+                "options": {
+                    "A": "Leo Williams wants to ask for a donation to get along.",
+                    "B": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "C": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "D": "Leo Williams wants to ask for a donation to win a sports competition."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Liam's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Liam's interest in learning about how he can contribute to the mentorship program indicates he is looking for a new charity to volunteer for.",
+                "options": {
+                    "A": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people",
+                    "B": "Make new friends at the dinner party",
+                    "C": "Ask for donation",
+                    "D": "Find a new charity to volunteer for"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Liam to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam's interest in the mentorship program and willingness to contribute suggests he values supporting initiatives that help LGBTQ+ youth.",
+                "options": {
+                    "A": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "B": "Liam Johnson wants to donate to buy a new car.",
+                    "C": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "D": "Liam Johnson wants to donate to be happy."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 7,
+            "scenario": 10,
+            "agent_1_goal_mcq": {
+                "question": "What is Leo's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo is actively seeking to involve Liam in the mentorship program and seems focused on providing information about how Liam can contribute.",
+                "options": {
+                    "A": "Network with influential people",
+                    "B": "Enjoy the dinner and relax",
+                    "C": "Ask for donation",
+                    "D": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Leo to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.85,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo's focus on the mentorship program's impact and willingness to set up a meeting suggest he believes in the program's effectiveness and wants to ensure its success through involvement.",
+                "options": {
+                    "A": "Leo Williams wants to ask for a donation to get along.",
+                    "B": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "C": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "D": "Leo Williams wants to ask for a donation to win a sports competition."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Liam's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people",
+                    "B": "Make new friends at the dinner party",
+                    "C": "Ask for donation",
+                    "D": "Find a new charity to volunteer for"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Liam to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam's interest in mentoring and supporting LGBTQ+ youth indicates a desire to contribute to causes that help queer people, suggesting he values such organizations.",
+                "options": {
+                    "A": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "B": "Liam Johnson wants to donate to buy a new car.",
+                    "C": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "D": "Liam Johnson wants to donate to be happy."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 8,
+            "scenario": 10,
+            "agent_1_goal_mcq": {
+                "question": "What is Leo's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.5,
+                "confidence_class": "Medium",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "The conversation does not provide clear evidence of Leo's specific goal, but the option to network seems the most plausible given the professional setting and the mention of a meeting.",
+                "options": {
+                    "A": "Network with influential people",
+                    "B": "Enjoy the dinner and relax",
+                    "C": "Ask for donation",
+                    "D": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Leo to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo's behavior suggests he is focused on finding a mentor to offer guidance and support, which implies he values the impact of his actions on the charity's beneficiaries.",
+                "options": {
+                    "A": "Leo Williams wants to ask for a donation to get along.",
+                    "B": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "C": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "D": "Leo Williams wants to ask for a donation to win a sports competition."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Liam's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Liam is showing interest in learning more about the mentoring opportunity and scheduling a meeting, indicating he is likely looking to volunteer rather than donate or make friends.",
+                "options": {
+                    "A": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people",
+                    "B": "Make new friends at the dinner party",
+                    "C": "Ask for donation",
+                    "D": "Find a new charity to volunteer for"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Liam to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam's response indicates a willingness to contribute and learn more, suggesting he values supporting causes that align with his personal values and priorities. Given the options, supporting trustworthy organizations that help queer people is the most plausible underlying motivation.",
+                "options": {
+                    "A": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "B": "Liam Johnson wants to donate to buy a new car.",
+                    "C": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "D": "Liam Johnson wants to donate to be happy."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 9,
+            "scenario": 10,
+            "agent_1_goal_mcq": {
+                "question": "What is Leo's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "",
+                "options": {
+                    "A": "Network with influential people",
+                    "B": "Enjoy the dinner and relax",
+                    "C": "Ask for donation",
+                    "D": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Leo to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo's behavior suggests he is rational and values best outcomes, which aligns with wanting to ensure the donation leads to better results for the charity's beneficiaries.",
+                "options": {
+                    "A": "Leo Williams wants to ask for a donation to get along.",
+                    "B": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "C": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "D": "Leo Williams wants to ask for a donation to win a sports competition."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Liam's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.7,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Liam's consistent nodding and smiling suggest he is comfortable and possibly seeking to build rapport, which aligns with making new friends.",
+                "options": {
+                    "A": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people",
+                    "B": "Make new friends at the dinner party",
+                    "C": "Ask for donation",
+                    "D": "Find a new charity to volunteer for"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Liam to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam's behavior suggests he is supportive and willing to help, which aligns with supporting a trustworthy organization. The context of a charity dinner party also points towards charitable intentions.",
+                "options": {
+                    "A": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "B": "Liam Johnson wants to donate to buy a new car.",
+                    "C": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "D": "Liam Johnson wants to donate to be happy."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 10,
+            "scenario": 10,
+            "agent_1_goal_mcq": {
+                "question": "What is Leo's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Network with influential people",
+                    "B": "Enjoy the dinner and relax",
+                    "C": "Ask for donation",
+                    "D": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Leo to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo's behavior suggests he is focused on preparing and looking forward to the meeting, indicating he believes it will lead to better outcomes for the charity's beneficiaries.",
+                "options": {
+                    "A": "Leo Williams wants to ask for a donation to get along.",
+                    "B": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "C": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "D": "Leo Williams wants to ask for a donation to win a sports competition."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Liam's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Liam's responses are brief and non-verbal, suggesting he might be more interested in the logistics of the meeting rather than engaging in a deeper conversation about the charity or donation.",
+                "options": {
+                    "A": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people",
+                    "B": "Make new friends at the dinner party",
+                    "C": "Ask for donation",
+                    "D": "Find a new charity to volunteer for"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Liam to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam's behavior suggests he is supportive and appreciative, which aligns with supporting a cause that helps a specific group.",
+                "options": {
+                    "A": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "B": "Liam Johnson wants to donate to buy a new car.",
+                    "C": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "D": "Liam Johnson wants to donate to be happy."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 11,
+            "scenario": 10,
+            "agent_1_goal_mcq": {
+                "question": "What is Leo's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo's repeated mention of preparation and support, along with the context of a charity dinner, suggests he is likely asking for a donation.",
+                "options": {
+                    "A": "Network with influential people",
+                    "B": "Enjoy the dinner and relax",
+                    "C": "Ask for donation",
+                    "D": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Leo to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo's behavior suggests he is focused on preparation and looking forward to the event, indicating he believes it will lead to better outcomes for the charity's beneficiaries.",
+                "options": {
+                    "A": "Leo Williams wants to ask for a donation to get along.",
+                    "B": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "C": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "D": "Leo Williams wants to ask for a donation to win a sports competition."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Liam's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.6,
+                "confidence_class": "Medium",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Liam's nonverbal responses suggest he is comfortable and supportive, which aligns more with making new friends than asking for a donation or finding a new charity.",
+                "options": {
+                    "A": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people",
+                    "B": "Make new friends at the dinner party",
+                    "C": "Ask for donation",
+                    "D": "Find a new charity to volunteer for"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Liam to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam's consistent nodding and smiling, along with his support, suggest he is motivated by supporting a good cause, which aligns with helping queer people.",
+                "options": {
+                    "A": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "B": "Liam Johnson wants to donate to buy a new car.",
+                    "C": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "D": "Liam Johnson wants to donate to be happy."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 12,
+            "scenario": 10,
+            "agent_1_goal_mcq": {
+                "question": "What is Leo's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "C",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "",
+                "options": {
+                    "A": "Network with influential people",
+                    "B": "Enjoy the dinner and relax",
+                    "C": "Ask for donation",
+                    "D": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Leo to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo's behavior suggests he values preparation and ensuring a positive impact, indicating he believes asking for donations will lead to better outcomes for the charity's beneficiaries.",
+                "options": {
+                    "A": "Leo Williams wants to ask for a donation to get along.",
+                    "B": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "C": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "D": "Leo Williams wants to ask for a donation to win a sports competition."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Liam's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.6,
+                "confidence_class": "Medium",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Liam's nonverbal responses suggest he is supportive and appreciative, which aligns more with making new friends than directly asking for a donation.",
+                "options": {
+                    "A": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people",
+                    "B": "Make new friends at the dinner party",
+                    "C": "Ask for donation",
+                    "D": "Find a new charity to volunteer for"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Liam to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam's consistent nonverbal responses suggest he is supportive and appreciative, which aligns with supporting a trustworthy organization. Given Leo's mention of a charity event, option A is the most plausible.",
+                "options": {
+                    "A": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "B": "Liam Johnson wants to donate to buy a new car.",
+                    "C": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "D": "Liam Johnson wants to donate to be happy."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 13,
+            "scenario": 10,
+            "agent_1_goal_mcq": {
+                "question": "What is Leo's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo is directly asking Liam about a potential donation for a charity event, indicating his goal is to ask for a donation.",
+                "options": {
+                    "A": "Network with influential people",
+                    "B": "Enjoy the dinner and relax",
+                    "C": "Ask for donation",
+                    "D": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Leo to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.85,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo's interest in discussing the charity event and the potential impact of Liam's donation suggests he believes it will lead to better outcomes for the charity's beneficiaries.",
+                "options": {
+                    "A": "Leo Williams wants to ask for a donation to get along.",
+                    "B": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "C": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "D": "Leo Williams wants to ask for a donation to win a sports competition."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Liam's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people",
+                    "B": "Make new friends at the dinner party",
+                    "C": "Ask for donation",
+                    "D": "Find a new charity to volunteer for"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Liam to pursue their goal?",
+                "selected": "C",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Liam's response indicates interest in supporting a cause that benefits underprivileged children, which aligns with Leo's explanation of the charity event's purpose.",
+                "options": {
+                    "A": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "B": "Liam Johnson wants to donate to buy a new car.",
+                    "C": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "D": "Liam Johnson wants to donate to be happy."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 14,
+            "scenario": 10,
+            "agent_1_goal_mcq": {
+                "question": "What is Leo's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo is clearly asking for a donation and providing information about the charity event's purpose and how the funds will be used.",
+                "options": {
+                    "A": "Network with influential people",
+                    "B": "Enjoy the dinner and relax",
+                    "C": "Ask for donation",
+                    "D": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Leo to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo emphasizes the cause being close to his heart and the direct impact of the funds, suggesting he believes in the positive outcomes for the charity's beneficiaries.",
+                "options": {
+                    "A": "Leo Williams wants to ask for a donation to get along.",
+                    "B": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "C": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "D": "Leo Williams wants to ask for a donation to win a sports competition."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Liam's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam's questions and interest in the specifics of the charity event suggest he is evaluating the organization's credibility and impact before deciding whether to donate. His mention of helping queer people indicates a specific interest in certain causes.",
+                "options": {
+                    "A": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people",
+                    "B": "Make new friends at the dinner party",
+                    "C": "Ask for donation",
+                    "D": "Find a new charity to volunteer for"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Liam to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Liam's response indicates a general interest in supporting a noble cause and contributing to a positive impact, which aligns with wanting to donate to be happy.",
+                "options": {
+                    "A": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "B": "Liam Johnson wants to donate to buy a new car.",
+                    "C": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "D": "Liam Johnson wants to donate to be happy."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 15,
+            "scenario": 10,
+            "agent_1_goal_mcq": {
+                "question": "What is Leo's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo is clearly asking Liam to donate to a charity event, which indicates his primary goal is to ask for a donation.",
+                "options": {
+                    "A": "Network with influential people",
+                    "B": "Enjoy the dinner and relax",
+                    "C": "Ask for donation",
+                    "D": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Leo to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.85,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo's detailed explanation about the charity's needs and how funds will be allocated suggests he genuinely cares about the outcomes for the charity's beneficiaries.",
+                "options": {
+                    "A": "Leo Williams wants to ask for a donation to get along.",
+                    "B": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "C": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "D": "Leo Williams wants to ask for a donation to win a sports competition."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Liam's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam shows interest in the cause and specifically asks about programs for LGBTQ+ children, indicating he wants to ensure his donation goes to a trustworthy organization that aligns with his values.",
+                "options": {
+                    "A": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people",
+                    "B": "Make new friends at the dinner party",
+                    "C": "Ask for donation",
+                    "D": "Find a new charity to volunteer for"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Liam to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.85,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam's interest in supporting organizations that help queer youth indicates his underlying motivation is related to supporting trustworthy organizations that address issues important to him.",
+                "options": {
+                    "A": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "B": "Liam Johnson wants to donate to buy a new car.",
+                    "C": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "D": "Liam Johnson wants to donate to be happy."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 16,
+            "scenario": 10,
+            "agent_1_goal_mcq": {
+                "question": "What is Leo's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo is actively providing information about the charity's programs and asking if Liam is interested, which indicates he is trying to ask for a donation.",
+                "options": {
+                    "A": "Network with influential people",
+                    "B": "Enjoy the dinner and relax",
+                    "C": "Ask for donation",
+                    "D": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Leo to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo provides detailed information about the charity's programs and how donations will be used, indicating a belief that such contributions will lead to better outcomes for the charity's beneficiaries.",
+                "options": {
+                    "A": "Leo Williams wants to ask for a donation to get along.",
+                    "B": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "C": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "D": "Leo Williams wants to ask for a donation to win a sports competition."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Liam's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam shows interest in the specific programs for LGBTQ+ youth and asks for detailed information on how funds will be used, indicating his goal is to donate to a trustworthy organization that supports queer youth.",
+                "options": {
+                    "A": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people",
+                    "B": "Make new friends at the dinner party",
+                    "C": "Ask for donation",
+                    "D": "Find a new charity to volunteer for"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Liam to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam's interest in supporting programs specifically for LGBTQ+ children and his detailed questions about how funds will be used for counseling services and mentorship opportunities indicate his motivation is related to supporting organizations that help queer people.",
+                "options": {
+                    "A": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "B": "Liam Johnson wants to donate to buy a new car.",
+                    "C": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "D": "Liam Johnson wants to donate to be happy."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 17,
+            "scenario": 10,
+            "agent_1_goal_mcq": {
+                "question": "What is Leo's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo is clearly discussing the specifics of the charity's programs and how donations can make a difference, indicating an intent to ask for a donation.",
+                "options": {
+                    "A": "Network with influential people",
+                    "B": "Enjoy the dinner and relax",
+                    "C": "Ask for donation",
+                    "D": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Leo to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.85,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo provides detailed information about the programs and how donations will be used, indicating a belief that the donation will lead to better outcomes for the charity's beneficiaries.",
+                "options": {
+                    "A": "Leo Williams wants to ask for a donation to get along.",
+                    "B": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "C": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "D": "Leo Williams wants to ask for a donation to win a sports competition."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Liam's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam shows interest in supporting specific programs for LGBTQ+ youth and asks about the impact of donations, indicating his goal is to donate to a trustworthy organization that helps queer people.",
+                "options": {
+                    "A": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people",
+                    "B": "Make new friends at the dinner party",
+                    "C": "Ask for donation",
+                    "D": "Find a new charity to volunteer for"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Liam to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam's interest in supporting programs specifically for LGBTQ+ children and his desire to understand how funds will be used for counseling services and mentorship opportunities strongly indicate his motivation is to support organizations that help queer people.",
+                "options": {
+                    "A": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "B": "Liam Johnson wants to donate to buy a new car.",
+                    "C": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "D": "Liam Johnson wants to donate to be happy."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 18,
+            "scenario": 10,
+            "agent_1_goal_mcq": {
+                "question": "What is Leo's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo provides detailed information about the charity's programs and asks about Liam's willingness to donate, indicating his goal is to ask for a donation.",
+                "options": {
+                    "A": "Network with influential people",
+                    "B": "Enjoy the dinner and relax",
+                    "C": "Ask for donation",
+                    "D": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Leo to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.85,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo provides detailed information about the programs and the impact of donations, indicating a belief in the positive outcomes for the charity's beneficiaries.",
+                "options": {
+                    "A": "Leo Williams wants to ask for a donation to get along.",
+                    "B": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "C": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "D": "Leo Williams wants to ask for a donation to win a sports competition."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Liam's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam is clearly interested in making a donation to support specific programs for LGBTQ+ youth, indicating his goal is to donate to a trustworthy organization.",
+                "options": {
+                    "A": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people",
+                    "B": "Make new friends at the dinner party",
+                    "C": "Ask for donation",
+                    "D": "Find a new charity to volunteer for"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Liam to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam's interest in the specific programs and willingness to contribute to their funding strongly suggests his motivation is to support organizations that help LGBTQ+ youth.",
+                "options": {
+                    "A": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "B": "Liam Johnson wants to donate to buy a new car.",
+                    "C": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "D": "Liam Johnson wants to donate to be happy."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 19,
+            "scenario": 10,
+            "agent_1_goal_mcq": {
+                "question": "What is Leo's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo provides detailed information about the programs and asks for a donation, indicating his goal is to ask for a donation.",
+                "options": {
+                    "A": "Network with influential people",
+                    "B": "Enjoy the dinner and relax",
+                    "C": "Ask for donation",
+                    "D": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Leo to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo provides detailed information about the impact of donations and focuses on the importance of the resources, indicating a belief in the positive outcomes for the charity's beneficiaries.",
+                "options": {
+                    "A": "Leo Williams wants to ask for a donation to get along.",
+                    "B": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "C": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "D": "Leo Williams wants to ask for a donation to win a sports competition."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Liam's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam's questions and willingness to donate indicate he is interested in supporting the organization and helping the cause, specifically focusing on making a meaningful contribution.",
+                "options": {
+                    "A": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people",
+                    "B": "Make new friends at the dinner party",
+                    "C": "Ask for donation",
+                    "D": "Find a new charity to volunteer for"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Liam to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam's interest in the impact of the donation and his willingness to contribute to supporting counselors for LGBTQ+ youth strongly suggest he is motivated by supporting trustworthy organizations that help queer people.",
+                "options": {
+                    "A": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "B": "Liam Johnson wants to donate to buy a new car.",
+                    "C": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "D": "Liam Johnson wants to donate to be happy."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        },
+        {
+            "round": 20,
+            "scenario": 10,
+            "agent_1_goal_mcq": {
+                "question": "What is Leo's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "C",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo provides detailed information about the donation process and suggests ways to contribute, indicating a clear goal of asking for a donation.",
+                "options": {
+                    "A": "Network with influential people",
+                    "B": "Enjoy the dinner and relax",
+                    "C": "Ask for donation",
+                    "D": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Leo to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.85,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Leo provides detailed information about the impact of donations and offers multiple ways to make a donation, suggesting a focus on achieving positive outcomes for the charity's beneficiaries.",
+                "options": {
+                    "A": "Leo Williams wants to ask for a donation to get along.",
+                    "B": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "C": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "D": "Leo Williams wants to ask for a donation to win a sports competition."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Liam's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Liam's actions and words indicate he is focused on making a donation to a specific program, which suggests he wants to support a trustworthy organization, especially one that helps queer people.",
+                "options": {
+                    "A": "Want to donate, but would like to spend money in trustworthy organizations, especially want to help queer people",
+                    "B": "Make new friends at the dinner party",
+                    "C": "Ask for donation",
+                    "D": "Find a new charity to volunteer for"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Liam to pursue their goal?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Liam's response indicates a desire to support the charity's efforts, which aligns with wanting to be happy through helping others.",
+                "options": {
+                    "A": "Liam Johnson wants to donate in order to support trustworthy organizations that help queer people.",
+                    "B": "Liam Johnson wants to donate to buy a new car.",
+                    "C": "Leo Williams wants to ask for a donation because he believes it will lead to better outcomes for the charity's beneficiaries.",
+                    "D": "Liam Johnson wants to donate to be happy."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": null,
+            "barrier_state": null
+        }
+    ]
+}

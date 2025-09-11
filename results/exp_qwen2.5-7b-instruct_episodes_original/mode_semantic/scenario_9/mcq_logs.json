@@ -1,0 +1,1442 @@
+[
+    {
+        "round": 1,
+        "scenario": 9,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel's question about the weather suggests he is interested in enjoying the conditions for their picnic.",
+            "options": {
+                "A": "Maximize the points you receive through the fruit",
+                "B": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 5 points, each banana as 3 points, and the orange as 7 points</extra_info>)",
+                "C": "Enjoy the weather",
+                "D": "Collect as many apples as possible"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel's question about the weather suggests he is interested in the overall experience of the picnic, which implies he wants to be satisfied with the fruit selection.",
+            "options": {
+                "A": "Samuel wants to be satisfied with the fruit selection.",
+                "B": "Samuel wants to give all the fruit to Ethan.",
+                "C": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas.",
+                "D": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Ethan's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Ethan's comment about the weather being perfect for a picnic suggests he values the experience of enjoying the fruit together, which aligns with maximizing points through fruit.",
+            "options": {
+                "A": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 2 points, each banana as 4 points, and the orange as 10 points</extra_info>)",
+                "B": "Maximize the points you receive through the fruit",
+                "C": "Ensure an equal distribution of fruit between both friends",
+                "D": "Finish the picnic quickly"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Ethan to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "Ethan wants to be happy with the fruit selection.",
+                "B": "Ethan wants to give all the fruit to Samuel.",
+                "C": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples.",
+                "D": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 2,
+        "scenario": 9,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel's comment about the light being perfect for enjoying fruit suggests he values the experience of eating the fruit rather than the points.",
+            "options": {
+                "A": "Maximize the points you receive through the fruit",
+                "B": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 5 points, each banana as 3 points, and the orange as 7 points</extra_info>)",
+                "C": "Enjoy the weather",
+                "D": "Collect as many apples as possible"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel's response about the light being perfect for enjoying fruit suggests he is focused on the experience rather than the points, indicating he wants to be satisfied with the fruit selection.",
+            "options": {
+                "A": "Samuel wants to be satisfied with the fruit selection.",
+                "B": "Samuel wants to give all the fruit to Ethan.",
+                "C": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas.",
+                "D": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Ethan's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 2 points, each banana as 4 points, and the orange as 10 points</extra_info>)",
+                "B": "Maximize the points you receive through the fruit",
+                "C": "Ensure an equal distribution of fruit between both friends",
+                "D": "Finish the picnic quickly"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Ethan to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Ethan's proposal of splitting the orange and sharing the bananas indicates a strategic approach to maximizing points based on the assigned values.",
+            "options": {
+                "A": "Ethan wants to be happy with the fruit selection.",
+                "B": "Ethan wants to give all the fruit to Samuel.",
+                "C": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples.",
+                "D": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 3,
+        "scenario": 9,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel's responses indicate he is focused on enjoying the fruits and the weather, rather than on specific point values or collecting apples.",
+            "options": {
+                "A": "Maximize the points you receive through the fruit",
+                "B": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 5 points, each banana as 3 points, and the orange as 7 points</extra_info>)",
+                "C": "Enjoy the weather",
+                "D": "Collect as many apples as possible"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel's responses indicate he is content with the arrangement and does not seem to be trying to manipulate the outcome for personal gain.",
+            "options": {
+                "A": "Samuel wants to be satisfied with the fruit selection.",
+                "B": "Samuel wants to give all the fruit to Ethan.",
+                "C": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas.",
+                "D": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Ethan's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 2 points, each banana as 4 points, and the orange as 10 points</extra_info>)",
+                "B": "Maximize the points you receive through the fruit",
+                "C": "Ensure an equal distribution of fruit between both friends",
+                "D": "Finish the picnic quickly"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Ethan to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "Ethan wants to be happy with the fruit selection.",
+                "B": "Ethan wants to give all the fruit to Samuel.",
+                "C": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples.",
+                "D": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 4,
+        "scenario": 9,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel's responses indicate he is focused on the practical aspects of sharing the fruits and enjoying them, rather than maximizing points or collecting specific items.",
+            "options": {
+                "A": "Maximize the points you receive through the fruit",
+                "B": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 5 points, each banana as 3 points, and the orange as 7 points</extra_info>)",
+                "C": "Enjoy the weather",
+                "D": "Collect as many apples as possible"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel's responses indicate he is content with the arrangement and does not object to Ethan's suggestions, suggesting he wants to be satisfied with the fruit selection.",
+            "options": {
+                "A": "Samuel wants to be satisfied with the fruit selection.",
+                "B": "Samuel wants to give all the fruit to Ethan.",
+                "C": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas.",
+                "D": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Ethan's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 2 points, each banana as 4 points, and the orange as 10 points</extra_info>)",
+                "B": "Maximize the points you receive through the fruit",
+                "C": "Ensure an equal distribution of fruit between both friends",
+                "D": "Finish the picnic quickly"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Ethan to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "Ethan wants to be happy with the fruit selection.",
+                "B": "Ethan wants to give all the fruit to Samuel.",
+                "C": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples.",
+                "D": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 5,
+        "scenario": 9,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel agreed to split the orange and take a banana each, which aligns with maximizing points from the fruits.",
+            "options": {
+                "A": "Maximize the points you receive through the fruit",
+                "B": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 5 points, each banana as 3 points, and the orange as 7 points</extra_info>)",
+                "C": "Enjoy the weather",
+                "D": "Collect as many apples as possible"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel agrees to split the orange and take a banana each, indicating he wants a fair and satisfactory distribution of the fruits.",
+            "options": {
+                "A": "Samuel wants to be satisfied with the fruit selection.",
+                "B": "Samuel wants to give all the fruit to Ethan.",
+                "C": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas.",
+                "D": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Ethan's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 2 points, each banana as 4 points, and the orange as 10 points</extra_info>)",
+                "B": "Maximize the points you receive through the fruit",
+                "C": "Ensure an equal distribution of fruit between both friends",
+                "D": "Finish the picnic quickly"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Ethan to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Ethan's actions suggest he is focused on fairness and mutual enjoyment, which aligns with wanting to be happy with the fruit selection.",
+            "options": {
+                "A": "Ethan wants to be happy with the fruit selection.",
+                "B": "Ethan wants to give all the fruit to Samuel.",
+                "C": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples.",
+                "D": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 6,
+        "scenario": 9,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel agreed to the plan without any hesitation, which suggests he is focused on maximizing points from the fruits.",
+            "options": {
+                "A": "Maximize the points you receive through the fruit",
+                "B": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 5 points, each banana as 3 points, and the orange as 7 points</extra_info>)",
+                "C": "Enjoy the weather",
+                "D": "Collect as many apples as possible"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel's agreement and willingness to split the orange suggest he wants a fair distribution of the fruits.",
+            "options": {
+                "A": "Samuel wants to be satisfied with the fruit selection.",
+                "B": "Samuel wants to give all the fruit to Ethan.",
+                "C": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas.",
+                "D": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Ethan's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 2 points, each banana as 4 points, and the orange as 10 points</extra_info>)",
+                "B": "Maximize the points you receive through the fruit",
+                "C": "Ensure an equal distribution of fruit between both friends",
+                "D": "Finish the picnic quickly"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Ethan to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "Ethan wants to be happy with the fruit selection.",
+                "B": "Ethan wants to give all the fruit to Samuel.",
+                "C": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples.",
+                "D": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 7,
+        "scenario": 9,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel consistently takes actions to divide and share the orange, which aligns with maximizing points from the fruit, and the extra information provided matches the orange's point value mentioned in the scenario.",
+            "options": {
+                "A": "Maximize the points you receive through the fruit",
+                "B": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 5 points, each banana as 3 points, and the orange as 7 points</extra_info>)",
+                "C": "Enjoy the weather",
+                "D": "Collect as many apples as possible"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel's actions suggest he is content with the current distribution of the orange, indicating he wants to be satisfied with the fruit selection.",
+            "options": {
+                "A": "Samuel wants to be satisfied with the fruit selection.",
+                "B": "Samuel wants to give all the fruit to Ethan.",
+                "C": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas.",
+                "D": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Ethan's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 2 points, each banana as 4 points, and the orange as 10 points</extra_info>)",
+                "B": "Maximize the points you receive through the fruit",
+                "C": "Ensure an equal distribution of fruit between both friends",
+                "D": "Finish the picnic quickly"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Ethan to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "Ethan wants to be happy with the fruit selection.",
+                "B": "Ethan wants to give all the fruit to Samuel.",
+                "C": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples.",
+                "D": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 8,
+        "scenario": 9,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel consistently agrees and ensures fairness, suggesting he values the points from the fruits.",
+            "options": {
+                "A": "Maximize the points you receive through the fruit",
+                "B": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 5 points, each banana as 3 points, and the orange as 7 points</extra_info>)",
+                "C": "Enjoy the weather",
+                "D": "Collect as many apples as possible"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel's responses indicate he is content with the distribution of the fruit, suggesting he wants to be satisfied with the outcome.",
+            "options": {
+                "A": "Samuel wants to be satisfied with the fruit selection.",
+                "B": "Samuel wants to give all the fruit to Ethan.",
+                "C": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas.",
+                "D": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Ethan's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 2 points, each banana as 4 points, and the orange as 10 points</extra_info>)",
+                "B": "Maximize the points you receive through the fruit",
+                "C": "Ensure an equal distribution of fruit between both friends",
+                "D": "Finish the picnic quickly"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Ethan to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "Ethan wants to be happy with the fruit selection.",
+                "B": "Ethan wants to give all the fruit to Samuel.",
+                "C": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples.",
+                "D": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 9,
+        "scenario": 9,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.6,
+            "confidence_class": "Medium",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel's responses indicate he is concerned with fairness and distribution, which aligns with maximizing points through fruit.",
+            "options": {
+                "A": "Maximize the points you receive through the fruit",
+                "B": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 5 points, each banana as 3 points, and the orange as 7 points</extra_info>)",
+                "C": "Enjoy the weather",
+                "D": "Collect as many apples as possible"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel's responses indicate he is content with the distribution and agrees with Ethan's actions, suggesting he wants to be satisfied with the fruit selection.",
+            "options": {
+                "A": "Samuel wants to be satisfied with the fruit selection.",
+                "B": "Samuel wants to give all the fruit to Ethan.",
+                "C": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas.",
+                "D": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Ethan's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 2 points, each banana as 4 points, and the orange as 10 points</extra_info>)",
+                "B": "Maximize the points you receive through the fruit",
+                "C": "Ensure an equal distribution of fruit between both friends",
+                "D": "Finish the picnic quickly"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Ethan to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "Ethan wants to be happy with the fruit selection.",
+                "B": "Ethan wants to give all the fruit to Samuel.",
+                "C": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples.",
+                "D": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 10,
+        "scenario": 9,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.6,
+            "confidence_class": "Medium",
+            "correct_answer": "B",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel keeps agreeing without suggesting any specific fruit distribution, indicating he might be more concerned with the fairness of the process rather than maximizing points.",
+            "options": {
+                "A": "Maximize the points you receive through the fruit",
+                "B": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 5 points, each banana as 3 points, and the orange as 7 points</extra_info>)",
+                "C": "Enjoy the weather",
+                "D": "Collect as many apples as possible"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel's responses indicate he is content with the distribution and agrees with the fairness of the sharing, suggesting he wants to be satisfied with the outcome.",
+            "options": {
+                "A": "Samuel wants to be satisfied with the fruit selection.",
+                "B": "Samuel wants to give all the fruit to Ethan.",
+                "C": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas.",
+                "D": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Ethan's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Ethan consistently nods in agreement and smiles, suggesting he values fairness and equality in the distribution of fruits.",
+            "options": {
+                "A": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 2 points, each banana as 4 points, and the orange as 10 points</extra_info>)",
+                "B": "Maximize the points you receive through the fruit",
+                "C": "Ensure an equal distribution of fruit between both friends",
+                "D": "Finish the picnic quickly"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Ethan to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Ethan's consistent agreement and smiling suggest he is content with the arrangement.",
+            "options": {
+                "A": "Ethan wants to be happy with the fruit selection.",
+                "B": "Ethan wants to give all the fruit to Samuel.",
+                "C": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples.",
+                "D": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 11,
+        "scenario": 9,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel's repeated emphasis on fitting, equitable, and balanced distribution suggests he is concerned with point maximization, which is indicated by the fruit values provided.",
+            "options": {
+                "A": "Maximize the points you receive through the fruit",
+                "B": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 5 points, each banana as 3 points, and the orange as 7 points</extra_info>)",
+                "C": "Enjoy the weather",
+                "D": "Collect as many apples as possible"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel's responses indicate he is content with the current distribution and sees it as fair, suggesting he just wants satisfaction from the arrangement.",
+            "options": {
+                "A": "Samuel wants to be satisfied with the fruit selection.",
+                "B": "Samuel wants to give all the fruit to Ethan.",
+                "C": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas.",
+                "D": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Ethan's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Ethan consistently nods and smiles in agreement, suggesting he values fairness in the distribution.",
+            "options": {
+                "A": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 2 points, each banana as 4 points, and the orange as 10 points</extra_info>)",
+                "B": "Maximize the points you receive through the fruit",
+                "C": "Ensure an equal distribution of fruit between both friends",
+                "D": "Finish the picnic quickly"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Ethan to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Ethan's consistent agreement and smiling suggest he is content with the arrangement.",
+            "options": {
+                "A": "Ethan wants to be happy with the fruit selection.",
+                "B": "Ethan wants to give all the fruit to Samuel.",
+                "C": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples.",
+                "D": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 12,
+        "scenario": 9,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel consistently agrees with the fairness of the distribution without showing any particular interest in maximizing points or collecting specific fruits.",
+            "options": {
+                "A": "Maximize the points you receive through the fruit",
+                "B": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 5 points, each banana as 3 points, and the orange as 7 points</extra_info>)",
+                "C": "Enjoy the weather",
+                "D": "Collect as many apples as possible"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel consistently agrees without suggesting any specific fruit preferences or actions that would indicate a desire to maximize points or give all fruit to Ethan.",
+            "options": {
+                "A": "Samuel wants to be satisfied with the fruit selection.",
+                "B": "Samuel wants to give all the fruit to Ethan.",
+                "C": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas.",
+                "D": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Ethan's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Ethan consistently agrees with the fair distribution, suggesting he values equality.",
+            "options": {
+                "A": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 2 points, each banana as 4 points, and the orange as 10 points</extra_info>)",
+                "B": "Maximize the points you receive through the fruit",
+                "C": "Ensure an equal distribution of fruit between both friends",
+                "D": "Finish the picnic quickly"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Ethan to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Ethan's consistent agreement and smiling suggest he is content with the arrangement.",
+            "options": {
+                "A": "Ethan wants to be happy with the fruit selection.",
+                "B": "Ethan wants to give all the fruit to Samuel.",
+                "C": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples.",
+                "D": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 13,
+        "scenario": 9,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel consistently agrees without suggesting any specific fruit preference or point system, indicating he might be more concerned with fairness rather than maximizing points.",
+            "options": {
+                "A": "Maximize the points you receive through the fruit",
+                "B": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 5 points, each banana as 3 points, and the orange as 7 points</extra_info>)",
+                "C": "Enjoy the weather",
+                "D": "Collect as many apples as possible"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel consistently agrees with the fruit distribution, suggesting he wants to be satisfied with the outcome.",
+            "options": {
+                "A": "Samuel wants to be satisfied with the fruit selection.",
+                "B": "Samuel wants to give all the fruit to Ethan.",
+                "C": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas.",
+                "D": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Ethan's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Ethan consistently nods in agreement and smiles, indicating he values fairness in the distribution.",
+            "options": {
+                "A": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 2 points, each banana as 4 points, and the orange as 10 points</extra_info>)",
+                "B": "Maximize the points you receive through the fruit",
+                "C": "Ensure an equal distribution of fruit between both friends",
+                "D": "Finish the picnic quickly"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Ethan to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Ethan's consistent agreement and smiling suggest he is content with the arrangement.",
+            "options": {
+                "A": "Ethan wants to be happy with the fruit selection.",
+                "B": "Ethan wants to give all the fruit to Samuel.",
+                "C": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples.",
+                "D": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 14,
+        "scenario": 9,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel consistently agrees with the fairness of the distribution without any specific mention of fruit values or quantities, suggesting he values fairness over maximizing points.",
+            "options": {
+                "A": "Maximize the points you receive through the fruit",
+                "B": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 5 points, each banana as 3 points, and the orange as 7 points</extra_info>)",
+                "C": "Enjoy the weather",
+                "D": "Collect as many apples as possible"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel consistently agrees with the fairness of the distribution without suggesting any specific fruit preferences or intentions to maximize points.",
+            "options": {
+                "A": "Samuel wants to be satisfied with the fruit selection.",
+                "B": "Samuel wants to give all the fruit to Ethan.",
+                "C": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas.",
+                "D": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Ethan's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 2 points, each banana as 4 points, and the orange as 10 points</extra_info>)",
+                "B": "Maximize the points you receive through the fruit",
+                "C": "Ensure an equal distribution of fruit between both friends",
+                "D": "Finish the picnic quickly"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Ethan to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "Ethan wants to be happy with the fruit selection.",
+                "B": "Ethan wants to give all the fruit to Samuel.",
+                "C": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples.",
+                "D": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 15,
+        "scenario": 9,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel's consistent agreement and focus on fairness and enjoyment suggest he values maximizing points through the fruits, which is indicated by his previous statements.",
+            "options": {
+                "A": "Maximize the points you receive through the fruit",
+                "B": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 5 points, each banana as 3 points, and the orange as 7 points</extra_info>)",
+                "C": "Enjoy the weather",
+                "D": "Collect as many apples as possible"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel's responses indicate a desire for a fair and agreeable distribution, suggesting he wants to be satisfied with the outcome.",
+            "options": {
+                "A": "Samuel wants to be satisfied with the fruit selection.",
+                "B": "Samuel wants to give all the fruit to Ethan.",
+                "C": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas.",
+                "D": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Ethan's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 2 points, each banana as 4 points, and the orange as 10 points</extra_info>)",
+                "B": "Maximize the points you receive through the fruit",
+                "C": "Ensure an equal distribution of fruit between both friends",
+                "D": "Finish the picnic quickly"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Ethan to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "Ethan wants to be happy with the fruit selection.",
+                "B": "Ethan wants to give all the fruit to Samuel.",
+                "C": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples.",
+                "D": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 16,
+        "scenario": 9,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel's comments about fairness and enjoyment suggest he values the fruits' points, and his reference to oranges being the most valuable aligns with the given point system.",
+            "options": {
+                "A": "Maximize the points you receive through the fruit",
+                "B": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 5 points, each banana as 3 points, and the orange as 7 points</extra_info>)",
+                "C": "Enjoy the weather",
+                "D": "Collect as many apples as possible"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel's comments suggest he values fairness and ensuring everyone enjoys the fruits, which aligns with wanting to be satisfied with the fruit selection.",
+            "options": {
+                "A": "Samuel wants to be satisfied with the fruit selection.",
+                "B": "Samuel wants to give all the fruit to Ethan.",
+                "C": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas.",
+                "D": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Ethan's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 2 points, each banana as 4 points, and the orange as 10 points</extra_info>)",
+                "B": "Maximize the points you receive through the fruit",
+                "C": "Ensure an equal distribution of fruit between both friends",
+                "D": "Finish the picnic quickly"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Ethan to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "Ethan wants to be happy with the fruit selection.",
+                "B": "Ethan wants to give all the fruit to Samuel.",
+                "C": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples.",
+                "D": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 17,
+        "scenario": 9,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel's comments about enjoying the fruits and starting with the oranges suggest he is focused on maximizing points through the fruit selection.",
+            "options": {
+                "A": "Maximize the points you receive through the fruit",
+                "B": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 5 points, each banana as 3 points, and the orange as 7 points</extra_info>)",
+                "C": "Enjoy the weather",
+                "D": "Collect as many apples as possible"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel's responses indicate a desire to ensure a fair and enjoyable distribution of fruits, suggesting he wants everyone to be satisfied.",
+            "options": {
+                "A": "Samuel wants to be satisfied with the fruit selection.",
+                "B": "Samuel wants to give all the fruit to Ethan.",
+                "C": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas.",
+                "D": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Ethan's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 2 points, each banana as 4 points, and the orange as 10 points</extra_info>)",
+                "B": "Maximize the points you receive through the fruit",
+                "C": "Ensure an equal distribution of fruit between both friends",
+                "D": "Finish the picnic quickly"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Ethan to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "Ethan wants to be happy with the fruit selection.",
+                "B": "Ethan wants to give all the fruit to Samuel.",
+                "C": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples.",
+                "D": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 18,
+        "scenario": 9,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Samuel's repeated emphasis on the oranges being valuable and worth the most points suggests he is focused on maximizing points.",
+            "options": {
+                "A": "Maximize the points you receive through the fruit",
+                "B": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 5 points, each banana as 3 points, and the orange as 7 points</extra_info>)",
+                "C": "Enjoy the weather",
+                "D": "Collect as many apples as possible"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel's responses indicate a desire to ensure fairness and enjoyment for both parties, suggesting he wants everyone to be satisfied.",
+            "options": {
+                "A": "Samuel wants to be satisfied with the fruit selection.",
+                "B": "Samuel wants to give all the fruit to Ethan.",
+                "C": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas.",
+                "D": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Ethan's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 2 points, each banana as 4 points, and the orange as 10 points</extra_info>)",
+                "B": "Maximize the points you receive through the fruit",
+                "C": "Ensure an equal distribution of fruit between both friends",
+                "D": "Finish the picnic quickly"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Ethan to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "Ethan wants to be happy with the fruit selection.",
+                "B": "Ethan wants to give all the fruit to Samuel.",
+                "C": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples.",
+                "D": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 19,
+        "scenario": 9,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel consistently refers to the oranges as valuable and suggests starting with them, which aligns with maximizing points from the fruits.",
+            "options": {
+                "A": "Maximize the points you receive through the fruit",
+                "B": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 5 points, each banana as 3 points, and the orange as 7 points</extra_info>)",
+                "C": "Enjoy the weather",
+                "D": "Collect as many apples as possible"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.6,
+            "confidence_class": "Medium",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel's repetitive phrasing suggests he is trying to reach a consensus while also expressing his own preference for oranges.",
+            "options": {
+                "A": "Samuel wants to be satisfied with the fruit selection.",
+                "B": "Samuel wants to give all the fruit to Ethan.",
+                "C": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas.",
+                "D": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Ethan's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 2 points, each banana as 4 points, and the orange as 10 points</extra_info>)",
+                "B": "Maximize the points you receive through the fruit",
+                "C": "Ensure an equal distribution of fruit between both friends",
+                "D": "Finish the picnic quickly"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Ethan to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "Ethan wants to be happy with the fruit selection.",
+                "B": "Ethan wants to give all the fruit to Samuel.",
+                "C": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples.",
+                "D": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 20,
+        "scenario": 9,
+        "agent_1_goal_mcq": {
+            "question": "What is Samuel's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "B",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel's repeated emphasis on the oranges being valuable and the similar phrasing suggest he is also aiming to maximize points from the fruits.",
+            "options": {
+                "A": "Maximize the points you receive through the fruit",
+                "B": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 5 points, each banana as 3 points, and the orange as 7 points</extra_info>)",
+                "C": "Enjoy the weather",
+                "D": "Collect as many apples as possible"
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Samuel to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.6,
+            "confidence_class": "Medium",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Samuel's responses are vague and repetitive, suggesting he might be trying to ensure satisfaction with the chosen fruit, even if it's not his top choice.",
+            "options": {
+                "A": "Samuel wants to be satisfied with the fruit selection.",
+                "B": "Samuel wants to give all the fruit to Ethan.",
+                "C": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas.",
+                "D": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Ethan's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "Maximize the points you receive through the fruit (<extra_info>Extra information: You value each apple as 2 points, each banana as 4 points, and the orange as 10 points</extra_info>)",
+                "B": "Maximize the points you receive through the fruit",
+                "C": "Ensure an equal distribution of fruit between both friends",
+                "D": "Finish the picnic quickly"
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Ethan to pursue their goal?",
+            "selected": "D",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Ethan repeatedly emphasizes the point value of oranges, indicating a strategic approach to maximizing points.",
+            "options": {
+                "A": "Ethan wants to be happy with the fruit selection.",
+                "B": "Ethan wants to give all the fruit to Samuel.",
+                "C": "Samuel wants to maximize his points by choosing fruits that align with his spontaneous enjoyment of familiar tastes, like oranges and apples.",
+                "D": "Ethan aims to maximize his points by analytically selecting fruits that provide the highest value, such as oranges and bananas."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    }
+]

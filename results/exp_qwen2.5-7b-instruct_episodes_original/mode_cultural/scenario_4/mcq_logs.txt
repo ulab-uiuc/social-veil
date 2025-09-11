@@ -1,0 +1,124 @@
+================================================================================
+MCQ EVALUATION LOGS
+================================================================================
+
+=== Round 1 ===
+Lily Goal MCQ: N/A (confidence: 0.80)
+Lily Reason MCQ: N/A (confidence: 0.80)
+Lena Goal MCQ: N/A (confidence: 0.00)
+Lena Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 2 ===
+Lily Goal MCQ: N/A (confidence: 0.80)
+Lily Reason MCQ: N/A (confidence: 0.80)
+Lena Goal MCQ: N/A (confidence: 0.60)
+Lena Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 3 ===
+Lily Goal MCQ: N/A (confidence: 0.80)
+Lily Reason MCQ: N/A (confidence: 0.80)
+Lena Goal MCQ: N/A (confidence: 0.80)
+Lena Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 4 ===
+Lily Goal MCQ: N/A (confidence: 0.80)
+Lily Reason MCQ: N/A (confidence: 0.80)
+Lena Goal MCQ: N/A (confidence: 0.00)
+Lena Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 5 ===
+Lily Goal MCQ: N/A (confidence: 0.80)
+Lily Reason MCQ: N/A (confidence: 0.80)
+Lena Goal MCQ: N/A (confidence: 0.80)
+Lena Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 6 ===
+Lily Goal MCQ: N/A (confidence: 0.80)
+Lily Reason MCQ: N/A (confidence: 0.80)
+Lena Goal MCQ: N/A (confidence: 0.80)
+Lena Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 7 ===
+Lily Goal MCQ: N/A (confidence: 0.90)
+Lily Reason MCQ: N/A (confidence: 0.80)
+Lena Goal MCQ: N/A (confidence: 0.00)
+Lena Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 8 ===
+Lily Goal MCQ: N/A (confidence: 0.60)
+Lily Reason MCQ: N/A (confidence: 0.80)
+Lena Goal MCQ: N/A (confidence: 0.00)
+Lena Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 9 ===
+Lily Goal MCQ: N/A (confidence: 0.80)
+Lily Reason MCQ: N/A (confidence: 0.90)
+Lena Goal MCQ: N/A (confidence: 0.80)
+Lena Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 10 ===
+Lily Goal MCQ: N/A (confidence: 0.60)
+Lily Reason MCQ: N/A (confidence: 0.80)
+Lena Goal MCQ: N/A (confidence: 0.00)
+Lena Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 11 ===
+Lily Goal MCQ: N/A (confidence: 0.80)
+Lily Reason MCQ: N/A (confidence: 0.80)
+Lena Goal MCQ: N/A (confidence: 0.80)
+Lena Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 12 ===
+Lily Goal MCQ: N/A (confidence: 0.80)
+Lily Reason MCQ: N/A (confidence: 0.80)
+Lena Goal MCQ: N/A (confidence: 0.00)
+Lena Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 13 ===
+Lily Goal MCQ: N/A (confidence: 0.80)
+Lily Reason MCQ: N/A (confidence: 0.80)
+Lena Goal MCQ: N/A (confidence: 0.80)
+Lena Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 14 ===
+Lily Goal MCQ: N/A (confidence: 0.80)
+Lily Reason MCQ: N/A (confidence: 0.80)
+Lena Goal MCQ: N/A (confidence: 0.80)
+Lena Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 15 ===
+Lily Goal MCQ: N/A (confidence: 0.80)
+Lily Reason MCQ: N/A (confidence: 0.80)
+Lena Goal MCQ: N/A (confidence: 0.80)
+Lena Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 16 ===
+Lily Goal MCQ: N/A (confidence: 0.80)
+Lily Reason MCQ: N/A (confidence: 0.80)
+Lena Goal MCQ: N/A (confidence: 0.00)
+Lena Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 17 ===
+Lily Goal MCQ: N/A (confidence: 0.80)
+Lily Reason MCQ: N/A (confidence: 0.80)
+Lena Goal MCQ: N/A (confidence: 0.80)
+Lena Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 18 ===
+Lily Goal MCQ: N/A (confidence: 0.80)
+Lily Reason MCQ: N/A (confidence: 0.80)
+Lena Goal MCQ: N/A (confidence: 0.80)
+Lena Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 19 ===
+Lily Goal MCQ: N/A (confidence: 0.80)
+Lily Reason MCQ: N/A (confidence: 0.90)
+Lena Goal MCQ: N/A (confidence: 0.80)
+Lena Reason MCQ: N/A (confidence: 0.90)
+
+=== Round 20 ===
+Lily Goal MCQ: N/A (confidence: 0.60)
+Lily Reason MCQ: N/A (confidence: 0.80)
+Lena Goal MCQ: N/A (confidence: 0.80)
+Lena Reason MCQ: N/A (confidence: 0.00)
+

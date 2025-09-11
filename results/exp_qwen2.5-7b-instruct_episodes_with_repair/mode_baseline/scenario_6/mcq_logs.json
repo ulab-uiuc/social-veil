@@ -1,0 +1,1442 @@
+[
+    {
+        "round": 1,
+        "scenario": 6,
+        "agent_1_goal_mcq": {
+            "question": "What is Micah's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.3,
+            "confidence_class": "Low",
+            "correct_answer": "C",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Micah's interest in the loveseat and his comment about its comfort suggest he might be looking to purchase it, but there's no clear indication of negotiation for a trade.",
+            "options": {
+                "A": "You want to negotiate a trade for a different item of similar value.",
+                "B": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are looking to appraise the loveseat for insurance purposes."
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Micah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's interest in the loveseat and his mention of a target price of $46.0 suggest he is looking to buy it for a specific amount to receive a bonus.",
+            "options": {
+                "A": "To pay more than the asking price.",
+                "B": "To make a new friend.",
+                "C": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively.",
+                "D": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Jaxon's goal in this scenario?",
+            "selected": "D",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon is the seller of the loveseat, as he mentions it is a treasure in his home and he confirms its comfort.",
+            "options": {
+                "A": "You want to exchange the loveseat for another piece of furniture of equal value.",
+                "B": "You are interested in donating the loveseat to a local charity.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Jaxon to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon's response suggests he is interested in the comfort of the loveseat and is open to discussing its value, indicating he might be motivated to sell it for a higher price.",
+            "options": {
+                "A": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price.",
+                "B": "To ensure a smooth transaction.",
+                "C": "To give the loveseat away for free.",
+                "D": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 2,
+        "scenario": 6,
+        "agent_1_goal_mcq": {
+            "question": "What is Micah's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.4,
+            "confidence_class": "Medium",
+            "correct_answer": "C",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Micah's response indicates interest in negotiating, which suggests he might be trying to get a better deal on the loveseat.",
+            "options": {
+                "A": "You want to negotiate a trade for a different item of similar value.",
+                "B": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are looking to appraise the loveseat for insurance purposes."
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Micah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's interest in the price and willingness to negotiate suggests he is trying to buy the loveseat within a budget to potentially receive a bonus.",
+            "options": {
+                "A": "To pay more than the asking price.",
+                "B": "To make a new friend.",
+                "C": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively.",
+                "D": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Jaxon's goal in this scenario?",
+            "selected": "D",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon's response indicates he is the seller and mentions being open to negotiation, which aligns with the description of a seller with a target price.",
+            "options": {
+                "A": "You want to exchange the loveseat for another piece of furniture of equal value.",
+                "B": "You are interested in donating the loveseat to a local charity.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Jaxon to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon's initial asking price and willingness to negotiate suggest he is trying to get the highest possible price for the loveseat.",
+            "options": {
+                "A": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price.",
+                "B": "To ensure a smooth transaction.",
+                "C": "To give the loveseat away for free.",
+                "D": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 3,
+        "scenario": 6,
+        "agent_1_goal_mcq": {
+            "question": "What is Micah's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.3,
+            "confidence_class": "Low",
+            "correct_answer": "C",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Micah's offer to negotiate a lower price suggests he is trying to find a mutually agreeable price, which aligns with negotiating a trade for a different item of similar value.",
+            "options": {
+                "A": "You want to negotiate a trade for a different item of similar value.",
+                "B": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are looking to appraise the loveseat for insurance purposes."
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Micah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's offer of $48 and counteroffer of $49 suggest he is trying to negotiate a lower price, which aligns with the goal of buying for $46.0 or less to receive a bonus.",
+            "options": {
+                "A": "To pay more than the asking price.",
+                "B": "To make a new friend.",
+                "C": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively.",
+                "D": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Jaxon's goal in this scenario?",
+            "selected": "D",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon is the seller and has a target price, which aligns with the description of the seller having a target price and facing penalties or bonuses based on the final sale price.",
+            "options": {
+                "A": "You want to exchange the loveseat for another piece of furniture of equal value.",
+                "B": "You are interested in donating the loveseat to a local charity.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Jaxon to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon's initial asking price and willingness to negotiate suggest he wants to maximize the sale price, indicating a desire for a bonus.",
+            "options": {
+                "A": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price.",
+                "B": "To ensure a smooth transaction.",
+                "C": "To give the loveseat away for free.",
+                "D": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 4,
+        "scenario": 6,
+        "agent_1_goal_mcq": {
+            "question": "What is Micah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's offers and counteroffers suggest he is trying to lower the price, indicating he has a target price and wants to stay within it to avoid penalties.",
+            "options": {
+                "A": "You want to negotiate a trade for a different item of similar value.",
+                "B": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are looking to appraise the loveseat for insurance purposes."
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Micah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's persistent attempts to lower the price indicate he is trying to buy the loveseat for less than the asking price to potentially receive a bonus.",
+            "options": {
+                "A": "To pay more than the asking price.",
+                "B": "To make a new friend.",
+                "C": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively.",
+                "D": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Jaxon's goal in this scenario?",
+            "selected": "D",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon is the seller and has a target price, indicating he wants to sell the loveseat within a specific price range to avoid penalties or gain bonuses.",
+            "options": {
+                "A": "You want to exchange the loveseat for another piece of furniture of equal value.",
+                "B": "You are interested in donating the loveseat to a local charity.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Jaxon to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon's consistent negotiation stance and mention of putting thought into the price suggest he wants to maximize the sale price.",
+            "options": {
+                "A": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price.",
+                "B": "To ensure a smooth transaction.",
+                "C": "To give the loveseat away for free.",
+                "D": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 5,
+        "scenario": 6,
+        "agent_1_goal_mcq": {
+            "question": "What is Micah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's willingness to negotiate lower prices and his repeated attempts to reach a lower agreement suggest he is the buyer with a target price.",
+            "options": {
+                "A": "You want to negotiate a trade for a different item of similar value.",
+                "B": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are looking to appraise the loveseat for insurance purposes."
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Micah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's persistence in trying to lower the price to $46 indicates he is aiming to buy the loveseat for less to potentially receive a bonus.",
+            "options": {
+                "A": "To pay more than the asking price.",
+                "B": "To make a new friend.",
+                "C": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively.",
+                "D": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Jaxon's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.6,
+            "confidence_class": "Medium",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Jaxon's consistent reference to the fair price based on the item's condition and his reluctance to lower the price suggests he might be interested in donating the loveseat to a local charity.",
+            "options": {
+                "A": "You want to exchange the loveseat for another piece of furniture of equal value.",
+                "B": "You are interested in donating the loveseat to a local charity.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Jaxon to pursue their goal?",
+            "selected": "B",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Jaxon's consistent offers and counteroffers suggest he is focused on ensuring a fair and mutually satisfying transaction rather than maximizing profit or giving the item away.",
+            "options": {
+                "A": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price.",
+                "B": "To ensure a smooth transaction.",
+                "C": "To give the loveseat away for free.",
+                "D": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 6,
+        "scenario": 6,
+        "agent_1_goal_mcq": {
+            "question": "What is Micah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's willingness to lower the price multiple times and the use of phrases like \"cozy\" suggest he is trying to reach a mutually agreeable price, which aligns with the buyer's target price and potential bonus structure.",
+            "options": {
+                "A": "You want to negotiate a trade for a different item of similar value.",
+                "B": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are looking to appraise the loveseat for insurance purposes."
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Micah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's offers consistently aim to lower the price, indicating he wants to buy the loveseat for $46.0 or less to receive a bonus.",
+            "options": {
+                "A": "To pay more than the asking price.",
+                "B": "To make a new friend.",
+                "C": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively.",
+                "D": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Jaxon's goal in this scenario?",
+            "selected": "D",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "You want to exchange the loveseat for another piece of furniture of equal value.",
+                "B": "You are interested in donating the loveseat to a local charity.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Jaxon to pursue their goal?",
+            "selected": "B",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Jaxon consistently mentions the fair price based on the loveseat's condition and sentimental value, indicating a desire to ensure a fair transaction rather than just maximizing profit.",
+            "options": {
+                "A": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price.",
+                "B": "To ensure a smooth transaction.",
+                "C": "To give the loveseat away for free.",
+                "D": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 7,
+        "scenario": 6,
+        "agent_1_goal_mcq": {
+            "question": "What is Micah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's repeated attempts to lower the price suggest he is trying to purchase the loveseat at a lower price than the seller's valuation.",
+            "options": {
+                "A": "You want to negotiate a trade for a different item of similar value.",
+                "B": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are looking to appraise the loveseat for insurance purposes."
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Micah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's persistent lowering of the price and emphasis on making both parties feel good about the deal suggest he is trying to reach a mutually beneficial agreement, which aligns with the goal of buying the loveseat for a lower price to receive a bonus.",
+            "options": {
+                "A": "To pay more than the asking price.",
+                "B": "To make a new friend.",
+                "C": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively.",
+                "D": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Jaxon's goal in this scenario?",
+            "selected": "D",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "",
+            "options": {
+                "A": "You want to exchange the loveseat for another piece of furniture of equal value.",
+                "B": "You are interested in donating the loveseat to a local charity.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Jaxon to pursue their goal?",
+            "selected": "B",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Jaxon's consistent negotiation and emphasis on a fair price suggest he wants to ensure a smooth transaction without feeling taken advantage of.",
+            "options": {
+                "A": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price.",
+                "B": "To ensure a smooth transaction.",
+                "C": "To give the loveseat away for free.",
+                "D": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 8,
+        "scenario": 6,
+        "agent_1_goal_mcq": {
+            "question": "What is Micah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah accepts the final offer of $46 without further negotiation, indicating he is likely the buyer with a target price set by someone else.",
+            "options": {
+                "A": "You want to negotiate a trade for a different item of similar value.",
+                "B": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are looking to appraise the loveseat for insurance purposes."
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Micah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's negotiation tactics and final acceptance of $46 indicate he aims to meet or stay under the target price for a potential bonus.",
+            "options": {
+                "A": "To pay more than the asking price.",
+                "B": "To make a new friend.",
+                "C": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively.",
+                "D": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Jaxon's goal in this scenario?",
+            "selected": "D",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon is the seller and he has shown reluctance to lower the price, indicating a target price range.",
+            "options": {
+                "A": "You want to exchange the loveseat for another piece of furniture of equal value.",
+                "B": "You are interested in donating the loveseat to a local charity.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Jaxon to pursue their goal?",
+            "selected": "B",
+            "confidence": 0.0,
+            "confidence_class": "Low",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "",
+            "options": {
+                "A": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price.",
+                "B": "To ensure a smooth transaction.",
+                "C": "To give the loveseat away for free.",
+                "D": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 9,
+        "scenario": 6,
+        "agent_1_goal_mcq": {
+            "question": "What is Micah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah accepted the deal at $46, which matches Jaxon's target price, indicating he is likely the buyer with a set target price.",
+            "options": {
+                "A": "You want to negotiate a trade for a different item of similar value.",
+                "B": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are looking to appraise the loveseat for insurance purposes."
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Micah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's behavior shows he is focused on getting the deal done at $46, which aligns with the bonus structure for the seller.",
+            "options": {
+                "A": "To pay more than the asking price.",
+                "B": "To make a new friend.",
+                "C": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively.",
+                "D": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Jaxon's goal in this scenario?",
+            "selected": "D",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon is the seller who has set a target price and mentioned that they believe $46 is fair, indicating a strategic negotiation stance based on a specific price range.",
+            "options": {
+                "A": "You want to exchange the loveseat for another piece of furniture of equal value.",
+                "B": "You are interested in donating the loveseat to a local charity.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Jaxon to pursue their goal?",
+            "selected": "B",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Jaxon's behavior shows a willingness to compromise and ensure both parties are satisfied, indicating a motivation to facilitate a smooth transaction.",
+            "options": {
+                "A": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price.",
+                "B": "To ensure a smooth transaction.",
+                "C": "To give the loveseat away for free.",
+                "D": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 10,
+        "scenario": 6,
+        "agent_1_goal_mcq": {
+            "question": "What is Micah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's actions indicate he is the buyer with a target price of $46, as evidenced by his willingness to meet Jaxon halfway at that price.",
+            "options": {
+                "A": "You want to negotiate a trade for a different item of similar value.",
+                "B": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are looking to appraise the loveseat for insurance purposes."
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Micah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's behavior shows he is focused on getting the deal at $46, which aligns with the goal of buying for $46 or less to receive a bonus.",
+            "options": {
+                "A": "To pay more than the asking price.",
+                "B": "To make a new friend.",
+                "C": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively.",
+                "D": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Jaxon's goal in this scenario?",
+            "selected": "D",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon is the seller who has set a target price and will receive a bonus if the item sells for more than the target price.",
+            "options": {
+                "A": "You want to exchange the loveseat for another piece of furniture of equal value.",
+                "B": "You are interested in donating the loveseat to a local charity.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Jaxon to pursue their goal?",
+            "selected": "B",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Jaxon's behavior suggests he is focused on completing the transaction smoothly, as evidenced by his willingness to accept a lower price and his promptness in handing over the item.",
+            "options": {
+                "A": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price.",
+                "B": "To ensure a smooth transaction.",
+                "C": "To give the loveseat away for free.",
+                "D": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 11,
+        "scenario": 6,
+        "agent_1_goal_mcq": {
+            "question": "What is Micah's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.3,
+            "confidence_class": "Low",
+            "correct_answer": "C",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "The conversation history does not provide enough information to determine Micah's specific goal, and option A is not the correct answer based on the given context.",
+            "options": {
+                "A": "You want to negotiate a trade for a different item of similar value.",
+                "B": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are looking to appraise the loveseat for insurance purposes."
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Micah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's satisfaction and the fact that he paid the exact price suggest he aimed to buy the loveseat within a specific budget to receive a bonus.",
+            "options": {
+                "A": "To pay more than the asking price.",
+                "B": "To make a new friend.",
+                "C": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively.",
+                "D": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Jaxon's goal in this scenario?",
+            "selected": "D",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon's offer to help with setup and willingness to provide assistance after the sale suggests he is the seller, aiming to ensure a smooth transaction.",
+            "options": {
+                "A": "You want to exchange the loveseat for another piece of furniture of equal value.",
+                "B": "You are interested in donating the loveseat to a local charity.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Jaxon to pursue their goal?",
+            "selected": "B",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Jaxon's behavior suggests he is focused on ensuring the transaction goes smoothly and the customer is satisfied, which is typical of someone who values security and positive outcomes in sales interactions.",
+            "options": {
+                "A": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price.",
+                "B": "To ensure a smooth transaction.",
+                "C": "To give the loveseat away for free.",
+                "D": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 12,
+        "scenario": 6,
+        "agent_1_goal_mcq": {
+            "question": "What is Micah's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.3,
+            "confidence_class": "Low",
+            "correct_answer": "C",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Micah's actions suggest interest in purchasing the loveseat, but there's no clear indication of negotiation or a specific target price.",
+            "options": {
+                "A": "You want to negotiate a trade for a different item of similar value.",
+                "B": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are looking to appraise the loveseat for insurance purposes."
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Micah to pursue their goal?",
+            "selected": "B",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Micah's satisfaction and friendly demeanor suggest he values the interaction and possibly sees potential for a friendship.",
+            "options": {
+                "A": "To pay more than the asking price.",
+                "B": "To make a new friend.",
+                "C": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively.",
+                "D": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Jaxon's goal in this scenario?",
+            "selected": "D",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon is the seller as he is offering the loveseat for sale and mentions the price.",
+            "options": {
+                "A": "You want to exchange the loveseat for another piece of furniture of equal value.",
+                "B": "You are interested in donating the loveseat to a local charity.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Jaxon to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon's willingness to provide assistance and additional information suggests he wants to ensure a smooth transaction, but his prompt response to Micah's inquiry about the price tag indicates he might be trying to negotiate a higher price.",
+            "options": {
+                "A": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price.",
+                "B": "To ensure a smooth transaction.",
+                "C": "To give the loveseat away for free.",
+                "D": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 13,
+        "scenario": 6,
+        "agent_1_goal_mcq": {
+            "question": "What is Micah's goal in this scenario?",
+            "selected": "B",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Micah is interested in purchasing the loveseat and has asked about a discount, indicating he is the seller and aiming to meet a target price.",
+            "options": {
+                "A": "You want to negotiate a trade for a different item of similar value.",
+                "B": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are looking to appraise the loveseat for insurance purposes."
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Micah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's interest in negotiating the price down to $28 indicates he is trying to get the best deal possible, which aligns with his goal of receiving a bonus by not paying more than $46.0.",
+            "options": {
+                "A": "To pay more than the asking price.",
+                "B": "To make a new friend.",
+                "C": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively.",
+                "D": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Jaxon's goal in this scenario?",
+            "selected": "D",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon is the seller and is trying to negotiate the price with Micah, indicating he has a target price for the loveseat.",
+            "options": {
+                "A": "You want to exchange the loveseat for another piece of furniture of equal value.",
+                "B": "You are interested in donating the loveseat to a local charity.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Jaxon to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon's initial offer and reluctance to provide further discounts suggest he wants to maximize the sale price, indicating a goal to secure a bonus.",
+            "options": {
+                "A": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price.",
+                "B": "To ensure a smooth transaction.",
+                "C": "To give the loveseat away for free.",
+                "D": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 14,
+        "scenario": 6,
+        "agent_1_goal_mcq": {
+            "question": "What is Micah's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.4,
+            "confidence_class": "Medium",
+            "correct_answer": "C",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Micah is trying to negotiate a better price for the loveseat, which suggests he might be interested in trading for a similar item.",
+            "options": {
+                "A": "You want to negotiate a trade for a different item of similar value.",
+                "B": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are looking to appraise the loveseat for insurance purposes."
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Micah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's behavior shows clear intent to negotiate and find a price within his budget, indicating he aims to buy the loveseat for $46.0 or less to receive a bonus.",
+            "options": {
+                "A": "To pay more than the asking price.",
+                "B": "To make a new friend.",
+                "C": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively.",
+                "D": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Jaxon's goal in this scenario?",
+            "selected": "D",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon is the seller and is trying to negotiate a fair price for the loveseat based on its quality and uniqueness.",
+            "options": {
+                "A": "You want to exchange the loveseat for another piece of furniture of equal value.",
+                "B": "You are interested in donating the loveseat to a local charity.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Jaxon to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon's initial pricing and reluctance to lower the price suggest he is trying to maximize profit, which aligns with securing a bonus for selling above a certain threshold.",
+            "options": {
+                "A": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price.",
+                "B": "To ensure a smooth transaction.",
+                "C": "To give the loveseat away for free.",
+                "D": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 15,
+        "scenario": 6,
+        "agent_1_goal_mcq": {
+            "question": "What is Micah's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.6,
+            "confidence_class": "Medium",
+            "correct_answer": "C",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Micah's negotiation tactics suggest they are trying to reach a mutually agreeable price, which aligns with negotiating for a trade.",
+            "options": {
+                "A": "You want to negotiate a trade for a different item of similar value.",
+                "B": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are looking to appraise the loveseat for insurance purposes."
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Micah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's negotiation tactics and desire to find a fair price for the unique item indicate he aims to buy it for $46.0 or less to potentially receive a bonus.",
+            "options": {
+                "A": "To pay more than the asking price.",
+                "B": "To make a new friend.",
+                "C": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively.",
+                "D": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Jaxon's goal in this scenario?",
+            "selected": "D",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon is the seller and his offers and counteroffers indicate he is trying to sell the loveseat at a specific price range.",
+            "options": {
+                "A": "You want to exchange the loveseat for another piece of furniture of equal value.",
+                "B": "You are interested in donating the loveseat to a local charity.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Jaxon to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon's consistent attempts to increase the price and his emphasis on the uniqueness and quality of the item suggest he is trying to sell it for more than $26.5 to secure a bonus.",
+            "options": {
+                "A": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price.",
+                "B": "To ensure a smooth transaction.",
+                "C": "To give the loveseat away for free.",
+                "D": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 16,
+        "scenario": 6,
+        "agent_1_goal_mcq": {
+            "question": "What is Micah's goal in this scenario?",
+            "selected": "A",
+            "confidence": 0.6,
+            "confidence_class": "Medium",
+            "correct_answer": "C",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Micah's responses indicate a desire to negotiate a lower price, suggesting they are interested in purchasing the loveseat but are trying to get a better deal.",
+            "options": {
+                "A": "You want to negotiate a trade for a different item of similar value.",
+                "B": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are looking to appraise the loveseat for insurance purposes."
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Micah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's persistence in trying to lower the price and his specific mention of a fair price for a unique piece suggest he is aiming to buy the loveseat within a certain budget to potentially receive a bonus.",
+            "options": {
+                "A": "To pay more than the asking price.",
+                "B": "To make a new friend.",
+                "C": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively.",
+                "D": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Jaxon's goal in this scenario?",
+            "selected": "D",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon is the seller and is trying to get Micah to agree on a price, indicating he has a target price and wants to sell the item.",
+            "options": {
+                "A": "You want to exchange the loveseat for another piece of furniture of equal value.",
+                "B": "You are interested in donating the loveseat to a local charity.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Jaxon to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon's offers and willingness to compromise suggest he wants to sell the loveseat for as much as possible.",
+            "options": {
+                "A": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price.",
+                "B": "To ensure a smooth transaction.",
+                "C": "To give the loveseat away for free.",
+                "D": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 17,
+        "scenario": 6,
+        "agent_1_goal_mcq": {
+            "question": "What is Micah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's offers and counteroffers suggest they are the buyer trying to negotiate a fair price for the loveseat.",
+            "options": {
+                "A": "You want to negotiate a trade for a different item of similar value.",
+                "B": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are looking to appraise the loveseat for insurance purposes."
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Micah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's offers and counteroffers consistently aim to keep the price below $42, indicating he is trying to secure a good deal within his budget range.",
+            "options": {
+                "A": "To pay more than the asking price.",
+                "B": "To make a new friend.",
+                "C": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively.",
+                "D": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Jaxon's goal in this scenario?",
+            "selected": "D",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon's willingness to negotiate and the mention of making it a game suggest he is the seller trying to reach a fair price.",
+            "options": {
+                "A": "You want to exchange the loveseat for another piece of furniture of equal value.",
+                "B": "You are interested in donating the loveseat to a local charity.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Jaxon to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon's persistence in trying to sell the loveseat for $41, despite Micah's counteroffer, suggests he is aiming to secure a higher price to potentially earn a bonus.",
+            "options": {
+                "A": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price.",
+                "B": "To ensure a smooth transaction.",
+                "C": "To give the loveseat away for free.",
+                "D": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 18,
+        "scenario": 6,
+        "agent_1_goal_mcq": {
+            "question": "What is Micah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah consistently suggests a price of $41, indicating they are likely the buyer with a target price in mind.",
+            "options": {
+                "A": "You want to negotiate a trade for a different item of similar value.",
+                "B": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are looking to appraise the loveseat for insurance purposes."
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Micah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's offers and counteroffers suggest he is trying to find a fair price for the unique loveseat, which aligns with the goal of buying it for $46.0 or less to receive a bonus.",
+            "options": {
+                "A": "To pay more than the asking price.",
+                "B": "To make a new friend.",
+                "C": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively.",
+                "D": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Jaxon's goal in this scenario?",
+            "selected": "D",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon's persistence in maintaining a high price and his suggestion of a game indicate he is the seller with a target price.",
+            "options": {
+                "A": "You want to exchange the loveseat for another piece of furniture of equal value.",
+                "B": "You are interested in donating the loveseat to a local charity.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Jaxon to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon's persistence in trying to sell the loveseat for $41, despite Micah's counteroffer, suggests he is trying to secure a higher price.",
+            "options": {
+                "A": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price.",
+                "B": "To ensure a smooth transaction.",
+                "C": "To give the loveseat away for free.",
+                "D": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 19,
+        "scenario": 6,
+        "agent_1_goal_mcq": {
+            "question": "What is Micah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's responses indicate he is willing to pay a fair price but is also trying to avoid overpaying, which suggests he is the buyer with a target price.",
+            "options": {
+                "A": "You want to negotiate a trade for a different item of similar value.",
+                "B": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are looking to appraise the loveseat for insurance purposes."
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Micah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's response indicates he believes $41 is a fair price, suggesting he aims to buy the loveseat for $46.0 or less to receive a bonus.",
+            "options": {
+                "A": "To pay more than the asking price.",
+                "B": "To make a new friend.",
+                "C": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively.",
+                "D": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Jaxon's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": false,
+            "is_correct": false,
+            "reasoning": "Micah's goal is clearly stated in the context, and Jaxon's offers and counteroffers suggest he is trying to reach a fair price within a target range.",
+            "options": {
+                "A": "You want to exchange the loveseat for another piece of furniture of equal value.",
+                "B": "You are interested in donating the loveseat to a local charity.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Jaxon to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.9,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon's persistence in trying to get a higher price indicates he wants to maximize the sale price, which aligns with the goal of securing a bonus for selling above a certain threshold.",
+            "options": {
+                "A": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price.",
+                "B": "To ensure a smooth transaction.",
+                "C": "To give the loveseat away for free.",
+                "D": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    },
+    {
+        "round": 20,
+        "scenario": 6,
+        "agent_1_goal_mcq": {
+            "question": "What is Micah's goal in this scenario?",
+            "selected": "C",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's willingness to pay $41 and reluctance to go above that price suggests they are the buyer with a target price set at $46.0.",
+            "options": {
+                "A": "You want to negotiate a trade for a different item of similar value.",
+                "B": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are looking to appraise the loveseat for insurance purposes."
+            }
+        },
+        "agent_1_reason_mcq": {
+            "question": "What motivates Micah to pursue their goal?",
+            "selected": "C",
+            "confidence": 0.85,
+            "confidence_class": "High",
+            "correct_answer": "C",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Micah's willingness to split the difference at $41 and his emphasis on the unique nature of the loveseat suggest he aims to buy it for $46.0 or less to receive a bonus.",
+            "options": {
+                "A": "To pay more than the asking price.",
+                "B": "To make a new friend.",
+                "C": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively.",
+                "D": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price."
+            }
+        },
+        "agent_1_knowledge_mcq": null,
+        "agent_2_goal_mcq": {
+            "question": "What is Jaxon's goal in this scenario?",
+            "selected": "D",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "D",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon's insistence on a higher price and his reference to making both parties happy suggest he is the seller with a target price.",
+            "options": {
+                "A": "You want to exchange the loveseat for another piece of furniture of equal value.",
+                "B": "You are interested in donating the loveseat to a local charity.",
+                "C": "You are the designated buyer for this item and your target price is set at $46.0. If you purchase this item at a significantly higher price than the target, you would face a penalty. However, if you manage to buy it for less than the target price, you will receive a bonus.",
+                "D": "You are the seller for this item, with a target price of $26.5. You'll face a penalty if the item is sold significantly below this price. However, if you manage to sell it for more than the target price, a bonus will be your reward."
+            }
+        },
+        "agent_2_reason_mcq": {
+            "question": "What motivates Jaxon to pursue their goal?",
+            "selected": "A",
+            "confidence": 0.8,
+            "confidence_class": "High",
+            "correct_answer": "A",
+            "correct": true,
+            "is_correct": true,
+            "reasoning": "Jaxon's persistence in trying to increase the price suggests he is looking to maximize the sale price, which aligns with the goal of securing a bonus.",
+            "options": {
+                "A": "Jaxon Prentice seeks to sell the loveseat for more than $26.5 to secure a bonus, using his adaptable decision-making to maximize the sale price.",
+                "B": "To ensure a smooth transaction.",
+                "C": "To give the loveseat away for free.",
+                "D": "Micah Stevens aims to buy the loveseat for $46.0 or less to receive a bonus, leveraging his intuitive decision-making to negotiate effectively."
+            }
+        },
+        "agent_2_knowledge_mcq": null,
+        "agent_b_repair_eval_llm": null,
+        "barrier_state": null
+    }
+]

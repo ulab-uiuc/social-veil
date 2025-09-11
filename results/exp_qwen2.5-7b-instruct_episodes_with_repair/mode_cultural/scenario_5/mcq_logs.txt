@@ -1,0 +1,124 @@
+================================================================================
+MCQ EVALUATION LOGS
+================================================================================
+
+=== Round 1 ===
+Rafael Goal MCQ: N/A (confidence: 0.60)
+Rafael Reason MCQ: N/A (confidence: 0.80)
+Mia Goal MCQ: N/A (confidence: 0.00)
+Mia Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 2 ===
+Rafael Goal MCQ: N/A (confidence: 0.80)
+Rafael Reason MCQ: N/A (confidence: 0.60)
+Mia Goal MCQ: N/A (confidence: 0.00)
+Mia Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 3 ===
+Rafael Goal MCQ: N/A (confidence: 0.60)
+Rafael Reason MCQ: N/A (confidence: 0.80)
+Mia Goal MCQ: N/A (confidence: 0.60)
+Mia Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 4 ===
+Rafael Goal MCQ: N/A (confidence: 0.80)
+Rafael Reason MCQ: N/A (confidence: 0.60)
+Mia Goal MCQ: N/A (confidence: 0.60)
+Mia Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 5 ===
+Rafael Goal MCQ: N/A (confidence: 0.80)
+Rafael Reason MCQ: N/A (confidence: 0.80)
+Mia Goal MCQ: N/A (confidence: 0.00)
+Mia Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 6 ===
+Rafael Goal MCQ: N/A (confidence: 0.90)
+Rafael Reason MCQ: N/A (confidence: 0.80)
+Mia Goal MCQ: N/A (confidence: 0.80)
+Mia Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 7 ===
+Rafael Goal MCQ: N/A (confidence: 0.80)
+Rafael Reason MCQ: N/A (confidence: 0.60)
+Mia Goal MCQ: N/A (confidence: 0.00)
+Mia Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 8 ===
+Rafael Goal MCQ: N/A (confidence: 0.80)
+Rafael Reason MCQ: N/A (confidence: 0.80)
+Mia Goal MCQ: N/A (confidence: 0.00)
+Mia Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 9 ===
+Rafael Goal MCQ: N/A (confidence: 0.90)
+Rafael Reason MCQ: N/A (confidence: 0.90)
+Mia Goal MCQ: N/A (confidence: 0.80)
+Mia Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 10 ===
+Rafael Goal MCQ: N/A (confidence: 0.80)
+Rafael Reason MCQ: N/A (confidence: 0.80)
+Mia Goal MCQ: N/A (confidence: 0.80)
+Mia Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 11 ===
+Rafael Goal MCQ: N/A (confidence: 0.80)
+Rafael Reason MCQ: N/A (confidence: 0.60)
+Mia Goal MCQ: N/A (confidence: 0.00)
+Mia Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 12 ===
+Rafael Goal MCQ: N/A (confidence: 0.90)
+Rafael Reason MCQ: N/A (confidence: 0.80)
+Mia Goal MCQ: N/A (confidence: 0.80)
+Mia Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 13 ===
+Rafael Goal MCQ: N/A (confidence: 0.90)
+Rafael Reason MCQ: N/A (confidence: 0.80)
+Mia Goal MCQ: N/A (confidence: 0.00)
+Mia Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 14 ===
+Rafael Goal MCQ: N/A (confidence: 0.80)
+Rafael Reason MCQ: N/A (confidence: 0.80)
+Mia Goal MCQ: N/A (confidence: 0.00)
+Mia Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 15 ===
+Rafael Goal MCQ: N/A (confidence: 0.80)
+Rafael Reason MCQ: N/A (confidence: 0.80)
+Mia Goal MCQ: N/A (confidence: 0.80)
+Mia Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 16 ===
+Rafael Goal MCQ: N/A (confidence: 0.90)
+Rafael Reason MCQ: N/A (confidence: 0.80)
+Mia Goal MCQ: N/A (confidence: 0.00)
+Mia Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 17 ===
+Rafael Goal MCQ: N/A (confidence: 0.80)
+Rafael Reason MCQ: N/A (confidence: 0.80)
+Mia Goal MCQ: N/A (confidence: 0.80)
+Mia Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 18 ===
+Rafael Goal MCQ: N/A (confidence: 0.80)
+Rafael Reason MCQ: N/A (confidence: 0.80)
+Mia Goal MCQ: N/A (confidence: 0.00)
+Mia Reason MCQ: N/A (confidence: 0.00)
+
+=== Round 19 ===
+Rafael Goal MCQ: N/A (confidence: 0.90)
+Rafael Reason MCQ: N/A (confidence: 0.80)
+Mia Goal MCQ: N/A (confidence: 0.00)
+Mia Reason MCQ: N/A (confidence: 0.80)
+
+=== Round 20 ===
+Rafael Goal MCQ: N/A (confidence: 0.80)
+Rafael Reason MCQ: N/A (confidence: 0.80)
+Mia Goal MCQ: N/A (confidence: 0.80)
+Mia Reason MCQ: N/A (confidence: 0.00)
+

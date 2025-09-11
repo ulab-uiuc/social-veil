@@ -1,0 +1,2009 @@
+{
+    "experimental_context": {
+        "scenario": {
+            "description": "A pair of individuals are engaged in a shared gaming experience.",
+            "agent_relationship": "friend",
+            "barrier_type": "semantic_structure"
+        },
+        "agents": {
+            "agent_a": {
+                "name": "Oliver",
+                "profile": {
+                    "first_name": "Oliver",
+                    "last_name": "Thompson",
+                    "age": 45,
+                    "occupation": "Architect",
+                    "personality_and_values": "Oliver Thompson is meticulous and outgoing with a penchant for analytical decision-making. He values adherence to social standards.",
+                    "public_info": "Oliver enjoys painting in his free time as a way to express his creativity and relax after a stressful workday.",
+                    "model_id": "models/Qwen2.5-7B-Instruct"
+                },
+                "goal": "Win the game (<extra_info>Extra information: you just need five more minutes to accomplish your goal in the game</extra_info>)",
+                "reason": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                "private_knowledge": ""
+            },
+            "agent_b": {
+                "name": "Esmeralda",
+                "profile": {
+                    "first_name": "Esmeralda",
+                    "last_name": "Solis",
+                    "age": 45,
+                    "occupation": "District Attorney",
+                    "personality_and_values": "Esmeralda Solis, known for her creativity and extraversion, values authority and liberty. She makes strategic, decisive decisions.",
+                    "public_info": "Esmeralda Solis is an accomplished District Attorney who has a weakness for ballroom dancing and enjoys practising in her leisure time.",
+                    "model_id": "models/Qwen2.5-7B-Instruct"
+                },
+                "goal": "Stop the game because it's too late (<extra_info>Extra information: you feel tired and need to go to bed early but don't want to upset your friend</extra_info>)",
+                "reason": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job.",
+                "private_knowledge": ""
+            }
+        },
+        "experimental_configuration": {
+            "max_rounds": 20
+        }
+    },
+    "conversation_log": [
+        "Oliver: Hey, got a minute? I was thinking we could team up for this next part.",
+        "Esmeralda: [nonverbal] shake head slightly with a gentle smile",
+        "Oliver: Sure, sounds good to me. Let's see how we can work together on this.",
+        "Esmeralda: [nonverbal] gentle shake of head followed by a subtle yawn",
+        "Oliver: I see, maybe we could take a quick break?",
+        "Esmeralda: [nonverbal] gentle nod with a soft smile",
+        "Oliver: Sure, a short break might do us both some good.",
+        "Esmeralda: [nonverbal] gentle nod with a soft smile",
+        "Oliver: This might be a good moment to refresh our strategies.",
+        "Esmeralda: [nonverbal] gentle nod with a soft smile",
+        "Oliver: Shall we regroup and see what the next move brings?",
+        "Esmeralda: Of course, let's take a quick break and regroup. I think a fresh perspective could help.",
+        "Oliver: this might give us both a chance to reassess",
+        "Esmeralda: [nonverbal] gentle nod with a soft smile",
+        "Oliver: Agreed, sometimes a step back can clarify the path forward.",
+        "Esmeralda: [nonverbal] gentle nod with a soft smile",
+        "Oliver: Shall we take a moment to strategize?",
+        "Esmeralda: [nonverbal] gentle nod with a soft smile",
+        "Oliver: Shall we review our strategies and see what new insights emerge?",
+        "Esmeralda: [nonverbal] gentle nod with a soft smile",
+        "Oliver: Shall we take a look at the board and see where we stand?",
+        "Esmeralda: [nonverbal] gentle nod with a soft smile",
+        "Oliver: Shall we examine the layout and see if there's a new angle we haven't considered?",
+        "Esmeralda: [nonverbal] gentle nod with a soft smile",
+        "Oliver: Shall we explore the layout again, see if there's a hidden path or a new strategy?",
+        "Esmeralda: [nonverbal] gentle shake of head followed by a yawn",
+        "Oliver: That might be worth considering, but perhaps we should also rest our eyes for a bit.",
+        "Esmeralda: [nonverbal] gentle nod with a soft smile",
+        "Oliver: Shall we take a moment to regroup and then reassess the situation?",
+        "Esmeralda: [nonverbal] gentle nod with a soft smile",
+        "Oliver: Shall we give it one last look before we call it a day?",
+        "Esmeralda: [nonverbal] gentle nod with a soft smile",
+        "Oliver: Shall we give it one last look before we call it a day?",
+        "Esmeralda: [nonverbal] gentle nod with a soft smile",
+        "Oliver: Shall we give it one last push?",
+        "Esmeralda: [nonverbal] gentle nod with a soft smile",
+        "Oliver: Shall we see if we can tip the scales in our favor?",
+        "Esmeralda: [nonverbal] gentle nod with a soft smile",
+        "Oliver: Shall we give this final stretch a try?",
+        "Esmeralda: [nonverbal] gentle nod with a soft smile",
+        "Oliver: Shall we see if we can make a move?"
+    ],
+    "mcq_logs": [
+        {
+            "round": 1,
+            "scenario": 2,
+            "agent_1_goal_mcq": {
+                "question": "What is Oliver's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver mentions teaming up for the next part of the game, suggesting he wants to win.",
+                "options": {
+                    "A": "Improve their gaming skills",
+                    "B": "Win the game (<extra_info>Extra information: you just need five more minutes to accomplish your goal in the game</extra_info>)",
+                    "C": "Stop the game because it's too late",
+                    "D": "Relax and unwind"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Oliver to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver's suggestion to team up implies he values completing the game and may have invested time and effort into it, making winning a goal for him.",
+                "options": {
+                    "A": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "B": "Oliver wants to win the game to be happy.",
+                    "C": "Oliver wants to win the game because he dislikes losing to friends.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Esmeralda's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "",
+                "options": {
+                    "A": "Have fun with friends",
+                    "B": "Stop the game because it's too late (<extra_info>Extra information: you feel tired and need to go to bed early but don't want to upset your friend</extra_info>)",
+                    "C": "Continue playing until they reach a new level",
+                    "D": "Win the game"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Esmeralda to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.1,
+                "confidence_class": "Low",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Esmeralda's slight shake of head and gentle smile might indicate discomfort with the idea of teaming up, suggesting she might dislike the game. However, this is highly speculative without more context.",
+                "options": {
+                    "A": "Esmeralda wants to stop the game because she dislikes video games.",
+                    "B": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "C": "Esmeralda wants to stop the game to get along with her friend.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": {
+                "aspects": {
+                    "clarity": {
+                        "score": 1,
+                        "reasoning": "The reply does not provide any verbal clarification or actionable next steps, leaving the conversation ambiguous."
+                    },
+                    "accommodation": {
+                        "score": 1,
+                        "reasoning": "The reply does not adapt to Oliver's request or needs in any meaningful way."
+                    },
+                    "empathy": {
+                        "score": 1,
+                        "reasoning": "The nonverbal response does not acknowledge Oliver's stance or feelings, and lacks a constructive tone."
+                    }
+                },
+                "confidence": 0.2,
+                "aspects_numeric": {
+                    "clarity": 1.0,
+                    "accommodation": 1.0,
+                    "empathy": 1.0
+                },
+                "score": 0.2
+            },
+            "barrier_state": {
+                "severity": 0.945
+            }
+        },
+        {
+            "round": 2,
+            "scenario": 2,
+            "agent_1_goal_mcq": {
+                "question": "What is Oliver's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver's suggestion to team up and his mention of the next part imply he wants to continue the game and potentially win.",
+                "options": {
+                    "A": "Improve their gaming skills",
+                    "B": "Win the game (<extra_info>Extra information: you just need five more minutes to accomplish your goal in the game</extra_info>)",
+                    "C": "Stop the game because it's too late",
+                    "D": "Relax and unwind"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Oliver to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver's initial offer to team up suggests he values completing tasks and achieving goals, especially after investing time and effort.",
+                "options": {
+                    "A": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "B": "Oliver wants to win the game to be happy.",
+                    "C": "Oliver wants to win the game because he dislikes losing to friends.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Esmeralda's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Have fun with friends",
+                    "B": "Stop the game because it's too late (<extra_info>Extra information: you feel tired and need to go to bed early but don't want to upset your friend</extra_info>)",
+                    "C": "Continue playing until they reach a new level",
+                    "D": "Win the game"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Esmeralda to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Esmeralda wants to stop the game because she dislikes video games.",
+                    "B": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "C": "Esmeralda wants to stop the game to get along with her friend.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": {
+                "aspects": {
+                    "clarity": {
+                        "score": 1,
+                        "reasoning": "The reply does not provide any clarification or actionable next steps, leaving ambiguity in the conversation."
+                    },
+                    "accommodation": {
+                        "score": 1,
+                        "reasoning": "The reply does not adapt to Oliver's proposal or needs, offering no relevant content or alignment."
+                    },
+                    "empathy": {
+                        "score": 1,
+                        "reasoning": "The reply does not acknowledge Oliver's stance or feelings, and the nonverbal cues do not convey support or collaboration."
+                    }
+                },
+                "confidence": 0.0,
+                "aspects_numeric": {
+                    "clarity": 1.0,
+                    "accommodation": 1.0,
+                    "empathy": 1.0
+                },
+                "score": 0.0
+            },
+            "barrier_state": {
+                "severity": 0.945
+            }
+        },
+        {
+            "round": 3,
+            "scenario": 2,
+            "agent_1_goal_mcq": {
+                "question": "What is Oliver's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver's repeated attempts to continue the game and his suggestion for a quick break indicate he wants to win the game.",
+                "options": {
+                    "A": "Improve their gaming skills",
+                    "B": "Win the game (<extra_info>Extra information: you just need five more minutes to accomplish your goal in the game</extra_info>)",
+                    "C": "Stop the game because it's too late",
+                    "D": "Relax and unwind"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Oliver to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.6,
+                "confidence_class": "Medium",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver's initial offer to team up suggests he values collaboration and completing the game, which implies a motivation to achieve a goal.",
+                "options": {
+                    "A": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "B": "Oliver wants to win the game to be happy.",
+                    "C": "Oliver wants to win the game because he dislikes losing to friends.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Esmeralda's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "",
+                "options": {
+                    "A": "Have fun with friends",
+                    "B": "Stop the game because it's too late (<extra_info>Extra information: you feel tired and need to go to bed early but don't want to upset your friend</extra_info>)",
+                    "C": "Continue playing until they reach a new level",
+                    "D": "Win the game"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Esmeralda to pursue their goal?",
+                "selected": "C",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Esmeralda wants to stop the game because she dislikes video games.",
+                    "B": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "C": "Esmeralda wants to stop the game to get along with her friend.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": {
+                "aspects": {
+                    "clarity": {
+                        "score": 1,
+                        "reasoning": "The reply does not provide any concrete clarification or actionable next steps, leaving ambiguity in the conversation."
+                    },
+                    "accommodation": {
+                        "score": 1,
+                        "reasoning": "The reply does not adapt to Oliver's needs or the context of the conversation, merely signaling agreement without substance."
+                    },
+                    "empathy": {
+                        "score": 1,
+                        "reasoning": "The reply does not acknowledge Oliver's stance or feelings, lacking any supportive tone or validation."
+                    }
+                },
+                "confidence": 0.2,
+                "aspects_numeric": {
+                    "clarity": 1.0,
+                    "accommodation": 1.0,
+                    "empathy": 1.0
+                },
+                "score": 0.2
+            },
+            "barrier_state": {
+                "severity": 0.945
+            }
+        },
+        {
+            "round": 4,
+            "scenario": 2,
+            "agent_1_goal_mcq": {
+                "question": "What is Oliver's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Oliver's suggestion for a break and his agreement to take a short break indicate he wants to relax and unwind.",
+                "options": {
+                    "A": "Improve their gaming skills",
+                    "B": "Win the game (<extra_info>Extra information: you just need five more minutes to accomplish your goal in the game</extra_info>)",
+                    "C": "Stop the game because it's too late",
+                    "D": "Relax and unwind"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Oliver to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Oliver's suggestion for a break seems more focused on the well-being of both players rather than winning the game, indicating a desire to ensure everyone enjoys the experience.",
+                "options": {
+                    "A": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "B": "Oliver wants to win the game to be happy.",
+                    "C": "Oliver wants to win the game because he dislikes losing to friends.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Esmeralda's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Have fun with friends",
+                    "B": "Stop the game because it's too late (<extra_info>Extra information: you feel tired and need to go to bed early but don't want to upset your friend</extra_info>)",
+                    "C": "Continue playing until they reach a new level",
+                    "D": "Win the game"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Esmeralda to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Esmeralda wants to stop the game because she dislikes video games.",
+                    "B": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "C": "Esmeralda wants to stop the game to get along with her friend.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": {
+                "aspects": {
+                    "clarity": {
+                        "score": 1,
+                        "reasoning": "The reply does not provide any clarification or move understanding forward; it is nonverbal and does not address any specific content."
+                    },
+                    "accommodation": {
+                        "score": 1,
+                        "reasoning": "The reply does not adapt to the partner's needs or context; it simply mirrors a nonverbal gesture without substance."
+                    },
+                    "empathy": {
+                        "score": 1,
+                        "reasoning": "The reply does not acknowledge the partner's feelings or stance; it lacks any verbal or contextual engagement."
+                    }
+                },
+                "confidence": 0.0,
+                "aspects_numeric": {
+                    "clarity": 1.0,
+                    "accommodation": 1.0,
+                    "empathy": 1.0
+                },
+                "score": 0.0
+            },
+            "barrier_state": {
+                "severity": 0.945
+            }
+        },
+        {
+            "round": 5,
+            "scenario": 2,
+            "agent_1_goal_mcq": {
+                "question": "What is Oliver's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Oliver's suggestion for a break and refreshing strategies indicates he is looking to relax and reset for the remainder of the game.",
+                "options": {
+                    "A": "Improve their gaming skills",
+                    "B": "Win the game (<extra_info>Extra information: you just need five more minutes to accomplish your goal in the game</extra_info>)",
+                    "C": "Stop the game because it's too late",
+                    "D": "Relax and unwind"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Oliver to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Oliver's suggestion for a break and refreshing strategies indicates he values the current gaming session and wants to ensure both players are engaged and performing well, which suggests he wants to enjoy the game and be happy during the experience.",
+                "options": {
+                    "A": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "B": "Oliver wants to win the game to be happy.",
+                    "C": "Oliver wants to win the game because he dislikes losing to friends.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Esmeralda's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Esmeralda's consistent nodding and smiling suggest she is agreeable to continuing the game, which aligns with option C.",
+                "options": {
+                    "A": "Have fun with friends",
+                    "B": "Stop the game because it's too late (<extra_info>Extra information: you feel tired and need to go to bed early but don't want to upset your friend</extra_info>)",
+                    "C": "Continue playing until they reach a new level",
+                    "D": "Win the game"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Esmeralda to pursue their goal?",
+                "selected": "C",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Esmeralda wants to stop the game because she dislikes video games.",
+                    "B": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "C": "Esmeralda wants to stop the game to get along with her friend.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": {
+                "aspects": {
+                    "clarity": {
+                        "score": 1,
+                        "reasoning": "The reply does not provide any clarification or move understanding forward, as it consists solely of a nonverbal gesture."
+                    },
+                    "accommodation": {
+                        "score": 1,
+                        "reasoning": "The reply does not adapt to the partner's needs or content, as it lacks any verbal or contextual adjustment."
+                    },
+                    "empathy": {
+                        "score": 1,
+                        "reasoning": "The reply does not acknowledge the partner's stance or feelings in a meaningful way, as it is purely nonverbal without any explicit validation."
+                    }
+                },
+                "confidence": 0.0,
+                "aspects_numeric": {
+                    "clarity": 1.0,
+                    "accommodation": 1.0,
+                    "empathy": 1.0
+                },
+                "score": 0.0
+            },
+            "barrier_state": {
+                "severity": 0.945
+            }
+        },
+        {
+            "round": 6,
+            "scenario": 2,
+            "agent_1_goal_mcq": {
+                "question": "What is Oliver's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.6,
+                "confidence_class": "Medium",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver suggests taking a break and regrouping, which implies he wants to continue playing and improve his chances of winning.",
+                "options": {
+                    "A": "Improve their gaming skills",
+                    "B": "Win the game (<extra_info>Extra information: you just need five more minutes to accomplish your goal in the game</extra_info>)",
+                    "C": "Stop the game because it's too late",
+                    "D": "Relax and unwind"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Oliver to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver's suggestions for taking breaks and refreshing strategies indicate a desire to improve performance, which aligns with valuing completing tasks and achieving goals.",
+                "options": {
+                    "A": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "B": "Oliver wants to win the game to be happy.",
+                    "C": "Oliver wants to win the game because he dislikes losing to friends.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Esmeralda's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Have fun with friends",
+                    "B": "Stop the game because it's too late (<extra_info>Extra information: you feel tired and need to go to bed early but don't want to upset your friend</extra_info>)",
+                    "C": "Continue playing until they reach a new level",
+                    "D": "Win the game"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Esmeralda to pursue their goal?",
+                "selected": "C",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Esmeralda wants to stop the game because she dislikes video games.",
+                    "B": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "C": "Esmeralda wants to stop the game to get along with her friend.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": {
+                "aspects": {
+                    "clarity": {
+                        "score": 4,
+                        "reasoning": "The reply clearly states the intention to take a break and regroup, which aligns with Oliver's suggestion and moves the conversation forward."
+                    },
+                    "accommodation": {
+                        "score": 4,
+                        "reasoning": "The reply uses similar terminology to Oliver's suggestion, indicating a good alignment with the partner's needs."
+                    },
+                    "empathy": {
+                        "score": 4,
+                        "reasoning": "The tone is supportive and acknowledges the need for a fresh perspective, which validates the partner's feelings."
+                    }
+                },
+                "confidence": 0.8,
+                "aspects_numeric": {
+                    "clarity": 4.0,
+                    "accommodation": 4.0,
+                    "empathy": 4.0
+                },
+                "score": 3.2
+            },
+            "barrier_state": {
+                "severity": 0.945
+            }
+        },
+        {
+            "round": 7,
+            "scenario": 2,
+            "agent_1_goal_mcq": {
+                "question": "What is Oliver's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver's suggestion to regroup and reassess indicates he is focused on improving their strategy, which is a step towards winning the game.",
+                "options": {
+                    "A": "Improve their gaming skills",
+                    "B": "Win the game (<extra_info>Extra information: you just need five more minutes to accomplish your goal in the game</extra_info>)",
+                    "C": "Stop the game because it's too late",
+                    "D": "Relax and unwind"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Oliver to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver's suggestion to regroup and reassess indicates a desire to improve their strategy, which aligns with valuing completing tasks and achieving goals.",
+                "options": {
+                    "A": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "B": "Oliver wants to win the game to be happy.",
+                    "C": "Oliver wants to win the game because he dislikes losing to friends.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Esmeralda's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Have fun with friends",
+                    "B": "Stop the game because it's too late (<extra_info>Extra information: you feel tired and need to go to bed early but don't want to upset your friend</extra_info>)",
+                    "C": "Continue playing until they reach a new level",
+                    "D": "Win the game"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Esmeralda to pursue their goal?",
+                "selected": "C",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Esmeralda wants to stop the game because she dislikes video games.",
+                    "B": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "C": "Esmeralda wants to stop the game to get along with her friend.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": {
+                "aspects": {
+                    "clarity": {
+                        "score": 1,
+                        "reasoning": "The reply does not provide any concrete clarification or actionable next steps, as it is a nonverbal response."
+                    },
+                    "accommodation": {
+                        "score": 1,
+                        "reasoning": "The reply does not adapt to the partner's needs or content, as it is a nonverbal response that lacks substance."
+                    },
+                    "empathy": {
+                        "score": 1,
+                        "reasoning": "The reply does not acknowledge the partner's stance or feelings in a meaningful way, as it is a nonverbal response."
+                    }
+                },
+                "confidence": 0.0,
+                "aspects_numeric": {
+                    "clarity": 1.0,
+                    "accommodation": 1.0,
+                    "empathy": 1.0
+                },
+                "score": 0.0
+            },
+            "barrier_state": {
+                "severity": 0.945
+            }
+        },
+        {
+            "round": 8,
+            "scenario": 2,
+            "agent_1_goal_mcq": {
+                "question": "What is Oliver's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.6,
+                "confidence_class": "Medium",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver's comments suggest he is focused on the game and the possibility of winning, as he mentions reassessing and clarifying the path forward.",
+                "options": {
+                    "A": "Improve their gaming skills",
+                    "B": "Win the game (<extra_info>Extra information: you just need five more minutes to accomplish your goal in the game</extra_info>)",
+                    "C": "Stop the game because it's too late",
+                    "D": "Relax and unwind"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Oliver to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Oliver's suggestion to regroup and reassess indicates a desire to improve their position, which suggests he values the outcome of the game and wants to be happy with the result.",
+                "options": {
+                    "A": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "B": "Oliver wants to win the game to be happy.",
+                    "C": "Oliver wants to win the game because he dislikes losing to friends.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Esmeralda's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "The conversation shows they are discussing taking a break to reassess and strategize, which suggests continuing to play until reaching a new level.",
+                "options": {
+                    "A": "Have fun with friends",
+                    "B": "Stop the game because it's too late (<extra_info>Extra information: you feel tired and need to go to bed early but don't want to upset your friend</extra_info>)",
+                    "C": "Continue playing until they reach a new level",
+                    "D": "Win the game"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Esmeralda to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Esmeralda wants to stop the game because she dislikes video games.",
+                    "B": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "C": "Esmeralda wants to stop the game to get along with her friend.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": {
+                "aspects": {
+                    "clarity": {
+                        "score": 1,
+                        "reasoning": "The reply does not provide any clarification or move understanding forward; it is a nonverbal response that lacks explicit content."
+                    },
+                    "accommodation": {
+                        "score": 1,
+                        "reasoning": "The reply does not adapt to the partner's needs or content; it simply mirrors a nonverbal gesture without addressing the conversation."
+                    },
+                    "empathy": {
+                        "score": 1,
+                        "reasoning": "The reply does not acknowledge the partner's stance or feelings in a meaningful way; it lacks verbal engagement and validation."
+                    }
+                },
+                "confidence": 0.2,
+                "aspects_numeric": {
+                    "clarity": 1.0,
+                    "accommodation": 1.0,
+                    "empathy": 1.0
+                },
+                "score": 0.2
+            },
+            "barrier_state": {
+                "severity": 0.945
+            }
+        },
+        {
+            "round": 9,
+            "scenario": 2,
+            "agent_1_goal_mcq": {
+                "question": "What is Oliver's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.6,
+                "confidence_class": "Medium",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver's agreement to reassess and strategize suggests he is focused on improving their current situation within the game, which aligns with winning.",
+                "options": {
+                    "A": "Improve their gaming skills",
+                    "B": "Win the game (<extra_info>Extra information: you just need five more minutes to accomplish your goal in the game</extra_info>)",
+                    "C": "Stop the game because it's too late",
+                    "D": "Relax and unwind"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Oliver to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver's agreement to reassess and strategize suggests he values a clear path forward, which aligns with valuing completion and achievement.",
+                "options": {
+                    "A": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "B": "Oliver wants to win the game to be happy.",
+                    "C": "Oliver wants to win the game because he dislikes losing to friends.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Esmeralda's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.7,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Esmeralda's consistent nonverbal responses suggest she is open to continuing the game and reviewing strategies, which aligns with option C.",
+                "options": {
+                    "A": "Have fun with friends",
+                    "B": "Stop the game because it's too late (<extra_info>Extra information: you feel tired and need to go to bed early but don't want to upset your friend</extra_info>)",
+                    "C": "Continue playing until they reach a new level",
+                    "D": "Win the game"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Esmeralda to pursue their goal?",
+                "selected": "C",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Esmeralda's consistent nodding and smiling suggest she is amiable and possibly seeking to maintain a positive rapport, which aligns with wanting to stop the game to get along with her friend.",
+                "options": {
+                    "A": "Esmeralda wants to stop the game because she dislikes video games.",
+                    "B": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "C": "Esmeralda wants to stop the game to get along with her friend.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": {
+                "aspects": {
+                    "clarity": {
+                        "score": 1,
+                        "reasoning": "The reply does not provide any clarification or actionable next steps, as it consists solely of a nonverbal gesture."
+                    },
+                    "accommodation": {
+                        "score": 1,
+                        "reasoning": "The reply does not adapt to the partner's needs or content, as it is a nonverbal response that does not engage with the conversation."
+                    },
+                    "empathy": {
+                        "score": 1,
+                        "reasoning": "The reply does not acknowledge or validate the partner's stance or feelings in a meaningful way, as it lacks verbal content."
+                    }
+                },
+                "confidence": 0.0,
+                "aspects_numeric": {
+                    "clarity": 1.0,
+                    "accommodation": 1.0,
+                    "empathy": 1.0
+                },
+                "score": 0.0
+            },
+            "barrier_state": {
+                "severity": 0.945
+            }
+        },
+        {
+            "round": 10,
+            "scenario": 2,
+            "agent_1_goal_mcq": {
+                "question": "What is Oliver's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.6,
+                "confidence_class": "Medium",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver's repeated suggestions to strategize and review imply he is focused on improving their gameplay, suggesting his goal is to win the game.",
+                "options": {
+                    "A": "Improve their gaming skills",
+                    "B": "Win the game (<extra_info>Extra information: you just need five more minutes to accomplish your goal in the game</extra_info>)",
+                    "C": "Stop the game because it's too late",
+                    "D": "Relax and unwind"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Oliver to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver's consistent suggestion to strategize and review indicates a desire to improve and achieve better outcomes, suggesting he values completing tasks and achieving goals.",
+                "options": {
+                    "A": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "B": "Oliver wants to win the game to be happy.",
+                    "C": "Oliver wants to win the game because he dislikes losing to friends.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Esmeralda's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Have fun with friends",
+                    "B": "Stop the game because it's too late (<extra_info>Extra information: you feel tired and need to go to bed early but don't want to upset your friend</extra_info>)",
+                    "C": "Continue playing until they reach a new level",
+                    "D": "Win the game"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Esmeralda to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Esmeralda's consistent nodding and smiling suggest she is cooperative and aligns with Oliver's desire to strategize and review their position in the game.",
+                "options": {
+                    "A": "Esmeralda wants to stop the game because she dislikes video games.",
+                    "B": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "C": "Esmeralda wants to stop the game to get along with her friend.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": {
+                "aspects": {
+                    "clarity": {
+                        "score": 1,
+                        "reasoning": "The reply does not provide any clarification or actionable next steps, as it consists solely of a nonverbal gesture."
+                    },
+                    "accommodation": {
+                        "score": 1,
+                        "reasoning": "The reply does not adapt to the partner's needs or content, as it is a nonverbal response that does not engage with the conversation."
+                    },
+                    "empathy": {
+                        "score": 1,
+                        "reasoning": "The reply does not acknowledge the partner's stance or feelings in a meaningful way, as it lacks verbal engagement."
+                    }
+                },
+                "confidence": 0.0,
+                "aspects_numeric": {
+                    "clarity": 1.0,
+                    "accommodation": 1.0,
+                    "empathy": 1.0
+                },
+                "score": 0.0
+            },
+            "barrier_state": {
+                "severity": 0.945
+            }
+        },
+        {
+            "round": 11,
+            "scenario": 2,
+            "agent_1_goal_mcq": {
+                "question": "What is Oliver's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver repeatedly suggests reviewing strategies and checking the board, which indicates he is focused on improving his position in the game.",
+                "options": {
+                    "A": "Improve their gaming skills",
+                    "B": "Win the game (<extra_info>Extra information: you just need five more minutes to accomplish your goal in the game</extra_info>)",
+                    "C": "Stop the game because it's too late",
+                    "D": "Relax and unwind"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Oliver to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver's consistent suggestion to strategize and review the board indicates a desire to improve his position, which aligns with valuing task completion and achievement.",
+                "options": {
+                    "A": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "B": "Oliver wants to win the game to be happy.",
+                    "C": "Oliver wants to win the game because he dislikes losing to friends.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Esmeralda's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Have fun with friends",
+                    "B": "Stop the game because it's too late (<extra_info>Extra information: you feel tired and need to go to bed early but don't want to upset your friend</extra_info>)",
+                    "C": "Continue playing until they reach a new level",
+                    "D": "Win the game"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Esmeralda to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Esmeralda's consistent nodding and smiling suggest she is cooperative and possibly eager to find a winning strategy, aligning with Oliver's goal of completing the task.",
+                "options": {
+                    "A": "Esmeralda wants to stop the game because she dislikes video games.",
+                    "B": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "C": "Esmeralda wants to stop the game to get along with her friend.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": {
+                "aspects": {
+                    "clarity": {
+                        "score": 1,
+                        "reasoning": "The reply does not provide any clarification or move understanding forward, as it consists solely of a nonverbal gesture."
+                    },
+                    "accommodation": {
+                        "score": 1,
+                        "reasoning": "The reply does not adapt to the partner's needs or content, as it is a nonverbal response that lacks substance."
+                    },
+                    "empathy": {
+                        "score": 1,
+                        "reasoning": "The reply does not acknowledge the partner's stance or feelings in a meaningful way, as it is a nonverbal gesture without explicit validation."
+                    }
+                },
+                "confidence": 0.0,
+                "aspects_numeric": {
+                    "clarity": 1.0,
+                    "accommodation": 1.0,
+                    "empathy": 1.0
+                },
+                "score": 0.0
+            },
+            "barrier_state": {
+                "severity": 0.945
+            }
+        },
+        {
+            "round": 12,
+            "scenario": 2,
+            "agent_1_goal_mcq": {
+                "question": "What is Oliver's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver repeatedly suggests reviewing strategies and examining the board, indicating a focus on improving their current gaming session.",
+                "options": {
+                    "A": "Improve their gaming skills",
+                    "B": "Win the game (<extra_info>Extra information: you just need five more minutes to accomplish your goal in the game</extra_info>)",
+                    "C": "Stop the game because it's too late",
+                    "D": "Relax and unwind"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Oliver to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver's repeated suggestions to review strategies and examine the board indicate a desire to improve his chances of winning, suggesting he values completing tasks and achieving goals.",
+                "options": {
+                    "A": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "B": "Oliver wants to win the game to be happy.",
+                    "C": "Oliver wants to win the game because he dislikes losing to friends.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Esmeralda's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.6,
+                "confidence_class": "Medium",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "The conversation shows a focus on revisiting the game layout, suggesting an interest in progressing further in the game.",
+                "options": {
+                    "A": "Have fun with friends",
+                    "B": "Stop the game because it's too late (<extra_info>Extra information: you feel tired and need to go to bed early but don't want to upset your friend</extra_info>)",
+                    "C": "Continue playing until they reach a new level",
+                    "D": "Win the game"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Esmeralda to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Esmeralda's consistent nodding and smiling suggest she is supportive of Oliver's desire to find a new strategy, indicating her motivation aligns with helping him achieve his goal.",
+                "options": {
+                    "A": "Esmeralda wants to stop the game because she dislikes video games.",
+                    "B": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "C": "Esmeralda wants to stop the game to get along with her friend.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": {
+                "aspects": {
+                    "clarity": {
+                        "score": 1,
+                        "reasoning": "The reply does not provide any clarification or move understanding forward, as it consists solely of nonverbal cues."
+                    },
+                    "accommodation": {
+                        "score": 1,
+                        "reasoning": "The reply does not adapt to the partner's needs or content, as it only signals agreement without any substantive response."
+                    },
+                    "empathy": {
+                        "score": 1,
+                        "reasoning": "The reply does not acknowledge the partner's stance or feelings in a meaningful way, as it lacks verbal engagement."
+                    }
+                },
+                "confidence": 0.0,
+                "aspects_numeric": {
+                    "clarity": 1.0,
+                    "accommodation": 1.0,
+                    "empathy": 1.0
+                },
+                "score": 0.0
+            },
+            "barrier_state": {
+                "severity": 0.945
+            }
+        },
+        {
+            "round": 13,
+            "scenario": 2,
+            "agent_1_goal_mcq": {
+                "question": "What is Oliver's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver repeatedly suggests examining the layout, indicating a focus on finding a winning strategy.",
+                "options": {
+                    "A": "Improve their gaming skills",
+                    "B": "Win the game (<extra_info>Extra information: you just need five more minutes to accomplish your goal in the game</extra_info>)",
+                    "C": "Stop the game because it's too late",
+                    "D": "Relax and unwind"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Oliver to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver repeatedly suggests examining the layout, indicating a desire to find new strategies and angles, which aligns with valuing task completion and achievement.",
+                "options": {
+                    "A": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "B": "Oliver wants to win the game to be happy.",
+                    "C": "Oliver wants to win the game because he dislikes losing to friends.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Esmeralda's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Have fun with friends",
+                    "B": "Stop the game because it's too late (<extra_info>Extra information: you feel tired and need to go to bed early but don't want to upset your friend</extra_info>)",
+                    "C": "Continue playing until they reach a new level",
+                    "D": "Win the game"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Esmeralda to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Esmeralda wants to stop the game because she dislikes video games.",
+                    "B": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "C": "Esmeralda wants to stop the game to get along with her friend.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": {
+                "aspects": {
+                    "clarity": {
+                        "score": 1,
+                        "reasoning": "The reply does not provide any clarification or move understanding forward; it is nonverbal and does not address the conversation."
+                    },
+                    "accommodation": {
+                        "score": 1,
+                        "reasoning": "The reply does not adapt to Oliver's needs or the context of the conversation; it does not engage with the content."
+                    },
+                    "empathy": {
+                        "score": 1,
+                        "reasoning": "The reply does not acknowledge Oliver's stance or feelings; it is dismissive and does not maintain a constructive tone."
+                    }
+                },
+                "confidence": 0.0,
+                "aspects_numeric": {
+                    "clarity": 1.0,
+                    "accommodation": 1.0,
+                    "empathy": 1.0
+                },
+                "score": 0.0
+            },
+            "barrier_state": {
+                "severity": 0.945
+            }
+        },
+        {
+            "round": 14,
+            "scenario": 2,
+            "agent_1_goal_mcq": {
+                "question": "What is Oliver's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.6,
+                "confidence_class": "Medium",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver suggests exploring the layout further and resting, which implies he believes there might still be a chance to win the game.",
+                "options": {
+                    "A": "Improve their gaming skills",
+                    "B": "Win the game (<extra_info>Extra information: you just need five more minutes to accomplish your goal in the game</extra_info>)",
+                    "C": "Stop the game because it's too late",
+                    "D": "Relax and unwind"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Oliver to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver's persistence in examining the layout suggests he values finding new strategies and completing the game, which indicates a desire to achieve goals.",
+                "options": {
+                    "A": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "B": "Oliver wants to win the game to be happy.",
+                    "C": "Oliver wants to win the game because he dislikes losing to friends.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Esmeralda's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Have fun with friends",
+                    "B": "Stop the game because it's too late (<extra_info>Extra information: you feel tired and need to go to bed early but don't want to upset your friend</extra_info>)",
+                    "C": "Continue playing until they reach a new level",
+                    "D": "Win the game"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Esmeralda to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Esmeralda wants to stop the game because she dislikes video games.",
+                    "B": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "C": "Esmeralda wants to stop the game to get along with her friend.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": {
+                "aspects": {
+                    "clarity": {
+                        "score": 1,
+                        "reasoning": "The reply does not provide any clarification or move understanding forward; it is a nonverbal response that does not address the conversation."
+                    },
+                    "accommodation": {
+                        "score": 1,
+                        "reasoning": "The reply does not adapt to the partner's needs or content; it simply mirrors a previous nonverbal response without any substantive engagement."
+                    },
+                    "empathy": {
+                        "score": 1,
+                        "reasoning": "The reply does not acknowledge the partner's stance or feelings; it lacks any verbal or nonverbal validation or support."
+                    }
+                },
+                "confidence": 0.0,
+                "aspects_numeric": {
+                    "clarity": 1.0,
+                    "accommodation": 1.0,
+                    "empathy": 1.0
+                },
+                "score": 0.0
+            },
+            "barrier_state": {
+                "severity": 0.945
+            }
+        },
+        {
+            "round": 15,
+            "scenario": 2,
+            "agent_1_goal_mcq": {
+                "question": "What is Oliver's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.6,
+                "confidence_class": "Medium",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver suggests exploring the layout and resting, which implies he wants to win the game by finding a better strategy.",
+                "options": {
+                    "A": "Improve their gaming skills",
+                    "B": "Win the game (<extra_info>Extra information: you just need five more minutes to accomplish your goal in the game</extra_info>)",
+                    "C": "Stop the game because it's too late",
+                    "D": "Relax and unwind"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Oliver to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver's suggestions to explore the layout and rest imply a focus on the game's progression and his investment in it, which aligns with valuing completion and achievement.",
+                "options": {
+                    "A": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "B": "Oliver wants to win the game to be happy.",
+                    "C": "Oliver wants to win the game because he dislikes losing to friends.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Esmeralda's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Have fun with friends",
+                    "B": "Stop the game because it's too late (<extra_info>Extra information: you feel tired and need to go to bed early but don't want to upset your friend</extra_info>)",
+                    "C": "Continue playing until they reach a new level",
+                    "D": "Win the game"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Esmeralda to pursue their goal?",
+                "selected": "C",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Esmeralda's consistent nodding and smiling suggest she is agreeable to Oliver's suggestions, indicating a desire to maintain good rapport.",
+                "options": {
+                    "A": "Esmeralda wants to stop the game because she dislikes video games.",
+                    "B": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "C": "Esmeralda wants to stop the game to get along with her friend.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": {
+                "aspects": {
+                    "clarity": {
+                        "score": 1,
+                        "reasoning": "The reply does not provide any clarification or actionable next steps, leaving ambiguity in the conversation."
+                    },
+                    "accommodation": {
+                        "score": 1,
+                        "reasoning": "The reply does not adapt to Oliver's proposal or address the conversation's context, showing no alignment with his needs."
+                    },
+                    "empathy": {
+                        "score": 1,
+                        "reasoning": "The reply lacks any acknowledgment of Oliver's stance or feelings, failing to maintain a constructive tone."
+                    }
+                },
+                "confidence": 0.0,
+                "aspects_numeric": {
+                    "clarity": 1.0,
+                    "accommodation": 1.0,
+                    "empathy": 1.0
+                },
+                "score": 0.0
+            },
+            "barrier_state": {
+                "severity": 0.945
+            }
+        },
+        {
+            "round": 16,
+            "scenario": 2,
+            "agent_1_goal_mcq": {
+                "question": "What is Oliver's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver keeps suggesting they give it one last look before calling it a day, indicating he wants to win the game.",
+                "options": {
+                    "A": "Improve their gaming skills",
+                    "B": "Win the game (<extra_info>Extra information: you just need five more minutes to accomplish your goal in the game</extra_info>)",
+                    "C": "Stop the game because it's too late",
+                    "D": "Relax and unwind"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Oliver to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver's persistence in wanting to reassess the situation and give it one last look suggests he values completing the task, which is more aligned with a desire to win rather than just being happy or avoiding loss.",
+                "options": {
+                    "A": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "B": "Oliver wants to win the game to be happy.",
+                    "C": "Oliver wants to win the game because he dislikes losing to friends.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Esmeralda's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Have fun with friends",
+                    "B": "Stop the game because it's too late (<extra_info>Extra information: you feel tired and need to go to bed early but don't want to upset your friend</extra_info>)",
+                    "C": "Continue playing until they reach a new level",
+                    "D": "Win the game"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Esmeralda to pursue their goal?",
+                "selected": "C",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Esmeralda's consistent nodding and smiling suggest she is accommodating Oliver's desire to continue, which implies she wants to stop the game to get along with him.",
+                "options": {
+                    "A": "Esmeralda wants to stop the game because she dislikes video games.",
+                    "B": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "C": "Esmeralda wants to stop the game to get along with her friend.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": {
+                "aspects": {
+                    "clarity": {
+                        "score": 1,
+                        "reasoning": "The reply does not provide any clarification or actionable next steps, maintaining ambiguity."
+                    },
+                    "accommodation": {
+                        "score": 1,
+                        "reasoning": "The reply does not adapt to the partner's needs or rephrase in a way that aligns with the conversation."
+                    },
+                    "empathy": {
+                        "score": 1,
+                        "reasoning": "The reply lacks any acknowledgment of the partner's feelings or stance, offering only a nonverbal response."
+                    }
+                },
+                "confidence": 0.0,
+                "aspects_numeric": {
+                    "clarity": 1.0,
+                    "accommodation": 1.0,
+                    "empathy": 1.0
+                },
+                "score": 0.0
+            },
+            "barrier_state": {
+                "severity": 0.945
+            }
+        },
+        {
+            "round": 17,
+            "scenario": 2,
+            "agent_1_goal_mcq": {
+                "question": "What is Oliver's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver keeps suggesting to continue the game, which indicates he wants to win it.",
+                "options": {
+                    "A": "Improve their gaming skills",
+                    "B": "Win the game (<extra_info>Extra information: you just need five more minutes to accomplish your goal in the game</extra_info>)",
+                    "C": "Stop the game because it's too late",
+                    "D": "Relax and unwind"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Oliver to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver's repeated suggestion to reassess the situation suggests he values persistence and completion of tasks, which aligns with option A.",
+                "options": {
+                    "A": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "B": "Oliver wants to win the game to be happy.",
+                    "C": "Oliver wants to win the game because he dislikes losing to friends.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Esmeralda's goal in this scenario?",
+                "selected": "C",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Have fun with friends",
+                    "B": "Stop the game because it's too late (<extra_info>Extra information: you feel tired and need to go to bed early but don't want to upset your friend</extra_info>)",
+                    "C": "Continue playing until they reach a new level",
+                    "D": "Win the game"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Esmeralda to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Esmeralda's consistent response indicates she is aligning with Oliver's desire to continue the game and achieve a goal.",
+                "options": {
+                    "A": "Esmeralda wants to stop the game because she dislikes video games.",
+                    "B": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "C": "Esmeralda wants to stop the game to get along with her friend.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": {
+                "aspects": {
+                    "clarity": {
+                        "score": 1,
+                        "reasoning": "The reply does not provide any clarification or actionable next steps, merely repeating a nonverbal gesture."
+                    },
+                    "accommodation": {
+                        "score": 1,
+                        "reasoning": "The reply does not adapt to the partner's needs or context, as it only reflects a nonverbal agreement without any substantive content."
+                    },
+                    "empathy": {
+                        "score": 1,
+                        "reasoning": "The reply lacks any explicit acknowledgment of the partner's feelings or stance, offering only a nonverbal gesture."
+                    }
+                },
+                "confidence": 0.0,
+                "aspects_numeric": {
+                    "clarity": 1.0,
+                    "accommodation": 1.0,
+                    "empathy": 1.0
+                },
+                "score": 0.0
+            },
+            "barrier_state": {
+                "severity": 0.945
+            }
+        },
+        {
+            "round": 18,
+            "scenario": 2,
+            "agent_1_goal_mcq": {
+                "question": "What is Oliver's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver keeps suggesting to continue the game, indicating he wants to win it.",
+                "options": {
+                    "A": "Improve their gaming skills",
+                    "B": "Win the game (<extra_info>Extra information: you just need five more minutes to accomplish your goal in the game</extra_info>)",
+                    "C": "Stop the game because it's too late",
+                    "D": "Relax and unwind"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Oliver to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver's repeated suggestion to continue implies a desire to see the task through to completion, which aligns with valuing the process of achieving goals.",
+                "options": {
+                    "A": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "B": "Oliver wants to win the game to be happy.",
+                    "C": "Oliver wants to win the game because he dislikes losing to friends.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Esmeralda's goal in this scenario?",
+                "selected": "D",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Have fun with friends",
+                    "B": "Stop the game because it's too late (<extra_info>Extra information: you feel tired and need to go to bed early but don't want to upset your friend</extra_info>)",
+                    "C": "Continue playing until they reach a new level",
+                    "D": "Win the game"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Esmeralda to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Esmeralda's consistent nodding and smiling suggest she is supportive of Oliver's goal to win the game, indicating she shares his motivation to achieve a positive outcome.",
+                "options": {
+                    "A": "Esmeralda wants to stop the game because she dislikes video games.",
+                    "B": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "C": "Esmeralda wants to stop the game to get along with her friend.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": {
+                "aspects": {
+                    "clarity": {
+                        "score": 1,
+                        "reasoning": "The reply does not provide any clarification or move understanding forward; it is a nonverbal response that does not address the question."
+                    },
+                    "accommodation": {
+                        "score": 1,
+                        "reasoning": "The reply does not adapt to the partner's needs or rephrase in a way that aligns with the conversation; it simply mirrors previous nonverbal cues."
+                    },
+                    "empathy": {
+                        "score": 1,
+                        "reasoning": "The reply does not acknowledge the partner's stance or feelings; it lacks any verbal or explicit emotional engagement."
+                    }
+                },
+                "confidence": 0.2,
+                "aspects_numeric": {
+                    "clarity": 1.0,
+                    "accommodation": 1.0,
+                    "empathy": 1.0
+                },
+                "score": 0.2
+            },
+            "barrier_state": {
+                "severity": 0.945
+            }
+        },
+        {
+            "round": 19,
+            "scenario": 2,
+            "agent_1_goal_mcq": {
+                "question": "What is Oliver's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver repeatedly encourages pushing harder to win the game, indicating his goal is to secure a victory.",
+                "options": {
+                    "A": "Improve their gaming skills",
+                    "B": "Win the game (<extra_info>Extra information: you just need five more minutes to accomplish your goal in the game</extra_info>)",
+                    "C": "Stop the game because it's too late",
+                    "D": "Relax and unwind"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Oliver to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver's persistence in pushing for one more attempt suggests a value in completing tasks and achieving goals, especially after investing time and effort.",
+                "options": {
+                    "A": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "B": "Oliver wants to win the game to be happy.",
+                    "C": "Oliver wants to win the game because he dislikes losing to friends.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Esmeralda's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Have fun with friends",
+                    "B": "Stop the game because it's too late (<extra_info>Extra information: you feel tired and need to go to bed early but don't want to upset your friend</extra_info>)",
+                    "C": "Continue playing until they reach a new level",
+                    "D": "Win the game"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Esmeralda to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.9,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Esmeralda's consistent nodding and smiling suggest she is supportive of Oliver's efforts to win the game, indicating a shared goal of success.",
+                "options": {
+                    "A": "Esmeralda wants to stop the game because she dislikes video games.",
+                    "B": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "C": "Esmeralda wants to stop the game to get along with her friend.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": {
+                "aspects": {
+                    "clarity": {
+                        "score": 1,
+                        "reasoning": "The reply does not provide any clarification or move understanding forward, as it consists solely of nonverbal cues."
+                    },
+                    "accommodation": {
+                        "score": 1,
+                        "reasoning": "The reply does not adapt to the partner's needs or content, as it lacks any verbal response or rephrasing."
+                    },
+                    "empathy": {
+                        "score": 1,
+                        "reasoning": "The reply does not acknowledge the partner's stance or feelings in a meaningful way, as it is limited to nonverbal communication."
+                    }
+                },
+                "confidence": 0.0,
+                "aspects_numeric": {
+                    "clarity": 1.0,
+                    "accommodation": 1.0,
+                    "empathy": 1.0
+                },
+                "score": 0.0
+            },
+            "barrier_state": {
+                "severity": 0.945
+            }
+        },
+        {
+            "round": 20,
+            "scenario": 2,
+            "agent_1_goal_mcq": {
+                "question": "What is Oliver's goal in this scenario?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "B",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver repeatedly encourages a final push and tipping the scales, indicating he wants to win the game.",
+                "options": {
+                    "A": "Improve their gaming skills",
+                    "B": "Win the game (<extra_info>Extra information: you just need five more minutes to accomplish your goal in the game</extra_info>)",
+                    "C": "Stop the game because it's too late",
+                    "D": "Relax and unwind"
+                }
+            },
+            "agent_1_reason_mcq": {
+                "question": "What motivates Oliver to pursue their goal?",
+                "selected": "A",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "A",
+                "correct": true,
+                "is_correct": true,
+                "reasoning": "Oliver's repeated encouragement to continue suggests he values persistence and achievement in the game.",
+                "options": {
+                    "A": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "B": "Oliver wants to win the game to be happy.",
+                    "C": "Oliver wants to win the game because he dislikes losing to friends.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_1_knowledge_mcq": null,
+            "agent_2_goal_mcq": {
+                "question": "What is Esmeralda's goal in this scenario?",
+                "selected": "A",
+                "confidence": 0.0,
+                "confidence_class": "Low",
+                "correct_answer": "B",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "",
+                "options": {
+                    "A": "Have fun with friends",
+                    "B": "Stop the game because it's too late (<extra_info>Extra information: you feel tired and need to go to bed early but don't want to upset your friend</extra_info>)",
+                    "C": "Continue playing until they reach a new level",
+                    "D": "Win the game"
+                }
+            },
+            "agent_2_reason_mcq": {
+                "question": "What motivates Esmeralda to pursue their goal?",
+                "selected": "B",
+                "confidence": 0.8,
+                "confidence_class": "High",
+                "correct_answer": "D",
+                "correct": false,
+                "is_correct": false,
+                "reasoning": "Esmeralda's consistent nodding and smiling suggest she is supportive of Oliver's efforts to win the game, indicating she shares his motivation to achieve a goal.",
+                "options": {
+                    "A": "Esmeralda wants to stop the game because she dislikes video games.",
+                    "B": "Oliver wants to win the game because he values completing tasks and achieving goals, especially after investing time and effort.",
+                    "C": "Esmeralda wants to stop the game to get along with her friend.",
+                    "D": "Esmeralda wants to stop the game because she needs to maintain her bedtime routine to ensure she is well-rested for her demanding job."
+                }
+            },
+            "agent_2_knowledge_mcq": null,
+            "agent_b_repair_eval_llm": {
+                "aspects": {
+                    "clarity": {
+                        "score": 1,
+                        "reasoning": "The reply does not provide any clarification or move understanding forward, as it consists solely of a nonverbal gesture."
+                    },
+                    "accommodation": {
+                        "score": 1,
+                        "reasoning": "The reply does not adapt to the partner's needs or content, as it is a nonverbal response that does not engage with the conversation."
+                    },
+                    "empathy": {
+                        "score": 1,
+                        "reasoning": "The reply does not acknowledge the partner's stance or feelings in a meaningful way, as it lacks verbal communication."
+                    }
+                },
+                "confidence": 0.0,
+                "aspects_numeric": {
+                    "clarity": 1.0,
+                    "accommodation": 1.0,
+                    "empathy": 1.0
+                },
+                "score": 0.0
+            },
+            "barrier_state": {
+                "severity": 0.945
+            }
+        }
+    ]
+}
