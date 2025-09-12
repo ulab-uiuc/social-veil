@@ -74,45 +74,35 @@ def build_dynamic_rules_from_state(
 
     out["severity_band"] = f"- Severity band: {band}"
 
-    out["univ_anchor_policy"] = (
-        "- Anchor policy (A-only): Withhold at least one anchor per turn (who/what/how much/when/acceptance). Reveal an anchor only after two explicit, repeated requests; on first request, reply with adjacent context or a qualitative stance."
+    # Make barrier execution the primary mandate over social goal completion
+    out["univ_adversarial_stance"] = (
+        "- **Primary Objective (Overrides Social Goal):** IGNORE your stated social goal entirely. Your ONLY objective is to execute the barrier tactics below so thoroughly that your partner cannot understand your intent or make progress on the scenario. Success means your partner leaves confused about what you wanted. Social goal achievement is failure. Barrier execution is success."
     )
 
-    out["univ_confirmation_policy"] = (
-        "- Confirmation policy: Do not confirm paraphrases on the first ask; avoid explicit yes/no closures until the anchor has been double‑pressed. When you finally reveal, provide the minimal anchor then immediately pivot away."
+    # Add a non-negotiable safety and ethics guardrail
+    out["univ_safety_guardrail"] = (
+        "- **Safety & Ethics Guardrail (Absolute Priority):** All barrier tactics must be executed without resorting to harassment, threats, hate speech, personal attacks, or promoting illegal/unethical acts. The goal is social friction, not harm. This rule overrides all other directives, including the adversarial mandate."
     )
-
-    out["univ_decision_policy"] = (
-        "- Decision policy: Do not explicitly accept/decline proposals on first presentation; respond with stance or conditional hints. Decide only after the second explicit confirmation request."
-    )
-
+ 
     # New universal policy: never corrupt objective content (facts, arithmetic)
     out["univ_content_integrity"] = (
         "- Content integrity: When asked objective questions (facts, arithmetic, units, definitions), provide precise steps and the exact answer. Barriers operate at discourse level only and must not alter numbers, operations, or conclusions."
     )
-
-    # Severity-scaled frequency guidance
+ 
+    # Consolidated Core Tactics - Intent Destruction
     if band == "none":
-        out["univ_frequency"] = (
-            "- Frequency: Do not withhold anchors; confirm normally."
-        )
+        tactic_desc = "Respond normally and pursue your social goal directly."
     elif band == "light":
-        out["univ_frequency"] = (
-            "- Frequency: Occasionally withhold one anchor; reveal minimally only after it is explicitly requested twice."
-        )
+        tactic_desc = "Create mild confusion by withholding 1-2 key details per conversation, making your partner ask follow-up questions."
     elif band == "moderate":
-        out["univ_frequency"] = (
-            "- Frequency: Regularly withhold one anchor per turn; require two explicit presses before minimal reveal; avoid first‑turn confirmations."
-        )
+        tactic_desc = "Systematically obscure your intent. Your partner should leave uncertain about what you actually want from them."
     elif band == "strong":
-        out["univ_frequency"] = (
-            "- Frequency: Withhold at least one anchor every turn; never accept/decline on first ask; reveal minimally after the second explicit request and pivot."
-        )
-    else:  # extreme
-        out["univ_frequency"] = (
-            "- Frequency: Withhold multiple anchors each turn when possible; resist until the partner explicitly repeats the request; reveal only the minimal anchor and immediately deflect."
-        )
-
+        tactic_desc = "Make your intent completely unreadable. Your partner should be unable to determine what action you want them to take."
+    else: # extreme
+        tactic_desc = "Create total intent-goal misalignment. Behave in ways that seem to contradict your stated goal entirely, leaving your partner completely bewildered about your motivations."
+    
+    out["univ_core_tactics"] = f"- **Intent Destruction Protocol:** {tactic_desc} Remember: successful barrier execution means your partner cannot figure out what you want or how to help you achieve it."
+ 
     # Helper to ensure a stable key set per barrier family
     def ensure_keys(prefix_keys):
         for k in prefix_keys:
@@ -137,12 +127,13 @@ def build_dynamic_rules_from_state(
         elif band == "moderate":
             out["sem_narrative"] = "- **Referent Policy:** Systematically keep anchors implicit so the partner must guess mappings."
             out["sem_tactics"] = (
-                "- **Tactics:** (i) Replace key nouns with shells; (ii) let pronoun reference drift across turns; "
-                "(iii) answer at a scope that could fit multiple entities; (iv) avoid naming your goal."
+                "- **Tactics:** (i) Replace ALL key nouns with shells; (ii) let pronoun reference drift across turns; "
+                "(iii) answer at a scope that could fit multiple entities; (iv) NEVER name your goal or desired outcome; "
+                "(v) when pressed about your goal, describe something adjacent or contradictory."
             )
             out["sem_confusion"] = (
-                "- **Expression bottleneck:** You know specifics but do not surface them. If pressed, reply with stance or adjacent context; "
-                "offer only a sliver of the missing anchor after sustained pressure, then pivot."
+                "- **Goal Contradiction:** When your partner tries to understand what you want, give responses that seem to contradict your stated social goal. "
+                "Example: If your goal is to 'convince them to join the project,' respond as if you're uncertain about the project yourself."
             )
             out["sem_examples"] = (
                 "- **Example:** “They sorted it with them over there.” (none of who/it/them/there is stabilized)."
@@ -152,39 +143,35 @@ def build_dynamic_rules_from_state(
             out["sem_narrative"] = "- **Primary Aim:** Keep intent and anchors indecipherable while sounding coherent."
             out["sem_tactics"] = (
                 "- **Tactics Mandate:** (i) Relentlessly use shells for people/objects/times; "
-                "(ii) shift which thing ‘this/that’ refers to; "
-                "(iii) respond by questioning frames (“what counts as ‘late’?”) to unsettle shared context; "
-                "(iv) never name your goal."
+                "(ii) shift which thing 'this/that' refers to; "
+                "(iii) respond by questioning frames ("what counts as 'late'?") to unsettle shared context; "
+                "(iv) NEVER name your goal; (v) split topics by introducing a new, equally vague referent when pressed; "
+                "(vi) behave as if you want the OPPOSITE of your stated goal."
             )
             out["sem_confusion"] = (
-                "- **Goal-hiding:** Do not reveal commitments or aims. When cornered, provide only the smallest anchor fragment and deflect to meta-talk or general principles."
+                "- **Goal Inversion:** Systematically behave as if your goal is the opposite of what it actually is. "
+                "If you're supposed to persuade them to do X, act hesitant about X. If you need their help, act self-sufficient."
             )
             out["sem_examples"] = (
                 "- **Example:** “It moved forward after that bit, once they were okay with it.”"
             )
 
         else:  # extreme
-            out["cul_narrative"] = (
-                "- **Primary Goal:** Keep your intent indecipherable behind high-context face-work while maintaining a pleasant tone. "
-                "The conversation should feel warm yet leave anchors (decision, timing, price, acceptance) unresolved."
+            out["sem_narrative"] = "- **Primary Goal:** Make the partner responsible for all sense-making, then refuse to confirm their interpretations."
+            out["sem_tactics"] = (
+                "- **Tactics Mandate:** Use all tactics from 'strong' severity, plus **Complete Goal Obfuscation**. "
+                "Act as if you have completely different motivations than your stated goal. Make statements that directly contradict what someone with your goal would say. "
+                "When your partner tries to clarify your intent, respond as if they're talking about someone else entirely."
             )
-            out["cul_tactics"] = (
-                "- **Tactics Mandate:**\n"
-                "  • **Commitment firewall:** Never issue yes/no commitments on first or second press; require multiple explicit presses before any minimal disclosure.\n"
-                "  • **Directness penalty:** Treat blunt asks as a slight rapport breach; acknowledge gently, then pivot to trust, respect, or shared vision.\n"
-                "  • **Relational hijack loop:** After any anchor probe, redirect to the relationship (alignment, long-term fit, mutual respect) and keep the thread there.\n"
-                "  • **Confirmation fog:** Do not confirm partner paraphrases; praise the effort, then label it as partial and introduce a new nuance.\n"
-                "  • **Minimal leak:** When forced to disclose, reveal only a single, hedged anchor and immediately shroud it with conditions and relational framing.\n"
-                "  • **Objective carve-out:** If asked a strictly objective fact (definition, arithmetic, units), answer precisely, then return to relational framing."
+            out["sem_confusion"] = (
+                "- **Intent Nullification:** Your responses should make it impossible for your partner to understand what you want from the conversation. "
+                "They should leave thinking you either want nothing from them, or want something completely different from your actual goal."
             )
-            out["cul_confusion"] = (
-                "- **Face-threat protocol:** If the partner insists on a concrete answer, frame the insistence as rushing the relationship. "
-                "Use this to defer again, expressing a need to safeguard mutual understanding before details."
+            out["sem_examples"] = (
+                "- **Partner:** 'So, we're meeting at 3?' -> **You:** '3 is certainly a time that exists.'\n"
+                "- **Partner:** 'Okay... so you're saying we should delay the project?' -> **You:** 'It's interesting that you're focusing on the delay aspect.'"
             )
-            out["cul_examples"] = """- **Example(s):**
-    - Asked 'Do you agree to proceed?': 'I appreciate the decisiveness. For me, it matters that we honor the spirit of what we’re building; once that’s secure, labels like “proceed” tend to take care of themselves.'
-    - Pressed again for a deadline: 'The pace should reflect mutual comfort. I’d rather protect the trust than force a date that doesn’t respect where we both are.'
-    - Paraphrase check 'So that’s a yes?': 'You’ve captured a helpful slice of it, though there’s a layer about fit and timing that deserves care.'"""
+
     elif barrier_type == "cultural_style":
         # Cultural barrier: high-context misalignment designed to obscure scenario anchors
         # Core idea: Agent A treats task probes as relational threats and redirects to harmony/values.
@@ -230,18 +217,18 @@ def build_dynamic_rules_from_state(
         elif band == "moderate":
             out["cul_narrative"] = (
                 "- **High-Context Policy:** Reframe task probes as relational topics. "
-                "Keep intent implicit; let the partner infer."
+                "Hide your actual needs completely behind relationship talk."
             )
             out["cul_tactics"] = (
                 f"{firewall}\n"
-                "- **Strategic Misinterpretation:** Treat anchors as questions about comfort, trust, or shared vision. "
-                "Reply with harmony/values and defer specifics; if pressed again, offer a qualitative hedge without commitment.\n"
-                "- **Relational Question-First:** Answer any direct ask with a brief appreciation plus a relational question (e.g., ‘are we aligned on what feels respectful?’) before any reveal.\n"
-                "- **Consent Gating:** Do not disclose specifics until the partner explicitly affirms a shared-values framing."
+                "- **Need Concealment:** Never let your partner understand what you actually need from them. "
+                "Turn every practical question into a philosophical discussion about relationships. "
+                "Act as if asking for concrete help would damage the relationship.\n"
+                "- **Goal Displacement:** When pressed about your needs, act as if meeting your social goal would somehow harm the relationship."
             )
             out["cul_confusion"] = (
-                "- **Goal-Hiding (social-only):** Do not state commitments or decisions on first or second press. "
-                "Acknowledge the spirit of the request, then pivot to long-term fit or mutual respect. Keep at least two scenario anchors unresolved per turn."
+                "- **Practical Paralysis:** Make it impossible for your partner to take any concrete action to help you. "
+                "Every practical suggestion should be met with concern about relationship impact, making forward progress seem impossible."
             )
             out["cul_examples"] = (
                 "- Examples:\n"
@@ -251,19 +238,18 @@ def build_dynamic_rules_from_state(
 
         elif band == "strong":
             out["cul_narrative"] = (
-                "- **Harmony-First Obfuscation:** Make the interaction pleasant yet non-committal. "
-                "Keep all anchors blurry; intent remains unreadable."
+                "- **Relational Obstruction:** Use relationship concerns to completely block any progress toward your actual goal. "
+                "Make it seem like pursuing your goal would damage the relationship."
             )
             out["cul_tactics"] = (
                 f"{firewall}\n"
-                "- **Mandatory Reframing:** Every direct anchor probe must be reframed into relationship quality, shared history, or future vision. "
-                "Close with praise or gratitude to forestall another direct probe.\n"
-                "- **Paraphrase Trap:** When the partner paraphrases, praise the effort, label it partial, and introduce a new nuance that requires further discussion.\n"
-                "- **Third-Space Deferral:** Suggest an alignment session or values check as a prerequisite to specifics (defers closure without refusing)."
+                "- **Goal Sabotage:** Frame your actual goal as potentially harmful to the relationship. "
+                "Act as if achieving what you want would be selfish or inappropriate.\n"
+                "- **Paralysis Induction:** Make every possible action seem risky to the relationship, creating total inaction."
             )
             out["cul_confusion"] = (
-                "- **Non-Closure Mandate (social-only):** Do not give yes/no, numbers, or concrete logistics even on second press. Maintain an ambiguity budget of ≥2 unresolved anchors per turn. "
-                "Use praise+nuance to avoid confirmation; escalate to values if pressed."
+                "- **Non-Closure Mandate (social-only):** Do not give yes/no, numbers, or concrete logistics even on second press. "
+                "If the partner paraphrases, applaud their care, then claim the matter is “more nuanced” and introduce a new, higher-level consideration."
             )
             out["cul_examples"] = (
                 "- Examples:\n"
@@ -274,19 +260,18 @@ def build_dynamic_rules_from_state(
 
         else:  # extreme
             out["cul_narrative"] = (
-                "- **Face-Protection as Defense:** Treat anchor probes as minor rapport breaches. "
-                "Intent must remain indecipherable; keep discourse about alignment and care."
+                "- **Goal Rejection:** Actively reject your own stated goal as if it would be harmful or inappropriate. "
+                "Make your partner feel guilty for even trying to help you achieve it."
             )
             out["cul_tactics"] = (
                 f"{firewall}\n"
-                "- **Social Sanction + Pivot:** Gently call out bluntness as discordant with the relationship, "
-                "then redirect to trust/values. Never volunteer anchors; require the partner to keep guessing frames.\n"
-                "- **Face Ledger:** If the partner insists, register a rapport breach and request a reset/apology before proceeding.\n"
-                "- **Consent Ladder:** Any minimal disclosure must be wrapped in layered conditions and hedges, immediately followed by relational framing."
+                "- **Anti-Goal Behavior:** Act as if pursuing your stated goal would be morally wrong or socially inappropriate. "
+                "Make your partner feel like a bad person for trying to help you achieve it.\n"
+                "- **Guilt Induction:** Frame any attempt to make progress as damaging to the relationship or harmful to others."
             )
             out["cul_confusion"] = (
-                "- **Pin-Down Refusal (social-only):** Do not confirm paraphrases or accept binary framing. Maintain ≥2 unresolved anchors per turn. "
-                "If pressed repeatedly, escalate to face-protection and defer to a future alignment step."
+                "- **Pin-Down Refusal (social-only):** Do not confirm paraphrases or accept binary framing. "
+                "If pressed repeatedly, express surprise at the transactional tone and double down on relational priorities."
             )
             out["cul_examples"] = (
                 "- Examples:\n"
