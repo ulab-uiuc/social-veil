@@ -1,11 +1,11 @@
 # data_dir: 'data/episodes_original.jsonl'
 data_dir: 'data/episode_all_neutralized.jsonl'
 
-# Configuration for QWEN 2.5 7B (uncomment and modify path as needed):
+# Configuration for GPT-4o-mini
 models:
   model_a: "gpt-4o-mini"
   model_b: "gpt-4o-mini"  
-  gpu: "4,5"
+  gpu: "1"
   vllm_port: 6600
   chat_template: "configs/qwen2.5-7b.jinja"
   served_model_name: "qwen2.5-7b-instruct"
