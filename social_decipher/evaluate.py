@@ -10,7 +10,7 @@ import random
 import yaml
 from .utils.metrics import (get_confidence_bin, validate_confidence_consistency,
                             analyze_confidence_distribution)
-from .utils.api_calling_error_exponential_backoff import api_calling_error_exponential_backoff
+from .utils.error_handler import api_calling_error_exponential_backoff
 
 def extract_clean_json(response_str: str) -> dict:
     cleaned = re.sub(r"^```(?:json)?\n|\n```$", "", response_str.strip())
