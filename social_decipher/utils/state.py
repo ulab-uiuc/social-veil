@@ -144,7 +144,7 @@ def build_dynamic_rules_from_state(
             out["sem_tactics"] = (
                 "- **Tactics Mandate:** (i) Relentlessly use shells for people/objects/times; "
                 "(ii) shift which thing 'this/that' refers to; "
-                "(iii) respond by questioning frames ("what counts as 'late'?") to unsettle shared context; "
+                "(iii) respond by questioning frames (\"what counts as 'late'?\") to unsettle shared context; "
                 "(iv) NEVER name your goal; (v) split topics by introducing a new, equally vague referent when pressed; "
                 "(vi) behave as if you want the OPPOSITE of your stated goal."
             )
