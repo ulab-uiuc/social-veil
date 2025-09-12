@@ -3,6 +3,7 @@ from typing import Any
 
 import anthropic
 from openai import OpenAI
+from .retry import retry_with_backoff
 
 
 class ModelManager:
@@ -203,106 +204,6 @@ class ModelManager:
         )
 
         return language in supported_languages
-
-    @classmethod
-    def translate_text(
-        cls, text: str, source_language: str, target_language: str, model_id: str
-    ) -> str:
-        model_id = cls._normalize_model_id(model_id)
-
-        model_info = cls.MODEL_PROVIDERS.get(model_id, {})
-        provider = model_info.get("provider", "openai")
-
-        if provider == "huggingface":
-            model_id = "gpt-4o-mini"
-            provider = "openai"
-
-        if provider == "openai" or provider == "openai_proxy":
-            result = cls._translate_with_openai(
-                text, source_language, target_language, model_id
-            )
-        elif provider == "anthropic":
-            result = cls._translate_with_anthropic(
-                text, source_language, target_language, model_id
-            )
-        else:
-            print(f"Unsupported provider: {provider}")
-            return text
-
-        return result
-
-    @classmethod
-    def _translate_with_openai(cls, text: str, source_language: str, target_language: str, model_id: str) -> str:
-        # First, check if text is already in the target language
-        client = cls.get_openai_client()
-        
-        # Language detection step
-        detect_prompt = f"Identify if this text is in {source_language} or {target_language}. Just respond with ONLY the language name, no explanations:\n\n{text}"
-        
-        try:
-            detect_response = client.chat.completions.create(
-                model=model_id,
-                messages=[
-                    {"role": "system", "content": "You are a language detection tool. Respond with ONLY the language name."},
-                    {"role": "user", "content": detect_prompt},
-                ],
-                temperature=0.0,
-            )
-            detected_language = detect_response.choices[0].message.content.strip().lower()
-            
-            # If already in target language or not in source language, don't translate
-            if target_language.lower() in detected_language:
-                print(f"Text already in {target_language}, skipping translation")
-                return text
-                
-            # Only translate if text is in source language
-            if source_language.lower() not in detected_language:
-                print(f"Text not in {source_language}, might be {detected_language}. Skipping translation.")
-                return text
-                
-            # Otherwise proceed with translation
-            prompt = f"Translate the following {source_language} text to {target_language}. Maintain the original structure and format. Return only the translated text without explanations or metadata.\n\n{text}"
-            
-            response = client.chat.completions.create(
-                model=model_id,
-                messages=[
-                    {"role": "system", "content": "You are a professional translator."},
-                    {"role": "user", "content": prompt},
-                ],
-                temperature=0.0,
-            )
-            
-            translated_text = response.choices[0].message.content
-            
-            # Verify translation actually happened
-            if translated_text.strip() == text.strip():
-                print(f"Warning: Translation returned identical text. Possible failure.")
-            
-            return translated_text
-            
-        except Exception as e:
-            print(f"Translation error with {model_id}: {e}")
-            return text
-
-    @classmethod
-    def _translate_with_anthropic(
-        cls, text: str, source_language: str, target_language: str, model_id: str
-    ) -> str:
-        """Translate text using Anthropic models"""
-        client = cls.get_anthropic_client()
-        prompt = f"Translate the following {source_language} text to {target_language}. Maintain the original structure and format. Return only the translated text without explanations or metadata.\n\n{text}"
-
-        try:
-            response = client.messages.create(
-                model=model_id,
-                system="You are a professional translator.",
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0,
-            )
-            return response.content[0].text
-        except Exception as e:
-            print(f"Translation error with {model_id}: {e}")
-            return text
 
     @classmethod
     def list_available_pairs(cls):
