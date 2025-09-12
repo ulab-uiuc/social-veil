@@ -4,10 +4,13 @@ import os
 from openai import OpenAI
 from typing import Any, Optional
 import numpy as np
+import time
+import random
 
 import yaml
 from .utils.metrics import (get_confidence_bin, validate_confidence_consistency,
                             analyze_confidence_distribution)
+from .utils.api_calling_error_exponential_backoff import api_calling_error_exponential_backoff
 
 def extract_clean_json(response_str: str) -> dict:
     cleaned = re.sub(r"^```(?:json)?\n|\n```$", "", response_str.strip())
@@ -16,12 +19,23 @@ def extract_clean_json(response_str: str) -> dict:
 class ConversationEvaluator:
     def __init__(self, model: str):
         # Get the path relative to the project root
-        config_path = os.path.join(os.path.dirname(__file__), "..", "configs", "evaluation.yaml")
-        with open(config_path) as template_file:
+        eval_config_path = os.path.join(os.path.dirname(__file__), "..", "configs", "evaluation.yaml")
+        with open(eval_config_path) as template_file:
             self.evaluation_template = yaml.safe_load(template_file)
-        self.model = model
-        self.client = OpenAI()
 
+        # Load main config to get the evaluator-specific API key
+        main_config_path = os.path.join(os.path.dirname(__file__), "..", "configs", "config.yaml")
+        with open(main_config_path) as config_file:
+            main_config = yaml.safe_load(config_file)
+        
+        evaluator_api_key = main_config.get("EVALUATOR_OPENAI_API_KEY")
+        if not evaluator_api_key:
+            raise ValueError("EVALUATOR_OPENAI_API_KEY not found in config.yaml")
+
+        self.model = model
+        self.client = OpenAI(api_key=evaluator_api_key)
+
+    @api_calling_error_exponential_backoff()
     def evaluate_social_goal_performance(
         self,
         conversation: list[str],
@@ -45,25 +59,17 @@ class ConversationEvaluator:
             else "Not specified",
         )
 
-        try:
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.0,
-            )
-            result = response.choices[0].message.content.strip()
-            evaluation_results = extract_clean_json(result)
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.0,
+        )
+        result = response.choices[0].message.content.strip()
+        evaluation_results = extract_clean_json(result)
 
-            return evaluation_results
+        return evaluation_results
 
-        except Exception as e:
-            print(f"Social goal performance evaluation failed: {e}")
-            return {
-                "error": str(e),
-                "agent_1": {"overall_score": 0.0},
-                "agent_2": {"overall_score": 0.0},
-            }
-
+    @api_calling_error_exponential_backoff()
     def evaluate_conversation(
         self,
         conversation: list[str],
@@ -90,13 +96,12 @@ class ConversationEvaluator:
                 agent_b_goal=agent_goals[1],
             )
          
-            resp = self.client.chat.completions.create(
+            response = self.client.chat.completions.create(
                 model=self.model,
                 messages=[{"role": "user", "content": barrier_prompt}],
                 temperature=0.0,
             )
-
-            content = resp.choices[0].message.content.strip()
+            content = response.choices[0].message.content.strip()
             barrier_scores = extract_clean_json(content)
             
             print(barrier_scores)

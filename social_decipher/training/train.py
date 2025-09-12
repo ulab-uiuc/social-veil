@@ -13,6 +13,7 @@ import os
 import sys
 import yaml
 import json
+import wandb
 from typing import Dict, List, Any, Optional
 from pathlib import Path
 
@@ -146,6 +147,26 @@ def main():
         help="Directory for model checkpoints"
     )
     
+    # Wandb options
+    parser.add_argument(
+        "--wandb_project", 
+        type=str, 
+        default="social-decipher",
+        help="Wandb project name"
+    )
+    parser.add_argument(
+        "--wandb_entity", 
+        type=str, 
+        default=None,
+        help="Wandb entity name"
+    )
+    parser.add_argument(
+        "--wandb_run_name",
+        type=str,
+        default=None,
+        help="Wandb run name"
+    )
+    
     # Model options
     parser.add_argument(
         "--expert_model", 
@@ -200,6 +221,14 @@ def main():
     )
     
     args = parser.parse_args()
+
+    # Initialize wandb
+    wandb.init(
+        project=args.wandb_project,
+        entity=args.wandb_entity,
+        name=args.wandb_run_name or args.experiment_name,
+        config=vars(args)
+    )
     
     # Load configuration
     if args.config:

@@ -15,7 +15,7 @@ from mistralai import Mistral
 from openai import OpenAI
 from rich import print
 from .local_model_manager import LocalModelManager
-from .retry import wait_on_rate_limit
+from .error_handler import api_calling_error_exponential_backoff
 
 CONFIG_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../configs/config.yaml"))
 with open(CONFIG_PATH, "r") as f:
@@ -96,8 +96,8 @@ def direct_completion(
     else:
         return openai_completion(model_id, system_message, message)
     
-@wait_on_rate_limit()
-def openai_completion(model_id, system_message, message):
+@api_calling_error_exponential_backoff()
+def openai_completion(model_id: str, system_message: str, message: str) -> Optional[str]:
 
     client = get_openai_client()
     try:    
@@ -125,8 +125,8 @@ def openai_completion(model_id, system_message, message):
             }
         )
 
-@wait_on_rate_limit()
-def anthropic_completion(model_id, system_message, message):
+@api_calling_error_exponential_backoff()
+def anthropic_completion(model_id: str, system_message: str, message: str) -> Optional[str]:
     """
     Get completion from Anthropic API.
     

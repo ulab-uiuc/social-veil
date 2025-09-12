@@ -26,6 +26,11 @@ FILTER_TOP_K=${FILTER_TOP_K:-2}
 USE_BARRIER_EPISODES=${USE_BARRIER_EPISODES:-false}
 BARRIER_TYPES=${BARRIER_TYPES:-"semantic cultural emotional"}
 
+# Wandb configuration
+WANDB_PROJECT=${WANDB_PROJECT:-"social-decipher"}
+WANDB_ENTITY=${WANDB_ENTITY:-""}
+WANDB_RUN_NAME=${WANDB_RUN_NAME:-""}
+
 # Environment setup
 export PYTHONPATH="${PYTHONPATH}:$(pwd)"
 
@@ -111,6 +116,15 @@ run_training() {
     TRAIN_CMD="$TRAIN_CMD --quality_threshold $QUALITY_THRESHOLD"
     TRAIN_CMD="$TRAIN_CMD --filter_top_k $FILTER_TOP_K"
     
+    # Add wandb arguments
+    TRAIN_CMD="$TRAIN_CMD --wandb_project $WANDB_PROJECT"
+    if [ -n "$WANDB_ENTITY" ]; then
+        TRAIN_CMD="$TRAIN_CMD --wandb_entity $WANDB_ENTITY"
+    fi
+    if [ -n "$WANDB_RUN_NAME" ]; then
+        TRAIN_CMD="$TRAIN_CMD --wandb_run_name $WANDB_RUN_NAME"
+    fi
+    
     if [ "$USE_BARRIER_EPISODES" = true ]; then
         TRAIN_CMD="$TRAIN_CMD --use_barrier_episodes"
         TRAIN_CMD="$TRAIN_CMD --barrier_types $BARRIER_TYPES"
@@ -180,6 +194,9 @@ show_help() {
     echo "  FILTER_TOP_K            Top-k filtering (default: 2)"
     echo "  USE_BARRIER_EPISODES    Use barrier episodes (default: false)"
     echo "  BARRIER_TYPES           Barrier types to include (default: semantic cultural emotional)"
+    echo "  WANDB_PROJECT           Wandb project name (default: social-decipher)"
+    echo "  WANDB_ENTITY            Wandb entity name (optional)"
+    echo "  WANDB_RUN_NAME          Wandb run name (optional, defaults to experiment name)"
     echo ""
     echo "Examples:"
     echo "  $0                                    # Run with default settings"

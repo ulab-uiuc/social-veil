@@ -8,6 +8,7 @@ import json
 from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass
 from openai import OpenAI
+from ..utils.retry import retry_with_backoff
 
 from .data_collector import TrainingConversation
 

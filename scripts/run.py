@@ -25,7 +25,7 @@ with open(CONFIG_PATH, "r") as f:
 sotopia_env = _config.get("sotopia_env")
 sotopia_hard_env = _config.get("sotopia_hard_env")
 
-os.environ["OPENAI_API_KEY"] = _config.get("OPENAI_API_KEY") 
+os.environ["OPENAI_API_KEY"] = _config.get("AGENT_OPENAI_API_KEY") 
 os.environ["HF_API_TOKEN"] = _config.get("HF_API_TOKEN")
 os.environ["MISTRAL_API_KEY"] = _config.get("MISTRAL_API_KEY")
 os.environ["ANTHROPIC_API_KEY"] = _config.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_API_KEY", "")

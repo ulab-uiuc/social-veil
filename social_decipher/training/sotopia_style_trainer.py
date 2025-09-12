@@ -314,6 +314,7 @@ class SotopiaStyleTrainer:
             "save_steps": self.config.save_steps,
             "save_total_limit": self.config.save_total_limit,
             "logging_steps": self.config.logging_steps,
+            "report_to": "wandb"
         })
         
         print(f"Training output directory: {output_dir}")
