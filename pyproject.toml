@@ -31,6 +31,7 @@ pyyaml = "^6.0.2"
 setuptools = "^80.9.0"
 scikit-learn = "^1.7.1"
 datasets = "^4.0.0"
+wandb = "^0.21.4"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.6.0"
