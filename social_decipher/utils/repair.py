@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional
 import yaml
 
 from .base import get_openai_client
-from .retry import retry_with_backoff
+from .error_handler import api_calling_error_exponential_backoff
 
 
 def _find_repair_yaml() -> str:
@@ -59,7 +59,7 @@ def judge_repair_with_llm(
 
     client = get_openai_client()
     model = model_id or os.environ.get("REPAIR_JUDGE_MODEL", "gpt-4o-mini")
-    @retry_with_backoff()
+    @api_calling_error_exponential_backoff()
     def _call():
         return client.chat.completions.create(
             model=model,
