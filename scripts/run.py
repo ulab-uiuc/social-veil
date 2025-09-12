@@ -4,8 +4,6 @@ import json
 import sys
 import yaml
 import requests
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from functools import partial
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from openai import OpenAI
@@ -52,7 +50,7 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "--episodes_file", type=str, default="data/episode_all_neutralized.jsonl", 
+        "--episodes_file", type=str, default="data/episode_original.json", 
         help="Path to the pre-processed episode JSONL file",
     )
     parser.add_argument(
@@ -62,10 +60,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--resume", action="store_true", 
         help="Resume an unfinished run by skipping scenarios that already have results in --results_dir",
-    )
-    parser.add_argument(
-        "--concurrency", type=int, default=1,
-        help="Number of scenarios to run in parallel (>=1). For local GPU servers via vLLM, 4-16 is typical."
     )
 
     return parser.parse_args()
@@ -182,57 +176,43 @@ def run_experiment(episodes, experiment_config, evaluator, args, mode_tag: str):
     print(f"   Mode: {mode_tag}")
     print(f"   Results: {results_dir}")
     
-    eval_results, mcq_logs = [], []
     completed = _get_completed_scenarios(results_dir) if getattr(args, "resume", False) else set()
 
     if completed:
         print(f"   Resume enabled: detected {len(completed)} completed scenario(s) in {results_dir} → will skip them")
     
-    def _run_one(scenario_idx: int, episode_data: dict):
+    for scenario_idx, episode_data in enumerate(episodes):
         scenario_num = scenario_idx + 1
+        if scenario_num in completed:
+            print(f"⏭️  Skipping scenario {scenario_num} (already completed)")
+            continue
         print(f"📝 Scenario {scenario_num}/{len(episodes)}")
-        # Build everything per task
+        
         profile_a, profile_b, env, agent1_name, agent2_name, agent_reasons = build_profiles_and_env(
             episode_data, args.model, args.model_a, args.model_b, None
         )
-        agent1, agent2 = create_agents(profile_a, profile_b, env, agent1_name, agent2_name)
-        # Create a fresh evaluator per task to avoid client sharing across threads
-        local_evaluator = ConversationEvaluator(args.model)
-        simulate_conversation(
-            personA=agent1,
-            personB=agent2,
-            evaluator=local_evaluator,
-            max_rounds=args.max_rounds,
-            scenario_index=scenario_idx,
-            pair="0",
-            environment=env,
-            result=None,
-            root_dir=results_dir,
+        
+        agent1, agent2 = create_agents(
+            profile_a, profile_b, env, agent1_name, agent2_name
         )
-
-    # Submit tasks
-    to_run = [(idx, ep) for idx, ep in enumerate(episodes) if (idx + 1) not in completed]
-    if not to_run:
-        print("Nothing to do. All scenarios appear completed.")
-        return
-    workers = max(1, int(getattr(args, "concurrency", 1) or 1))
-    if workers == 1:
-        for idx, ep in to_run:
-            try:
-                _run_one(idx, ep)
-            except Exception as e:
-                print(f"❌ Scenario {idx+1} failed with error: {e}")
-    else:
-        print(f"🚀 Concurrency: {workers} workers")
-        with ThreadPoolExecutor(max_workers=workers) as executor:
-            futures = {executor.submit(_run_one, idx, ep): idx for idx, ep in to_run}
-            for fut in as_completed(futures):
-                idx = futures[fut]
-                try:
-                    fut.result()
-                except Exception as e:
-                    print(f"❌ Scenario {idx+1} failed with error: {e}")
-
+        
+        try:
+            simulate_conversation(
+                personA=agent1,
+                personB=agent2,
+                evaluator=evaluator,
+                max_rounds=args.max_rounds,
+                scenario_index=scenario_idx,
+                pair="0",
+                environment=env,
+                result=None,
+                root_dir=results_dir,
+            )
+        except Exception as e:
+            # Log and continue to next scenario so long runs can progress
+            print(f"❌ Scenario {scenario_num} failed with error: {e}")
+            continue
+        
 def main():
     args = parse_args()
     
@@ -261,9 +241,9 @@ def main():
         args.results_dir
     )
     
-    semantic_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_all_semantic.json"))
-    cultural_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_all_cultural.json"))
-    emotional_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_all_emotional.json"))
+    semantic_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_semantic.json"))
+    cultural_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_cultural.json"))
+    emotional_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_emotional.json"))
 
     need_generate = not (os.path.isfile(semantic_path) and os.path.isfile(cultural_path) and os.path.isfile(emotional_path))
     if need_generate:
@@ -276,8 +256,8 @@ def main():
     episodes_emotional = load_json(emotional_path)
 
     # Run baseline then each barrier set
-    print("\n▶️ Running baseline (original episodes)...")
-    run_experiment(episodes, experiment_config, evaluator, args, mode_tag="baseline")
+    # print("\n▶️ Running baseline (original episodes)...")
+    # run_experiment(episodes, experiment_config, evaluator, args, mode_tag="baseline")
 
     print("\n▶️ Running semantic barrier episodes...")
     run_experiment(episodes_semantic, experiment_config, evaluator, args, mode_tag="semantic")
