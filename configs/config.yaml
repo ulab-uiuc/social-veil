@@ -11,6 +11,7 @@ models:
   served_model_name: "qwen2.5-7b-instruct"
   max_model_len: 4096
   tensor_parallel_size: 0
+  response_max_tokens: 256
   enable_repair_and_state: false
 
 ## Configuration for Mistral 8B Instruct:
@@ -38,7 +39,11 @@ models:
 #   enable_repair_and_state: false
 
 # Key
-OPENAI_API_KEY: ""
+
+#OPENAI_API_KEY: "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"
+OPENAI_API_KEY: "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"
+
+
 HF_API_TOKEN: "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"
 MISTRAL_API_KEY: yQ9wm2nsnrlujAjTbBDuRwnjTV2bA1oT
 

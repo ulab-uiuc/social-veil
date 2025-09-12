@@ -15,10 +15,14 @@ from mistralai import Mistral
 from openai import OpenAI
 from rich import print
 from .local_model_manager import LocalModelManager
+from .retry import wait_on_rate_limit
 
 CONFIG_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../configs/config.yaml"))
 with open(CONFIG_PATH, "r") as f:
     _config = yaml.safe_load(f)
+
+# Global token cap (response) with sensible default
+_RESP_MAX_TOKENS = int((_config.get("models", {}) or {}).get("response_max_tokens", 160))
 
 # Global clients for API access
 openai_client = None
@@ -92,6 +96,7 @@ def direct_completion(
     else:
         return openai_completion(model_id, system_message, message)
     
+@wait_on_rate_limit()
 def openai_completion(model_id, system_message, message):
 
     client = get_openai_client()
@@ -103,6 +108,7 @@ def openai_completion(model_id, system_message, message):
                 {"role": "user", "content": message},
             ],
             temperature=0.3,
+            max_tokens=_RESP_MAX_TOKENS,
         )
         content = response.choices[0].message.content
         if not (content.startswith("{") and content.endswith("}")):
@@ -119,6 +125,7 @@ def openai_completion(model_id, system_message, message):
             }
         )
 
+@wait_on_rate_limit()
 def anthropic_completion(model_id, system_message, message):
     """
     Get completion from Anthropic API.
@@ -139,7 +146,7 @@ def anthropic_completion(model_id, system_message, message):
             system=system_message,
             messages=[{"role": "user", "content": message}],
             temperature=0.3,
-            max_tokens=1024,
+            max_tokens=_RESP_MAX_TOKENS,
         )
         content = response.content[0].text
 
@@ -288,7 +295,7 @@ def local_model_completion(model_id, system_message, message):
         # Generate response
         print(f"🚀 Generating response via local model...")
         try:
-            response = model_manager.generate(messages, max_new_tokens=512)
+            response = model_manager.generate(messages, max_new_tokens=_RESP_MAX_TOKENS)
         except Exception as e:
             print(f"   ❌ Generate call failed: {e}")
             print(f"   ❌ Generate error type: {type(e)}")
