@@ -17,7 +17,7 @@ DATA_TAG="${DATA_FILE_NAME%.*}"
 export MODEL_NAME=$(poetry run python $CONFIG_READER models.served_model_name)
 export GPU=$(poetry run python $CONFIG_READER models.gpu)
 export VLLM_PORT=$(poetry run python $CONFIG_READER models.vllm_port)
-export CONCURRENCY=${CONCURRENCY:-8}
+export CONCURRENCY=${CONCURRENCY:-1}
 
 TIMESTAMP=$(date +%m%d_%H%M)
 
@@ -52,7 +52,7 @@ fi
 
 echo "Starting experiment..."
 
-CUDA_VISIBLE_DEVICES=$GPU VLLM_PORT=$VLLM_PORT python scripts/run.py \
+CUDA_VISIBLE_DEVICES=$GPU VLLM_PORT=$VLLM_PORT python scripts/run.py --disable-mcq \
     --model_a $GLOBAL_MODEL_A \
     --model_b $GLOBAL_MODEL_B \
     --episodes_file $DATA_NAME \
