@@ -67,6 +67,10 @@ def parse_args() -> argparse.Namespace:
         "--concurrency", type=int, default=1,
         help="Number of scenarios to run in parallel (>=1). For local GPU servers via vLLM, 4-16 is typical."
     )
+    parser.add_argument(
+        "--disable-mcq", action="store_true",
+        help="Disable MCQ tests during the simulation."
+    )
 
     return parser.parse_args()
 
@@ -212,6 +216,7 @@ def run_experiment(episodes, experiment_config, evaluator, args, mode_tag: str):
                 environment=env,
                 result=None,
                 root_dir=results_dir,
+                run_mcq_tests=not args.disable_mcq,
             )
         except Exception as e:
             # Log the exception to a file in the scenario directory

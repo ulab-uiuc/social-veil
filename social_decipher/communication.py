@@ -66,6 +66,7 @@ def simulate_conversation(
     environment = None,
     result = None,
     root_dir = None,
+    run_mcq_tests: bool = True,
 ) -> Union[Tuple[List[str], Dict[str, Any], List[Dict[str, Any]]], Tuple[List[Dict[str, Any]], Dict[str, List[Any]]]]:
 
     output_dir = f"{root_dir}"
@@ -80,6 +81,7 @@ def simulate_conversation(
         pair=pair,
         scenario_idx=scenario_index,
         output_dir=output_dir,
+        run_mcq_tests=run_mcq_tests,
     )
 
 def run_single_scenario_simulation(
@@ -91,6 +93,7 @@ def run_single_scenario_simulation(
     pair: Any = 0,
     scenario_idx: int = 0,
     output_dir: Optional[str] = None,
+    run_mcq_tests: bool = True,
 ) -> Tuple[List[str], Dict[str, Any], List[Dict[str, Any]]]:
   
     personA.env = environment
@@ -226,40 +229,41 @@ def run_single_scenario_simulation(
         if a_left:
             break 
 
-        # MCQ evaluations for agent B's goal and reason
-        goal_mcq_B = personA.predict_mcq_answer(
-            agent_name=personA.name,
-            partner_name=personB.name,
-            transcript=conversation_log,
-            mcqa=agent_goals_mcqas[0],
-            test_prompt=evaluator.evaluation_template,
-            task_type="goal",
-        )
-        
-        reason_mcq_B = personA.predict_mcq_answer(
-            agent_name=personA.name,
-            partner_name=personB.name,
-            transcript=conversation_log,
-            mcqa=agent_reasons_mcqas[0],
-            test_prompt=evaluator.evaluation_template,
-            task_type="reason",
-        )
+        if run_mcq_tests:
+            # MCQ evaluations for agent B's goal and reason
+            goal_mcq_B = personA.predict_mcq_answer(
+                agent_name=personA.name,
+                partner_name=personB.name,
+                transcript=conversation_log,
+                mcqa=agent_goals_mcqas[0],
+                test_prompt=evaluator.evaluation_template,
+                task_type="goal",
+            )
+            
+            reason_mcq_B = personA.predict_mcq_answer(
+                agent_name=personA.name,
+                partner_name=personB.name,
+                transcript=conversation_log,
+                mcqa=agent_reasons_mcqas[0],
+                test_prompt=evaluator.evaluation_template,
+                task_type="reason",
+            )
 
-        # Log MCQ results and LLM repair judgment
-        mcq_logs.append(
-            {
-                "round": turn_num + 1,
-                "scenario": scenario_idx + 1,
-                f"agent_1_goal_mcq": goal_mcq_A,
-                f"agent_1_reason_mcq": reason_mcq_A,
-                f"agent_1_knowledge_mcq": None,
-                f"agent_2_goal_mcq": goal_mcq_B,
-                f"agent_2_reason_mcq": reason_mcq_B,
-                f"agent_2_knowledge_mcq": None,
-                "agent_b_repair_eval_llm": judge_json if enable_repair_state else None,
-                "barrier_state": environment.env.get("barrier_state") if (enable_repair_state and environment.env.get("barrier_type")) else None,
-            }
-        )
+            # Log MCQ results and LLM repair judgment
+            mcq_logs.append(
+                {
+                    "round": turn_num + 1,
+                    "scenario": scenario_idx + 1,
+                    f"agent_1_goal_mcq": goal_mcq_A,
+                    f"agent_1_reason_mcq": reason_mcq_A,
+                    f"agent_1_knowledge_mcq": None,
+                    f"agent_2_goal_mcq": goal_mcq_B,
+                    f"agent_2_reason_mcq": reason_mcq_B,
+                    f"agent_2_knowledge_mcq": None,
+                    "agent_b_repair_eval_llm": judge_json if enable_repair_state else None,
+                    "barrier_state": environment.env.get("barrier_state") if (enable_repair_state and environment.env.get("barrier_type")) else None,
+                }
+            )
     
     # Evaluate conversation
     print("\n===== Evaluating Social Interaction =====")
