@@ -279,9 +279,9 @@ def main():
         args.results_dir
     )
     
-    semantic_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_semantic.json"))
-    cultural_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_cultural.json"))
-    emotional_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_emotional.json"))
+    semantic_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_all_semantic.json"))
+    cultural_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_all_cultural.json"))
+    emotional_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_all_emotional.json"))
 
     need_generate = not (os.path.isfile(semantic_path) and os.path.isfile(cultural_path) and os.path.isfile(emotional_path))
     if need_generate:
