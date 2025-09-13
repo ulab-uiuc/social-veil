@@ -207,6 +207,13 @@ def main():
         help="Top-k filtering per episode type"
     )
     
+    parser.add_argument(
+        "--scoring_strategy", 
+        type=str, 
+        default="default",
+        help="Scoring strategy to use (e.g., default, weighted, custom_barrier_focused)"
+    )
+    
     # Data options
     parser.add_argument(
         "--use_barrier_episodes", 
@@ -248,7 +255,8 @@ def main():
             evaluator_model=args.evaluator_model,
             conversations_per_episode=args.conversations_per_episode,
             quality_threshold=args.quality_threshold,
-            filter_top_k=args.filter_top_k
+            filter_top_k=args.filter_top_k,
+            scoring_strategy=args.scoring_strategy
         )
     
     # Load episodes
