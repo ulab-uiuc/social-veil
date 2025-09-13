@@ -8,6 +8,8 @@ import json
 from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass
 from openai import OpenAI
+import os
+import yaml
 
 from .data_collector import TrainingConversation
 
@@ -37,7 +39,20 @@ class ConversationRater:
     """
     
     def __init__(self, model: str = "gpt-4o", temperature: float = 0.3):
-        self.client = OpenAI()
+        # Load main config to get the evaluator-specific API key
+        main_config_path = os.path.join(os.path.dirname(__file__), "..", "..", "configs", "config.yaml")
+        with open(main_config_path) as config_file:
+            main_config = yaml.safe_load(config_file)
+        
+        evaluator_api_key = main_config.get("EVALUATOR_OPENAI_API_KEY")
+        if not evaluator_api_key:
+            # Fallback to the agent key if the evaluator key is not found
+            evaluator_api_key = main_config.get("AGENT_OPENAI_API_KEY")
+        
+        if not evaluator_api_key:
+            raise ValueError("No OpenAI API key found in config.yaml (checked for EVALUATOR_OPENAI_API_KEY and AGENT_OPENAI_API_KEY)")
+
+        self.client = OpenAI(api_key=evaluator_api_key)
         self.model = model
         self.temperature = temperature
         
