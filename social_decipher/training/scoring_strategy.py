@@ -136,8 +136,15 @@ class WeightedScoringStrategy(ScoringStrategy):
         total_weight = 0.0
         
         for dimension in self.config.scoring_dimensions:
+            score = None
+            # Handle Sotopia dimensions (e.g., goal_completion)
             if hasattr(rating, dimension):
                 score = getattr(rating, dimension)
+            # Handle nested episode_level dimensions (e.g., unresolved_confusion)
+            elif rating.episode_level and dimension in rating.episode_level:
+                score = rating.episode_level[dimension]
+
+            if score is not None:
                 weight = self.config.dimension_weights.get(dimension, 1.0)
                 total_score += score * weight
                 total_weight += weight
@@ -310,7 +317,8 @@ class ScoringManager:
         "default": DefaultScoringStrategy,
         "weighted": WeightedScoringStrategy,
         "adaptive": AdaptiveScoringStrategy,
-        "custom": CustomScoringStrategy
+        "custom": CustomScoringStrategy,
+        "custom_barrier_focused": CustomScoringStrategy,
     }
     
     def __init__(self, strategy_name: str = "default", config: ScoringConfig = None, **kwargs):
@@ -427,6 +435,28 @@ def get_balanced_config() -> ScoringConfig:
             "social_intelligence": 0.2,
             "communication_effectiveness": 0.15,
             "goal_achievement": 0.1
+        }
+    )
+
+
+def get_custom_barrier_focused_config() -> ScoringConfig:
+    """Get a custom, barrier-focused scoring configuration based on user request."""
+    return ScoringConfig(
+        quality_threshold=5.5,  # Adjusted threshold for a different scoring scale
+        filter_top_k=3,
+        scoring_dimensions=[
+            "goal_completion",
+            "believability",
+            "relationship",
+            "unresolved_confusion",
+            "mutual_understanding"
+        ],
+        dimension_weights={
+            "goal_completion": 1.0,
+            "believability": 0.8,
+            "relationship": 0.6,
+            "unresolved_confusion": -1.0,  # Negative weight because lower is better
+            "mutual_understanding": 1.0
         }
     )
 
