@@ -188,7 +188,7 @@ class BarrierDataCollector:
             environment=env,
             evaluator=self.evaluator,
             num_turns=max_rounds,
-
+            run_mcq_tests=False,
         )
         
         # Package training conversation
@@ -241,7 +241,7 @@ class BarrierDataCollector:
             environment=env,
             evaluator=self.evaluator,
             num_turns=max_rounds,
-
+            run_mcq_tests=False,
         )
         
         # Package training conversation
