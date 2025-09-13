@@ -26,6 +26,12 @@ AGENT_MODEL="models/Qwen2.5-0.5B-Instruct"
 EVALUATOR_MODEL="gpt-4o"
 EXPERT_MODEL="gpt-4.1"
 
+# --- API Keys (read from config.yaml) ---
+CONFIG_READER_CMD="python3 -m social_decipher.utils.config_reader"
+export AGENT_OPENAI_API_KEY=$($CONFIG_READER_CMD AGENT_OPENAI_API_KEY)
+export EVALUATOR_OPENAI_API_KEY=$($CONFIG_READER_CMD EVALUATOR_OPENAI_API_KEY)
+export OPENAI_API_KEY=$AGENT_OPENAI_API_KEY
+
 # --- Data & Training Loop Configuration ---
 # The starting dataset of scenarios. Use a small sample for testing.
 # For testing: "data/episode_test_sample.jsonl"

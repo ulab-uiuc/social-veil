@@ -72,6 +72,9 @@ class TrainingConfig:
     save_total_limit: int = 5
     logging_steps: int = 1
 
+    # Data loading settings
+    load_existing_data: bool = False
+
 
 class SotopiaStyleTrainer:
     """
@@ -187,11 +190,20 @@ class SotopiaStyleTrainer:
         
         # Behavior Cloning (Expert demonstrations)
         print("🎓 Collecting Behavior Cloning data...")
-        bc_conversations = self.data_collector.collect_behavior_cloning_data(
-            episodes, 
-            self.config.conversations_per_episode,
-            self.config.max_rounds
-        )
+        
+        bc_file_path = os.path.join(self.config.output_dir, "bc_data.json")
+        if self.config.load_existing_data and os.path.exists(bc_file_path):
+            print(f"🔄 Loading existing BC data from {bc_file_path}...")
+            self.data_collector.load_conversations(bc_file="bc_data.json")
+            bc_conversations = self.data_collector.bc_conversations
+        else:
+            if self.config.load_existing_data:
+                print(f"⚠️  --load-existing-data was specified, but {bc_file_path} not found. Regenerating data.")
+            bc_conversations = self.data_collector.collect_behavior_cloning_data(
+                episodes, 
+                self.config.conversations_per_episode,
+                self.config.max_rounds
+            )
         all_conversations.extend(bc_conversations)
         
         # Self-Reinforcement (Self-play)

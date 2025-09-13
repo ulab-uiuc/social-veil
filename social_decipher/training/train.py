@@ -226,6 +226,11 @@ def main():
         default=["semantic", "cultural", "emotional"],
         help="Barrier types to include"
     )
+    parser.add_argument(
+        "--load-existing-data", 
+        action="store_true",
+        help="Load existing conversation data (e.g., bc_data.json) if available, instead of regenerating it."
+    )
     
     args = parser.parse_args()
 
@@ -259,6 +264,9 @@ def main():
             filter_top_k=args.filter_top_k,
             scoring_strategy=args.scoring_strategy
         )
+    
+    # Pass the data loading preference to the trainer
+    config.load_existing_data = args.load_existing_data
     
     # Load episodes
     print(f"Loading episodes from {args.episodes_file}")

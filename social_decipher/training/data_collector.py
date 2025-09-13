@@ -71,8 +71,22 @@ class BarrierDataCollector:
         Both agents use expert models to show optimal barrier handling.
         """
         print("🎓 Collecting Behavior Cloning (BC) data...")
-        conversations = []
         
+        # Load existing conversations to append new data, preventing overwrites
+        bc_filepath = os.path.join(self.output_dir, "bc_data.json")
+        if os.path.exists(bc_filepath):
+            print(f"🔄 Found existing BC data at {bc_filepath}. Loading to append new conversations.")
+            with open(bc_filepath, 'r', encoding='utf-8') as f:
+                try:
+                    existing_data = json.load(f)
+                    conversations = [TrainingConversation(**conv) for conv in existing_data]
+                    print(f"   Loaded {len(conversations)} existing conversations.")
+                except (json.JSONDecodeError, TypeError) as e:
+                    print(f"⚠️  Could not load existing BC data, starting fresh. Error: {e}")
+                    conversations = []
+        else:
+            conversations = []
+
         for episode_idx, episode_data in enumerate(episodes):
             episode_type = self._get_episode_type(episode_data)
             print(f"Episode {episode_idx + 1}/{len(episodes)} ({episode_type})")
@@ -104,8 +118,22 @@ class BarrierDataCollector:
         Current agent model plays against itself to generate improvement targets.
         """
         print("Collecting Self-Reinforcement (SR) data...")
-        conversations = []
-        
+
+        # Load existing conversations to append new data
+        sr_filepath = os.path.join(self.output_dir, "sr_data.json")
+        if os.path.exists(sr_filepath):
+            print(f"🔄 Found existing SR data at {sr_filepath}. Loading to append new conversations.")
+            with open(sr_filepath, 'r', encoding='utf-8') as f:
+                try:
+                    existing_data = json.load(f)
+                    conversations = [TrainingConversation(**conv) for conv in existing_data]
+                    print(f"   Loaded {len(conversations)} existing conversations.")
+                except (json.JSONDecodeError, TypeError) as e:
+                    print(f"⚠️  Could not load existing SR data, starting fresh. Error: {e}")
+                    conversations = []
+        else:
+            conversations = []
+
         for episode_idx, episode_data in enumerate(episodes):
             episode_type = self._get_episode_type(episode_data)
             print(f"Episode {episode_idx + 1}/{len(episodes)} ({episode_type})")
@@ -329,9 +357,9 @@ def load_barrier_episode_sets(data_dir: str = "data") -> Dict[str, List[Dict[str
     
     # Load different barrier types
     barrier_files = {
-        "semantic": "episodes_semantic.json",
-        "cultural": "episodes_cultural.json", 
-        "emotional": "episodes_emotional.json"
+        "semantic": "episodes_all_semantic.json",
+        "cultural": "episodes_all_cultural.json", 
+        "emotional": "episodes_all_emotional.json"
     }
     
     for barrier_type, filename in barrier_files.items():
