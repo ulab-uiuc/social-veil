@@ -3,33 +3,54 @@
 # Sotopia-π Style Training Script for Social-Decipher
 # Following the training methodology from Sotopia-π but adapted for barrier scenarios
 
-set -e  # Exit on any error
+set -e # Exit on any error
 
-# Configuration
-EXPERIMENT_NAME=${EXPERIMENT_NAME:-"social_decipher_barrier_training"}
-NUM_IMPROVE_STEPS=${NUM_IMPROVE_STEPS:-3}
-EPISODES_FILE=${EPISODES_FILE:-"data/episode_sample.jsonl"}
-OUTPUT_DIR=${OUTPUT_DIR:-"training_data"}
-CHECKPOINT_DIR=${CHECKPOINT_DIR:-"checkpoints"}
+################################################################################
+### USER CONFIGURATION - EDIT THIS SECTION TO CONFIGURE YOUR TRAINING RUN    ###
+################################################################################
 
-# Model configuration
-EXPERT_MODEL=${EXPERT_MODEL:-"gpt-4o"}
-AGENT_MODEL=${AGENT_MODEL:-"gpt-4o-mini"}
-EVALUATOR_MODEL=${EVALUATOR_MODEL:-"gpt-4o"}
+# --- Wandb Authentication (MANDATORY for shared SSH environments) ---
+export WANDB_API_KEY="606b4f0ccb0c2a098157d3055631930177d1aeac"
+WANDB_ENTITY="kxtechds"
+WANDB_PROJECT="my-social-decipher-runs"
+EXPERIMENT_NAME="qwen-finetune-barrier-run"
+# A specific name for this particular run. Defaults to the experiment name + timestamp.
+WANDB_RUN_NAME="${EXPERIMENT_NAME}-$(date +%Y%m%d-%H%M)"
 
-# Training parameters
-CONVERSATIONS_PER_EPISODE=${CONVERSATIONS_PER_EPISODE:-3}
-QUALITY_THRESHOLD=${QUALITY_THRESHOLD:-6.0}
-FILTER_TOP_K=${FILTER_TOP_K:-2}
+# --- Model Configuration ---
+AGENT_MODEL="models/Qwen2.5-0.5B-Instruct"
+# The powerful model used to judge conversations and provide reward signals.
+EVALUATOR_MODEL="gpt-4o"
+EXPERT_MODEL="gpt-4.1"
 
-# Data options
-USE_BARRIER_EPISODES=${USE_BARRIER_EPISODES:-false}
-BARRIER_TYPES=${BARRIER_TYPES:-"semantic cultural emotional"}
+# --- Data & Training Loop Configuration ---
+# The starting dataset of scenarios. Use a small sample for testing.
+# For testing: "data/episode_test_sample.jsonl"
+# For full run: "data/episode_all_neutralized.jsonl"
+EPISODES_FILE="data/episode_test_sample.jsonl"
 
-# Wandb configuration
-WANDB_PROJECT=${WANDB_PROJECT:-"social-decipher"}
-WANDB_ENTITY=${WANDB_ENTITY:-""}
-WANDB_RUN_NAME=${WANDB_RUN_NAME:-""}
+# How many times to repeat the "data collection -> training" cycle. 1-2 is good for testing.
+NUM_IMPROVE_STEPS=1
+
+# How many conversations to generate for each scenario. 1 is good for testing.
+CONVERSATIONS_PER_EPISODE=1
+
+# --- Advanced Settings ---
+USE_BARRIER_EPISODES=true
+# The scoring logic to use for filtering conversations. "custom_barrier_focused" is the recommended default.
+SCORING_STRATEGY="custom_barrier_focused"
+# The quality score threshold for filtering conversations.
+QUALITY_THRESHOLD=6.0
+# The number of top conversations to keep per scenario type.
+FILTER_TOP_K=2
+# Which barrier types to include when USE_BARRIER_EPISODES is true.
+BARRIER_TYPES="semantic cultural emotional"
+OUTPUT_DIR="training_data"
+CHECKPOINT_DIR="checkpoints"
+
+################################################################################
+### SCRIPT EXECUTION - NO NEED TO EDIT BELOW THIS LINE                       ###
+################################################################################
 
 # Environment setup
 export PYTHONPATH="${PYTHONPATH}:$(pwd)"
@@ -115,6 +136,7 @@ run_training() {
     TRAIN_CMD="$TRAIN_CMD --conversations_per_episode $CONVERSATIONS_PER_EPISODE"
     TRAIN_CMD="$TRAIN_CMD --quality_threshold $QUALITY_THRESHOLD"
     TRAIN_CMD="$TRAIN_CMD --filter_top_k $FILTER_TOP_K"
+    TRAIN_CMD="$TRAIN_CMD --scoring_strategy $SCORING_STRATEGY"
     
     # Add wandb arguments
     TRAIN_CMD="$TRAIN_CMD --wandb_project $WANDB_PROJECT"
@@ -192,6 +214,7 @@ show_help() {
     echo "  CONVERSATIONS_PER_EPISODE  Conversations per episode (default: 3)"
     echo "  QUALITY_THRESHOLD       Quality threshold (default: 6.0)"
     echo "  FILTER_TOP_K            Top-k filtering (default: 2)"
+    echo "  SCORING_STRATEGY        Scoring strategy to use (default: custom_barrier_focused)"
     echo "  USE_BARRIER_EPISODES    Use barrier episodes (default: false)"
     echo "  BARRIER_TYPES           Barrier types to include (default: semantic cultural emotional)"
     echo "  WANDB_PROJECT           Wandb project name (default: social-decipher)"
