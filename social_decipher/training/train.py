@@ -234,7 +234,8 @@ def main():
         project=args.wandb_project,
         entity=args.wandb_entity,
         name=args.wandb_run_name or args.experiment_name,
-        config=vars(args)
+        config=vars(args),
+        settings=wandb.Settings(init_timeout=300)
     )
     
     # Load configuration
