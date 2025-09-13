@@ -22,7 +22,8 @@ from .scoring_strategy import (
     ScoringConfig, 
     get_default_scoring_config,
     get_barrier_focused_config,
-    get_balanced_config
+    get_balanced_config,
+    get_custom_barrier_focused_config
 )
 
 
@@ -388,6 +389,16 @@ def create_training_config(
 def create_barrier_focused_training_config(**kwargs) -> TrainingConfig:
     """Create training configuration focused on barrier handling"""
     scoring_config = get_barrier_focused_config()
+    return create_training_config(
+        scoring_strategy="weighted",
+        scoring_config=scoring_config,
+        **kwargs
+    )
+
+
+def create_custom_barrier_focused_training_config(**kwargs) -> TrainingConfig:
+    """Create the user-defined custom barrier-focused training configuration."""
+    scoring_config = get_custom_barrier_focused_config()
     return create_training_config(
         scoring_strategy="weighted",
         scoring_config=scoring_config,
