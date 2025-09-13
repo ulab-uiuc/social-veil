@@ -11,8 +11,11 @@ set -e # Exit on any error
 
 # --- Wandb Authentication (MANDATORY for shared SSH environments) ---
 export WANDB_API_KEY="606b4f0ccb0c2a098157d3055631930177d1aeac"
-WANDB_ENTITY="kxtechds"
-WANDB_PROJECT="my-social-decipher-runs"
+WANDB_ENTITY="kxtechds-university-of-illinois-urbana-champaign"
+WANDB_PROJECT="social-decipher"
+
+# --- Experiment Setup ---
+# A name for the overall experiment. This will be used for checkpoint folders.
 EXPERIMENT_NAME="qwen-finetune-barrier-run"
 # A specific name for this particular run. Defaults to the experiment name + timestamp.
 WANDB_RUN_NAME="${EXPERIMENT_NAME}-$(date +%Y%m%d-%H%M)"
