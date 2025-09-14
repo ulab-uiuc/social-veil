@@ -21,9 +21,13 @@ EXPERIMENT_NAME="qwen-finetune-barrier-run"
 WANDB_RUN_NAME="${EXPERIMENT_NAME}-$(date +%Y%m%d-%H%M)"
 
 # --- Model Configuration ---
+# The model to be fine-tuned.
 AGENT_MODEL="models/Qwen2.5-0.5B-Instruct"
+# The consistent partner model for the agent to play against during Self-Reinforcement (SR).
+PARTNER_MODEL="gpt-4o-mini"
 # The powerful model used to judge conversations and provide reward signals.
 EVALUATOR_MODEL="gpt-4o"
+# The model used to generate "gold standard" expert demonstrations.
 EXPERT_MODEL="gpt-4.1"
 
 # --- API Keys (read from config.yaml) ---
@@ -144,6 +148,7 @@ run_training() {
     TRAIN_CMD="$TRAIN_CMD --checkpoint_dir $CHECKPOINT_DIR"
     TRAIN_CMD="$TRAIN_CMD --expert_model $EXPERT_MODEL"
     TRAIN_CMD="$TRAIN_CMD --agent_model $AGENT_MODEL"
+    TRAIN_CMD="$TRAIN_CMD --partner_model $PARTNER_MODEL"
     TRAIN_CMD="$TRAIN_CMD --evaluator_model $EVALUATOR_MODEL"
     TRAIN_CMD="$TRAIN_CMD --conversations_per_episode $CONVERSATIONS_PER_EPISODE"
     TRAIN_CMD="$TRAIN_CMD --quality_threshold $QUALITY_THRESHOLD"
@@ -224,10 +229,11 @@ show_help() {
     echo "  EPISODES_FILE           Path to episodes JSONL file (default: data/episode_sample.jsonl)"
     echo "  OUTPUT_DIR              Output directory (default: training_data)"
     echo "  CHECKPOINT_DIR          Checkpoint directory (default: checkpoints)"
-    echo "  EXPERT_MODEL            Expert model for BC (default: gpt-4o)"
-    echo "  AGENT_MODEL             Agent model for SR (default: gpt-4o-mini)"
+    echo "  EXPERT_MODEL            Expert model for BC (default: gpt-4.1)"
+    echo "  AGENT_MODEL             Agent model for SR (default: models/Qwen2.5-0.5B-Instruct)"
+    echo "  PARTNER_MODEL           Partner model for SR (default: gpt-4o-mini)"
     echo "  EVALUATOR_MODEL         Evaluator model (default: gpt-4o)"
-    echo "  CONVERSATIONS_PER_EPISODE  Conversations per episode (default: 3)"
+    echo "  CONVERSATIONS_PER_EPISODE  Conversations per episode (default: 1)"
     echo "  QUALITY_THRESHOLD       Quality threshold (default: 6.0)"
     echo "  FILTER_TOP_K            Top-k filtering (default: 2)"
     echo "  SCORING_STRATEGY        Scoring strategy to use (default: custom_barrier_focused)"

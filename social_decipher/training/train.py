@@ -181,6 +181,12 @@ def main():
         help="Agent model for SR self-play"
     )
     parser.add_argument(
+        "--partner_model",
+        type=str,
+        default="gpt-4o-mini",
+        help="Partner model for SR self-play"
+    )
+    parser.add_argument(
         "--evaluator_model", 
         type=str, 
         default="gpt-4o",
@@ -258,6 +264,7 @@ def main():
             checkpoint_dir=args.checkpoint_dir,
             expert_model=args.expert_model,
             agent_model=args.agent_model,
+            partner_model=args.partner_model,
             evaluator_model=args.evaluator_model,
             conversations_per_episode=args.conversations_per_episode,
             quality_threshold=args.quality_threshold,

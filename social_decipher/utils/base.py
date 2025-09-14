@@ -116,6 +116,13 @@ def openai_completion(model_id: str, system_message: str, message: str) -> Optio
 
         return content
     except Exception as e:
+        # If this is a rate limit error, re-raise so the decorator can wait and retry
+        try:
+            import openai as _openai_mod  # type: ignore
+        except Exception:
+            _openai_mod = None
+        if _openai_mod and isinstance(e, _openai_mod.RateLimitError):
+            raise
         print(f"[ERROR] OpenAI completion error: {e}")
         # Return a basic response to prevent the conversation from stopping
         return json.dumps(

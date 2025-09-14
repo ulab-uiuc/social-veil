@@ -47,11 +47,13 @@ class BarrierDataCollector:
         self,
         expert_model: str = "gpt-4o",
         agent_model: str = "gpt-4o-mini", 
+        partner_model: str = "gpt-4o-mini",
         evaluator_model: str = "gpt-4o",
         output_dir: str = "training_data"
     ):
         self.expert_model = expert_model
         self.agent_model = agent_model
+        self.partner_model = partner_model
         self.evaluator = ConversationEvaluator(evaluator_model)
         self.output_dir = output_dir
         os.makedirs(output_dir, exist_ok=True)
@@ -215,10 +217,11 @@ class BarrierDataCollector:
         max_rounds: int,
         episode_type: str
     ) -> Optional[TrainingConversation]:
-        """Run conversation with current agent model"""
+        """Run conversation with current agent model against a fixed partner."""
         
-        # Create agent profiles  
-        profile_a = self._build_profile(episode_data, 0, self.agent_model)
+        # Agent A (the partner) uses the partner_model
+        # Agent B (the one being trained) uses the agent_model
+        profile_a = self._build_profile(episode_data, 0, self.partner_model)
         profile_b = self._build_profile(episode_data, 1, self.agent_model)
         
         # Create environment
@@ -248,7 +251,7 @@ class BarrierDataCollector:
         conversation = TrainingConversation(
             conversation_id=f"sr_{episode_idx}_{conv_idx}_{int(time.time())}",
             episode_type=episode_type,
-            agent_a_model=self.agent_model,
+            agent_a_model=self.partner_model,
             agent_b_model=self.agent_model,
             conversation_log=conversation_log,
             mcq_logs=mcq_logs,

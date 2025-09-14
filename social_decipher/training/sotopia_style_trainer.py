@@ -38,6 +38,7 @@ class TrainingConfig:
     # Model settings
     expert_model: str = "gpt-4o"
     agent_model: str = "gpt-4o-mini"
+    partner_model: str = "gpt-4o-mini"
     evaluator_model: str = "gpt-4o"
     
     # Training settings
@@ -96,6 +97,7 @@ class SotopiaStyleTrainer:
         self.data_collector = BarrierDataCollector(
             expert_model=config.expert_model,
             agent_model=config.agent_model,
+            partner_model=config.partner_model,
             evaluator_model=config.evaluator_model,
             output_dir=config.output_dir
         )
