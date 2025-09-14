@@ -3,9 +3,11 @@ import json
 import os
 import glob
 import csv
-from typing import Dict, List
+from typing import Dict, List, Optional, Set, Tuple
 
 import numpy as np
+import re
+import sys
 
 
 MODES = ["baseline", "semantic", "cultural", "emotional"]
@@ -19,7 +21,68 @@ DIMS = [
 ]
 
 
-def collect_mode_stats(base_dir: str, mode: str) -> Dict[str, float]:
+def _safe_import_hard_ids(project_root: str) -> Optional[List[str]]:
+    """Try to import SOTOPIA_HARD_ENVS from data/data_check.py.
+    Returns list of IDs or None on failure.
+    """
+    try:
+        sys.path.insert(0, project_root)
+        from data.data_check import SOTOPIA_HARD_ENVS  # type: ignore
+        if isinstance(SOTOPIA_HARD_ENVS, list):
+            return [str(x) for x in SOTOPIA_HARD_ENVS]
+    except Exception:
+        pass
+    return None
+
+
+def _load_episodes(path: str) -> List[dict]:
+    if not path:
+        return []
+    if path.lower().endswith(".jsonl"):
+        out: List[dict] = []
+        with open(path, "r", encoding="utf-8") as f:
+            for line in f:
+                s = line.strip()
+                if s:
+                    try:
+                        out.append(json.loads(s))
+                    except Exception:
+                        continue
+        return out
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data if isinstance(data, list) else []
+
+
+def _guess_episode_id(ep: dict) -> Optional[str]:
+    # Try common keys used for environment identifiers
+    for k in ("env_id", "environment_id", "episode_id", "id", "uuid", "scene_id"):
+        v = ep.get(k)
+        if isinstance(v, (str, int)):
+            return str(v)
+    # Sometimes under nested keys
+    meta = ep.get("meta") if isinstance(ep.get("meta"), dict) else None
+    if meta:
+        for k in ("env_id", "environment_id", "episode_id", "id", "uuid"):
+            v = meta.get(k)
+            if isinstance(v, (str, int)):
+                return str(v)
+    return None
+
+
+def build_hard_index_set(episodes_file: str, hard_ids: List[str]) -> Set[int]:
+    """Map episode indices (1-based) whose IDs are in hard_ids."""
+    episodes = _load_episodes(episodes_file)
+    hard_set: Set[str] = set(str(x) for x in (hard_ids or []))
+    idxs: Set[int] = set()
+    for i, ep in enumerate(episodes, start=1):
+        eid = _guess_episode_id(ep)
+        if eid and eid in hard_set:
+            idxs.add(i)
+    return idxs
+
+
+def collect_mode_stats(base_dir: str, mode: str, allowed_indices: Optional[Set[int]] = None) -> Dict[str, float]:
     pattern = os.path.join(base_dir, f"mode_{mode}", "scenario_*", "eval_result.json")
     a1_over: List[float] = []
     a2_over: List[float] = []
@@ -43,6 +106,11 @@ def collect_mode_stats(base_dir: str, mode: str) -> Dict[str, float]:
 
     for fp in glob.glob(pattern):
         try:
+            # Extract 1-based scenario index from the path (scenario_XX)
+            m = re.search(r"scenario_(\d+)", fp)
+            scen_idx = int(m.group(1)) if m else None
+            if allowed_indices is not None and scen_idx is not None and scen_idx not in allowed_indices:
+                continue
             with open(fp, "r", encoding="utf-8") as f:
                 data = json.load(f)
             ag = data.get("aggregated_scores", {})
@@ -122,13 +190,25 @@ def main():
     )
     parser.add_argument("--out_json", type=str, default="", help="Optional path to save the summary JSON")
     parser.add_argument("--out_csv", type=str, default="", help="Optional path to save the summary CSV")
+    parser.add_argument("--subset", type=str, default="all", choices=["all", "sotopia_hard"], help="Subset of scenarios to aggregate")
+    parser.add_argument("--episodes_file", type=str, default="", help="Episodes file (json/jsonl) to map scenario indices to env IDs when using --subset sotopia_hard")
     args = parser.parse_args()
 
     base_dir = os.path.abspath(args.base_dir)
     if not os.path.isdir(base_dir):
         raise SystemExit(f"Base directory not found: {base_dir}")
 
-    summary = {mode: collect_mode_stats(base_dir, mode) for mode in MODES}
+    allowed_indices: Optional[Set[int]] = None
+    if args.subset == "sotopia_hard":
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        hard_ids = _safe_import_hard_ids(project_root) or []
+        if not args.episodes_file:
+            raise SystemExit("--episodes_file is required when --subset sotopia_hard")
+        allowed_indices = build_hard_index_set(os.path.abspath(args.episodes_file), hard_ids)
+        if not allowed_indices:
+            print("WARNING: No hard indices were resolved from the provided episodes file; results will be empty.")
+
+    summary = {mode: collect_mode_stats(base_dir, mode, allowed_indices=allowed_indices) for mode in MODES}
 
     # Pretty print
     print(json.dumps(summary, indent=2))
