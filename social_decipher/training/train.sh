@@ -45,6 +45,9 @@ NUM_IMPROVE_STEPS=1
 CONVERSATIONS_PER_EPISODE=1
 
 # --- Advanced Settings ---
+# Set to 'true' to skip BC data collection if bc_data.json already exists.
+LOAD_EXISTING_DATA=true
+# Set to 'true' to include the specialized barrier datasets in training.
 USE_BARRIER_EPISODES=true
 # The scoring logic to use for filtering conversations. "custom_barrier_focused" is the recommended default.
 SCORING_STRATEGY="custom_barrier_focused"
@@ -156,6 +159,10 @@ run_training() {
         TRAIN_CMD="$TRAIN_CMD --wandb_run_name $WANDB_RUN_NAME"
     fi
     
+    if [ "$LOAD_EXISTING_DATA" = true ]; then
+        TRAIN_CMD="$TRAIN_CMD --load_existing_data"
+    fi
+
     if [ "$USE_BARRIER_EPISODES" = true ]; then
         TRAIN_CMD="$TRAIN_CMD --use_barrier_episodes"
         TRAIN_CMD="$TRAIN_CMD --barrier_types $BARRIER_TYPES"
@@ -224,6 +231,7 @@ show_help() {
     echo "  QUALITY_THRESHOLD       Quality threshold (default: 6.0)"
     echo "  FILTER_TOP_K            Top-k filtering (default: 2)"
     echo "  SCORING_STRATEGY        Scoring strategy to use (default: custom_barrier_focused)"
+    echo "  LOAD_EXISTING_DATA      Set to 'true' to reuse existing bc_data.json (default: false)"
     echo "  USE_BARRIER_EPISODES    Use barrier episodes (default: false)"
     echo "  BARRIER_TYPES           Barrier types to include (default: semantic cultural emotional)"
     echo "  WANDB_PROJECT           Wandb project name (default: social-decipher)"

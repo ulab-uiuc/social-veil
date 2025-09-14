@@ -221,15 +221,15 @@ def main():
         help="Use barrier-specific episode sets"
     )
     parser.add_argument(
+        "--load_existing_data",
+        action="store_true",
+        help="Load existing BC/SR data if available, instead of regenerating it."
+    )
+    parser.add_argument(
         "--barrier_types", 
         nargs="+", 
         default=["semantic", "cultural", "emotional"],
         help="Barrier types to include"
-    )
-    parser.add_argument(
-        "--load-existing-data", 
-        action="store_true",
-        help="Load existing conversation data (e.g., bc_data.json) if available, instead of regenerating it."
     )
     
     args = parser.parse_args()

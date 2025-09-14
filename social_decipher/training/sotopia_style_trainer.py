@@ -72,7 +72,7 @@ class TrainingConfig:
     save_total_limit: int = 5
     logging_steps: int = 1
 
-    # Data loading settings
+    # New feature: Load existing data to speed up iteration
     load_existing_data: bool = False
 
 
@@ -182,40 +182,36 @@ class SotopiaStyleTrainer:
         episodes: List[Dict[str, Any]], 
         improve_step: int
     ) -> List[TrainingConversation]:
-        """Collect training data using BC and SR methods"""
+        """Collect training data using BC and SR methods, with an option to load existing BC data."""
         
         print(f"\nStep 1: Data Collection (Improvement Step {improve_step + 1})")
-        
-        all_conversations = []
-        
+
         # Behavior Cloning (Expert demonstrations)
-        print("🎓 Collecting Behavior Cloning data...")
-        
-        bc_file_path = os.path.join(self.config.output_dir, "bc_data.json")
-        if self.config.load_existing_data and os.path.exists(bc_file_path):
-            print(f"🔄 Loading existing BC data from {bc_file_path}...")
+        bc_data_path = os.path.join(self.config.output_dir, "bc_data.json")
+        if self.config.load_existing_data and os.path.exists(bc_data_path):
+            print(f"♻️ Loading existing Behavior Cloning data from {bc_data_path}...")
             self.data_collector.load_conversations(bc_file="bc_data.json")
-            bc_conversations = self.data_collector.bc_conversations
+            bc_conversations, _ = self.data_collector.get_all_conversations()
+            print(f"   Loaded {len(bc_conversations)} BC conversations.")
         else:
-            if self.config.load_existing_data:
-                print(f"⚠️  --load-existing-data was specified, but {bc_file_path} not found. Regenerating data.")
+            print("🎓 Collecting new Behavior Cloning data...")
             bc_conversations = self.data_collector.collect_behavior_cloning_data(
                 episodes, 
                 self.config.conversations_per_episode,
                 self.config.max_rounds
             )
-        all_conversations.extend(bc_conversations)
         
-        # Self-Reinforcement (Self-play)
-        print("Collecting Self-Reinforcement data...")
+        # Self-Reinforcement (Self-play) should always be regenerated as it depends on the current agent
+        print("Collecting new Self-Reinforcement data...")
         sr_conversations = self.data_collector.collect_self_reinforcement_data(
             episodes,
             self.config.conversations_per_episode,
             self.config.max_rounds
         )
-        all_conversations.extend(sr_conversations)
         
-        print(f"Collected {len(all_conversations)} total conversations")
+        all_conversations = bc_conversations + sr_conversations
+        
+        print(f"\nCollected {len(all_conversations)} total conversations for this step:")
         print(f"   - BC: {len(bc_conversations)} conversations")
         print(f"   - SR: {len(sr_conversations)} conversations")
         
