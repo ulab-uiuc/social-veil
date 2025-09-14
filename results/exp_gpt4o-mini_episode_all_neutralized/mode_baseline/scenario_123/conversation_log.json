@@ -1,0 +1,88 @@
+{
+    "experimental_context": {
+        "scenario": {
+            "description": "After lunch, the remaining fruits need to be divided between two friends, each with their own fruit preferences.",
+            "agent_relationship": "friend",
+            "barrier_type": null
+        },
+        "agents": {
+            "agent_a": {
+                "name": "Naomi",
+                "profile": {
+                    "first_name": "Naomi",
+                    "last_name": "Fletcher",
+                    "age": 29,
+                    "occupation": "Software Developer",
+                    "personality_and_values": "Naomi Fletcher, a meticulous introvert who values loyalty and conformity. She lets her instincts guide her choices.",
+                    "public_info": "Naomi Fletcher, a software developer, enjoys coding personal projects and gaming in her free time. She is also a dedicated mentor in a local coding boot camp helping others learn and enhance their skills in software development.",
+                    "model_id": "gpt-4o-mini"
+                },
+                "goal": "Maximize the points you have (<extra_info>Extra information: For you, 1 apple equals 2 points, 1 banana equals 1 point, and the orange equals 3 points.</extra_info>)",
+                "reason": "Naomi wants to maximize her points by following her instincts to choose the fruits that align with her preferences.",
+                "private_knowledge": ""
+            },
+            "agent_b": {
+                "name": "Micah",
+                "profile": {
+                    "first_name": "Micah",
+                    "last_name": "Stevens",
+                    "age": 25,
+                    "occupation": "Pharmacist",
+                    "personality_and_values": "Micah Stevens is imaginative and extraverted but can also be impulsive. He values power and fairness and often follows an intuitive decision-making approach.",
+                    "public_info": "Micah Stevens has a great taste for fashion.",
+                    "model_id": "gpt-4o-mini"
+                },
+                "goal": "Maximize the points you have (<extra_info>Extra information: For you, 1 apple equals 1 point, 1 banana equals 2 points, and the orange equals 3 points.<strategy_hint>Hint: You may want to negotiate with your friend to get the fruits that give you the most points.</strategy_hint></extra_info>)",
+                "reason": "Micah aims to maximize his points by negotiating for fruits that offer him the most value, reflecting his value for fairness.",
+                "private_knowledge": ""
+            }
+        },
+        "experimental_configuration": {
+            "max_rounds": 20
+        }
+    },
+    "conversation_log": [
+        "Naomi: Hey Micah, we need to divide the remaining fruits. How do you want to go about it?",
+        "Micah: Hey Naomi! Let's make it fair and fun. How about we each pick one fruit at a time until they're all gone? I think that way we can both get what we really want.",
+        "Naomi: That sounds like a great idea, Micah! I think I'll go for the orange first since it has the highest points. What about you?",
+        "Micah: I see you're going for the orange! That's a smart choice. I think I'll grab the banana next since it gives me 2 points. How about we keep this going until we finish all the fruits?",
+        "Naomi: Sounds good to me! I'll take the apple next since it gives me 2 points as well. Your turn!",
+        "Micah: Nice choice with the apple! I think I'll go for the other banana then. That gives me a total of 4 points now! What do you want to pick next?",
+        "Naomi: Thanks, Micah! I think I'll grab the last apple. That'll give me a total of 4 points too! Looks like we're both doing pretty well!",
+        "Micah: Great job, Naomi! We're really neck and neck here. For my next pick, I think I'll go for the last banana. That'll give me a total of 6 points! What do you want to pick next?",
+        "Naomi: Thanks, Micah! I think I'll go for the last apple. That'll give me a total of 6 points too! Looks like we're tied now!",
+        "Micah: Tied game! This is getting exciting! For my next pick, I think I'll go for the orange. That'll give me 3 points, and I'll be in the lead! What do you think?",
+        "Naomi: That sounds like a solid strategy, Micah! The orange would definitely give you an edge. I think I’ll have to go for the last banana to keep my points up, though. It's a tough choice!",
+        "Micah: Thanks, Naomi! I appreciate your support! Since we're both aiming for points, how about we make a little trade? If I give you the orange, would you be willing to swap it for one of your bananas? That way, we both get something valuable!",
+        "Naomi: That sounds like a fair trade, Micah! Swapping one of my bananas for the orange would definitely help me maximize my points. Let's do it!",
+        "Micah: Awesome! I'm glad we could make that trade. Now, with my orange and your banana, we're both in a good position! What do you want to pick next?",
+        "Naomi: I think I'll go for the last apple! That'll give me a total of 8 points, and I really want to maximize my score. How about you? What are you thinking of picking next?",
+        "Micah: Nice choice with the apple, Naomi! I'm thinking of going for the last banana. That'll give me 2 more points, and I want to keep my score competitive. Plus, it pairs well with the orange I just got!",
+        "Naomi: Thanks, Micah! The banana sounds like a great pick for you. I think I'm in a good spot with my apple and the points I'm racking up. Let's see how this plays out!",
+        "Micah: Absolutely, Naomi! It’s great to see us both making strategic choices. I think we’re really maximizing our potential here. Let’s keep an eye on what’s left and see if we can make any more trades or picks that benefit us both!",
+        "Naomi: Definitely, Micah! I think we should keep an eye on the remaining fruits. If we can spot any opportunities for trades or picks that can boost our scores, let's jump on them!",
+        "Micah: Absolutely, Naomi! I’m all for spotting those opportunities. If we can keep our eyes peeled for any high-value fruits left, we can make some smart moves. Maybe we can even work together to ensure we both get the best picks!",
+        "Naomi: I like the sound of that, Micah! Teaming up could really help us both maximize our scores. Let's keep an eye on those high-value fruits and see if we can strategize together!",
+        "Micah: Great! I think if we can spot any oranges left, that would be a game-changer for both of us. We should also consider what fruits we might be willing to trade later on. What do you think?",
+        "Naomi: I completely agree, Micah! If we can find any oranges, that would really boost our scores. As for trades, I think I could be open to trading my banana if it means getting an orange. What about you?",
+        "Micah: That sounds like a solid plan, Naomi! I'm definitely interested in trading for an orange. I could offer you two apples for that banana. What do you think?",
+        "Naomi: That sounds like a fair trade, Micah! Since two apples equal four points and my banana is only worth one point, I think I’ll take that deal. Let’s make the trade!",
+        "Micah: Awesome, Naomi! I'm glad we could come to an agreement. I'll grab those apples for you, and you can hand over the banana. This is going to really help both of us!",
+        "Naomi: [action] hand over the banana to Micah with a smile",
+        "Micah: [action] take the banana from Naomi with a smile and thank her for the trade",
+        "Naomi: You're welcome, Micah! I'm really glad we could help each other out. Now let's see if we can find those oranges!",
+        "Micah: Absolutely, Naomi! Oranges would be a great addition to our haul. Let's keep an eye out for them. I know they’re worth a solid three points!",
+        "Naomi: Yes, definitely! I really want to maximize my points, so finding those oranges is a priority. Let's keep searching!",
+        "Micah: Totally agree, Naomi! Let's split up a bit and cover more ground. I'll check over by the other fruit stand while you look around here. We’ll find those oranges in no time!",
+        "Naomi: Sounds like a plan, Micah! I'll keep my eyes peeled for those oranges. Good luck over there!",
+        "Micah: Thanks, Naomi! If you find any oranges, let me know right away. I’ll do the same if I spot any over here!",
+        "Naomi: Absolutely, Micah! We'll keep each other updated. Let's make sure we get those points!",
+        "Micah: For sure, Naomi! Just a thought—if we find any bananas, I’d love to negotiate for those since they give us two points each. What do you think?",
+        "Naomi: That sounds like a smart idea, Micah! Bananas could definitely help boost our points. If I find any, I'll make sure to save them for you. Let's keep our eyes open!",
+        "Micah: Awesome, Naomi! I really appreciate that. If I come across any bananas, I'll definitely save them for you too. Let's make this fruit hunt a success!",
+        "Naomi: Thanks, Micah! I really appreciate your support. Together, we'll definitely make this fruit hunt a success!",
+        "Micah: Absolutely, Naomi! I'm really excited about this. Let's keep pushing for those high-point fruits!",
+        "Naomi: Yes, let's definitely focus on those high-point fruits! I think we should prioritize the oranges since they give us the most points. What do you think?"
+    ],
+    "mcq_logs": []
+}

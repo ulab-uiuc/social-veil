@@ -1,0 +1,88 @@
+{
+    "experimental_context": {
+        "scenario": {
+            "description": "After lunch, the remaining fruits need to be divided between two friends, each with their own fruit preferences.",
+            "agent_relationship": "friend",
+            "barrier_type": null
+        },
+        "agents": {
+            "agent_a": {
+                "name": "Naomi",
+                "profile": {
+                    "first_name": "Naomi",
+                    "last_name": "Fletcher",
+                    "age": 29,
+                    "occupation": "Software Developer",
+                    "personality_and_values": "Naomi Fletcher, a meticulous introvert who values loyalty and conformity. She lets her instincts guide her choices.",
+                    "public_info": "Naomi Fletcher, a software developer, enjoys coding personal projects and gaming in her free time. She is also a dedicated mentor in a local coding boot camp helping others learn and enhance their skills in software development.",
+                    "model_id": "gpt-4o-mini"
+                },
+                "goal": "Maximize the points you have (<extra_info>Extra information: For you, 1 apple equals 2 points, 1 banana equals 1 point, and the orange equals 3 points.</extra_info>)",
+                "reason": "Naomi wants to maximize her points by choosing fruits that align with her instinctive preference for apples and oranges because they offer the highest value for her.",
+                "private_knowledge": ""
+            },
+            "agent_b": {
+                "name": "Micah",
+                "profile": {
+                    "first_name": "Micah",
+                    "last_name": "Stevens",
+                    "age": 25,
+                    "occupation": "Pharmacist",
+                    "personality_and_values": "Micah Stevens is imaginative and extraverted but can also be impulsive. He values power and fairness and often follows an intuitive decision-making approach.",
+                    "public_info": "Micah Stevens has a great taste for fashion.",
+                    "model_id": "gpt-4o-mini"
+                },
+                "goal": "Maximize the points you have (<extra_info>Extra information: For you, 1 apple equals 1 point, 1 banana equals 2 points, and the orange equals 3 points.<strategy_hint>Hint: You may want to negotiate with your friend to get the fruits that give you the most points.</strategy_hint></extra_info>)",
+                "reason": "Micah aims to maximize his points by negotiating for bananas and the orange because they provide the most value according to his preference.",
+                "private_knowledge": ""
+            }
+        },
+        "experimental_configuration": {
+            "max_rounds": 20
+        }
+    },
+    "conversation_log": [
+        "Naomi: Hey Micah, we need to figure out how to split these fruits. What do you think?",
+        "Micah: I was thinking we could split them based on what we like most. I really love bananas and oranges since they give the most points. How about we negotiate a fair split?",
+        "Naomi: That sounds like a good idea, Micah! Since I prefer apples and oranges, maybe we could focus on those. How about I take the apples and you take the bananas, and we split the oranges evenly?",
+        "Micah: I like that plan, but how about I take both bananas and the larger half of the oranges? That way, I can maximize my points, and you still get the apples you love!",
+        "Naomi: I see your point, Micah, but I think we could make it more balanced. How about you take one banana and the larger half of the oranges, while I keep the apples and the other banana? That way, we both get a fair share and I still get my favorite fruits.",
+        "Micah: I appreciate your willingness to find a balance, Naomi! But if I take one banana and the larger half of the oranges, I think I could still maximize my points a bit more. How about I take both bananas and we split the oranges evenly? That way, I get the most points, and you still get to enjoy the apples!",
+        "Naomi: I understand your perspective, Micah, but I really think we should focus on a split that benefits us both. If I take the apples and one banana, and you take one banana and the larger half of the oranges, it feels more balanced. We both get what we like, and I still get to maximize my points with the apples and oranges.",
+        "Micah: I get that you're looking for balance, Naomi, but I really believe that if I take both bananas and we split the oranges evenly, it would still be fair. The bananas give me a significant point advantage, and I promise I'll make it up to you next time!",
+        "Naomi: I appreciate your promise, Micah, but I really think we should focus on what benefits us both right now. If I take the apples and one banana, and you take one banana and the larger half of the oranges, we can both maximize our points while still enjoying the fruits we like.",
+        "Micah: I see where you're coming from, Naomi, but I still think that taking both bananas and splitting the oranges would give me a better chance to maximize my points. How about we try that? I promise to make it worth your while next time!",
+        "Naomi: I appreciate your offer, Micah, but I really think we should stick to a split that allows us both to benefit. If I take the apples and one banana, and you take one banana and the larger half of the oranges, we can both maximize our points while enjoying the fruits we like.",
+        "Micah: I understand your point, Naomi, but I really believe that taking both bananas and splitting the oranges evenly would give me a better chance to maximize my points. It feels fair to me, and I promise I'll make it worth your while next time!",
+        "Naomi: I appreciate your perspective, Micah, but I still believe that my proposal is the best way for both of us to maximize our points right now. If I take the apples and one banana, and you take one banana and the larger half of the oranges, we can both benefit from the fruits we enjoy.",
+        "Micah: I get that you're trying to find a solution that works for both of us, Naomi, but I really think my idea gives me a better chance to score higher. How about we compromise a bit? If I take both bananas and we split the oranges, I promise to share some of my points with you next time. It could be a win-win!",
+        "Naomi: I appreciate your willingness to compromise, Micah, but I still believe that my initial proposal is the best way for both of us to maximize our points. If I take the apples and one banana, and you take one banana and the larger half of the oranges, we can both benefit from the fruits we enjoy and score higher overall.",
+        "Micah: I get that you feel strongly about your proposal, Naomi, but I'm really convinced that if I take both bananas and we split the oranges, it would maximize my points. How about we give it a shot this time? I promise I’ll make it worth your while next time!",
+        "Naomi: I appreciate your enthusiasm, Micah, but I really believe that my proposal is the most beneficial for both of us. If I take the apples and one banana, and you take one banana and the larger half of the oranges, we can both maximize our points and enjoy the fruits we prefer.",
+        "Micah: I see where you're coming from, Naomi, but I still think my idea of taking both bananas and splitting the oranges is the best way for me to maximize my points. How about we try it this time, and I promise to make it worth your while next time? It could really benefit both of us!",
+        "Naomi: I appreciate your offer, Micah, but I really believe that my proposal is the most beneficial for both of us. If I take the apples and one banana, and you take one banana and the larger half of the oranges, we can both maximize our points and enjoy the fruits we prefer.",
+        "Micah: I understand where you're coming from, Naomi, but I really think my idea of taking both bananas and splitting the oranges is the best way for me to maximize my points. Let's give it a try this time, and I promise to make it worth your while next time!",
+        "Naomi: I appreciate your willingness to compromise, Micah, but I still believe that my proposal is the best way for both of us to maximize our points. If I take the apples and one banana, and you take one banana and the larger half of the oranges, we can both benefit from the fruits we enjoy and score higher overall.",
+        "Micah: I get that you have a solid plan, Naomi, but I really think my idea of taking both bananas and splitting the oranges could lead to even better outcomes for both of us. Bananas give me more points, and I believe we can find a way to make it work this time. What do you say?",
+        "Naomi: I understand your perspective, Micah, but I really think that by sticking to my proposal, we can ensure that both of us get the maximum points possible. The apples and oranges align better with my strategy, and I genuinely believe it will benefit us both.",
+        "Micah: I appreciate your confidence in your plan, Naomi, but I still think my approach could lead to even greater points for both of us. Bananas are a big win for me, and I believe we can find a way to make this work. How about we give it a shot this time and see how it goes?",
+        "Naomi: I understand your enthusiasm, Micah, but I really believe that my proposal is the best way to ensure we both maximize our points. The apples and oranges align better with my strategy, and I think it will lead to a more favorable outcome for both of us.",
+        "Micah: I see your point, Naomi, but I can't help but feel that my idea of taking both bananas and splitting the oranges could really give us a competitive edge. Bananas are just too valuable to overlook! How about we try my approach this time, and if it doesn't work out, we can revisit your plan next time?",
+        "Naomi: I appreciate your willingness to experiment, Micah, but I really believe that sticking to my plan will yield the best results for both of us. The apples and oranges provide a stronger point total, and I think it's important we focus on maximizing our scores this time.",
+        "Micah: I get where you're coming from, Naomi, but I still think we could really benefit from my idea. The bananas are a game changer, and if we can find a way to incorporate them, it could lead to a win-win for both of us. Let's give it a shot this time!",
+        "Naomi: I appreciate your enthusiasm, Micah, but I really think we should stick to my plan. The apples and oranges will give us a much better point total, and I believe that will ultimately benefit us both.",
+        "Micah: I understand your perspective, Naomi, but I really believe that incorporating the bananas could elevate our scores even further. If we can find a way to balance both our ideas, we might just hit the jackpot! What do you think about a compromise?",
+        "Naomi: I appreciate your suggestion for a compromise, Micah, but I still feel strongly that focusing on the apples and oranges will give us the best point total. Maybe we can revisit the idea of bananas in the future, but for now, let's stick to what we know will maximize our scores.",
+        "Micah: I understand your commitment to the apples and oranges, Naomi, but I really think we could create an even stronger strategy by including the bananas this time. How about we take a couple of apples and oranges, but also set aside a few bananas? That way, we can test both ideas without fully committing to one.",
+        "Naomi: I see your point, Micah, but I still believe that the apples and oranges will give us the best overall score. If we focus on those, we can ensure we're maximizing our points this time. Let's stick to the plan for now.",
+        "Micah: I appreciate your dedication to the plan, Naomi. But think about it this way: if we can snag a few bananas along with the apples and oranges, we could really boost our overall score. The bananas are a solid investment! How about we at least try to grab a couple?",
+        "Naomi: I understand where you're coming from, Micah, but I really believe that the apples and oranges will give us the best return on our points. Let's focus on those for now, and we can always consider bananas in the future if we feel it's necessary.",
+        "Micah: I get that, Naomi, but I really think we could maximize our points right now by including at least a couple of bananas. They have a higher value, and if we can balance it out with the apples and oranges, we could really come out ahead. What do you say to giving it a shot?",
+        "Naomi: I appreciate your enthusiasm, Micah, but I still believe that sticking with the apples and oranges is our best bet for maximizing points. The bananas just don't compare in value. Let's focus on what we know will give us the highest score this time.",
+        "Micah: I hear you, Naomi, but let's break it down. The oranges are great, but if we can grab a couple of bananas, we could really elevate our score. It's all about maximizing our potential, right? What if we just try it this time?",
+        "Naomi: I appreciate your perspective, Micah, but I really believe that the apples and oranges will give us the best score. The bananas just don't match up in value. Let's stick to our plan for now and focus on what we know will maximize our points.",
+        "Micah: I understand your commitment to the plan, Naomi, but let's not overlook the potential of the bananas. If we can grab a couple, it could really enhance our score. How about we compromise and take a few bananas along with the apples and oranges? It could really pay off!",
+        "Naomi: I appreciate your willingness to compromise, Micah, but I still think we should prioritize the apples and oranges. The bananas just don't offer the same value. Let's stick to our strategy for this round, and we can reassess later."
+    ],
+    "mcq_logs": []
+}
