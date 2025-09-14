@@ -13,6 +13,8 @@ from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass, asdict
 import time
 from datetime import datetime
+import wandb
+import numpy as np
 
 from .data_collector import BarrierDataCollector, TrainingConversation
 from .conversation_rater import ConversationRater, ConversationRating
@@ -160,8 +162,11 @@ class SotopiaStyleTrainer:
             # Step 1: Data Collection
             conversations = self.collect_training_data(episodes, improve_step)
             
-            # Step 2: Quality Filtering
-            filtered_conversations = self.filter_high_quality_data(conversations)
+            # Step 2: Quality Filtering (and get ratings for logging)
+            filtered_conversations, ratings = self.filter_high_quality_data(conversations)
+
+            # Log performance metrics for this step to wandb
+            self._log_performance_metrics(ratings, improve_step)
             
             # Step 3: Data Preprocessing
             training_data = self.preprocess_training_data(filtered_conversations)
@@ -222,8 +227,8 @@ class SotopiaStyleTrainer:
     def filter_high_quality_data(
         self, 
         conversations: List[TrainingConversation]
-    ) -> List[TrainingConversation]:
-        """Filter conversations using extensible scoring strategy"""
+    ) -> Tuple[List[TrainingConversation], List[ConversationRating]]:
+        """Filter conversations using extensible scoring strategy and return ratings."""
         
         print(f"\nStep 2: Quality Filtering ({self.config.scoring_strategy} strategy)")
         print(f"Rating {len(conversations)} conversations...")
@@ -259,7 +264,45 @@ class SotopiaStyleTrainer:
             json.dump(scores, f, indent=2, ensure_ascii=False)
         print(f"Saved scores to {scores_file}")
         
-        return top_k_conversations
+        return top_k_conversations, ratings
+
+    def _log_performance_metrics(self, ratings: List[ConversationRating], improve_step: int):
+        """Calculate and log average performance metrics to wandb."""
+        if not ratings:
+            print("No ratings available to log performance metrics.")
+            return
+
+        print(f"📊 Logging performance metrics for step {improve_step + 1} to wandb...")
+        
+        # Initialize containers for scores
+        metrics = {
+            "performance/goal_completion": [],
+            "performance/believability": [],
+            "performance/relationship": [],
+            "performance/unresolved_confusion": [],
+            "performance/mutual_understanding": [],
+            "performance/composite_score": []
+        }
+
+        # Extract scores from each rating
+        for r in ratings:
+            metrics["performance/goal_completion"].append(r.goal_completion)
+            metrics["performance/believability"].append(r.believability)
+            metrics["performance/relationship"].append(r.relationship)
+            if r.episode_level:
+                metrics["performance/unresolved_confusion"].append(r.episode_level.get("unresolved_confusion", np.nan))
+                metrics["performance/mutual_understanding"].append(r.episode_level.get("mutual_understanding", np.nan))
+            
+            # Calculate and store the composite score for this conversation
+            composite_score = self.scoring_manager.strategy.calculate_composite_score(r)
+            metrics["performance/composite_score"].append(composite_score)
+
+        # Calculate averages, handling potential NaNs from missing data
+        avg_metrics = {key: np.nanmean(values) for key, values in metrics.items() if values}
+        avg_metrics["improvement_step"] = improve_step + 1
+        
+        wandb.log(avg_metrics)
+        print("   Done logging.")
         
     def preprocess_training_data(
         self, 
