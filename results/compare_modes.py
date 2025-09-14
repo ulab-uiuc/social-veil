@@ -55,15 +55,15 @@ def _load_episodes(path: str) -> List[dict]:
 
 
 def _guess_episode_id(ep: dict) -> Optional[str]:
-    # Try common keys used for environment identifiers
-    for k in ("env_id", "environment_id", "episode_id", "id", "uuid", "scene_id"):
+    # Try common keys used for environment identifiers (prefer environment_id)
+    for k in ("environment_id", "env_id", "episode_id", "id", "uuid", "scene_id"):
         v = ep.get(k)
         if isinstance(v, (str, int)):
             return str(v)
     # Sometimes under nested keys
     meta = ep.get("meta") if isinstance(ep.get("meta"), dict) else None
     if meta:
-        for k in ("env_id", "environment_id", "episode_id", "id", "uuid"):
+        for k in ("environment_id", "env_id", "episode_id", "id", "uuid"):
             v = meta.get(k)
             if isinstance(v, (str, int)):
                 return str(v)
