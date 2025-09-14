@@ -257,7 +257,8 @@ def local_model_completion(model_id, system_message, message):
     
     try:        
         # Create model manager directly
-        vllm_port = int(os.environ.get("VLLM_PORT", 8000))  # Default to 8000 if not set
+        # Read the port directly from the loaded config to ensure consistency.
+        vllm_port = int((_config.get("models", {}) or {}).get("vllm_port", 8000))
         print(f"   Using vLLM server at port {vllm_port}")
 
         # Get the template path from config or auto-detect based on model
