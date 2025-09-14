@@ -70,20 +70,45 @@ def _guess_episode_id(ep: dict) -> Optional[str]:
     return None
 
 
-def build_hard_index_set(episodes_file: str, hard_ids: List[str]) -> Set[int]:
+def build_hard_index_set(episodes_file: str, hard_ids: List[str], debug: bool = False) -> Set[int]:
     """Map episode indices (1-based) whose IDs are in hard_ids."""
     episodes = _load_episodes(episodes_file)
     hard_set: Set[str] = set(str(x) for x in (hard_ids or []))
     idxs: Set[int] = set()
+    found_ids: Set[str] = set()
     for i, ep in enumerate(episodes, start=1):
         eid = _guess_episode_id(ep)
         if eid and eid in hard_set:
             idxs.add(i)
+            found_ids.add(eid)
+
+    if debug:
+        print(f"🕵️  Scanned '{os.path.basename(episodes_file)}', found {len(found_ids)} matching hard IDs out of {len(hard_set)}.")
+        if found_ids:
+            print(f"   - Found IDs: {list(found_ids)[:5]}")
     return idxs
 
 
-def collect_mode_stats(base_dir: str, mode: str, allowed_indices: Optional[Set[int]] = None) -> Dict[str, float]:
+def collect_mode_stats(base_dir: str, mode: str, allowed_indices: Optional[Set[int]] = None, debug: bool = False) -> Dict[str, float]:
     pattern = os.path.join(base_dir, f"mode_{mode}", "scenario_*", "eval_result.json")
+    all_files = glob.glob(pattern)
+    files_to_process = []
+    
+    if allowed_indices is not None:
+        for fp in all_files:
+            try:
+                m = re.search(r"scenario_(\d+)", fp)
+                scen_idx = int(m.group(1)) if m else None
+                if scen_idx is not None and scen_idx in allowed_indices:
+                    files_to_process.append(fp)
+            except (ValueError, IndexError):
+                continue
+    else:
+        files_to_process = all_files
+        
+    if debug:
+        print(f"🕵️  [mode_{mode}] Found {len(all_files)} total scenarios. After filtering for hard indices, processing {len(files_to_process)} scenarios.")
+
     a1_over: List[float] = []
     a2_over: List[float] = []
     dim_acc: Dict[str, List[float]] = {f"a1_{d}": [] for d in DIMS}
@@ -104,13 +129,10 @@ def collect_mode_stats(base_dir: str, mode: str, allowed_indices: Optional[Set[i
         for t, m in mcq_keys:
             mcq_acc[f"{who}_{t}_{m}"] = []
 
-    for fp in glob.glob(pattern):
+    for fp in files_to_process:
         try:
-            # Extract 1-based scenario index from the path (scenario_XX)
-            m = re.search(r"scenario_(\d+)", fp)
-            scen_idx = int(m.group(1)) if m else None
-            if allowed_indices is not None and scen_idx is not None and scen_idx not in allowed_indices:
-                continue
+            # This logic is now redundant as we pre-filter, but kept as a safeguard.
+            # No real need to extract scen_idx again here.
             with open(fp, "r", encoding="utf-8") as f:
                 data = json.load(f)
             ag = data.get("aggregated_scores", {})
@@ -192,6 +214,7 @@ def main():
     parser.add_argument("--out_csv", type=str, default="", help="Optional path to save the summary CSV")
     parser.add_argument("--subset", type=str, default="all", choices=["all", "sotopia_hard"], help="Subset of scenarios to aggregate")
     parser.add_argument("--episodes_file", type=str, default="", help="Episodes file (json/jsonl) to map scenario indices to env IDs when using --subset sotopia_hard")
+    parser.add_argument("--debug", action="store_true", help="Enable debug printing to trace ID matching.")
     args = parser.parse_args()
 
     base_dir = os.path.abspath(args.base_dir)
@@ -202,13 +225,20 @@ def main():
     if args.subset == "sotopia_hard":
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
         hard_ids = _safe_import_hard_ids(project_root) or []
+        if args.debug:
+            print(f"🕵️  Loaded {len(hard_ids)} hard environment IDs from data_check.py.")
+            print(f"   - Sample IDs: {hard_ids[:5]}")
+
         if not args.episodes_file:
             raise SystemExit("--episodes_file is required when --subset sotopia_hard")
-        allowed_indices = build_hard_index_set(os.path.abspath(args.episodes_file), hard_ids)
+        allowed_indices = build_hard_index_set(os.path.abspath(args.episodes_file), hard_ids, debug=args.debug)
         if not allowed_indices:
             print("WARNING: No hard indices were resolved from the provided episodes file; results will be empty.")
+        elif args.debug:
+            print(f"✅ Mapped to {len(allowed_indices)} scenario indices: {sorted(list(allowed_indices))[:10]}...")
 
-    summary = {mode: collect_mode_stats(base_dir, mode, allowed_indices=allowed_indices) for mode in MODES}
+
+    summary = {mode: collect_mode_stats(base_dir, mode, allowed_indices=allowed_indices, debug=args.debug) for mode in MODES}
 
     # Pretty print
     print(json.dumps(summary, indent=2))
