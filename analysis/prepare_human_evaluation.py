@@ -46,8 +46,13 @@ def extract_task_data(
     episode_data = episodes[scenario_idx - 1]
 
     ep_level = eval_data.get("aggregated_scores", {}).get("episode_level", {})
-    unresolved_confusion = ep_level.get("unresolved_confusion", {}).get("score", "")
-    mutual_understanding = ep_level.get("mutual_understanding", {}).get("score", "")
+    
+    # Handle both dict and direct int/float formats for scores
+    uc_raw = ep_level.get("unresolved_confusion")
+    unresolved_confusion = uc_raw.get("score", "") if isinstance(uc_raw, dict) else uc_raw if isinstance(uc_raw, (int, float)) else ""
+    
+    mu_raw = ep_level.get("mutual_understanding")
+    mutual_understanding = mu_raw.get("score", "") if isinstance(mu_raw, dict) else mu_raw if isinstance(mu_raw, (int, float)) else ""
 
     return {
         "conversation_id": f"{mode}/scenario_{scenario_idx}",
