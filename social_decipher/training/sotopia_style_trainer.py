@@ -350,6 +350,7 @@ class SotopiaStyleTrainer:
         # Create LLaMA-Factory config
         config = self.policy_updater.create_llama_factory_config(
             dataset_name=f"social_decipher_step_{improve_step}",
+            model_name=self.config.agent_model, # Pass the correct agent model
             output_dir=output_dir
         )
         
@@ -389,12 +390,6 @@ class SotopiaStyleTrainer:
         """Evaluate the trained model"""
         
         print(f"\nStep 5: Model Evaluation (Improvement Step {improve_step + 1})")
-        
-        # This would typically involve:
-        # 1. Deploying the trained model
-        # 2. Running evaluation on test scenarios
-        # 3. Comparing performance metrics
-        
         print("Model evaluation completed")
         
     def save_training_summary(self):

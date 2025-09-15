@@ -332,10 +332,14 @@ Episode type: {episode_type}"""
     def create_llama_factory_config(
         self,
         dataset_name: str,
-        model_name: str = "Qwen/Qwen2.5-7B-Instruct",
-        output_dir: str = "saves/barrier_social_agent"
+        model_name: str, # This should be the agent_model from the main config
+        output_dir: str
     ) -> Dict[str, Any]:
-        """Create LLaMA-Factory training configuration"""
+        """
+        Create LLaMA-Factory training configuration.
+        This configuration is used by the llamafactory-cli tool, which leverages
+        Hugging Face Accelerate for distributed and mixed-precision training.
+        """
         
         config = {
             "stage": "sft",

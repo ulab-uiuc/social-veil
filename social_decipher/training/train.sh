@@ -22,7 +22,7 @@ WANDB_RUN_NAME="${EXPERIMENT_NAME}-$(date +%Y%m%d-%H%M)"
 
 # --- Model Configuration ---
 # The model to be fine-tuned.
-AGENT_MODEL="models/Qwen2.5-0.5B-Instruct"
+AGENT_MODEL="models/Qwen2.5-7B-Instruct"
 # The consistent partner model for the agent to play against during Self-Reinforcement (SR).
 PARTNER_MODEL="gpt-4o-mini"
 # The powerful model used to judge conversations and provide reward signals.
@@ -40,15 +40,15 @@ export OPENAI_API_KEY=$AGENT_OPENAI_API_KEY
 # The starting dataset of scenarios. Use a small sample for testing.
 # For testing: "data/episode_test_sample.jsonl"
 # For full run: "data/episode_all_neutralized.jsonl"
-EPISODES_FILE="data/episode_test_sample.jsonl"
+EPISODES_FILE="data/episode_all_neutralized.jsonl"
 
 # --- Training Loop & Data Volume ---
 # How many times to repeat the "data collection -> training" cycle. 1-2 is good for testing.
-NUM_IMPROVE_STEPS=5
+NUM_IMPROVE_STEPS=2
 # How many conversations to generate for each scenario. 1 is good for testing.
-CONVERSATIONS_PER_EPISODE=3
+CONVERSATIONS_PER_EPISODE=2
 # [NEW] Limit the total number of unique scenarios to process. Set to a low number for fast tests.
-EPISODE_LIMIT=20
+EPISODE_LIMIT=50
 
 # --- Advanced Settings ---
 # Set to 'true' to skip BC data collection if bc_data.json already exists.
