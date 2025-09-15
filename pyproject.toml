@@ -32,6 +32,8 @@ setuptools = "^80.9.0"
 scikit-learn = "^1.7.1"
 datasets = "^4.0.0"
 wandb = "^0.21.4"
+simpledorff = "^0.0.2"
+unsloth = {git = "https://github.com/unslothai/unsloth.git", extras = ["pt"]}
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.6.0"
