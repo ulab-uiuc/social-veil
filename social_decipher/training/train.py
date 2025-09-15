@@ -14,6 +14,7 @@ import sys
 import yaml
 import json
 import wandb
+import random
 from typing import Dict, List, Any, Optional
 from pathlib import Path
 
@@ -227,6 +228,12 @@ def main():
         help="Use barrier-specific episode sets"
     )
     parser.add_argument(
+        "--episode_limit",
+        type=int,
+        default=None,
+        help="Limit the number of episodes to process for faster runs."
+    )
+    parser.add_argument(
         "--load_existing_data",
         action="store_true",
         help="Load existing BC/SR data if available, instead of regenerating it."
@@ -282,28 +289,43 @@ def main():
         sys.exit(1)
     
     episodes = load_episodes(args.episodes_file)
-    print(f"Loaded {len(episodes)} episodes")
+    print(f"Loaded {len(episodes)} base episodes")
     
     # Load barrier episodes if requested
     if args.use_barrier_episodes:
         print("Loading barrier-specific episodes...")
         barrier_episodes = load_barrier_episode_sets()
         
-        # Filter by requested barrier types
-        filtered_barrier_episodes = {}
-        for barrier_type in args.barrier_types:
-            if barrier_type in barrier_episodes:
-                filtered_barrier_episodes[barrier_type] = barrier_episodes[barrier_type]
-                print(f"   {barrier_type}: {len(barrier_episodes[barrier_type])} episodes")
+        # Combine all episodes into a dictionary first
+        all_episode_sets = {"neutral": episodes, **barrier_episodes}
+
+        # Apply episode limit by random sampling to EACH category if specified
+        if args.episode_limit is not None:
+            print(f"Randomly sampling {args.episode_limit} episodes per category...")
+            for category, eps in all_episode_sets.items():
+                original_count = len(eps)
+                if original_count > args.episode_limit:
+                    all_episode_sets[category] = random.sample(eps, args.episode_limit)
+                # If the category has fewer episodes than the limit, just use all of them
+                else:
+                    all_episode_sets[category] = eps
+                print(f"   {category}: {original_count} → {len(all_episode_sets[category])} episodes")
         
-        # Combine all episodes
-        all_episodes = episodes.copy()
-        for barrier_type, barrier_eps in filtered_barrier_episodes.items():
-            all_episodes.extend(barrier_eps)
+        # Combine all limited episodes into the final training list
+        final_episodes = []
+        for category_eps in all_episode_sets.values():
+            final_episodes.extend(category_eps)
         
-        episodes = all_episodes
-        print(f"Total episodes with barriers: {len(episodes)}")
+        episodes = final_episodes
+        print(f"Total episodes for training: {len(episodes)}")
     
+    # Handle the case where only a limit on neutral episodes is desired
+    elif args.episode_limit is not None:
+        original_count = len(episodes)
+        if original_count > args.episode_limit:
+            episodes = random.sample(episodes, args.episode_limit)
+        print(f"Randomly sampling to {len(episodes)} neutral episodes based on --episode_limit.")
+
     # Initialize trainer
     print("Initializing Sotopia-π style trainer...")
     trainer = SotopiaStyleTrainer(config)

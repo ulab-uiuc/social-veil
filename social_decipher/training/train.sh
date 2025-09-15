@@ -42,11 +42,13 @@ export OPENAI_API_KEY=$AGENT_OPENAI_API_KEY
 # For full run: "data/episode_all_neutralized.jsonl"
 EPISODES_FILE="data/episode_test_sample.jsonl"
 
+# --- Training Loop & Data Volume ---
 # How many times to repeat the "data collection -> training" cycle. 1-2 is good for testing.
-NUM_IMPROVE_STEPS=1
-
+NUM_IMPROVE_STEPS=5
 # How many conversations to generate for each scenario. 1 is good for testing.
-CONVERSATIONS_PER_EPISODE=1
+CONVERSATIONS_PER_EPISODE=3
+# [NEW] Limit the total number of unique scenarios to process. Set to a low number for fast tests.
+EPISODE_LIMIT=20
 
 # --- Advanced Settings ---
 # Set to 'true' to skip BC data collection if bc_data.json already exists.
@@ -154,6 +156,9 @@ run_training() {
     TRAIN_CMD="$TRAIN_CMD --quality_threshold $QUALITY_THRESHOLD"
     TRAIN_CMD="$TRAIN_CMD --filter_top_k $FILTER_TOP_K"
     TRAIN_CMD="$TRAIN_CMD --scoring_strategy $SCORING_STRATEGY"
+    if [ -n "$EPISODE_LIMIT" ]; then
+        TRAIN_CMD="$TRAIN_CMD --episode_limit $EPISODE_LIMIT"
+    fi
     
     # Add wandb arguments
     TRAIN_CMD="$TRAIN_CMD --wandb_project $WANDB_PROJECT"
@@ -234,6 +239,7 @@ show_help() {
     echo "  PARTNER_MODEL           Partner model for SR (default: gpt-4o-mini)"
     echo "  EVALUATOR_MODEL         Evaluator model (default: gpt-4o)"
     echo "  CONVERSATIONS_PER_EPISODE  Conversations per episode (default: 1)"
+    echo "  EPISODE_LIMIT           Max number of unique scenarios to process (e.g., 10 for a quick test)"
     echo "  QUALITY_THRESHOLD       Quality threshold (default: 6.0)"
     echo "  FILTER_TOP_K            Top-k filtering (default: 2)"
     echo "  SCORING_STRATEGY        Scoring strategy to use (default: custom_barrier_focused)"
