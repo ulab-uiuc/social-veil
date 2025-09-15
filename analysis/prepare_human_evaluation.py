@@ -144,7 +144,8 @@ def main():
                     with open(eval_path, "r", encoding="utf-8") as f:
                         eval_data = json.load(f)
                     
-                    mu_score = eval_data.get("aggregated_scores", {}).get("episode_level", {}).get("mutual_understanding", {}).get("score")
+                    mu_raw = eval_data.get("aggregated_scores", {}).get("episode_level", {}).get("mutual_understanding")
+                    mu_score = mu_raw.get("score") if isinstance(mu_raw, dict) else mu_raw if isinstance(mu_raw, (int, float)) else None
                     
                     if mu_score is not None and float(mu_score) <= args.score_threshold:
                         candidate_indices.append(idx)
