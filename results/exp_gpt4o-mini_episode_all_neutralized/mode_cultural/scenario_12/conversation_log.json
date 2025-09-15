@@ -1,0 +1,53 @@
+{
+    "experimental_context": {
+        "scenario": {
+            "description": "In a park, two individuals engage in a casual conversation.",
+            "agent_relationship": "friend",
+            "barrier_type": "cultural_style"
+        },
+        "agents": {
+            "agent_a": {
+                "name": "Donovan",
+                "profile": {
+                    "first_name": "Donovan",
+                    "last_name": "Reeves",
+                    "age": 27,
+                    "occupation": "Software Developer",
+                    "personality_and_values": "Donovan Reeves values authority and care. Even though he's outgoing and hardworking, he can be somewhat moody. His decision-making style varies according to the situation at hand.",
+                    "public_info": "Donovan Reeves is a software developer who, in his spare time, is an avid gamer who participates in global coding competitions.",
+                    "model_id": "gpt-4o-mini"
+                },
+                "goal": "Distance from a friend due to developing feelings and avoid letting them aware of your feelings (<extra_info>Extra information: you have developed romantic feelings for your friend and it's making you uncomfortable. You want to take a step back from the friendship to sort out your feelings <strategy_hint>Hint: you don't want to reveal your secretive feelings to them and you need to find other reasons</strategy_hint></extra_info>)",
+                "reason": "Donovan wants to distance himself because he needs time to sort out his romantic feelings without revealing them to Ava.",
+                "private_knowledge": ""
+            },
+            "agent_b": {
+                "name": "Ava",
+                "profile": {
+                    "first_name": "Ava",
+                    "last_name": "Thompson",
+                    "age": 28,
+                    "occupation": "Architect",
+                    "personality_and_values": "Ava Thompson, with her outgoing and regulated temperament, is driven by achievement. Her decision-making style is largely intuitive.",
+                    "public_info": "Ava Thompson has a samoyed.",
+                    "model_id": "gpt-4o-mini"
+                },
+                "goal": "Maintain the existing friendship (<extra_info>Extra information: you value your friendship with the friend and don't want to lose it. <strategy_hint>Hint: you want to understand the sudden change in their behavior.</strategy_hint></extra_info>)",
+                "reason": "Ava wants to maintain the friendship so that she can understand Donovan's sudden change in behavior and preserve their bond.",
+                "private_knowledge": ""
+            }
+        },
+        "experimental_configuration": {
+            "max_rounds": 20
+        }
+    },
+    "conversation_log": [
+        "Donovan: Hey Ava, it's nice to see you here! How have you been enjoying the park lately?",
+        "Ava: Hey Donovan! It's great to see you too! I've been really enjoying the fresh air and the beautiful scenery. How about you? Have you been coming here often?",
+        "Donovan: You know, I've been trying to appreciate the little things around here. It's amazing how nature can bring a sense of calm, isn't it? I think it's important to take a step back sometimes and just soak it all in.",
+        "Ava: Absolutely! I love how being in nature can really help clear the mind. It’s like a breath of fresh air, both literally and figuratively. Have you found any particular spots in the park that you enjoy more than others?",
+        "Donovan: left the conversation",
+        "Donovan left the conversation"
+    ],
+    "mcq_logs": []
+}

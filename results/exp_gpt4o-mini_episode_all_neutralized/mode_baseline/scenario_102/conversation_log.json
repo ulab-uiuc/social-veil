@@ -1,0 +1,88 @@
+{
+    "experimental_context": {
+        "scenario": {
+            "description": "Two individuals are engaged in a conversation, with one expressing distress.",
+            "agent_relationship": "friend",
+            "barrier_type": null
+        },
+        "agents": {
+            "agent_a": {
+                "name": "Samuel",
+                "profile": {
+                    "first_name": "Samuel",
+                    "last_name": "Anderson",
+                    "age": 29,
+                    "occupation": "Software Developer",
+                    "personality_and_values": "Samuel Anderson, though somewhat impulsive and free-spirited, values enjoyment. His decision-making is often spontaneous, staying within familiar boundaries.",
+                    "public_info": "Samuel Anderson can cook very well.",
+                    "model_id": "gpt-4o-mini"
+                },
+                "goal": "Distance from a friend due to developing feelings and avoid letting them aware of your feelings (<extra_info>Extra information: you have developed romantic feelings for your friend and it's making you uncomfortable. You want to take a step back from the friendship to sort out your feelings <strategy_hint>Hint: you don't want to reveal your secretive feelings to them and you need to find other reasons</strategy_hint></extra_info>)",
+                "reason": "Samuel wants to distance himself because his romantic feelings for Noah are making him uncomfortable.",
+                "private_knowledge": ""
+            },
+            "agent_b": {
+                "name": "Noah",
+                "profile": {
+                    "first_name": "Noah",
+                    "last_name": "Davis",
+                    "age": 40,
+                    "occupation": "Coach",
+                    "personality_and_values": "Noah Davis, who is somewhat reserved and anxious, highly prioritizes care and protection for others. He is cautious when making decisions.",
+                    "public_info": "Noah Davis has a swimming pool.",
+                    "model_id": "gpt-4o-mini"
+                },
+                "goal": "Figure out why they estranged you recently, and maintain the existing friendship (<extra_info>Extra information: you notice that your friend has been intentionally avoiding you, you would like to figure out why. You value your friendship with the friend and don't want to lose it.</extra_info>)",
+                "reason": "Noah wants to figure out why Samuel is avoiding him in order to maintain their valued friendship.",
+                "private_knowledge": ""
+            }
+        },
+        "experimental_configuration": {
+            "max_rounds": 20
+        }
+    },
+    "conversation_log": [
+        "Samuel: Hey Noah, how have you been lately? Anything new going on?",
+        "Noah: Hey Samuel, I've been doing okay, just keeping busy with coaching. I noticed we haven't been hanging out as much lately. Is everything alright?",
+        "Samuel: Yeah, I've just been caught up with work and some personal stuff. I think I just need a little time to sort things out, you know?",
+        "Noah: I totally understand, Samuel. We all go through those phases. Just know I'm here for you if you need to talk or if there's anything I can do to help.",
+        "Samuel: Thanks, Noah. I really appreciate that. It means a lot to know you're there for me. I might just need some time to figure things out on my own for now.",
+        "Noah: Of course, take all the time you need. Just remember, I'm here whenever you're ready to talk or hang out. I miss our time together.",
+        "Samuel: I miss our time together too, Noah. Maybe we can plan something in the future, once I get my head straight. Just need a little space for now.",
+        "Noah: I completely respect that, Samuel. Just know I'm always here when you're ready. Maybe we can keep in touch through text or something in the meantime? I just want to make sure you're okay.",
+        "Samuel: Yeah, that sounds good. I think texting would be a nice way to stay connected without feeling overwhelmed. I appreciate your understanding, Noah.",
+        "Noah: I'm really glad to hear that, Samuel. I just want you to know that I care about you and our friendship. If there's anything specific that's been on your mind or if you feel comfortable sharing, I'm here to listen.",
+        "Samuel: Thanks, Noah. I really appreciate your concern. It's just been a lot to process lately, and I think I just need some time to sort through everything on my own.",
+        "Noah: I completely understand, Samuel. Take all the time you need. Just know that I'm here if you ever want to talk or if there's anything I can do to help you through this.",
+        "Samuel: Thanks, Noah. It really means a lot to me to have your support. I’ll definitely reach out when I feel ready to talk more.",
+        "Noah: Of course, Samuel. Just remember, I'm here whenever you're ready. I value our friendship a lot, and I want to make sure you feel comfortable.",
+        "Samuel: Thanks, Noah. That really means a lot to me. I just need a little space for now to figure things out.",
+        "Noah: I completely respect that, Samuel. Just know that I'm here whenever you're ready to talk. I really value our friendship, and I want to make sure you feel comfortable.",
+        "Samuel: I really appreciate that, Noah. It’s comforting to know you’re here for me. I just need to take a step back for a bit, but I’ll reach out when I’m ready.",
+        "Noah: I completely understand, Samuel. Just know that I'll be here, and I'm always ready to listen whenever you feel up to it. I care about you and our friendship.",
+        "Samuel: Thanks, Noah. It really means a lot to hear that. I just need some time to sort through things on my own for now.",
+        "Noah: I completely understand, Samuel. Just know that I'm here for you, and whenever you're ready to talk, I'm all ears. I just want to make sure you're okay.",
+        "Samuel: Thanks, Noah. I really appreciate your support. It just feels like I need to take a little time to focus on myself right now.",
+        "Noah: I completely get that, Samuel. Taking time for yourself is really important. Just remember, I'm here whenever you're ready to talk or if you need anything. Your well-being matters to me.",
+        "Samuel: Thanks, Noah. I really appreciate your understanding. It just feels like I need to clear my head a bit and focus on what I need right now.",
+        "Noah: I completely respect that, Samuel. Just know that if you ever want to share what's on your mind or if there's anything specific bothering you, I'm here to help. I value our friendship and want to make sure you're okay.",
+        "Samuel: I really appreciate that, Noah. It means a lot to know you're there for me. I just need to take a step back for a bit to figure things out.",
+        "Noah: Of course, Samuel. I completely understand that you need some space. Just remember, I'm here whenever you're ready to reconnect. Your friendship is important to me, and I want to support you in any way I can.",
+        "Samuel: Thanks, Noah. I really value our friendship too. I just need some time to sort things out in my head.",
+        "Noah: I completely understand, Samuel. Just know that I'm here for you whenever you're ready. If you ever feel like sharing what's on your mind, I'm all ears. Your friendship means a lot to me.",
+        "Samuel: Thanks, Noah. I really appreciate your patience. I just need to take some time to focus on myself and figure things out.",
+        "Noah: I completely understand, Samuel. It's important to take that time for yourself. Just remember, I'm here whenever you're ready to talk or if you need anything. Your well-being matters to me.",
+        "Samuel: Thanks, Noah. I really appreciate that. I just need to focus on some personal things for now.",
+        "Noah: I completely respect that, Samuel. Just know that I'm here to support you in any way you need. If there's ever anything you want to share or talk about, I'm just a message away.",
+        "Samuel: Thanks, Noah. That really means a lot to me. I just need to take a step back for a bit and focus on some personal things.",
+        "Noah: I completely understand, Samuel. Just know that I'm here whenever you feel ready to talk or if you need support. Your friendship is really important to me, and I want to make sure you feel comfortable.",
+        "Samuel: Thanks, Noah. I really value our friendship too. I just need a little time to sort things out on my own.",
+        "Noah: I completely understand, Samuel. Just know that I'm here for you, and if you ever feel like sharing what's on your mind, I'm all ears. I just want to make sure everything's okay.",
+        "Samuel: I appreciate that, Noah. It really helps to know you're there for me. I just need to take some time to figure things out on my own.",
+        "Noah: Of course, Samuel. Just remember, I'm here whenever you're ready. I care about you and our friendship, so take all the time you need.",
+        "Samuel: Thanks, Noah. I really appreciate your understanding. It means a lot to me.",
+        "Noah: I'm really glad to hear that, Samuel. Your friendship means a lot to me too. If there's anything specific on your mind or if you ever want to talk about what's been going on, I'm here for you.",
+        "Samuel: Thanks, Noah. I just need some space to clear my head for a bit. I hope you understand."
+    ],
+    "mcq_logs": []
+}

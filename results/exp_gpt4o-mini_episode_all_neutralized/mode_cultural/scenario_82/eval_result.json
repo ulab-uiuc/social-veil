@@ -1,0 +1,27 @@
+{
+    "aggregated_scores": {
+        "agent_1": {
+            "goal_completion": 6,
+            "believability": 8,
+            "relationship": 1,
+            "knowledge": 3,
+            "social_rules": 0,
+            "financial_benefits": 0,
+            "overall": 4
+        },
+        "agent_2": {
+            "goal_completion": 8,
+            "believability": 9,
+            "relationship": 2,
+            "knowledge": 4,
+            "social_rules": 0,
+            "financial_benefits": 0,
+            "overall": 6
+        },
+        "interaction_quality": 7,
+        "episode_level": {
+            "unresolved_confusion": 3,
+            "mutual_understanding": 4
+        }
+    }
+}
