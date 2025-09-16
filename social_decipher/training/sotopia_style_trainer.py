@@ -390,6 +390,8 @@ class SotopiaStyleTrainer:
         # LLaMA-Factory expects dataset_dir + dataset (basename without .json)
         config["dataset_dir"] = self.config.output_dir
         config["dataset"] = os.path.splitext(os.path.basename(sft_data_path))[0]
+        # Our formatter produces Alpaca-style fields: instruction/input/output
+        config["dataset_format"] = "alpaca"
         config_path = os.path.join(self.policy_updater.output_dir, "llama_factory_config.yaml")
         with open(config_path, 'w') as f:
             yaml.dump(config, f)
