@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
 from scipy.stats import ttest_ind
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from nltk.tokenize import word_tokenize, sent_tokenize
@@ -228,7 +229,7 @@ def main():
     plt.savefig('analysis/figure1_linguistic_signatures.png', dpi=300, bbox_inches='tight')
     print("Saved Figure 1: Linguistic Signatures Radar Chart")
 
-    # --- Figure 2: Correlation Heatmap with Significance ---
+    # --- Figure 2: Correlation Heatmap with Significance (using Matplotlib) ---
     linguistic_features = ['reference_pronoun_rate', 'hedging_rate', 'self_focus_rate', 'sentiment_polarity']
     outcome_metrics = [
         'unresolved_confusion', 'mutual_understanding', 'agent_b_goal_completion', 
@@ -238,7 +239,7 @@ def main():
     # Calculate correlation and p-value matrices
     corr_matrix = df[linguistic_features + outcome_metrics].corr().loc[linguistic_features, outcome_metrics]
     
-    p_values = pd.DataFrame(index=linguistic_features, columns=outcome_metrics)
+    p_values = pd.DataFrame(index=linguistic_features, columns=outcome_metrics, dtype=float)
     for feature in linguistic_features:
         for outcome in outcome_metrics:
             clean_df = df[[feature, outcome]].dropna()
@@ -251,20 +252,32 @@ def main():
     # Create annotations based on p-values
     annot_matrix = p_values.apply(lambda s: s.apply(lambda p: '***' if p < 0.001 else '**' if p < 0.01 else '*' if p < 0.05 else ''))
 
-    plt.figure(figsize=(10, 8))
-    sns.heatmap(
-        corr_matrix,
-        annot=annot_matrix,
-        fmt='s',  # Tell heatmap annotations are strings
-        cmap='RdBu_r', 
-        linewidths=.5, 
-        linecolor='white',
-        center=0
-    )
-    plt.title('Linguistic Features vs. Conversational Outcomes (Significance)', size=18)
-    plt.xticks(rotation=45, ha="right")
-    plt.yticks(rotation=0)
-    plt.tight_layout()
+    fig, ax = plt.subplots(figsize=(10, 8))
+    
+    # Use a diverging norm to center the colormap at 0
+    norm = mcolors.TwoSlopeNorm(vmin=corr_matrix.min().min(), vcenter=0, vmax=corr_matrix.max().max())
+    im = ax.imshow(corr_matrix, cmap='RdBu_r', norm=norm)
+
+    # Create colorbar
+    cbar = ax.figure.colorbar(im, ax=ax)
+    cbar.ax.set_ylabel("Correlation", rotation=-90, va="bottom")
+
+    # Add the significance annotations
+    for i in range(len(linguistic_features)):
+        for j in range(len(outcome_metrics)):
+            text = ax.text(j, i, annot_matrix.iloc[i, j],
+                           ha="center", va="center", color="black", fontsize=14)
+
+    # Set ticks and labels
+    ax.set_xticks(np.arange(len(outcome_metrics)))
+    ax.set_yticks(np.arange(len(linguistic_features)))
+    ax.set_xticklabels([label.replace('_', ' ').title() for label in outcome_metrics])
+    ax.set_yticklabels([label.replace('_', ' ').title() for label in linguistic_features])
+
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+
+    ax.set_title('Linguistic Features vs. Conversational Outcomes (Significance)', size=18)
+    fig.tight_layout()
     plt.savefig('analysis/figure2_correlation_heatmap.png', dpi=300, bbox_inches='tight')
     print("Saved Correlation Heatmap with Significance")
 
