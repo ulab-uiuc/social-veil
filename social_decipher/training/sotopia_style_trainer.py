@@ -387,7 +387,9 @@ class SotopiaStyleTrainer:
         
         # Update config with current settings and the dataset path for this step
         sft_data_path = os.path.join(self.config.output_dir, f"sft_data_step_{improve_step}.json")
-        config["dataset_path"] = sft_data_path
+        # LLaMA-Factory expects dataset_dir + dataset (basename without .json)
+        config["dataset_dir"] = self.config.output_dir
+        config["dataset"] = os.path.splitext(os.path.basename(sft_data_path))[0]
         config_path = os.path.join(self.policy_updater.output_dir, "llama_factory_config.yaml")
         with open(config_path, 'w') as f:
             yaml.dump(config, f)

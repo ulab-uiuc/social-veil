@@ -44,11 +44,11 @@ EPISODES_FILE="data/episode_all_neutralized.jsonl"
 
 # --- Training Loop & Data Volume ---
 # How many times to repeat the "data collection -> training" cycle. 1-2 is good for testing.
-NUM_IMPROVE_STEPS=2
+NUM_IMPROVE_STEPS=5
 # How many conversations to generate for each scenario. 1 is good for testing.
 CONVERSATIONS_PER_EPISODE=2
 # [NEW] Limit the total number of unique scenarios to process. Set to a low number for fast tests.
-EPISODE_LIMIT=50
+EPISODE_LIMIT=10
 
 # --- Advanced Settings ---
 # Set to 'true' to skip BC data collection if bc_data.json already exists.
@@ -58,9 +58,9 @@ USE_BARRIER_EPISODES=true
 # The scoring logic to use for filtering conversations. "custom_barrier_focused" is the recommended default.
 SCORING_STRATEGY="custom_barrier_focused"
 # The quality score threshold for filtering conversations.
-QUALITY_THRESHOLD=6.0
+QUALITY_THRESHOLD=7.0
 # The number of top conversations to keep per scenario type.
-FILTER_TOP_K=2
+FILTER_TOP_K=1
 # Which barrier types to include when USE_BARRIER_EPISODES is true.
 BARRIER_TYPES="semantic cultural emotional"
 OUTPUT_DIR="training_data"
@@ -158,6 +158,16 @@ run_training() {
     TRAIN_CMD="$TRAIN_CMD --scoring_strategy $SCORING_STRATEGY"
     if [ -n "$EPISODE_LIMIT" ]; then
         TRAIN_CMD="$TRAIN_CMD --episode_limit $EPISODE_LIMIT"
+    fi
+
+    # If a pre-formatted SFT dataset is provided, train directly from it
+    # Priority: env var SFT_DATA, else default path training_data/sft_data_step_0.json
+    if [ -n "$SFT_DATA" ] && [ -f "$SFT_DATA" ]; then
+        print_info "Detected preformatted SFT dataset: $SFT_DATA"
+        TRAIN_CMD="$TRAIN_CMD --sft_data $SFT_DATA"
+    elif [ -f "$OUTPUT_DIR/sft_data_step_0.json" ]; then
+        print_info "Detected preformatted SFT dataset: $OUTPUT_DIR/sft_data_step_0.json"
+        TRAIN_CMD="$TRAIN_CMD --sft_data $OUTPUT_DIR/sft_data_step_0.json"
     fi
     
     # Add wandb arguments
