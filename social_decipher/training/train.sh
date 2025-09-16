@@ -21,17 +21,14 @@ EXPERIMENT_NAME="qwen-finetune-barrier-run"
 WANDB_RUN_NAME="${EXPERIMENT_NAME}-$(date +%Y%m%d-%H%M)"
 
 # --- Model Configuration ---
-# The model to be fine-tuned.
-AGENT_MODEL="models/Qwen2.5-7B-Instruct"
-# The consistent partner model for the agent to play against during Self-Reinforcement (SR).
-PARTNER_MODEL="gpt-4o-mini"
-# The powerful model used to judge conversations and provide reward signals.
-EVALUATOR_MODEL="gpt-4o"
-# The model used to generate "gold standard" expert demonstrations.
-EXPERT_MODEL="gpt-4.1"
+# Read from configs/config.yaml
+CONFIG_READER_CMD="python3 -m social_decipher.utils.config_reader"
+AGENT_MODEL=$($CONFIG_READER_CMD training_models.agent_model)
+PARTNER_MODEL=$($CONFIG_READER_CMD training_models.partner_model)
+EVALUATOR_MODEL=$($CONFIG_READER_CMD training_models.evaluator_model)
+EXPERT_MODEL=$($CONFIG_READER_CMD training_models.expert_model)
 
 # --- API Keys (read from config.yaml) ---
-CONFIG_READER_CMD="python3 -m social_decipher.utils.config_reader"
 export AGENT_OPENAI_API_KEY=$($CONFIG_READER_CMD AGENT_OPENAI_API_KEY)
 export EVALUATOR_OPENAI_API_KEY=$($CONFIG_READER_CMD EVALUATOR_OPENAI_API_KEY)
 export OPENAI_API_KEY=$AGENT_OPENAI_API_KEY
@@ -240,34 +237,6 @@ show_help() {
     echo "  --help, -h              Show this help message"
     echo "  --preprocess-only       Run data preprocessing only"
     echo "  --check-requirements    Check requirements and exit"
-    echo ""
-    echo "Environment Variables:"
-    echo "  EXPERIMENT_NAME         Name of the training experiment (default: social_decipher_barrier_training)"
-    echo "  NUM_IMPROVE_STEPS       Number of improvement steps (default: 3)"
-    echo "  EPISODES_FILE           Path to episodes JSONL file (default: data/episode_sample.jsonl)"
-    echo "  OUTPUT_DIR              Output directory (default: training_data)"
-    echo "  CHECKPOINT_DIR          Checkpoint directory (default: checkpoints)"
-    echo "  EXPERT_MODEL            Expert model for BC (default: gpt-4.1)"
-    echo "  AGENT_MODEL             Agent model for SR (default: models/Qwen2.5-0.5B-Instruct)"
-    echo "  PARTNER_MODEL           Partner model for SR (default: gpt-4o-mini)"
-    echo "  EVALUATOR_MODEL         Evaluator model (default: gpt-4o)"
-    echo "  CONVERSATIONS_PER_EPISODE  Conversations per episode (default: 1)"
-    echo "  EPISODE_LIMIT           Max number of unique scenarios to process (e.g., 10 for a quick test)"
-    echo "  QUALITY_THRESHOLD       Quality threshold (default: 6.0)"
-    echo "  FILTER_TOP_K            Top-k filtering (default: 2)"
-    echo "  SCORING_STRATEGY        Scoring strategy to use (default: custom_barrier_focused)"
-    echo "  LOAD_EXISTING_DATA      Set to 'true' to reuse existing bc_data.json (default: false)"
-    echo "  USE_BARRIER_EPISODES    Use barrier episodes (default: false)"
-    echo "  BARRIER_TYPES           Barrier types to include (default: semantic cultural emotional)"
-    echo "  WANDB_PROJECT           Wandb project name (default: social-decipher)"
-    echo "  WANDB_ENTITY            Wandb entity name (optional)"
-    echo "  WANDB_RUN_NAME          Wandb run name (optional, defaults to experiment name)"
-    echo ""
-    echo "Examples:"
-    echo "  $0                                    # Run with default settings"
-    echo "  $0 --preprocess-only                  # Run preprocessing only"
-    echo "  EXPERIMENT_NAME=my_exp $0             # Run with custom experiment name"
-    echo "  USE_BARRIER_EPISODES=true $0          # Run with barrier episodes"
 }
 
 # Main execution
