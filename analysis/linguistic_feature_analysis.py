@@ -35,6 +35,15 @@ def analyze_sentiment(text):
     polarity_scores = [sid.polarity_scores(sentence)['compound'] for sentence in sentences]
     return np.mean(polarity_scores)
 
+def get_agent_a_name(transcript_text):
+    """Dynamically identifies the name of the first speaker (Agent A)."""
+    for line in transcript_text.strip().split('\n'):
+        clean_line = line.strip()
+        if ':' in clean_line:
+            # The first speaker found is assumed to be Agent A
+            return clean_line.split(':', 1)[0]
+    return None
+
 def count_reference_pronouns(text):
     """Counts the occurrences of ambiguous/impersonal reference pronouns."""
     tokens = word_tokenize(text.lower())
@@ -57,13 +66,19 @@ def count_first_person_pronouns(text):
     first_person_pronouns = {'i', 'me', 'my', 'mine', 'myself'}
     return sum(1 for token in tokens if token in first_person_pronouns)
 
-def extract_features_from_transcript(transcript_text):
-    """Extracts all linguistic features from a single conversation transcript."""
-    # We only analyze Agent A's (Rafael's) speech, as they are the one with the barrier
+def extract_features_from_transcript(transcript_text, agent_a_name):
+    """Extracts all linguistic features from a single conversation transcript for a given agent."""
+    if not agent_a_name:
+        return {}
+        
     agent_a_text = ""
+    agent_a_name_lower = agent_a_name.lower()
+    
     for line in transcript_text.strip().split('\n'):
-        if line.lower().startswith('rafael:'):
-            agent_a_text += line.split(':', 1)[1]
+        # Strip leading/trailing whitespace from each line before checking the name
+        clean_line = line.strip()
+        if clean_line.lower().startswith(f'{agent_a_name_lower}:'):
+            agent_a_text += clean_line.split(':', 1)[1]
 
     if not agent_a_text:
         return {}
@@ -98,10 +113,17 @@ def load_data(base_dir):
                 transcript_path = os.path.join(scenario_path, 'conversation_log.txt')
                 with open(transcript_path, 'r', encoding='utf-8') as f:
                     transcript = f.read()
+
+                # Dynamically determine Agent A's name from the transcript
+                agent_a_name = get_agent_a_name(transcript)
+                if not agent_a_name:
+                    print(f"Warning: Could not determine Agent A's name in {transcript_path}. Skipping.")
+                    continue
                 
-                linguistic_features = extract_features_from_transcript(transcript)
+                linguistic_features = extract_features_from_transcript(transcript, agent_a_name)
                 if not linguistic_features:
-                    print(f"Warning: No features extracted from {transcript_path}. Agent A's name might be wrong or text empty.")
+                    # This warning is now more specific
+                    print(f"Warning: No features extracted from {transcript_path} for agent '{agent_a_name}'.")
                     continue
                 row.update(linguistic_features)
 
@@ -120,6 +142,8 @@ def load_data(base_dir):
                     'mutual_understanding': episode_scores.get('mutual_understanding'),
                     'agent_a_goal_completion': agent1_scores.get('goal_completion'),
                     'agent_b_goal_completion': agent2_scores.get('goal_completion'),
+                    'agent_b_relationship': agent2_scores.get('relationship'),
+                    'agent_b_knowledge': agent2_scores.get('knowledge'),
                 }
                 
                 # Handle cases where scores might be nested dicts, e.g., {"score": 5}
@@ -205,7 +229,10 @@ def main():
 
     # --- Figure 2: Correlation Heatmap (Focused View) ---
     linguistic_features = ['reference_pronoun_rate', 'hedging_rate', 'self_focus_rate', 'sentiment_polarity']
-    outcome_metrics = ['unresolved_confusion', 'mutual_understanding', 'agent_a_goal_completion', 'agent_b_goal_completion']
+    outcome_metrics = [
+        'unresolved_confusion', 'mutual_understanding', 'agent_b_goal_completion', 
+        'agent_b_relationship', 'agent_b_knowledge'
+    ]
     
     # Ensure all columns exist in the dataframe before correlation
     all_cols = [col for col in linguistic_features + outcome_metrics if col in df.columns]
@@ -224,12 +251,12 @@ def main():
         linecolor='white',
         vmin=-1, vmax=1
     )
-    plt.title('Figure 2: Linguistic Features vs. Conversational Outcomes', size=18)
+    plt.title('Linguistic Features vs. Conversational Outcomes', size=18)
     plt.xticks(rotation=45, ha="right")
     plt.yticks(rotation=0)
     plt.tight_layout()
     plt.savefig('analysis/figure2_correlation_heatmap.png', dpi=300, bbox_inches='tight')
-    print("Saved Figure 2: Correlation Heatmap")
+    print("Saved Correlation Heatmap")
 
 
 if __name__ == '__main__':
