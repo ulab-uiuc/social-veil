@@ -161,13 +161,16 @@ run_training() {
     fi
 
     # If a pre-formatted SFT dataset is provided, train directly from it
-    # Priority: env var SFT_DATA, else default path training_data/sft_data_step_0.json
+    # Priority: env var SFT_DATA; else auto-pick the latest sft_data_step_*.json in $OUTPUT_DIR
     if [ -n "$SFT_DATA" ] && [ -f "$SFT_DATA" ]; then
         print_info "Detected preformatted SFT dataset: $SFT_DATA"
         TRAIN_CMD="$TRAIN_CMD --sft_data $SFT_DATA"
-    elif [ -f "$OUTPUT_DIR/sft_data_step_0.json" ]; then
-        print_info "Detected preformatted SFT dataset: $OUTPUT_DIR/sft_data_step_0.json"
-        TRAIN_CMD="$TRAIN_CMD --sft_data $OUTPUT_DIR/sft_data_step_0.json"
+    else
+        latest_sft=$(ls "$OUTPUT_DIR"/sft_data_step_*.json 2>/dev/null | sort -V | tail -n 1 || true)
+        if [ -n "$latest_sft" ] && [ -f "$latest_sft" ]; then
+            print_info "Detected preformatted SFT dataset: $latest_sft"
+            TRAIN_CMD="$TRAIN_CMD --sft_data $latest_sft"
+        fi
     fi
     
     # Add wandb arguments
