@@ -179,25 +179,25 @@ def run_single_scenario_simulation(
         if turn_num >= num_turns:
             print(f"⏰ Conversation ended: maximum turns reached ({num_turns})")
             break
-
-        # MCQ evaluations for agent A's goal and reason
-        goal_mcq_A = personB.predict_mcq_answer(
-            agent_name=personB.name,
-            partner_name=personA.name,
-            transcript=conversation_log,
-            mcqa=agent_goals_mcqas[1],
-            test_prompt=evaluator.evaluation_template,
-            task_type="goal",
-        )
         
-        reason_mcq_A = personB.predict_mcq_answer(
-            agent_name=personB.name,
-            partner_name=personA.name,
-            transcript=conversation_log,
-            mcqa=agent_reasons_mcqas[1],
-            test_prompt=evaluator.evaluation_template,
-            task_type="reason",
-        )
+        if run_mcq_tests:
+            goal_mcq_A = personB.predict_mcq_answer(
+                agent_name=personB.name,
+                partner_name=personA.name,
+                transcript=conversation_log,
+                mcqa=agent_goals_mcqas[1],
+                test_prompt=evaluator.evaluation_template,
+                task_type="goal",
+            )
+            
+            reason_mcq_A = personB.predict_mcq_answer(
+                agent_name=personB.name,
+                partner_name=personA.name,
+                transcript=conversation_log,
+                mcqa=agent_reasons_mcqas[1],
+                test_prompt=evaluator.evaluation_template,
+                task_type="reason",
+            )
 
         # Before Agent A's next turn, add barrier preface if still in barrier window
         # Update agent A's instructions first (this rebuilds the system prompt)
