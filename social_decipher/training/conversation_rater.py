@@ -26,24 +26,15 @@ class ConversationRating:
     explanation: str
     is_positive: bool  # Whether to include in training data
     
-    # Fields required for the custom barrier-focused scoring strategy
-    goal_completion: float = 0.0
-    believability: float = 0.0
-    relationship: float = 0.0
-    episode_level: Optional[Dict[str, Any]] = None
+    # New metrics for barrier-focused scoring strategy
+    goal_completion: float = 0.0  # 0-10 scale
+    believability: float = 0.0  # 0-10 scale
+    relationship: float = 0.0  # -5 to 5 scale
+    episode_level: Dict[str, Any] = None  # Contains unresolved_confusion and mutual_understanding
 
 
 class ConversationRater:
-    """
-    Rates conversation quality for training data filtering.
-    
-    Inspired by Sotopia-π rating system but specialized for:
-    1. Barrier Communication Quality: How well Agent B adapts to Agent A's barriers
-    2. Social Intelligence: Maintaining relationship despite communication challenges  
-    3. Goal Achievement: Success in reaching conversation objectives
-    4. Learning Value: Whether conversation provides good training signal
-    """
-    
+
     def __init__(self, model: str = "gpt-4o", temperature: float = 0.3):
         # Load main config to get the evaluator-specific API key
         main_config_path = os.path.join(os.path.dirname(__file__), "..", "..", "configs", "config.yaml")
@@ -65,52 +56,27 @@ class ConversationRater:
     def rate_conversations(
         self, 
         conversations: List[TrainingConversation],
-        quality_threshold: float = 6.0,
-        ratings_cache_path: Optional[str] = None
+        quality_threshold: float = 6.0
     ) -> List[ConversationRating]:
-        """
-        Rate a batch of conversations, reusing existing ratings from a cache if available.
-        """
+        """Rate a batch of conversations for training data filtering"""
         
-        # Load existing ratings from cache if provided
-        cached_ratings: Dict[str, ConversationRating] = {}
-        if ratings_cache_path and os.path.exists(ratings_cache_path):
-            print(f"Loading existing ratings from {ratings_cache_path}...")
-            try:
-                with open(ratings_cache_path, 'r', encoding='utf-8') as f:
-                    data = json.load(f)
-                for r_data in data:
-                    # Re-construct ConversationRating object from loaded JSON data
-                    rating = ConversationRating(**r_data)
-                    cached_ratings[rating.conversation_id] = rating
-                print(f"Loaded {len(cached_ratings)} cached ratings.")
-            except Exception as e:
-                print(f"  WARNING: Could not load or parse cache file: {e}")
-
         ratings = []
         print(f"Rating {len(conversations)} conversations...")
         
         for i, conversation in enumerate(conversations):
-            print(f"Processing conversation {i+1}/{len(conversations)} (ID: {conversation.conversation_id})")
+            print(f"Rating conversation {i+1}/{len(conversations)}")
             
-            # Check if the rating is in the cache
-            if conversation.conversation_id in cached_ratings:
-                print(f"  ✅ Using cached rating.")
-                rating = cached_ratings[conversation.conversation_id]
-            else:
-                try:
-                    # If not in cache, rate it via API call
-                    print(f"  📞 Calling rating API...")
-                    rating = self._rate_single_conversation(conversation)
-                except Exception as e:
-                    print(f"  WARNING: Rating failed: {e}")
-                    continue
-            
-            rating.is_positive = rating.overall_quality >= quality_threshold
-            ratings.append(rating)
-            
-            quality_emoji = "PASS" if rating.is_positive else "FAIL"
-            print(f"  -> Quality: {rating.overall_quality:.1f}/10 ({quality_emoji})")
+            try:
+                rating = self._rate_single_conversation(conversation)
+                rating.is_positive = rating.overall_quality >= quality_threshold
+                ratings.append(rating)
+                
+                quality_emoji = "PASS" if rating.is_positive else "FAIL"
+                print(f"  {quality_emoji} Quality: {rating.overall_quality:.1f}/10")
+                
+            except Exception as e:
+                print(f"  WARNING: Rating failed: {e}")
+                continue
                 
         positive_count = sum(1 for r in ratings if r.is_positive)
         print(f"\nResults: {positive_count}/{len(ratings)} conversations above threshold ({quality_threshold})")
@@ -140,37 +106,30 @@ class ConversationRater:
         # Parse rating response
         rating_data = json.loads(response.choices[0].message.content)
         
-        # Extract episode-level metrics from the original conversation's eval_result
-        episode_level_metrics = {}
+        # Extract episode-level metrics from eval_result if available
+        episode_level = {}
         if conversation.eval_result and "aggregated_scores" in conversation.eval_result:
-            source = conversation.eval_result["aggregated_scores"].get("episode_level", {})
-            episode_level_metrics = {
-                "unresolved_confusion": source.get("unresolved_confusion"),
-                "mutual_understanding": source.get("mutual_understanding")
+            ep_level = conversation.eval_result["aggregated_scores"].get("episode_level", {})
+            episode_level = {
+                "unresolved_confusion": ep_level.get("unresolved_confusion"),
+                "mutual_understanding": ep_level.get("mutual_understanding")
             }
-
-        # The base evaluation prompt doesn't ask for Sotopia-style metrics directly.
-        # We map the available metrics to the ones our scoring strategy needs.
-        goal_completion_score = float(rating_data.get("goal_achievement", 0))
-        # We approximate believability from social_intelligence and relationship from comm_effectiveness
-        believability_score = float(rating_data.get("social_intelligence", 0))
-        # Map 0-10 scale to -5 to 5 scale for relationship
-        relationship_score = float(rating_data.get("communication_effectiveness", 0)) - 5
-
+        
         return ConversationRating(
             conversation_id=conversation.conversation_id,
             overall_quality=float(rating_data.get("overall_quality", 0)),
             barrier_handling=float(rating_data.get("barrier_handling", 0)),
             social_intelligence=float(rating_data.get("social_intelligence", 0)),
             communication_effectiveness=float(rating_data.get("communication_effectiveness", 0)),
-            goal_achievement=goal_completion_score,
+            goal_achievement=float(rating_data.get("goal_achievement", 0)),
             explanation=rating_data.get("explanation", ""),
             is_positive=False,  # Will be set by caller based on threshold
-            # Populate the new fields for the scoring strategy
-            goal_completion=goal_completion_score,
-            believability=believability_score,
-            relationship=relationship_score,
-            episode_level=episode_level_metrics
+            
+            # Map existing metrics to new barrier-focused metrics
+            goal_completion=float(rating_data.get("goal_achievement", 0)),  # Map goal_achievement to goal_completion
+            believability=float(rating_data.get("social_intelligence", 0)),  # Map social_intelligence to believability
+            relationship=float(rating_data.get("communication_effectiveness", 0)) - 5,  # Convert 0-10 to -5 to 5 scale
+            episode_level=episode_level
         )
     
     def _prepare_conversation_context(self, conversation: TrainingConversation) -> Dict[str, Any]:

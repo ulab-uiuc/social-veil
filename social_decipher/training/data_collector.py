@@ -247,7 +247,7 @@ class BarrierDataCollector:
             run_mcq_tests=False,
         )
         
-        # Package training conversation
+        # Package training conversation with correct model names
         conversation = TrainingConversation(
             conversation_id=f"sr_{episode_idx}_{conv_idx}_{int(time.time())}",
             episode_type=episode_type,

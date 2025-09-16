@@ -146,44 +146,75 @@ class SotopiaStyleTrainer:
             config=scoring_config
         )
         
-    def run_training_pipeline(self, episodes: List[Dict[str, Any]]):
+    def run_single_improvement_step(self, episodes: List[Dict[str, Any]], current_step: int):
         """
-        Run the complete training pipeline following Sotopia-π methodology.
-        
-        Args:
-            episodes: List of episode data for training
+        Runs a single, self-contained improvement step on a given batch of episodes.
+        This includes data collection, filtering, and model training.
         """
-        print("Starting Sotopia-π Style Training Pipeline")
-        print(f"Experiment: {self.config.experiment_name}")
-        print(f"Improvement Steps: {self.config.num_improve_steps}")
-        
-        for improve_step in range(self.config.num_improve_steps):
-            print(f"\nImprovement Step {improve_step + 1}/{self.config.num_improve_steps}")
-            
-            # Step 1: Data Collection
-            conversations = self.collect_training_data(episodes, improve_step)
-            
-            # Step 2: Quality Filtering (and get ratings for logging)
-            filtered_conversations, ratings = self.filter_high_quality_data(conversations)
+        self.improve_step = current_step
+        print(f"Executing improvement step {self.improve_step + 1} with {len(episodes)} episodes.")
 
-            # Log performance metrics for this step to wandb
-            self._log_performance_metrics(ratings, improve_step)
+        # --- 1. Data Collection ---
+        # This will now only run on the batch of episodes for the current step.
+        bc_data, sr_data = self.collect_training_data(episodes)
+        
+        all_conversations = bc_data + sr_data
+        if not all_conversations:
+            print("  No conversations were collected. Skipping this improvement step.")
+            return
+
+        # --- 2. Quality Filtering ---
+        filtered_conversations, ratings = self.filter_high_quality_data(all_conversations)
+        
+        if not filtered_conversations:
+            print("  No conversations passed the quality filter. Skipping model training for this step.")
+            return
             
-            # Step 3: Data Preprocessing
-            training_data = self.preprocess_training_data(filtered_conversations)
-            
-            # Step 4: Model Training
-            if training_data:
-                self.train_model(training_data, improve_step)
-            else:
-                print("WARNING: No training data available, skipping training step")
-                
-            # Step 5: Evaluation (optional)
-            if improve_step < self.config.num_improve_steps - 1:
-                self.evaluate_model(improve_step)
-                
-        print("\nTraining pipeline completed!")
-        self.save_training_summary()
+        # --- 3. Log Performance Metrics ---
+        self._log_performance_metrics(ratings, self.improve_step + 1)
+
+        # --- 4. Prepare Data for SFT ---
+        # This part needs to be updated to use the filtered data and format it correctly.
+        sft_data = self._prepare_sft_data(filtered_conversations, ratings)
+        
+        # --- 5. Fine-Tune the Model ---
+        if sft_data:
+            self.train_model(sft_data, self.improve_step)
+        else:
+            print("  No SFT data was generated. Skipping model training.")
+
+    def run_training_pipeline(self, all_episodes: List[Dict[str, Any]]):
+        """
+        DEPRECATED: This method is replaced by the new batched approach
+        controlled from train.py. Keeping it for backward compatibility if needed.
+        """
+        print("WARNING: `run_training_pipeline` is deprecated. The training loop is now managed in train.py.")
+        # For simplicity, we can have it call the new step-wise function for the full dataset
+        self.run_single_improvement_step(all_episodes, 0)
+        
+    def _prepare_sft_data(self, conversations: List, ratings: List) -> List[Dict[str, Any]]:
+        """
+        Prepares the final SFT data in the required format for LLaMA-Factory.
+        """
+        print("\nStep 4: Preparing SFT Data for LLaMA-Factory")
+        
+        # We can reuse the formatting logic from our existing PolicyUpdater
+        training_examples = self.policy_updater.prepare_training_data(
+            conversations=conversations,
+            ratings=ratings,
+            focus_on_agent_b=True,
+            min_quality_score=0 # Filtering is already done
+        )
+
+        llama_factory_data = self.policy_updater.format_for_llama_factory(training_examples)
+        
+        # Save the formatted data for this step for inspection
+        sft_data_path = os.path.join(self.config.output_dir, f"sft_data_step_{self.improve_step}.json")
+        with open(sft_data_path, 'w', encoding='utf-8') as f:
+            json.dump(llama_factory_data, f, indent=2)
+        print(f"  Saved formatted SFT data for this step to {sft_data_path}")
+        
+        return llama_factory_data
         
     def collect_training_data(
         self, 

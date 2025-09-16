@@ -244,6 +244,14 @@ def main():
         default=["semantic", "cultural", "emotional"],
         help="Barrier types to include"
     )
+
+    # New: direct SFT path
+    parser.add_argument(
+        "--sft_data",
+        type=str,
+        default=None,
+        help="Path to a pre-formatted SFT dataset (JSON). If provided, the pipeline will skip data collection and train directly."
+    )
     
     args = parser.parse_args()
 
@@ -281,65 +289,85 @@ def main():
     
     # Pass the data loading preference to the trainer
     config.load_existing_data = args.load_existing_data
-    
-    # Load episodes
-    print(f"Loading episodes from {args.episodes_file}")
-    if not os.path.exists(args.episodes_file):
-        print(f"ERROR: Episodes file not found: {args.episodes_file}")
-        sys.exit(1)
-    
-    episodes = load_episodes(args.episodes_file)
-    print(f"Loaded {len(episodes)} base episodes")
-    
-    # Load barrier episodes if requested
-    if args.use_barrier_episodes:
-        print("Loading barrier-specific episodes...")
-        barrier_episodes = load_barrier_episode_sets()
-        
-        # Combine all episodes into a dictionary first
-        all_episode_sets = {"neutral": episodes, **barrier_episodes}
-
-        # Apply episode limit by random sampling to EACH category if specified
-        if args.episode_limit is not None:
-            print(f"Randomly sampling {args.episode_limit} episodes per category...")
-            for category, eps in all_episode_sets.items():
-                original_count = len(eps)
-                if original_count > args.episode_limit:
-                    all_episode_sets[category] = random.sample(eps, args.episode_limit)
-                # If the category has fewer episodes than the limit, just use all of them
-                else:
-                    all_episode_sets[category] = eps
-                print(f"   {category}: {original_count} → {len(all_episode_sets[category])} episodes")
-        
-        # Combine all limited episodes into the final training list
-        final_episodes = []
-        for category_eps in all_episode_sets.values():
-            final_episodes.extend(category_eps)
-        
-        episodes = final_episodes
-        print(f"Total episodes for training: {len(episodes)}")
-    
-    # Handle the case where only a limit on neutral episodes is desired
-    elif args.episode_limit is not None:
-        original_count = len(episodes)
-        if original_count > args.episode_limit:
-            episodes = random.sample(episodes, args.episode_limit)
-        print(f"Randomly sampling to {len(episodes)} neutral episodes based on --episode_limit.")
 
     # Initialize trainer
     print("Initializing Sotopia-π style trainer...")
     trainer = SotopiaStyleTrainer(config)
-    
-    # Run training pipeline
-    print("Starting training pipeline...")
-    try:
-        trainer.run_training_pipeline(episodes)
-        print("Training completed successfully!")
-    except Exception as e:
-        print(f"ERROR: Training failed: {e}")
-        import traceback
-        traceback.print_exc()
-        sys.exit(1)
+
+    # Short-circuit: train directly from provided SFT data
+    if args.sft_data:
+        if not os.path.exists(args.sft_data):
+            print(f"ERROR: SFT data file not found: {args.sft_data}")
+            sys.exit(1)
+        print(f"Loading pre-formatted SFT data from {args.sft_data} and starting fine-tuning...")
+        with open(args.sft_data, 'r', encoding='utf-8') as f:
+            sft_data = json.load(f)
+        try:
+            trainer.train_model(sft_data, improve_step=0)
+            print("Training from pre-formatted SFT data completed successfully!")
+        except Exception as e:
+            print(f"ERROR: Training from SFT data failed: {e}")
+            import traceback
+            traceback.print_exc()
+            sys.exit(1)
+        return
+
+    # --- Loading and batching when no direct SFT provided ---
+    print("--- Loading and Preparing All Scenario Sets ---")
+    base_episodes = load_episodes(args.episodes_file)
+    all_episode_sets = {"neutral": base_episodes}
+    if args.use_barrier_episodes:
+        barrier_episodes = load_barrier_episode_sets()
+        all_episode_sets.update(barrier_episodes)
+
+    available_episodes = {category: list(eps) for category, eps in all_episode_sets.items()}
+    print("Total available episodes per category:")
+    for category, eps in available_episodes.items():
+        print(f"  - {category}: {len(eps)}")
+
+    print(f"\n--- Starting Batched Training Pipeline for {args.num_improve_steps} steps ---")
+    for step in range(args.num_improve_steps):
+        print(f"\n{'='*20} Improvement Step {step + 1}/{args.num_improve_steps} {'='*20}")
+        print(f"Sampling a new batch of {args.episode_limit} episodes per category...")
+        current_batch_episodes = []
+        for category, eps in available_episodes.items():
+            if not eps:
+                print(f"  WARNING: No more episodes available for category '{category}'.")
+                continue
+            sample_size = min(args.episode_limit or len(eps), len(eps))
+            sampled_eps = random.sample(eps, sample_size)
+            current_batch_episodes.extend(sampled_eps)
+            # Remove sampled by a simple id if present; fallback to object identity
+            remaining = []
+            sampled_ids = set()
+            for e in sampled_eps:
+                sid = e.get('scenario_id') or e.get('id') or None
+                if sid:
+                    sampled_ids.add(sid)
+            if sampled_ids:
+                for e in eps:
+                    sid = e.get('scenario_id') or e.get('id') or None
+                    if sid not in sampled_ids:
+                        remaining.append(e)
+            else:
+                remaining = [e for e in eps if e not in sampled_eps]
+            available_episodes[category] = remaining
+            print(f"  - Sampled {len(sampled_eps)} from '{category}'. {len(available_episodes[category])} remaining.")
+
+        if not current_batch_episodes:
+            print("No more episodes to process. Ending training early.")
+            break
+
+        try:
+            trainer.run_single_improvement_step(current_batch_episodes, step)
+            print(f"--- Step {step + 1} completed successfully! ---")
+        except Exception as e:
+            print(f"ERROR in improvement step {step + 1}: {e}")
+            import traceback
+            traceback.print_exc()
+            sys.exit(1)
+
+    print("\nAll training steps completed successfully!")
 
 
 if __name__ == "__main__":
