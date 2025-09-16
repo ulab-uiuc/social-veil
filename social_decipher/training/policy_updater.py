@@ -336,37 +336,46 @@ Episode type: {episode_type}"""
         output_dir: str
     ) -> Dict[str, Any]:
         """
-        Create LLaMA-Factory training configuration.
+        Create LLaMA-Factory training configuration based on Sotopia-π paper.
         This configuration is used by the llamafactory-cli tool, which leverages
         Hugging Face Accelerate for distributed and mixed-precision training.
         """
         
         config = {
+            # Core settings
             "stage": "sft",
             "do_train": True,
-            "finetuning_type": "lora",
-            "lora_target": "all",
+            "model_name_or_path": model_name,
             "dataset": dataset_name,
             "template": "qwen",
-            "model_name_or_path": model_name,
+            "finetuning_type": "lora",
+            "lora_target": "all",
             "output_dir": output_dir,
             "overwrite_output_dir": True,
-            "per_device_train_batch_size": 2,
-            "gradient_accumulation_steps": 4,
+            "plot_loss": True,
+
+            # Sotopia-π Training Hyperparameters
+            "num_train_epochs": 20.0,
+            "per_device_train_batch_size": 4,
+            "gradient_accumulation_steps": 4, # Kept from original, adjust if needed
+            "learning_rate": 5.0e-5,
             "lr_scheduler_type": "cosine",
-            "logging_steps": 10,
-            "warmup_steps": 100,
-            "save_steps": 500,
-            "learning_rate": 5.0e-05,
-            "num_train_epochs": 3.0,
-            "max_samples": 10000,
-            "max_grad_norm": 1.0,
+            "warmup_ratio": 0.03,
+            "cutoff_len": 4096,
+
+            # Sotopia-π QLoRA Hyperparameters
             "quantization_bit": 4,
-            "loraplus_lr_ratio": 16.0,
+            "lora_r": 8,
+            "lora_alpha": 16,
+            "lora_dropout": 0.05,
+
+            # Other settings
+            "logging_steps": 10,
+            "save_steps": 500,
+            "max_grad_norm": 1.0,
             "use_unsloth": True,
             "ddp_timeout": 180000000,
             "include_num_input_tokens_seen": True,
-            "plot_loss": True
         }
         
         config_path = os.path.join(self.output_dir, "llama_factory_config.yaml")

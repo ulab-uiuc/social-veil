@@ -9,6 +9,7 @@ import os
 import multiprocessing
 import subprocess
 import yaml
+import shutil
 from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass, asdict
 import time
@@ -355,28 +356,65 @@ class SotopiaStyleTrainer:
         )
         
         # Update config with current settings
-        config.update({
-            "num_train_epochs": self.config.num_train_epochs,
-            "per_device_train_batch_size": self.config.per_device_train_batch_size,
-            "gradient_accumulation_steps": self.config.gradient_accumulation_steps,
-            "learning_rate": self.config.learning_rate,
-            "lr_scheduler_type": self.config.lr_scheduler_type,
-            "warmup_ratio": self.config.warmup_ratio,
-            "finetuning_type": self.config.finetuning_type,
-            "lora_target": self.config.lora_target,
-            "quantization_bit": self.config.quantization_bit,
-            "quantization_type": self.config.quantization_type,
-            "save_steps": self.config.save_steps,
-            "save_total_limit": self.config.save_total_limit,
-            "logging_steps": self.config.logging_steps,
-            "report_to": "wandb"
-        })
+        config_path = os.path.join(self.policy_updater.output_dir, "llama_factory_config.yaml")
+        with open(config_path, 'w') as f:
+            yaml.dump(config, f)
+
+        # Determine number of GPUs from environment variable
+        cuda_visible_devices = os.environ.get("CUDA_VISIBLE_DEVICES", "0")
+        num_gpus = len(cuda_visible_devices.split(','))
+
+        # Build the training command
+        if num_gpus > 1:
+            print(f"Multi-GPU training detected ({num_gpus} GPUs). Using 'accelerate launch'.")
+            # Ensure llamafactory-cli executable can be found
+            llama_factory_executable = shutil.which("llamafactory-cli")
+            if not llama_factory_executable:
+                raise FileNotFoundError("Could not find 'llamafactory-cli' executable in the environment's PATH.")
+            
+            training_command = [
+                "accelerate", "launch",
+                "--num_processes", str(num_gpus),
+                llama_factory_executable,
+                "train",
+                config_path
+            ]
+        else:
+            print("Single-GPU training detected.")
+            training_command = [
+                "llamafactory-cli",
+                "train",
+                config_path
+            ]
+
+        # Run LLaMA-Factory training
+        print(f"\nRunning LLaMA-Factory command: {' '.join(training_command)}")
         
-        print(f"Training output directory: {output_dir}")
-        print(f"Training configuration created")
+        # Set CUDA devices if specified
+        env = os.environ.copy()
         
-        # Note: Actual training would be triggered here
-        # For now, we just save the configuration
+        process = subprocess.Popen(
+            training_command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            env=env
+        )
+        
+        # Stream output
+        while True:
+            output = process.stdout.readline()
+            if output == '' and process.poll() is not None:
+                break
+            if output:
+                print(output.strip())
+                wandb.log({"training_output": output.strip()})
+        
+        # Wait for the process to finish
+        process.wait()
+        print(f"LLaMA-Factory training process finished with exit code {process.returncode}")
+        
+        # Save training configuration
         config_path = os.path.join(output_dir, "training_config.yaml")
         os.makedirs(output_dir, exist_ok=True)
         
