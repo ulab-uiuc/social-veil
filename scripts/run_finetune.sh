@@ -43,17 +43,11 @@ echo "Checkpoint Dir:   $CHECKPOINT_DIR"
 echo "===================================="
 
 # --- 1. Format the data for LLaMA-Factory ---
-# We need to convert our conversation logs into the instruction/input/output format.
-# A dedicated script would be best for this, but for now, we'll assume the manual_filter
-# script will be updated to handle this formatting. Let's create a placeholder for the formatted data.
 FORMATTED_DATA_PATH="${OUTPUT_DIR}/formatted_sft_data.json"
 echo "Copying data to formatted path: $FORMATTED_DATA_PATH"
 cp "$SFT_DATASET_PATH" "$FORMATTED_DATA_PATH"
 
-
 # --- 2. Create LLaMA-Factory Config ---
-# This step generates the llama_factory_config.yaml file required for training.
-# We will create a small python script to call the existing function.
 CONFIG_GENERATOR_SCRIPT=$(mktemp)
 cat <<EOF > "$CONFIG_GENERATOR_SCRIPT"
 from social_decipher.training.policy_updater import SocialPolicyUpdater
@@ -63,7 +57,7 @@ updater.create_llama_factory_config(
     model_name="$AGENT_MODEL",
     output_dir="$CHECKPOINT_DIR"
 )
-# Manually add the dataset path to the generated config
+# Inject dataset path
 import yaml
 config_path = f"{'$OUTPUT_DIR'}/llama_factory_config.yaml"
 with open(config_path, 'r') as f:
@@ -79,18 +73,27 @@ rm "$CONFIG_GENERATOR_SCRIPT"
 CONFIG_PATH="${OUTPUT_DIR}/llama_factory_config.yaml"
 echo "   Config saved to $CONFIG_PATH"
 
-
 # --- 3. Run Fine-Tuning ---
-NUM_GPUS=$(nvidia-smi -L | wc -l)
+# Prefer GPU count from CUDA_VISIBLE_DEVICES if set, else fall back to nvidia-smi
+if [ -n "$CUDA_VISIBLE_DEVICES" ]; then
+  # count comma-separated devices
+  NUM_GPUS=$(echo "$CUDA_VISIBLE_DEVICES" | awk -F',' '{print NF}')
+else
+  NUM_GPUS=$(nvidia-smi -L 2>/dev/null | wc -l | awk '{print $1}')
+  if [ -z "$NUM_GPUS" ] || [ "$NUM_GPUS" -lt 1 ]; then
+    NUM_GPUS=1
+  fi
+fi
 
-CMD="llamafactory-cli train $CONFIG_PATH"
+CMD_CONFIG="$(which llamafactory-cli) train $CONFIG_PATH"
 
 if [ "$NUM_GPUS" -gt 1 ]; then
     echo "\n🚀 Launching multi-GPU training ($NUM_GPUS GPUs)..."
-    accelerate launch --config_file /path/to/accelerate/config.yaml --num_processes=$NUM_GPUS $(which llamafactory-cli) train $CONFIG_PATH
+    # Use accelerate without a config file; rely on --num_processes
+    accelerate launch --num_processes $NUM_GPUS $(which llamafactory-cli) train "$CONFIG_PATH"
 else
     echo "\n🚀 Launching single-GPU training..."
-    $CMD
+    llamafactory-cli train "$CONFIG_PATH"
 fi
 
 echo "\n✅ Fine-tuning complete. Final model saved in $CHECKPOINT_DIR"
