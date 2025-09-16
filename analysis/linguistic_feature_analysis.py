@@ -249,7 +249,7 @@ def main():
         fmt=".2f", 
         linewidths=.5, 
         linecolor='white',
-        vmin=-1, vmax=1
+        center=0  # Center the colormap at zero for better visual representation
     )
     plt.title('Linguistic Features vs. Conversational Outcomes', size=18)
     plt.xticks(rotation=45, ha="right")
