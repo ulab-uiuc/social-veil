@@ -365,7 +365,7 @@ Episode type: {episode_type}"""
 
             # Sotopia-π QLoRA Hyperparameters
             "quantization_bit": 4,
-            "lora_r": 8,
+            "lora_rank": 8,
             "lora_alpha": 16,
             "lora_dropout": 0.05,
 
