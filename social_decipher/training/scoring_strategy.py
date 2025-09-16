@@ -127,7 +127,9 @@ class WeightedScoringStrategy(ScoringStrategy):
     
     def calculate_composite_score(self, rating: ConversationRating) -> float:
         """
-        Calculate weighted composite score from multiple dimensions
+        Calculate a normalized, weighted composite score.
+        This version correctly handles metrics with different scales (e.g., [1, 5], [1, 10], [-5, 5])
+        by normalizing them to a 0-1 range before applying weights.
         """
         if self.config.composite_score_function:
             return self.config.composite_score_function(rating)
@@ -135,21 +137,40 @@ class WeightedScoringStrategy(ScoringStrategy):
         total_score = 0.0
         total_weight = 0.0
         
+        # Define the min/max scale for each metric
+        metric_scales = {
+            "goal_completion":      {"min": 1, "max": 10},
+            "believability":        {"min": 1, "max": 10},
+            "relationship":         {"min": -5, "max": 5},
+            "unresolved_confusion": {"min": 1, "max": 5},
+            "mutual_understanding": {"min": 1, "max": 5}
+        }
+
         for dimension in self.config.scoring_dimensions:
             score = None
-            # Handle Sotopia dimensions (e.g., goal_completion)
             if hasattr(rating, dimension):
                 score = getattr(rating, dimension)
-            # Handle nested episode_level dimensions (e.g., unresolved_confusion)
             elif rating.episode_level and dimension in rating.episode_level:
                 score = rating.episode_level[dimension]
 
             if score is not None:
+                scale = metric_scales.get(dimension, {"min": 1, "max": 10})
+                min_score, max_score = scale["min"], scale["max"]
+                
+                # Universal normalization to a 0-1 range
+                if (max_score - min_score) == 0:
+                    normalized_score = 0.5 # Avoid division by zero for constant-value metrics
+                else:
+                    normalized_score = (score - min_score) / (max_score - min_score)
+                
                 weight = self.config.dimension_weights.get(dimension, 1.0)
-                total_score += score * weight
-                total_weight += weight
+                total_score += normalized_score * weight
+                total_weight += abs(weight)
         
-        return total_score / total_weight if total_weight > 0 else 0.0
+        # Return the final score, scaled to a 1-10 range for interpretability
+        # A score of 0 on the normalized scale becomes 1, 0.5 becomes 5.5, and 1 becomes 10.
+        final_score = (total_score / total_weight) * 9 + 1 if total_weight > 0 else 1.0
+        return final_score
     
     def should_include_conversation(self, rating: ConversationRating, context: Dict[str, Any] = None) -> bool:
         """
@@ -440,9 +461,12 @@ def get_balanced_config() -> ScoringConfig:
 
 
 def get_custom_barrier_focused_config() -> ScoringConfig:
-    """Get a custom, barrier-focused scoring configuration based on user request."""
+    """
+    Get a custom, barrier-focused scoring configuration.
+    This version uses corrected weights and prioritizes barrier-handling metrics.
+    """
     return ScoringConfig(
-        quality_threshold=5.5,  # Adjusted threshold for a different scoring scale
+        quality_threshold=5.5,
         filter_top_k=3,
         scoring_dimensions=[
             "goal_completion",
@@ -453,10 +477,10 @@ def get_custom_barrier_focused_config() -> ScoringConfig:
         ],
         dimension_weights={
             "goal_completion": 1.0,
+            "mutual_understanding": 1.2, # Increased weight
+            "unresolved_confusion": 1.2,  # Corrected from negative and increased weight
             "believability": 0.8,
             "relationship": 0.6,
-            "unresolved_confusion": -1.0,  # Negative weight because lower is better
-            "mutual_understanding": 1.0
         }
     )
 

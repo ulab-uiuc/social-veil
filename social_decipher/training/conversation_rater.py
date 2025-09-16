@@ -25,6 +25,12 @@ class ConversationRating:
     goal_achievement: float  # 0-10 scale
     explanation: str
     is_positive: bool  # Whether to include in training data
+    
+    # Fields required for the custom barrier-focused scoring strategy
+    goal_completion: float = 0.0
+    believability: float = 0.0
+    relationship: float = 0.0
+    episode_level: Optional[Dict[str, Any]] = None
 
 
 class ConversationRater:
@@ -59,27 +65,52 @@ class ConversationRater:
     def rate_conversations(
         self, 
         conversations: List[TrainingConversation],
-        quality_threshold: float = 6.0
+        quality_threshold: float = 6.0,
+        ratings_cache_path: Optional[str] = None
     ) -> List[ConversationRating]:
-        """Rate a batch of conversations for training data filtering"""
+        """
+        Rate a batch of conversations, reusing existing ratings from a cache if available.
+        """
         
+        # Load existing ratings from cache if provided
+        cached_ratings: Dict[str, ConversationRating] = {}
+        if ratings_cache_path and os.path.exists(ratings_cache_path):
+            print(f"Loading existing ratings from {ratings_cache_path}...")
+            try:
+                with open(ratings_cache_path, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                for r_data in data:
+                    # Re-construct ConversationRating object from loaded JSON data
+                    rating = ConversationRating(**r_data)
+                    cached_ratings[rating.conversation_id] = rating
+                print(f"Loaded {len(cached_ratings)} cached ratings.")
+            except Exception as e:
+                print(f"  WARNING: Could not load or parse cache file: {e}")
+
         ratings = []
         print(f"Rating {len(conversations)} conversations...")
         
         for i, conversation in enumerate(conversations):
-            print(f"Rating conversation {i+1}/{len(conversations)}")
+            print(f"Processing conversation {i+1}/{len(conversations)} (ID: {conversation.conversation_id})")
             
-            try:
-                rating = self._rate_single_conversation(conversation)
-                rating.is_positive = rating.overall_quality >= quality_threshold
-                ratings.append(rating)
-                
-                quality_emoji = "PASS" if rating.is_positive else "FAIL"
-                print(f"  {quality_emoji} Quality: {rating.overall_quality:.1f}/10")
-                
-            except Exception as e:
-                print(f"  WARNING: Rating failed: {e}")
-                continue
+            # Check if the rating is in the cache
+            if conversation.conversation_id in cached_ratings:
+                print(f"  ✅ Using cached rating.")
+                rating = cached_ratings[conversation.conversation_id]
+            else:
+                try:
+                    # If not in cache, rate it via API call
+                    print(f"  📞 Calling rating API...")
+                    rating = self._rate_single_conversation(conversation)
+                except Exception as e:
+                    print(f"  WARNING: Rating failed: {e}")
+                    continue
+            
+            rating.is_positive = rating.overall_quality >= quality_threshold
+            ratings.append(rating)
+            
+            quality_emoji = "PASS" if rating.is_positive else "FAIL"
+            print(f"  -> Quality: {rating.overall_quality:.1f}/10 ({quality_emoji})")
                 
         positive_count = sum(1 for r in ratings if r.is_positive)
         print(f"\nResults: {positive_count}/{len(ratings)} conversations above threshold ({quality_threshold})")
@@ -109,15 +140,37 @@ class ConversationRater:
         # Parse rating response
         rating_data = json.loads(response.choices[0].message.content)
         
+        # Extract episode-level metrics from the original conversation's eval_result
+        episode_level_metrics = {}
+        if conversation.eval_result and "aggregated_scores" in conversation.eval_result:
+            source = conversation.eval_result["aggregated_scores"].get("episode_level", {})
+            episode_level_metrics = {
+                "unresolved_confusion": source.get("unresolved_confusion"),
+                "mutual_understanding": source.get("mutual_understanding")
+            }
+
+        # The base evaluation prompt doesn't ask for Sotopia-style metrics directly.
+        # We map the available metrics to the ones our scoring strategy needs.
+        goal_completion_score = float(rating_data.get("goal_achievement", 0))
+        # We approximate believability from social_intelligence and relationship from comm_effectiveness
+        believability_score = float(rating_data.get("social_intelligence", 0))
+        # Map 0-10 scale to -5 to 5 scale for relationship
+        relationship_score = float(rating_data.get("communication_effectiveness", 0)) - 5
+
         return ConversationRating(
             conversation_id=conversation.conversation_id,
             overall_quality=float(rating_data.get("overall_quality", 0)),
             barrier_handling=float(rating_data.get("barrier_handling", 0)),
             social_intelligence=float(rating_data.get("social_intelligence", 0)),
             communication_effectiveness=float(rating_data.get("communication_effectiveness", 0)),
-            goal_achievement=float(rating_data.get("goal_achievement", 0)),
+            goal_achievement=goal_completion_score,
             explanation=rating_data.get("explanation", ""),
-            is_positive=False  # Will be set by caller based on threshold
+            is_positive=False,  # Will be set by caller based on threshold
+            # Populate the new fields for the scoring strategy
+            goal_completion=goal_completion_score,
+            believability=believability_score,
+            relationship=relationship_score,
+            episode_level=episode_level_metrics
         )
     
     def _prepare_conversation_context(self, conversation: TrainingConversation) -> Dict[str, Any]:
