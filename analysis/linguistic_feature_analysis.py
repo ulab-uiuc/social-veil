@@ -258,9 +258,9 @@ def main():
     norm = mcolors.TwoSlopeNorm(vmin=corr_matrix.min().min(), vcenter=0, vmax=corr_matrix.max().max())
     im = ax.imshow(corr_matrix, cmap='RdBu_r', norm=norm)
 
-    # Create colorbar
-    cbar = ax.figure.colorbar(im, ax=ax)
-    cbar.ax.set_ylabel("Correlation", rotation=-90, va="bottom")
+    # Create colorbar with proper sizing
+    cbar = ax.figure.colorbar(im, ax=ax, shrink=0.8, aspect=20)
+    cbar.ax.set_ylabel("Correlation", rotation=-90, va="bottom", fontsize=12)
 
     # Add the significance annotations
     for i in range(len(linguistic_features)):
@@ -273,10 +273,13 @@ def main():
     ax.set_yticks(np.arange(len(linguistic_features)))
     ax.set_xticklabels([label.replace('_', ' ').title() for label in outcome_metrics])
     ax.set_yticklabels([label.replace('_', ' ').title() for label in linguistic_features])
+    
+    # Remove grid lines but keep tick marks
+    ax.grid(False)
 
     plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
 
-    ax.set_title('Linguistic Features vs. Conversational Outcomes (Significance)', size=18)
+    ax.set_title('Linguistic Features vs. Conversation Metrics', fontsize=16)
     fig.tight_layout()
     plt.savefig('analysis/figure2_correlation_heatmap.png', dpi=300, bbox_inches='tight')
     print("Saved Correlation Heatmap with Significance")
