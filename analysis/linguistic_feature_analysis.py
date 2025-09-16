@@ -83,7 +83,7 @@ def extract_features_from_transcript(transcript_text):
 # --- Data Loading and Processing ---
 
 def load_data(base_dir):
-    """Loads all conversation logs and evaluation results."""
+    """Loads all conversation logs and evaluation results with robust error handling."""
     all_data = []
     modes = ['mode_baseline', 'mode_semantic', 'mode_cultural', 'mode_emotional']
     
@@ -92,40 +92,52 @@ def load_data(base_dir):
         scenario_paths = glob.glob(os.path.join(mode_path, 'scenario_*'))
         
         for scenario_path in scenario_paths:
+            row = {'mode': mode.replace('mode_', '')}
             try:
+                # --- Load Transcript ---
                 transcript_path = os.path.join(scenario_path, 'conversation_log.txt')
-                eval_path = os.path.join(scenario_path, 'eval_result.json')
-
                 with open(transcript_path, 'r', encoding='utf-8') as f:
                     transcript = f.read()
                 
+                linguistic_features = extract_features_from_transcript(transcript)
+                if not linguistic_features:
+                    print(f"Warning: No features extracted from {transcript_path}. Agent A's name might be wrong or text empty.")
+                    continue
+                row.update(linguistic_features)
+
+                # --- Load Eval Results ---
+                eval_path = os.path.join(scenario_path, 'eval_result.json')
                 with open(eval_path, 'r', encoding='utf-8') as f:
                     eval_data = json.load(f)
 
-                linguistic_features = extract_features_from_transcript(transcript)
-                
-                outcome_scores = {
-                    'unresolved_confusion': eval_data['aggregated_scores']['episode_level']['unresolved_confusion'],
-                    'mutual_understanding': eval_data['aggregated_scores']['episode_level']['mutual_understanding'],
-                    'agent_a_goal_completion': eval_data['aggregated_scores']['agent_1']['goal_completion'],
-                    'agent_b_goal_completion': eval_data['aggregated_scores']['agent_2']['goal_completion'],
-                }
+                # Robustly extract nested scores
+                episode_scores = eval_data.get('aggregated_scores', {}).get('episode_level', {})
+                agent1_scores = eval_data.get('aggregated_scores', {}).get('agent_1', {})
+                agent2_scores = eval_data.get('aggregated_scores', {}).get('agent_2', {})
 
-                # Handle cases where scores might be nested
+                outcome_scores = {
+                    'unresolved_confusion': episode_scores.get('unresolved_confusion'),
+                    'mutual_understanding': episode_scores.get('mutual_understanding'),
+                    'agent_a_goal_completion': agent1_scores.get('goal_completion'),
+                    'agent_b_goal_completion': agent2_scores.get('goal_completion'),
+                }
+                
+                # Handle cases where scores might be nested dicts, e.g., {"score": 5}
                 for key, value in outcome_scores.items():
                     if isinstance(value, dict) and 'score' in value:
                         outcome_scores[key] = value['score']
-
-                row = {
-                    'mode': mode.replace('mode_', ''),
-                    **linguistic_features,
-                    **outcome_scores
-                }
+                
+                row.update(outcome_scores)
                 all_data.append(row)
 
-            except (FileNotFoundError, json.JSONDecodeError, KeyError) as e:
-                print(f"Skipping {scenario_path} due to error: {e}")
-                continue
+            except FileNotFoundError as e:
+                print(f"Warning: Skipping {scenario_path}. Missing file: {e.filename}")
+            except json.JSONDecodeError:
+                print(f"Warning: Skipping {scenario_path}. Invalid JSON in {eval_path}")
+            except KeyError as e:
+                print(f"Warning: Skipping {scenario_path}. Missing key in JSON: {e}")
+            except Exception as e:
+                print(f"Warning: Skipping {scenario_path} due to an unexpected error: {e}")
                 
     return pd.DataFrame(all_data)
 
