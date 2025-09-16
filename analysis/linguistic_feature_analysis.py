@@ -90,10 +90,10 @@ def extract_features_from_transcript(transcript_text, agent_a_name):
         return {}
 
     features = {
-        'sentiment_polarity': analyze_sentiment(agent_a_text),
-        'reference_pronoun_rate': (count_reference_pronouns(agent_a_text) / word_count) * 100,
-        'hedging_rate': (count_hedging_words(agent_a_text) / word_count) * 100,
-        'self_focus_rate': (count_first_person_pronouns(agent_a_text) / word_count) * 100,
+        'senti_polarity': analyze_sentiment(agent_a_text),
+        'refer_pronoun': (count_reference_pronouns(agent_a_text) / word_count) * 100,
+        'hedging': (count_hedging_words(agent_a_text) / word_count) * 100,
+        'self_focus': (count_first_person_pronouns(agent_a_text) / word_count) * 100,
     }
     return features
 
@@ -140,12 +140,11 @@ def load_data(base_dir):
                 agent2_scores = eval_data.get('aggregated_scores', {}).get('agent_2', {})
 
                 outcome_scores = {
-                    'unresolved_confusion': episode_scores.get('unresolved_confusion'),
-                    'mutual_understanding': episode_scores.get('mutual_understanding'),
-                    'agent_a_goal_completion': agent1_scores.get('goal_completion'),
-                    'agent_b_goal_completion': agent2_scores.get('goal_completion'),
-                    'agent_b_relationship': agent2_scores.get('relationship'),
-                    'agent_b_knowledge': agent2_scores.get('knowledge'),
+                    'Confus.': episode_scores.get('unresolved_confusion'),
+                    'Mutual': episode_scores.get('mutual_understanding'),
+                    'Goal': agent2_scores.get('goal_completion'),
+                    'Rel': agent2_scores.get('relationship'),
+                    'Kno': agent2_scores.get('knowledge'),
                 }
                 
                 # Handle cases where scores might be nested dicts, e.g., {"score": 5}
@@ -174,7 +173,7 @@ def main():
     parser.add_argument(
         '--results_dir', 
         type=str, 
-        default='results/exp_qwen2.5-7b-instruct_episode_all_neutralized',
+        default='results/exp_qwen3-4b-instruct_episode_all_neutralized',
         help='Path to the base directory containing the experiment results.'
     )
     args = parser.parse_args()
@@ -195,45 +194,11 @@ def main():
         print("No data loaded. Please check the results directory path.")
         return
 
-    # --- Figure 1: Radar Chart for Linguistic Signatures ---
-    features_for_radar = ['reference_pronoun_rate', 'hedging_rate', 'self_focus_rate', 'sentiment_polarity']
-    radar_palette = sns.color_palette("muted", len(df['mode'].unique()))
-    
-    # Normalize data for radar chart (scale each feature 0-1)
-    df_radar = df.groupby('mode')[features_for_radar].mean().reset_index()
-    for feature in features_for_radar:
-        min_val = df_radar[feature].min()
-        max_val = df_radar[feature].max()
-        df_radar[feature] = (df_radar[feature] - min_val) / (max_val - min_val)
-
-    labels = df_radar.columns[1:]
-    num_vars = len(labels)
-    
-    angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
-    angles += angles[:1] # complete the loop
-
-    fig, ax = plt.subplots(figsize=(10, 10), subplot_kw=dict(polar=True))
-
-    for i, (index, row) in enumerate(df_radar.iterrows()):
-        data = row.drop('mode').tolist()
-        data += data[:1]
-        ax.plot(angles, data, label=row['mode'], color=radar_palette[i], linewidth=2)
-        ax.fill(angles, data, alpha=0.2, color=radar_palette[i])
-
-    ax.set_yticklabels([])
-    ax.set_xticks(angles[:-1])
-    ax.set_xticklabels([label.replace('_', ' ').title() for label in labels], size=12)
-    plt.title('Figure 1: Linguistic Signatures of Communication Barriers', size=18, y=1.1)
-    plt.legend(loc='upper right', bbox_to_anchor=(1.3, 1.1))
-    plt.tight_layout()
-    plt.savefig('analysis/figure1_linguistic_signatures.png', dpi=300, bbox_inches='tight')
-    print("Saved Figure 1: Linguistic Signatures Radar Chart")
-
     # --- Figure 2: Correlation Heatmap with Significance (using Matplotlib) ---
-    linguistic_features = ['reference_pronoun_rate', 'hedging_rate', 'self_focus_rate', 'sentiment_polarity']
+    linguistic_features = ['refer_pronoun', 'hedging', 'self_focus', 'senti_polarity']
     outcome_metrics = [
-        'unresolved_confusion', 'mutual_understanding', 'agent_b_goal_completion', 
-        'agent_b_relationship', 'agent_b_knowledge'
+        'Confus.', 'Mutual', 'Goal', 
+        'Rel', 'Kno'
     ]
     
     # Calculate correlation and p-value matrices
@@ -252,7 +217,7 @@ def main():
     # Create annotations based on p-values
     annot_matrix = p_values.apply(lambda s: s.apply(lambda p: '***' if p < 0.001 else '**' if p < 0.01 else '*' if p < 0.05 else ''))
 
-    fig, ax = plt.subplots(figsize=(10, 8))
+    fig, ax = plt.subplots(figsize=(7.5, 6))
     
     # Use a diverging norm to center the colormap at 0
     norm = mcolors.TwoSlopeNorm(vmin=corr_matrix.min().min(), vcenter=0, vmax=corr_matrix.max().max())
@@ -271,19 +236,84 @@ def main():
     # Set ticks and labels
     ax.set_xticks(np.arange(len(outcome_metrics)))
     ax.set_yticks(np.arange(len(linguistic_features)))
-    ax.set_xticklabels([label.replace('_', ' ').title() for label in outcome_metrics])
-    ax.set_yticklabels([label.replace('_', ' ').title() for label in linguistic_features])
+    ax.set_xticklabels([label.replace('_', ' ').title() for label in outcome_metrics], fontsize=14, fontweight='bold')
+    ax.set_yticklabels([label.replace('_', ' ').title() for label in linguistic_features], fontsize=14, fontweight='bold')
+    
     
     # Remove grid lines but keep tick marks
     ax.grid(False)
 
     plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
 
-    ax.set_title('Linguistic Features vs. Conversation Metrics', fontsize=16)
+    ax.set_title('Qwen3-4B', fontsize=18)
+
     fig.tight_layout()
-    plt.savefig('analysis/figure2_correlation_heatmap.png', dpi=300, bbox_inches='tight')
+    plt.savefig('analysis/figure2_correlation_heatmap.png', dpi=500, bbox_inches='tight')
     print("Saved Correlation Heatmap with Significance")
 
+
+
+
+    # --- Figure 3: Linguistic Signatures vs Barrier Types (delta vs baseline with significance) ---
+    barrier_types = ['semantic', 'cultural', 'emotional']
+    features = ['refer_pronoun', 'hedging', 'self_focus', 'senti_polarity']
+
+    # Prepare matrices: value = mean(barrier) - mean(baseline); p-values from Welch t-test
+    baseline_df = df[df['mode'] == 'baseline']
+    delta_matrix = pd.DataFrame(index=features, columns=barrier_types, dtype=float)
+    pval_matrix = pd.DataFrame(index=features, columns=barrier_types, dtype=float)
+
+    for bt in barrier_types:
+        bdf = df[df['mode'] == bt]
+        for feat in features:
+            base_vals = baseline_df[feat].dropna()
+            barrier_vals = bdf[feat].dropna()
+            # Mean difference (barrier - baseline)
+            delta = barrier_vals.mean() - base_vals.mean()
+            delta_matrix.loc[feat, bt] = delta
+            # Welch's t-test
+            if len(base_vals) > 1 and len(barrier_vals) > 1:
+                try:
+                    tstat, pval = ttest_ind(barrier_vals, base_vals, equal_var=False, nan_policy='omit')
+                except Exception:
+                    pval = 1.0
+            else:
+                pval = 1.0
+            pval_matrix.loc[feat, bt] = pval
+
+    # Significance annotations
+    annot_b = pval_matrix.apply(lambda s: s.apply(lambda p: '***' if p < 0.001 else '**' if p < 0.01 else '*' if p < 0.05 else ''))
+
+    fig, ax = plt.subplots(figsize=(7.5, 6))
+
+    # Center colormap at 0 for deltas, keep lighter palette
+    norm_b = mcolors.TwoSlopeNorm(vmin=delta_matrix.min().min(), vcenter=0, vmax=delta_matrix.max().max())
+    colors_b = ['#d73027', '#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#e0f3f8', '#abd9e9', '#74add1', '#4575b4']
+    cmap_b = mcolors.LinearSegmentedColormap.from_list('custom_b', colors_b, N=256)
+    im = ax.imshow(delta_matrix, cmap=cmap_b, norm=norm_b)
+
+    # Colorbar (compact)
+    cbar = ax.figure.colorbar(im, ax=ax, shrink=0.75, aspect=18)
+    cbar.ax.set_ylabel("Δ Feature vs Baseline", rotation=-90, va="bottom", fontsize=12)
+    cbar.ax.tick_params(labelsize=11)
+
+    # Annotations
+    for i in range(len(features)):
+        for j in range(len(barrier_types)):
+            ax.text(j, i, annot_b.iloc[i, j], ha="center", va="center", color="black", fontsize=14)
+
+    # Ticks and labels (bold)
+    ax.set_xticks(np.arange(len(barrier_types)))
+    ax.set_yticks(np.arange(len(features)))
+    ax.set_xticklabels([bt.title() for bt in barrier_types], fontsize=14, fontweight='bold')
+    ax.set_yticklabels([label.replace('_', ' ').title() for label in features], fontsize=14, fontweight='bold')
+    ax.grid(False)
+
+    plt.setp(ax.get_xticklabels(), rotation=0, ha="center", rotation_mode="anchor")
+    ax.set_title('Qwen2.5_7B', fontsize=18)
+    fig.tight_layout()
+    plt.savefig('analysis/figure3_signature_vs_barrier.png', dpi=500, bbox_inches='tight')
+    print("Saved Figure 3: Signatures vs Barrier Types")
 
 if __name__ == '__main__':
     main()
