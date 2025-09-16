@@ -10,6 +10,7 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from nltk.tokenize import word_tokenize, sent_tokenize
 import nltk
 import argparse
+from scipy.stats import pearsonr
 
 # --- Setup: Download necessary NLTK data ---
 try:
@@ -227,36 +228,45 @@ def main():
     plt.savefig('analysis/figure1_linguistic_signatures.png', dpi=300, bbox_inches='tight')
     print("Saved Figure 1: Linguistic Signatures Radar Chart")
 
-    # --- Figure 2: Correlation Heatmap (Focused View) ---
+    # --- Figure 2: Correlation Heatmap with Significance ---
     linguistic_features = ['reference_pronoun_rate', 'hedging_rate', 'self_focus_rate', 'sentiment_polarity']
     outcome_metrics = [
         'unresolved_confusion', 'mutual_understanding', 'agent_b_goal_completion', 
         'agent_b_relationship', 'agent_b_knowledge'
     ]
     
-    # Ensure all columns exist in the dataframe before correlation
-    all_cols = [col for col in linguistic_features + outcome_metrics if col in df.columns]
-    df_corr = df[all_cols].corr()
+    # Calculate correlation and p-value matrices
+    corr_matrix = df[linguistic_features + outcome_metrics].corr().loc[linguistic_features, outcome_metrics]
     
-    # Select only the cross-correlation between features and outcomes
-    focused_corr = df_corr.loc[linguistic_features, outcome_metrics]
+    p_values = pd.DataFrame(index=linguistic_features, columns=outcome_metrics)
+    for feature in linguistic_features:
+        for outcome in outcome_metrics:
+            clean_df = df[[feature, outcome]].dropna()
+            if len(clean_df) > 1:
+                _, p_value = pearsonr(clean_df[feature], clean_df[outcome])
+                p_values.loc[feature, outcome] = p_value
+            else:
+                p_values.loc[feature, outcome] = 1.0
+
+    # Create annotations based on p-values
+    annot_matrix = p_values.apply(lambda s: s.apply(lambda p: '***' if p < 0.001 else '**' if p < 0.01 else '*' if p < 0.05 else ''))
 
     plt.figure(figsize=(10, 8))
     sns.heatmap(
-        focused_corr, 
-        annot=True, 
+        corr_matrix,
+        annot=annot_matrix,
+        fmt='s',  # Tell heatmap annotations are strings
         cmap='RdBu_r', 
-        fmt=".2f", 
         linewidths=.5, 
         linecolor='white',
-        center=0  # Center the colormap at zero for better visual representation
+        center=0
     )
-    plt.title('Linguistic Features vs. Conversational Outcomes', size=18)
+    plt.title('Linguistic Features vs. Conversational Outcomes (Significance)', size=18)
     plt.xticks(rotation=45, ha="right")
     plt.yticks(rotation=0)
     plt.tight_layout()
     plt.savefig('analysis/figure2_correlation_heatmap.png', dpi=300, bbox_inches='tight')
-    print("Saved Correlation Heatmap")
+    print("Saved Correlation Heatmap with Significance")
 
 
 if __name__ == '__main__':
