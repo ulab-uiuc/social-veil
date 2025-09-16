@@ -385,7 +385,9 @@ class SotopiaStyleTrainer:
             output_dir=output_dir
         )
         
-        # Update config with current settings
+        # Update config with current settings and the dataset path for this step
+        sft_data_path = os.path.join(self.config.output_dir, f"sft_data_step_{improve_step}.json")
+        config["dataset_path"] = sft_data_path
         config_path = os.path.join(self.policy_updater.output_dir, "llama_factory_config.yaml")
         with open(config_path, 'w') as f:
             yaml.dump(config, f)
@@ -443,6 +445,8 @@ class SotopiaStyleTrainer:
         # Wait for the process to finish
         process.wait()
         print(f"LLaMA-Factory training process finished with exit code {process.returncode}")
+        if process.returncode != 0:
+            raise RuntimeError(f"LLaMA-Factory exited with code {process.returncode}. Check the config at {config_path} and logs above.")
         
         # Save training configuration
         config_path = os.path.join(output_dir, "training_config.yaml")
