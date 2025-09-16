@@ -152,13 +152,12 @@ class SotopiaStyleTrainer:
         This includes data collection, filtering, and model training.
         """
         self.improve_step = current_step
+        self.current_step = current_step
         print(f"Executing improvement step {self.improve_step + 1} with {len(episodes)} episodes.")
 
         # --- 1. Data Collection ---
         # This will now only run on the batch of episodes for the current step.
-        bc_data, sr_data = self.collect_training_data(episodes)
-        
-        all_conversations = bc_data + sr_data
+        all_conversations = self.collect_training_data(episodes, self.improve_step)
         if not all_conversations:
             print("  No conversations were collected. Skipping this improvement step.")
             return
