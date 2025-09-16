@@ -286,30 +286,27 @@ def main():
 
     fig, ax = plt.subplots(figsize=(7.5, 6))
 
-    # Center colormap at 0 for deltas, keep lighter palette
+    # Center colormap at 0 for deltas – match Figure 2 style
     norm_b = mcolors.TwoSlopeNorm(vmin=delta_matrix.min().min(), vcenter=0, vmax=delta_matrix.max().max())
-    colors_b = ['#d73027', '#f46d43', '#fdae61', '#fee08b', '#ffffbf', '#e0f3f8', '#abd9e9', '#74add1', '#4575b4']
-    cmap_b = mcolors.LinearSegmentedColormap.from_list('custom_b', colors_b, N=256)
-    im = ax.imshow(delta_matrix, cmap=cmap_b, norm=norm_b)
+    im = ax.imshow(delta_matrix, cmap='RdBu_r', norm=norm_b)
 
-    # Colorbar (compact)
-    cbar = ax.figure.colorbar(im, ax=ax, shrink=0.75, aspect=18)
+    # Colorbar – match Figure 2 sizing
+    cbar = ax.figure.colorbar(im, ax=ax, shrink=0.8, aspect=20)
     cbar.ax.set_ylabel("Δ Feature vs Baseline", rotation=-90, va="bottom", fontsize=12)
-    cbar.ax.tick_params(labelsize=11)
 
     # Annotations
     for i in range(len(features)):
         for j in range(len(barrier_types)):
             ax.text(j, i, annot_b.iloc[i, j], ha="center", va="center", color="black", fontsize=14)
 
-    # Ticks and labels (bold)
+    # Ticks and labels (bold) – match Figure 2
     ax.set_xticks(np.arange(len(barrier_types)))
     ax.set_yticks(np.arange(len(features)))
     ax.set_xticklabels([bt.title() for bt in barrier_types], fontsize=14, fontweight='bold')
     ax.set_yticklabels([label.replace('_', ' ').title() for label in features], fontsize=14, fontweight='bold')
     ax.grid(False)
 
-    plt.setp(ax.get_xticklabels(), rotation=0, ha="center", rotation_mode="anchor")
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
     ax.set_title('Qwen2.5_7B', fontsize=18)
     fig.tight_layout()
     plt.savefig('analysis/figure3_signature_vs_barrier.png', dpi=500, bbox_inches='tight')
