@@ -230,6 +230,31 @@ class SocialPolicyUpdater:
         print(f"Formatted {len(formatted_data)} samples for training")
         return formatted_data
     
+    def format_for_sotopia_sft(
+        self,
+        training_examples: List[TrainingExample],
+    ) -> List[Dict[str, Any]]:
+        """
+        Format training examples for the SotopiaSFTTrainer.
+        It expects a list of dictionaries with "input" and "output" keys.
+        """
+        print("Formatting for Sotopia SFT...")
+        
+        formatted_data = []
+        for example in training_examples:
+            # The "input" is the conversation history.
+            conversation_text = "\n".join(example.conversation_history)
+            
+            # The "output" is the target response.
+            sample = {
+                "input": conversation_text,
+                "output": example.target_response,
+            }
+            formatted_data.append(sample)
+            
+        print(f"Formatted {len(formatted_data)} samples for Sotopia SFT training")
+        return formatted_data
+
     def _create_instruction(self, example: TrainingExample, template: str) -> str:
         """Create instruction for training sample"""
         

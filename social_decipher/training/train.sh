@@ -1,0 +1,76 @@
+#!/bin/bash
+# Main training script for Social-Decipher, implementing the SOTOPIA-π iterative loop.
+
+set -euo pipefail
+
+# --- CONFIGURATION ---
+# Experiment
+export EXPERIMENT_NAME="sotopia-pi-v1"
+export WANDB_PROJECT="social-decipher"
+export NUM_IMPROVE_STEPS=3 # Number of iterative loops
+
+# Data Preparation
+export EPISODES_FILE="data/episode_sample.jsonl"
+export EPISODE_LIMIT=5 # Number of unique scenarios per step
+export BASE_OUTPUT_DIR="training_output/${EXPERIMENT_NAME}"
+
+# SFT Training - Initial Model
+# This is the starting point for the first iteration. Subsequent steps will use the checkpoint from the previous step.
+export AGENT_MODEL_PATH="Qwen/Qwen2.5-7B-Instruct" 
+export TEMPLATE_PATH="configs/qwen2.5-7b.jinja"
+export NUM_EPOCHS=3
+export TRAIN_BATCH_SIZE=2
+
+# --- EXECUTION LOOP ---
+
+for (( step=0; step<$NUM_IMPROVE_STEPS; step++ )); do
+    echo "================================================="
+    echo "🚀 STARTING IMPROVEMENT STEP $((step + 1)) / $NUM_IMPROVE_STEPS"
+    echo "================================================="
+    
+    STEP_OUTPUT_DIR="${BASE_OUTPUT_DIR}/step_${step}"
+    SFT_DATA_FILE="${STEP_OUTPUT_DIR}/sft_data.json"
+    CHECKPOINT_DIR="${STEP_OUTPUT_DIR}/checkpoints"
+    mkdir -p "$STEP_OUTPUT_DIR"
+    mkdir -p "$CHECKPOINT_DIR"
+
+    echo "Current Agent Model: ${AGENT_MODEL_PATH}"
+
+    # --- STAGE 1: Preparing SFT Data ---
+    echo "\n🔥 Preparing SFT Data for Step ${step}..."
+    python -m social_decipher.training.prepare_data \
+        --episodes_file "$EPISODES_FILE" \
+        --episode_limit "$EPISODE_LIMIT" \
+        --output_file "$SFT_DATA_FILE" \
+        --agent_model "$AGENT_MODEL_PATH" \
+        --partner_model "$AGENT_MODEL_PATH" \
+        --use_barrier_episodes \
+        --load_existing_data # Use this to reuse BC data across steps
+
+    echo "✅ SFT data prepared at ${SFT_DATA_FILE}"
+
+    # --- STAGE 2: Launching SFT Training ---
+    echo "\n🔥 Launching SFT Training for Step ${step}..."
+    # We must run the script from its directory for relative paths to work
+    cd scripts
+    
+    # Modify train_sft.sh to accept checkpoint_dir as an argument
+    # For simplicity, we'll just set it via env var here
+    export CHECKPOINT_DIR_OVERRIDE="../${CHECKPOINT_DIR}"
+    bash ./train_sft.sh "../${SFT_DATA_FILE}"
+    
+    cd ..
+    
+    # --- STAGE 3: Update model path for next iteration ---
+    # Find the 'best-checkpoint' to use for the next SR round
+    BEST_CHECKPOINT=$(find "$CHECKPOINT_DIR" -type d -name "best-checkpoint" | head -n 1)
+    if [ -z "$BEST_CHECKPOINT" ]; then
+        echo "❌ ERROR: Could not find 'best-checkpoint' in ${CHECKPOINT_DIR}. Cannot proceed to next step."
+        exit 1
+    fi
+    
+    AGENT_MODEL_PATH="$BEST_CHECKPOINT"
+    echo "\n✅ Step ${step} complete. New agent model for next step is: ${AGENT_MODEL_PATH}"
+done
+
+echo "\n🎉 SOTOPIA-π training loop finished successfully!"
