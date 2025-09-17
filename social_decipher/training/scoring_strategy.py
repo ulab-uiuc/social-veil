@@ -365,7 +365,19 @@ class ScoringManager:
         filtered_conversations = []
         for conv in conversations:
             rating = next((r for r in ratings if r.conversation_id == conv.conversation_id), None)
-            if rating and self.strategy.should_include_conversation(rating):
+            if rating:
+                if not self.strategy.should_include_conversation(rating):
+                    continue
+
+                # New episode-level filtering layer
+                if rating.episode_level:
+                    unresolved_confusion = rating.episode_level.get("unresolved_confusion", 0)
+                    mutual_understanding = rating.episode_level.get("mutual_understanding", 0)
+
+                    if unresolved_confusion < 3 and mutual_understanding < 3:
+                        print(f"  - Excluding Conv {conv.conversation_id}: Low confusion ({unresolved_confusion}) and understanding ({mutual_understanding}).")
+                        continue
+                
                 filtered_conversations.append(conv)
         
         print(f"Filtered {len(conversations)} → {len(filtered_conversations)} conversations")
