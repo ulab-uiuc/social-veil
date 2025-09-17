@@ -14,7 +14,7 @@ from transformers import (
     TrainingArguments,
 )
 
-from sotopia_rl.data import SFTDataset
+from socailveil.training.data import SFTDataset
 
 os.environ['NCCL_P2P_DISABLE'] = '1'
 os.environ["TOKENIZERS_PARALLELISM"] = "false"

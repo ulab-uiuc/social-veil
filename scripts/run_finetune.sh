@@ -8,7 +8,7 @@ set -e # Exit immediately if a command exits with a non-zero status.
 # --- Configuration ---
 SFT_DATASET_PATH="$1" # The first argument to the script is the path to the SFT data
 EXPERIMENT_NAME="qwen-finetune-from-filtered-data"
-AGENT_MODEL="models/Qwen2.5-0.5B-Instruct" # Make sure this matches your intended model
+AGENT_MODEL="models/Qwen2.5-7B-Instruct" # Make sure this matches your intended model
 
 # --- Script Setup ---
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
