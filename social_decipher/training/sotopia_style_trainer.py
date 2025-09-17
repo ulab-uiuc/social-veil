@@ -389,7 +389,26 @@ class SotopiaStyleTrainer:
         sft_data_path = os.path.join(self.config.output_dir, f"sft_data_step_{improve_step}.json")
         # LLaMA-Factory expects dataset_dir + dataset (basename without .json)
         config["dataset_dir"] = self.config.output_dir
-        config["dataset"] = os.path.splitext(os.path.basename(sft_data_path))[0]
+        dataset_name = os.path.splitext(os.path.basename(sft_data_path))[0]
+        config["dataset"] = dataset_name
+
+        # Ensure dataset_info.json exists and includes our dataset entry
+        dataset_info_path = os.path.join(self.config.output_dir, "dataset_info.json")
+        try:
+            if os.path.exists(dataset_info_path):
+                with open(dataset_info_path, 'r', encoding='utf-8') as f:
+                    dataset_info = json.load(f)
+            else:
+                dataset_info = {}
+            dataset_info[dataset_name] = {
+                "file_name": f"{dataset_name}.json",
+                "formatting": "alpaca"
+            }
+            with open(dataset_info_path, 'w', encoding='utf-8') as f:
+                json.dump(dataset_info, f, indent=2, ensure_ascii=False)
+        except Exception as e:
+            print(f"WARNING: Failed to write dataset_info.json: {e}")
+
         config_path = os.path.join(self.policy_updater.output_dir, "llama_factory_config.yaml")
         with open(config_path, 'w') as f:
             yaml.dump(config, f)
