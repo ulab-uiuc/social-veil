@@ -2,17 +2,17 @@
 data_dir: 'data/episode_all_neutralized.jsonl'
 
 # Configuration for GPT-4o-mini
-models:
-  model_a: "gpt-4o-mini"
-  model_b: "gpt-4o-mini"  
-  gpu: "1"
-  vllm_port: 6600
-  chat_template: "configs/qwen2.5-7b.jinja"
-  served_model_name: "qwen2.5-7b-instruct"
-  max_model_len: 4096
-  tensor_parallel_size: 0
-  response_max_tokens: 256
-  enable_repair_and_state: false
+# models:
+#   model_a: "gpt-4o-mini"
+#   model_b: "gpt-4o-mini"  
+#   gpu: "0,9"
+#   vllm_port: 6600
+#   chat_template: "configs/qwen2.5-7b.jinja"
+#   served_model_name: "qwen2.5-7b-instruct"
+#   max_model_len: 4096
+#   tensor_parallel_size: 0
+#   response_max_tokens: 256
+#   enable_repair_and_state: false
 
 ## Configuration for Mistral 8B Instruct:
 # models:
@@ -27,25 +27,32 @@ models:
 #   enable_repair_and_state: false
 
 ## Configuration for Qwen2.5 7B Instruct:
-# models:
-#   model_a: "gpt-4o-mini"
-#   model_b: "models/Qwen2.5-7B-Instruct"  
-#   gpu: "4,5"
-#   vllm_port: 6900
-#   chat_template: "configs/qwen2.5-7b.jinja"
-#   served_model_name: "qwen2.5-7b-instruct"
-#   max_model_len: 4096
-#   tensor_parallel_size: 0
-#   enable_repair_and_state: false
+models:
+  model_a: "gpt-4o-mini"
+  model_b: "/mnt/disk1/models/Qwen2.5-7B-Instruct"  
+  gpu: "2,3"
+  vllm_port: 7900
+  chat_template: "configs/qwen2.5-7b.jinja"
+  served_model_name: "qwen2.5-7b-instruct"
+  max_model_len: 4096
+  tensor_parallel_size: 0
+  enable_repair_and_state: false
+
+training_models:
+  agent_model: "/mnt/disk1/models/Qwen2.5-7B-Instruct"   # or "Qwen/Qwen2.5-7B-Instruct"
+  partner_model: "gpt-4o-mini"
+  evaluator_model: "gpt-4o"
+  expert_model: "gpt-4.1"
 
 # Key
 
-AGENT_OPENAI_API_KEY: "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"
-EVALUATOR_OPENAI_API_KEY: "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"
-
+AGENT_OPENAI_API_KEY: "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"
+# EVALUATOR_OPENAI_API_KEY: "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"
+EVALUATOR_OPENAI_API_KEY: "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"
 
 HF_API_TOKEN: "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"
 MISTRAL_API_KEY: yQ9wm2nsnrlujAjTbBDuRwnjTV2bA1oT
+
 
 
 ### RUN COMMANDS:

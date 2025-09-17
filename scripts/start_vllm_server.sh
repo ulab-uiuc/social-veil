@@ -46,6 +46,9 @@ if curl -s http://localhost:$PORT/health > /dev/null 2>&1; then
   exit 0
 fi
 
+export NCCL_P2P_DISABLE=1
+export TOKENIZERS_PARALLELISM=false
+
 echo "Starting vLLM server..."
 CUDA_VISIBLE_DEVICES=$GPU python -m vllm.entrypoints.openai.api_server \
   --model "$MODEL" \
@@ -53,7 +56,8 @@ CUDA_VISIBLE_DEVICES=$GPU python -m vllm.entrypoints.openai.api_server \
   --chat-template "$CHAT_TEMPLATE" \
   --served-model-name "$SERVED_NAME" \
   --max-model-len $MAX_LEN \
-  --tensor-parallel-size $TP
+  --tensor-parallel-size $TP \
+
 
 echo ""
 echo "✅ vLLM server started"

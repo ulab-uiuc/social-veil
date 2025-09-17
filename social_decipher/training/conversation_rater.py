@@ -136,10 +136,6 @@ class ConversationRater:
             }
         )
 
-    # The old _rate_single_conversation is retained for optional future use but unused now.
-    def _rate_single_conversation(self, conversation: TrainingConversation) -> ConversationRating:
-        """Deprecated in no-rerating mode; kept for compatibility if needed."""
-        raise RuntimeError("Re-rating is disabled. Use existing eval_result instead.")
 
     def _prepare_conversation_context(self, conversation: TrainingConversation) -> Dict[str, Any]:
         """Prepare conversation context for rating (unused in no-rerating mode)"""
