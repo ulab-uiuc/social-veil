@@ -4,15 +4,6 @@
 from .data_collector import BarrierDataCollector, load_barrier_episode_sets
 from .policy_updater import SocialPolicyUpdater
 from .conversation_rater import ConversationRater
-from .sotopia_style_trainer import (
-    SotopiaStyleTrainer, 
-    TrainingConfig, 
-    create_training_config,
-    create_barrier_focused_training_config,
-    create_balanced_training_config,
-    create_adaptive_training_config,
-    run_sotopia_style_training
-)
 from .data_preprocessing import SotopiaStyleDataProcessor
 from .scoring_strategy import (
     ScoringManager,
@@ -32,13 +23,6 @@ __all__ = [
     'load_barrier_episode_sets',
     'SocialPolicyUpdater', 
     'ConversationRater',
-    'SotopiaStyleTrainer',
-    'TrainingConfig',
-    'create_training_config',
-    'create_barrier_focused_training_config',
-    'create_balanced_training_config', 
-    'create_adaptive_training_config',
-    'run_sotopia_style_training',
     'SotopiaStyleDataProcessor',
     'ScoringManager',
     'ScoringConfig',
