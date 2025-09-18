@@ -13,6 +13,11 @@ from transformers import (
     Trainer,
     TrainingArguments,
 )
+try:
+    # Available in PEFT for QLoRA preparation
+    from peft import prepare_model_for_kbit_training
+except Exception:
+    prepare_model_for_kbit_training = None
 
 from social_decipher.training.data import SFTDataset
 
@@ -71,6 +76,12 @@ class SotopiaSFTTrainer(Trainer):
                 quantization_config=quantization_config,
                 device_map={"": 0} if not is_distributed else None,
             )
+            # Ensure model is ready for k-bit training (input grads, layer norms cast, etc.)
+            if prepare_model_for_kbit_training is not None:
+                base_model = prepare_model_for_kbit_training(base_model)
+            # Ensure no cache during training
+            if hasattr(base_model, "config"):
+                base_model.config.use_cache = False
         else:
             # bf16; in distributed we let Accelerate handle device placement
             base_model = AutoModelForCausalLM.from_pretrained(
