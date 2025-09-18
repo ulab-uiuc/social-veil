@@ -17,9 +17,13 @@ if [ -z "$CKPT_DIR" ]; then
 fi
 mkdir -p "$CKPT_DIR"
 
-# Derive processes from GPUs to avoid config mismatch
-CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES:-"0,1,2,3"}
-NUM_PROCS=$(awk -F',' '{print NF}' <<< "$CUDA_VISIBLE_DEVICES")
+# Derive processes from GPUs to avoid config mismatch; don't override user's selection
+if [ -n "$CUDA_VISIBLE_DEVICES" ]; then
+  NUM_PROCS=$(awk -F',' '{print NF}' <<< "$CUDA_VISIBLE_DEVICES")
+else
+  # Safe default: single GPU/process if user didn't set devices upstream
+  NUM_PROCS=1
+fi
 
 accelerate launch \
   --num_processes "$NUM_PROCS" \
