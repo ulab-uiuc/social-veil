@@ -72,12 +72,10 @@ class SotopiaSFTTrainer(Trainer):
                 device_map={"": 0} if not is_distributed else None,
             )
         else:
-            # bf16 with automatic sharding across available GPUs
+            # bf16; in distributed we let Accelerate handle device placement
             base_model = AutoModelForCausalLM.from_pretrained(
                 args.model_name,
                 torch_dtype=torch.bfloat16,
-                quantization_config=quantization_config,
-                # ❗ NO device_map in distributed. Let HF/Accelerate place the model.
                 device_map={"": 0} if not is_distributed else None,
             )
 
@@ -143,7 +141,6 @@ class SotopiaSFTTrainer(Trainer):
             eval_dataset=eval_ds,
             data_collator=partial(sft_collate_fn, tokenizer=tokenizer),
             tokenizer=tokenizer,
-            processing_class=tokenizer,
         )
 
     def train(self, **kwargs):
