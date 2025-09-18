@@ -11,7 +11,7 @@ export NUM_IMPROVE_STEPS=5
 
 # Data Preparation
 export EPISODES_FILE="data/episode_all_neutralized.jsonl"
-export EPISODE_LIMIT=10 # Number of unique scenarios per step
+export EPISODE_LIMIT=1 # Number of unique scenarios per step
 export BASE_OUTPUT_DIR="training_output/${EXPERIMENT_NAME}"
 
 # SFT Training - Initial Model

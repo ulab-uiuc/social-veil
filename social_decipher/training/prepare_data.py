@@ -21,7 +21,7 @@ def main():
     parser.add_argument("--episode_limit", type=int, default=10, help="Limit the number of episodes to process for faster runs.")
     parser.add_argument("--output_file", type=str, default="training_data/sft_data.json", help="Path to save the final SFT JSON dataset.")
     parser.add_argument("--expert_model", type=str, default="gpt-4o")
-    parser.add_argument("--agent_model", type=str, default="gpt-4o-mini")
+    parser.add_argument("--agent_model", type=str, default="/mnt/disk1/models/Qwen2.5-7B-Instruct")
     parser.add_argument("--partner_model", type=str, default="gpt-4o-mini")
     parser.add_argument("--evaluator_model", type=str, default="gpt-4o")
     parser.add_argument("--conversations_per_episode", type=int, default=2)
@@ -59,21 +59,27 @@ def main():
             if line.strip():
                 base_episodes.append(json.loads(line))
 
+    if args.episode_limit and len(base_episodes) > args.episode_limit:
+        print(f"Loaded {len(base_episodes)} base episodes, sampling {args.episode_limit}.")
+        base_episodes = base_episodes[:args.episode_limit]
+
     all_episodes = base_episodes
+    
     if args.use_barrier_episodes:
-        barrier_episodes = load_barrier_episode_sets(barrier_types=args.barrier_types)
+        barrier_episodes = load_barrier_episode_sets()
         for cat, eps in barrier_episodes.items():
             print(f"Loaded {len(eps)} episodes for barrier type: {cat}")
+            if args.episode_limit and len(eps) > args.episode_limit:
+                print(f"  -> Sampling {args.episode_limit} episodes for '{cat}'.")
+                eps = eps[:args.episode_limit]
             all_episodes.extend(eps)
     
-    if args.episode_limit and len(all_episodes) > args.episode_limit:
-        print(f"Limiting to {args.episode_limit} episodes.")
-        all_episodes = all_episodes[:args.episode_limit]
     print(f"Processing a total of {len(all_episodes)} episodes.")
 
     # 3. Collect data
     print("\n--- Collecting Conversation Data ---")
     bc_convos = []
+   
     if args.load_existing_data and os.path.exists(os.path.join(output_dir, "bc_data.json")):
          print("Loading existing BC data...")
          data_collector.load_conversations(bc_file="bc_data.json")

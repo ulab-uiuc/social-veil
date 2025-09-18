@@ -37,6 +37,9 @@ class SotopiaSFTTrainer(Trainer):
         # 1️⃣ Initialize wandb on main process
         self.accelerator = accelerator
         self.device = accelerator.device
+        world_size = int(os.environ.get("WORLD_SIZE", "1"))
+        is_distributed = world_size > 1
+        local_rank = int(os.environ.get("LOCAL_RANK", "0"))
 
         if self.accelerator.is_main_process:
             wandb.init(
@@ -50,6 +53,9 @@ class SotopiaSFTTrainer(Trainer):
         config.use_cache = False
         tokenizer = AutoTokenizer.from_pretrained(args.model_name)
         tokenizer.model_max_length = args.max_length
+        if tokenizer.pad_token_id is None and tokenizer.eos_token_id is not None:
+            tokenizer.pad_token_id = tokenizer.eos_token_id
+ 
 
         # 3️⃣ Load model ONCE with memory-safe settings
         if args.use_qlora:
@@ -63,15 +69,23 @@ class SotopiaSFTTrainer(Trainer):
             base_model = AutoModelForCausalLM.from_pretrained(
                 args.model_name,
                 quantization_config=quantization_config,
-                device_map="auto",
+                device_map={"": 0} if not is_distributed else None,
             )
         else:
             # bf16 with automatic sharding across available GPUs
             base_model = AutoModelForCausalLM.from_pretrained(
                 args.model_name,
                 torch_dtype=torch.bfloat16,
-                device_map="auto",
+                quantization_config=quantization_config,
+                # ❗ NO device_map in distributed. Let HF/Accelerate place the model.
+                device_map={"": 0} if not is_distributed else None,
             )
+
+        if hasattr(base_model, "gradient_checkpointing_enable"):
+            try:
+                base_model.gradient_checkpointing_enable()
+            except TypeError:
+                base_model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={"use_reentrant": False})
 
         # Optional: wrap with LoRA (no second load!)
         if args.use_lora:
@@ -115,8 +129,10 @@ class SotopiaSFTTrainer(Trainer):
             optim="paged_adamw_8bit" if args.use_qlora else "adamw_torch",
             dataloader_num_workers=4,
             ddp_find_unused_parameters=False,
-            eval_strategy="steps",
+            evaluation_strategy="steps",
             label_names=["labels"],
+            remove_unused_columns=False,
+            save_safetensors=True,
         )
 
         # 6️⃣ Call the Trainer constructor
@@ -127,6 +143,7 @@ class SotopiaSFTTrainer(Trainer):
             eval_dataset=eval_ds,
             data_collator=partial(sft_collate_fn, tokenizer=tokenizer),
             tokenizer=tokenizer,
+            processing_class=tokenizer,
         )
 
     def train(self, **kwargs):

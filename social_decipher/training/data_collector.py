@@ -358,7 +358,6 @@ def load_barrier_episode_sets(data_dir: str = "data") -> Dict[str, List[Dict[str
     
     episode_sets = {}
     
-    # Load different barrier types
     barrier_files = {
         "semantic": "episodes_all_semantic.json",
         "cultural": "episodes_all_cultural.json", 

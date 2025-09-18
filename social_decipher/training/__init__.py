@@ -4,7 +4,6 @@
 from .data_collector import BarrierDataCollector, load_barrier_episode_sets
 from .policy_updater import SocialPolicyUpdater
 from .conversation_rater import ConversationRater
-from .data_preprocessing import SotopiaStyleDataProcessor
 from .scoring_strategy import (
     ScoringManager,
     ScoringConfig,
