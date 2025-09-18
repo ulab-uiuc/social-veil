@@ -285,15 +285,11 @@ class CustomScoringStrategy(ScoringStrategy):
         self.custom_functions = custom_functions or {}
     
     def calculate_composite_score(self, rating: ConversationRating) -> float:
-        """
-        Use custom scoring function if provided
-        """
         if "composite_score" in self.custom_functions:
             return self.custom_functions["composite_score"](rating, self.config)
         elif self.config.composite_score_function:
             return self.config.composite_score_function(rating)
         else:
-            # Fallback to overall quality
             return rating.overall_quality
     
     def should_include_conversation(self, rating: ConversationRating, context: Dict[str, Any] = None) -> bool:
@@ -362,23 +358,86 @@ class ScoringManager:
         """
         print(f"Filtering with {self.strategy_name} strategy (threshold: {self.config.quality_threshold})")
         
-        filtered_conversations = []
+        # --- Pre-compute goal score baselines (global & local) ---
+        def _goal_score(r: ConversationRating) -> float:
+            # Prefer goal_completion; fallback to goal_achievement; else 0
+            if hasattr(r, "goal_completion"):
+                return float(getattr(r, "goal_completion") or 0.0)
+            if hasattr(r, "goal_achievement"):
+                return float(getattr(r, "goal_achievement") or 0.0)
+            # episode-level fallback if ever present
+            if r.episode_level:
+                val = r.episode_level.get("goal_completion") or r.episode_level.get("goal")
+                return float(val or 0.0)
+            return 0.0
+
+        def _episode_key(conv_id: str) -> str:
+            # Expected patterns: bc_{ep}_{conv}_{ts} or sr_{ep}_{conv}_{ts}
+            try:
+                parts = conv_id.split("_")
+                if parts and parts[0] in {"bc", "sr"} and len(parts) >= 3:
+                    return f"{parts[0]}_{parts[1]}"  # paradigm + episode_idx
+            except Exception:
+                pass
+            return conv_id  # fallback: unique key per conversation
+
+        rating_map: Dict[str, ConversationRating] = {r.conversation_id: r for r in ratings}
+        print(f"Rating map: {rating_map}")
+        exit()
+
+        # Global mean goal score across all ratings
+        goal_values = [_goal_score(r) for r in ratings if r is not None]
+        global_goal_mean = float(np.mean(goal_values)) if goal_values else 0.0
+
+        # Local mean per episode key
+        local_acc: Dict[str, List[float]] = {}
         for conv in conversations:
-            rating = next((r for r in ratings if r.conversation_id == conv.conversation_id), None)
-            if rating:
-                if not self.strategy.should_include_conversation(rating):
+            r = rating_map.get(conv.conversation_id)
+            if not r:
+                continue
+            k = _episode_key(conv.conversation_id)
+            local_acc.setdefault(k, []).append(_goal_score(r))
+        local_mean: Dict[str, float] = {k: float(np.mean(v)) if v else 0.0 for k, v in local_acc.items()}
+
+        filtered_conversations = []
+        barrier_types = {"semantic", "cultural", "emotional"}
+        base_threshold = self.config.quality_threshold
+
+        for conv in conversations:
+            rating = rating_map.get(conv.conversation_id)
+            if not rating:
+                continue
+
+            # Composite score (strategy-specific)
+            score = self.strategy.calculate_composite_score(rating)
+
+            # Dynamic thresholding
+            episode_type = (getattr(conv, "episode_type", None) or "original").lower()
+            if episode_type in barrier_types:
+                effective_threshold = base_threshold # barrier cases use normal threshold
+            else:
+                effective_threshold = base_threshold + 1 #stricter for no-barrier cases
+
+            if score < effective_threshold:
+                continue
+
+            # Additional goal baseline gate: require goal score >= min(local_mean, global_mean)
+            gscore = _goal_score(rating)
+            k = _episode_key(conv.conversation_id)
+            local_mean_k = local_mean.get(k, global_goal_mean)
+            goal_floor = min(local_mean_k, global_goal_mean)
+            if gscore < goal_floor:
+                continue
+
+            # Complexity gate (keep only sufficiently challenging interactions)
+            if rating.episode_level:
+                unresolved_confusion = rating.episode_level.get("unresolved_confusion", 0)
+                mutual_understanding = rating.episode_level.get("mutual_understanding", 0)
+                if unresolved_confusion < 3 and mutual_understanding < 3:
+                    # too trivial; skip
                     continue
 
-                # New episode-level filtering layer
-                if rating.episode_level:
-                    unresolved_confusion = rating.episode_level.get("unresolved_confusion", 0)
-                    mutual_understanding = rating.episode_level.get("mutual_understanding", 0)
-
-                    if unresolved_confusion < 3 and mutual_understanding < 3:
-                        print(f"  - Excluding Conv {conv.conversation_id}: Low confusion ({unresolved_confusion}) and understanding ({mutual_understanding}).")
-                        continue
-                
-                filtered_conversations.append(conv)
+            filtered_conversations.append(conv)
         
         print(f"Filtered {len(conversations)} → {len(filtered_conversations)} conversations")
         return filtered_conversations
