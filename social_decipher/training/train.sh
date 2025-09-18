@@ -7,6 +7,7 @@ set -euo pipefail
 # Experiment
 export EXPERIMENT_NAME="sotopia-pi-v1"
 export WANDB_PROJECT="social-decipher"
+export WANDB_ENTITY="kxtechds"
 export NUM_IMPROVE_STEPS=5 
 
 # Data Preparation
