@@ -7,16 +7,25 @@ set -euo pipefail
 # Experiment
 export EXPERIMENT_NAME="sotopia-pi-v1"
 export WANDB_PROJECT="social-decipher"
-export NUM_IMPROVE_STEPS=3 # Number of iterative loops
+export NUM_IMPROVE_STEPS=5 
 
 # Data Preparation
-export EPISODES_FILE="data/episode_sample.jsonl"
-export EPISODE_LIMIT=5 # Number of unique scenarios per step
+export EPISODES_FILE="data/episode_all_neutralized.jsonl"
+export EPISODE_LIMIT=10 # Number of unique scenarios per step
 export BASE_OUTPUT_DIR="training_output/${EXPERIMENT_NAME}"
 
 # SFT Training - Initial Model
 # This is the starting point for the first iteration. Subsequent steps will use the checkpoint from the previous step.
-export AGENT_MODEL_PATH="Qwen/Qwen2.5-7B-Instruct" 
+CONFIG_READER_CMD="python3 -m social_decipher.utils.config_reader"
+AGENT_MODEL_PATH=$($CONFIG_READER_CMD training_models.agent_model)
+PARTNER_MODEL_PATH=$($CONFIG_READER_CMD training_models.partner_model)
+EVALUATOR_MODEL=$($CONFIG_READER_CMD training_models.evaluator_model)
+EXPERT_MODEL=$($CONFIG_READER_CMD training_models.expert_model)
+
+export AGENT_OPENAI_API_KEY=$($CONFIG_READER_CMD AGENT_OPENAI_API_KEY)
+export EVALUATOR_OPENAI_API_KEY=$($CONFIG_READER_CMD EVALUATOR_OPENAI_API_KEY)
+export OPENAI_API_KEY=${AGENT_OPENAI_API_KEY}
+
 export TEMPLATE_PATH="configs/qwen2.5-7b.jinja"
 export NUM_EPOCHS=3
 export TRAIN_BATCH_SIZE=2
@@ -43,7 +52,9 @@ for (( step=0; step<$NUM_IMPROVE_STEPS; step++ )); do
         --episode_limit "$EPISODE_LIMIT" \
         --output_file "$SFT_DATA_FILE" \
         --agent_model "$AGENT_MODEL_PATH" \
-        --partner_model "$AGENT_MODEL_PATH" \
+        --partner_model "$PARTNER_MODEL_PATH" \
+        --expert_model "$EXPERT_MODEL" \
+        --evaluator_model "$EVALUATOR_MODEL" \
         --use_barrier_episodes \
         --load_existing_data # Use this to reuse BC data across steps
 
@@ -54,10 +65,10 @@ for (( step=0; step<$NUM_IMPROVE_STEPS; step++ )); do
     # We must run the script from its directory for relative paths to work
     cd scripts
     
-    # Modify train_sft.sh to accept checkpoint_dir as an argument
-    # For simplicity, we'll just set it via env var here
-    export CHECKPOINT_DIR_OVERRIDE="../${CHECKPOINT_DIR}"
-    bash ./train_sft.sh "../${SFT_DATA_FILE}"
+    # Pass absolute SFT path and explicit checkpoint dir
+    SFT_DATA_FILE_ABS=$(pwd)/../$SFT_DATA_FILE
+    CHECKPOINT_DIR_ABS=$(pwd)/../$CHECKPOINT_DIR
+    bash ./train_sft.sh "$SFT_DATA_FILE_ABS" "$CHECKPOINT_DIR_ABS"
     
     cd ..
     

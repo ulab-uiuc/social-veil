@@ -51,6 +51,7 @@ class SotopiaSFTTrainer(Trainer):
         tokenizer = AutoTokenizer.from_pretrained(args.model_name)
         tokenizer.model_max_length = args.max_length
 
+        # 3️⃣ Load model ONCE with memory-safe settings
         if args.use_qlora:
             quantization_config = BitsAndBytesConfig(
                 load_in_4bit=True,
@@ -61,16 +62,21 @@ class SotopiaSFTTrainer(Trainer):
             print(f"Using QLoRA (4bit) to load model: {args.model_name}")
             base_model = AutoModelForCausalLM.from_pretrained(
                 args.model_name,
-                torch_dtype=torch.float16,
                 quantization_config=quantization_config,
+                device_map="auto",
             )
         else:
-            base_model = AutoModelForCausalLM.from_pretrained(args.model_name).to(self.device)
+            # bf16 with automatic sharding across available GPUs
+            base_model = AutoModelForCausalLM.from_pretrained(
+                args.model_name,
+                torch_dtype=torch.bfloat16,
+                device_map="auto",
+            )
 
-        # 3️⃣ Load & (optional) LoRA-wrap model
-        base_model = AutoModelForCausalLM.from_pretrained(args.model_name)
+        # Optional: wrap with LoRA (no second load!)
         if args.use_lora:
             from peft import LoraConfig, get_peft_model
+
             peft_config = LoraConfig(
                 r=args.lora_r,
                 lora_alpha=args.lora_alpha,
@@ -78,6 +84,7 @@ class SotopiaSFTTrainer(Trainer):
                 target_modules=args.target_modules.split(","),
             )
             base_model = get_peft_model(base_model, peft_config)
+
         model = base_model
 
         # 4️⃣ Prepare dataset + split
@@ -109,7 +116,7 @@ class SotopiaSFTTrainer(Trainer):
             dataloader_num_workers=4,
             ddp_find_unused_parameters=False,
             eval_strategy="steps",
-            label_names=["labels"]
+            label_names=["labels"],
         )
 
         # 6️⃣ Call the Trainer constructor
