@@ -130,18 +130,23 @@ class SotopiaSFTTrainer(Trainer):
             learning_rate=args.learning_rate,
             weight_decay=args.weight_decay,
             eval_steps=args.evaluation_steps,
+            save_strategy="steps",
             save_steps=50,
+            save_total_limit=3,
             logging_dir="./logs",
             logging_steps=1,
-            report_to=None,
+            report_to="none",
             bf16=True,
             optim="paged_adamw_8bit" if args.use_qlora else "adamw_torch",
             dataloader_num_workers=4,
             ddp_find_unused_parameters=False,
             evaluation_strategy="steps",
+            load_best_model_at_end=True,
+            metric_for_best_model="eval_loss",
+            greater_is_better=False,
             label_names=["labels"],
             remove_unused_columns=False,
-            save_safetensors=True,
+            save_safetokens=True,
         )
 
         # 6️⃣ Call the Trainer constructor
@@ -156,11 +161,19 @@ class SotopiaSFTTrainer(Trainer):
 
     def train(self, **kwargs):
         # run the usual HF train loop
-        super().train(**kwargs)
-        # then save your LoRA adapter if needed
-        self._save_lora()
-        # optionally run final evaluation
-        return self.evaluate()
+        train_output = super().train(**kwargs)
+
+        # Save best model to a stable path for downstream steps
+        if self.accelerator.is_main_process:
+            best_dir = os.path.join(self.args.output_dir, "best-checkpoint")
+            os.makedirs(best_dir, exist_ok=True)
+            # Trainer loads best weights into self.model when load_best_model_at_end=True
+            self.model.save_pretrained(best_dir)
+            if hasattr(self, "tokenizer") and self.tokenizer is not None:
+                self.tokenizer.save_pretrained(best_dir)
+            print(f"Best model saved to {best_dir}")
+
+        return train_output
 
     def _save_lora(self):
         if getattr(self.args, "use_lora", False):
