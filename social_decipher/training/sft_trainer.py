@@ -133,7 +133,7 @@ class SotopiaSFTTrainer(Trainer):
             save_steps=50,
             logging_dir="./logs",
             logging_steps=1,
-            report_to="wandb",
+            report_to=None,
             bf16=True,
             optim="paged_adamw_8bit" if args.use_qlora else "adamw_torch",
             dataloader_num_workers=4,

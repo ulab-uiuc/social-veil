@@ -5,14 +5,14 @@ set -euo pipefail
 
 # --- CONFIGURATION ---
 # Experiment
-export EXPERIMENT_NAME="sotopia-pi-v1"
+export EXPERIMENT_NAME="socialveil"
 export WANDB_PROJECT="social-decipher"
 export WANDB_ENTITY="kxtechds"
-export NUM_IMPROVE_STEPS=5 
+export NUM_IMPROVE_STEPS=20
 
 # Data Preparation
 export EPISODES_FILE="data/episode_all_neutralized.jsonl"
-export EPISODE_LIMIT=1 # Number of unique scenarios per step
+export EPISODE_LIMIT=5 # Number of unique scenarios per step
 export BASE_OUTPUT_DIR="training_output/${EXPERIMENT_NAME}"
 
 # SFT Training - Initial Model
@@ -28,8 +28,7 @@ export EVALUATOR_OPENAI_API_KEY=$($CONFIG_READER_CMD EVALUATOR_OPENAI_API_KEY)
 export OPENAI_API_KEY=${AGENT_OPENAI_API_KEY}
 
 export TEMPLATE_PATH="configs/qwen2.5-7b.jinja"
-export NUM_EPOCHS=3
-export TRAIN_BATCH_SIZE=2
+export TRAIN_BATCH_SIZE=4
 
 # --- EXECUTION LOOP ---
 

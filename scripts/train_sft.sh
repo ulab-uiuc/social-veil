@@ -34,15 +34,15 @@ accelerate launch \
   --main_process_port 29512 \
     ./train_sft.py \
     --model_name "$MODEL_PATH" \
-    --learning_rate 1e-4 \
+    --learning_rate 5e-5 \
     --max_length 4096 \
-    --train_batch_size 2 \
+    --train_batch_size 4 \
     --val_batch_size 1 \
     --accumulation_steps 8 \
-    --num_epochs 500 \
+    --num_epochs 400 \
     --use_lora \
     --use_qlora \
     --evaluation_steps 5 \
     --sft_data_path "$SFT_DATA_PATH" \
     --template_path ../configs/qwen2.5-7b.jinja \
-    --checkpoint_dir "$CKPT_DIR"
+    --checkpoint_dir "$CKPT_DIR" 

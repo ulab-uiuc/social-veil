@@ -382,8 +382,6 @@ class ScoringManager:
             return conv_id  # fallback: unique key per conversation
 
         rating_map: Dict[str, ConversationRating] = {r.conversation_id: r for r in ratings}
-        print(f"Rating map: {rating_map}")
-        exit()
 
         # Global mean goal score across all ratings
         goal_values = [_goal_score(r) for r in ratings if r is not None]

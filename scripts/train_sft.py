@@ -14,7 +14,7 @@ if __name__ == "__main__":
     parser.add_argument("--local_rank", type=int, default=-1, help="Local rank for distributed training")
     parser.add_argument("--model_name", type=str, default="gpt2", help="Model name or path")
     parser.add_argument("--learning_rate", type=float, default=1e-5, help="Learning rate")
-    parser.add_argument("--train_batch_size", type=int, default=2, help="Training batch size")
+    parser.add_argument("--train_batch_size", type=int, default=4, help="Training batch size")
     parser.add_argument("--val_batch_size", type=int, default=2, help="Validation batch size")
     parser.add_argument("--num_epochs", type=int, default=3, help="Number of training epochs")
     parser.add_argument("--sft_data_path", type=str, required=True, help="Path to SFT data")
