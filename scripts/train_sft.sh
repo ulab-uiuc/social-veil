@@ -17,6 +17,10 @@ if [ -z "$CKPT_DIR" ]; then
 fi
 mkdir -p "$CKPT_DIR"
 
+# Runtime safety knobs
+export TORCHDYNAMO_DISABLE=${TORCHDYNAMO_DISABLE:-1}
+export PYTORCH_CUDA_ALLOC_CONF=${PYTORCH_CUDA_ALLOC_CONF:-expandable_segments:True}
+
 # Derive processes from GPUs to avoid config mismatch; don't override user's selection
 if [ -n "$CUDA_VISIBLE_DEVICES" ]; then
   NUM_PROCS=$(awk -F',' '{print NF}' <<< "$CUDA_VISIBLE_DEVICES")
