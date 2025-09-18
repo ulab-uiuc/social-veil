@@ -2,7 +2,6 @@ import os
 from functools import partial
 
 import torch
-import wandb
 from jinja2 import Environment, FileSystemLoader
 from torch.nn.utils.rnn import pad_sequence
 from transformers import (
@@ -46,13 +45,6 @@ class SotopiaSFTTrainer(Trainer):
         is_distributed = world_size > 1
         local_rank = int(os.environ.get("LOCAL_RANK", "0"))
 
-        if self.accelerator.is_main_process:
-            wandb.init(
-                project=args.wandb_project,
-                name=args.wandb_run_name,
-                config={k: v for k, v in vars(args).items() if isinstance(v, (int, float, str))},
-            )
-
         # 2️⃣ Load config + tokenizer
         config = AutoConfig.from_pretrained(args.model_name)
         config.use_cache = False
@@ -74,7 +66,7 @@ class SotopiaSFTTrainer(Trainer):
             base_model = AutoModelForCausalLM.from_pretrained(
                 args.model_name,
                 quantization_config=quantization_config,
-                device_map={"": 0} if not is_distributed else None,
+                device_map={"_": self.device},
             )
             # Ensure model is ready for k-bit training (input grads, layer norms cast, etc.)
             if prepare_model_for_kbit_training is not None:
@@ -87,7 +79,7 @@ class SotopiaSFTTrainer(Trainer):
             base_model = AutoModelForCausalLM.from_pretrained(
                 args.model_name,
                 torch_dtype=torch.bfloat16,
-                device_map={"": 0} if not is_distributed else None,
+                device_map={"_": self.device},
             )
 
         if hasattr(base_model, "gradient_checkpointing_enable"):
