@@ -146,7 +146,7 @@ class SotopiaSFTTrainer(Trainer):
             greater_is_better=False,
             label_names=["labels"],
             remove_unused_columns=False,
-            save_safetokens=True,
+            save_safetensors=True,
         )
 
         # 6️⃣ Call the Trainer constructor
