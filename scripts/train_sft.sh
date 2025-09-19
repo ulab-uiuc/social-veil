@@ -36,9 +36,9 @@ CUDA_VISIBLE_DEVICES=6,7,8,9 accelerate launch \
     --model_name "$MODEL_PATH" \
     --learning_rate 1e-4 \
     --max_length 2048 \
-    --train_batch_size 1 \
+    --train_batch_size 2 \
     --val_batch_size 1 \
-    --accumulation_steps 16 \
+    --accumulation_steps 8 \
     --num_epochs 500 \
     --use_lora \
     --use_qlora \

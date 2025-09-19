@@ -38,25 +38,20 @@ def sft_collate_fn(batch, tokenizer):
 
 class SotopiaSFTTrainer(Trainer):
     def __init__(self, args, accelerator):
-        # 1️⃣ Initialize wandb on main process
         self.accelerator = accelerator
         self.device = accelerator.device
         world_size = int(os.environ.get("WORLD_SIZE", "1"))
-        
         is_distributed = world_size > 1
         local_rank = int(os.environ.get("LOCAL_RANK", "0"))
         per_rank_device_map = {"": local_rank} if is_distributed else {"": 0}
-        
-        # 2️⃣ Load config + tokenizer
+
         config = AutoConfig.from_pretrained(args.model_name)
         config.use_cache = False
         tokenizer = AutoTokenizer.from_pretrained(args.model_name)
         tokenizer.model_max_length = args.max_length
         if tokenizer.pad_token_id is None and tokenizer.eos_token_id is not None:
             tokenizer.pad_token_id = tokenizer.eos_token_id
- 
 
-        # 3️⃣ Load model ONCE with memory-safe settings
         if args.use_qlora:
             quantization_config = BitsAndBytesConfig(
                 load_in_4bit=True,
@@ -70,14 +65,11 @@ class SotopiaSFTTrainer(Trainer):
                 quantization_config=quantization_config,
                 device_map=per_rank_device_map,
             )
-            # Ensure model is ready for k-bit training (input grads, layer norms cast, etc.)
             if prepare_model_for_kbit_training is not None:
                 base_model = prepare_model_for_kbit_training(base_model)
-            # Ensure no cache during training
             if hasattr(base_model, "config"):
                 base_model.config.use_cache = False
         else:
-            # bf16; in distributed we let Accelerate handle device placement
             base_model = AutoModelForCausalLM.from_pretrained(
                 args.model_name,
                 torch_dtype=torch.bfloat16,
@@ -90,10 +82,8 @@ class SotopiaSFTTrainer(Trainer):
             except TypeError:
                 base_model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={"use_reentrant": False})
 
-        # Optional: wrap with LoRA (no second load!)
         if args.use_lora:
             from peft import LoraConfig, get_peft_model
-
             peft_config = LoraConfig(
                 r=args.lora_r,
                 lora_alpha=args.lora_alpha,
@@ -104,7 +94,6 @@ class SotopiaSFTTrainer(Trainer):
 
         model = base_model
 
-        # 4️⃣ Prepare dataset + split
         env = Environment(loader=FileSystemLoader(os.path.dirname(args.template_path)))
         template = env.get_template(os.path.basename(args.template_path))
         full_ds = SFTDataset(args.sft_data_path, tokenizer, template, args.max_length)
@@ -114,7 +103,6 @@ class SotopiaSFTTrainer(Trainer):
             full_ds, [train_size, val_size], generator=torch.Generator().manual_seed(42)
         )
 
-        # 5️⃣ Build HF TrainingArguments
         hf_args = TrainingArguments(
             output_dir=args.checkpoint_dir,
             num_train_epochs=args.num_epochs,
@@ -123,24 +111,25 @@ class SotopiaSFTTrainer(Trainer):
             gradient_accumulation_steps=args.accumulation_steps,
             learning_rate=args.learning_rate,
             weight_decay=args.weight_decay,
-            eval_steps=args.evaluation_steps,
-            save_strategy="steps",
-            save_steps=50,
-            save_total_limit=3,
+            evaluation_strategy="epoch",
+            save_strategy="epoch",
+            save_total_limit=2,
             logging_dir="./logs",
             logging_steps=1,
-            report_to=None,
+            report_to="none",
             bf16=True,
             optim="paged_adamw_8bit" if args.use_qlora else "adamw_torch",
             dataloader_num_workers=4,
             ddp_find_unused_parameters=False,
-            evaluation_strategy="steps",
+            load_best_model_at_end=True,
+            metric_for_best_model="eval_loss",
+            greater_is_better=False,
+            max_grad_norm=1.0,  # Gradient clipping for stability
             label_names=["labels"],
             remove_unused_columns=False,
             save_safetensors=True,
         )
 
-        # 6️⃣ Call the Trainer constructor
         super().__init__(
             model=model,
             args=hf_args,
@@ -150,16 +139,26 @@ class SotopiaSFTTrainer(Trainer):
             tokenizer=tokenizer,
         )
 
-    def train(self, **kwargs):
-        # run the usual HF train loop
-        super().train(**kwargs)
-        self._save_lora()
-        return self.evaluate()
+    def compute_loss(self, model, inputs, return_outputs=False):
+        """
+        Custom loss computation to ensure logits are in float32 for stability, preventing NaN loss.
+        """
+        outputs = model(**inputs)
+        logits = outputs.get("logits").to(torch.float32)
+        labels = inputs.get("labels")
+        loss_fct = torch.nn.CrossEntropyLoss()
+        shift_logits = logits[..., :-1, :].contiguous()
+        shift_labels = labels[..., 1:].contiguous()
+        loss = loss_fct(shift_logits.view(-1, self.model.config.vocab_size), shift_labels.view(-1))
+        return (loss, outputs) if return_outputs else loss
 
-    def _save_lora(self):
-        if getattr(self.args, "use_lora", False):
-            ckpt = os.path.join(self.args.output_dir, "best_lora_checkpoint")
-            os.makedirs(ckpt, exist_ok=True)
-            # HF/PEFT save
-            self.model.save_pretrained(ckpt)
-            print(f"LoRA checkpoint saved at {ckpt}")
+    def train(self, **kwargs):
+        train_output = super().train(**kwargs)
+        if self.accelerator.is_main_process:
+            best_dir = os.path.join(self.args.output_dir, "best-checkpoint")
+            os.makedirs(best_dir, exist_ok=True)
+            self.model.save_pretrained(best_dir)
+            if hasattr(self, "tokenizer") and self.tokenizer is not None:
+                self.tokenizer.save_pretrained(best_dir)
+            print(f"Best model saved to {best_dir}")
+        return train_output
