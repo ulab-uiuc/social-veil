@@ -111,7 +111,7 @@ class SotopiaSFTTrainer(Trainer):
             gradient_accumulation_steps=args.accumulation_steps,
             learning_rate=args.learning_rate,
             weight_decay=args.weight_decay,
-            evaluation_strategy="epoch",
+            eval_strategy="epoch",       # Use new argument name
             save_strategy="epoch",
             save_total_limit=2,
             logging_dir="./logs",
@@ -139,7 +139,7 @@ class SotopiaSFTTrainer(Trainer):
             tokenizer=tokenizer,
         )
 
-    def compute_loss(self, model, inputs, return_outputs=False):
+    def compute_loss(self, model, inputs, return_outputs=False, **kwargs):
         """
         Custom loss computation to ensure logits are in float32 for stability, preventing NaN loss.
         """
