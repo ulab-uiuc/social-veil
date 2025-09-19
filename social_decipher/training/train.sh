@@ -3,9 +3,21 @@
 
 set -euo pipefail
 
+# --- GPU Reservation ---
+# Start a background process that allocates a small amount of VRAM on each visible GPU.
+# This "reserves" the GPUs and prevents other processes from claiming them during the
+# data collection phase, which does not keep the GPUs occupied on its own.
+echo "INFO: Starting GPU placeholder to reserve devices specified by CUDA_VISIBLE_DEVICES..."
+python -m social_decipher.utils.gpu_placeholder &
+PLACEHOLDER_PID=$!
+echo "INFO: GPU placeholder started with PID: $PLACEHOLDER_PID"
+
+# Ensure the placeholder is killed automatically when this script exits for any reason.
+trap "echo 'INFO: Shutting down GPU placeholder (PID: $PLACEHOLDER_PID)...'; kill $PLACEHOLDER_PID 2>/dev/null; exit" EXIT SIGINT SIGTERM
+
 # --- CONFIGURATION ---
 # Experiment
-export EXPERIMENT_NAME="socialveil"
+export EXPERIMENT_NAME="sotopia-pi-v1"
 export WANDB_PROJECT="social-decipher"
 export WANDB_ENTITY="kxtechds"
 export NUM_IMPROVE_STEPS=20
