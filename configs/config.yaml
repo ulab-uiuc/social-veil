@@ -30,7 +30,7 @@ data_dir: 'data/episode_all_neutralized.jsonl'
 models:
   model_a: "gpt-4o-mini"
   model_b: "/mnt/disk1/models/Qwen2.5-7B-Instruct"  
-  gpu: "2,3"
+  gpu: "1,2"
   vllm_port: 7900
   chat_template: "configs/qwen2.5-7b.jinja"
   served_model_name: "qwen2.5-7b-instruct"
