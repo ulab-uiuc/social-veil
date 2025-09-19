@@ -153,17 +153,20 @@ class SotopiaSFTTrainer(Trainer):
         return (loss, outputs) if return_outputs else loss
 
     def train(self, **kwargs):
+        # Run the standard training loop. The trainer will save checkpoints at the end of each epoch.
         train_output = super().train(**kwargs)
+
+        # After training, explicitly save the final model to a consistent "best-checkpoint" directory.
+        # This ensures the main script can always find it, regardless of the final epoch number.
         if self.accelerator.is_main_process:
-            best_dir = os.path.join(self.args.output_dir, "best-checkpoint")
-            os.makedirs(best_dir, exist_ok=True)
-            self.model.save_pretrained(best_dir)
+            final_checkpoint_dir = os.path.join(self.args.output_dir, "best-checkpoint")
+            os.makedirs(final_checkpoint_dir, exist_ok=True)
+            print(f"Saving final model to {final_checkpoint_dir}")
+            self.model.save_pretrained(final_checkpoint_dir)
             if hasattr(self, "tokenizer") and self.tokenizer is not None:
-                self.tokenizer.save_pretrained(best_dir)
-            print(f"Best model saved to {best_dir}")
+                self.tokenizer.save_pretrained(final_checkpoint_dir)
         
-        # Add a barrier to ensure all processes wait until the main process has finished saving.
-        # This prevents a race condition where non-main processes exit before the checkpoint is complete.
+        # Barrier to ensure all processes wait until the save is complete.
         self.accelerator.wait_for_everyone()
         
         return train_output

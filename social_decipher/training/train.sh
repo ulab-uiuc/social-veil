@@ -49,6 +49,17 @@ for (( step=0; step<$NUM_IMPROVE_STEPS; step++ )); do
     echo "🚀 STARTING IMPROVEMENT STEP $((step + 1)) / $NUM_IMPROVE_STEPS"
     echo "================================================="
     
+    # --- Set Epochs and Data Mode based on Sotopia-pi Strategy ---
+    if [ "$step" -eq 0 ]; then
+        SFT_EPOCHS=20 # Longer training for the initial BC phase
+        DATA_MODE="bc_and_sr"
+        echo "INFO: Step 0, setting SFT epochs to 20 and data mode to 'bc_and_sr'."
+    else
+        SFT_EPOCHS=5  # Shorter training for subsequent SR phases
+        DATA_MODE="sr_only"
+        echo "INFO: Step > 0, setting SFT epochs to 5 and data mode to 'sr_only'."
+    fi
+
     STEP_OUTPUT_DIR="${BASE_OUTPUT_DIR}/step_${step}"
     SFT_DATA_FILE="${STEP_OUTPUT_DIR}/sft_data.json"
     CHECKPOINT_DIR="${STEP_OUTPUT_DIR}/checkpoints"
@@ -68,9 +79,14 @@ for (( step=0; step<$NUM_IMPROVE_STEPS; step++ )); do
         --expert_model "$EXPERT_MODEL" \
         --evaluator_model "$EVALUATOR_MODEL" \
         --use_barrier_episodes \
-        --load_existing_data # Use this to reuse BC data across steps
+        --data_collection_mode "$DATA_MODE"
 
     echo "✅ SFT data prepared at ${SFT_DATA_FILE}"
+
+    if [ ! -f "$SFT_DATA_FILE" ]; then
+        echo "❌ ERROR: SFT data file not found at ${SFT_DATA_FILE}. Cannot proceed to next step."
+        exit 1
+    fi
 
     # --- STAGE 2: Launching SFT Training ---
     echo "\n🔥 Launching SFT Training for Step ${step}..."

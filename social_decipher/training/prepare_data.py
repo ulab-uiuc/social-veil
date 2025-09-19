@@ -30,6 +30,7 @@ def main():
     parser.add_argument("--quality_threshold", type=float, default=7.0)
     parser.add_argument("--filter_top_k", type=int, default=5)
     parser.add_argument("--scoring_strategy", type=str, default="custom_barrier_focused")
+    parser.add_argument("--data_collection_mode", type=str, default="bc_and_sr", choices=["bc_and_sr", "sr_only"], help="Data collection mode: 'bc_and_sr' for step 0, 'sr_only' for subsequent steps.")
     args = parser.parse_args()
 
     # 1. Initialize components
@@ -76,31 +77,38 @@ def main():
     
     print(f"Processing a total of {len(all_episodes)} episodes.")
 
-    # 3. Collect data
-    print("\n--- Collecting Conversation Data ---")
-    bc_convos = []
-   
-    if args.load_existing_data and os.path.exists(os.path.join(output_dir, "bc_data.json")):
-         print("Loading existing BC data...")
-         data_collector.load_conversations(bc_file="bc_data.json")
-         bc_convos, _ = data_collector.get_all_conversations()
-    else:
+    # 3. Collect data based on the specified mode
+    print(f"\n--- Collecting Conversation Data (Mode: {args.data_collection_mode}) ---")
+    collected_convos = []
+
+    if args.data_collection_mode == "bc_and_sr":
+        # Step 0: Generate and save BC data, then generate the first round of SR data.
         print("Generating new BC data...")
         bc_convos = data_collector.collect_behavior_cloning_data(
             all_episodes, args.conversations_per_episode, args.max_rounds
         )
-    
-    print("Generating new SR data...")
-    sr_convos = data_collector.collect_self_reinforcement_data(
-        all_episodes, args.conversations_per_episode, args.max_rounds
-    )
-    all_convos = bc_convos + sr_convos
-    print(f"Collected {len(all_convos)} total conversations ({len(bc_convos)} BC, {len(sr_convos)} SR).")
+        collected_convos.extend(bc_convos)
+        
+        print("Generating initial SR data...")
+        sr_convos = data_collector.collect_self_reinforcement_data(
+            all_episodes, args.conversations_per_episode, args.max_rounds
+        )
+        collected_convos.extend(sr_convos)
+
+    elif args.data_collection_mode == "sr_only":
+        # Steps > 0: Only generate new SR data with the updated agent.
+        print("Generating new SR data...")
+        sr_convos = data_collector.collect_self_reinforcement_data(
+            all_episodes, args.conversations_per_episode, args.max_rounds
+        )
+        collected_convos.extend(sr_convos)
+
+    print(f"Collected {len(collected_convos)} total conversations for this step ({len(bc_convos) if 'bc_convos' in locals() else 0} BC, {len(sr_convos)} SR).")
 
     # 4. Rate and filter data
     print("\n--- Rating and Filtering Conversations ---")
-    ratings = rater.rate_conversations(all_convos)
-    filtered_convos = scoring_manager.filter_conversations(all_convos, ratings)
+    ratings = rater.rate_conversations(collected_convos)
+    filtered_convos = scoring_manager.filter_conversations(collected_convos, ratings)
     top_k_convos = scoring_manager.apply_top_k_filtering(filtered_convos, ratings)
     print(f"Filtered down to {len(top_k_convos)} high-quality conversations.")
 
