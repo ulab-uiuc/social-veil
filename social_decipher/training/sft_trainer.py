@@ -161,4 +161,9 @@ class SotopiaSFTTrainer(Trainer):
             if hasattr(self, "tokenizer") and self.tokenizer is not None:
                 self.tokenizer.save_pretrained(best_dir)
             print(f"Best model saved to {best_dir}")
+        
+        # Add a barrier to ensure all processes wait until the main process has finished saving.
+        # This prevents a race condition where non-main processes exit before the checkpoint is complete.
+        self.accelerator.wait_for_everyone()
+        
         return train_output
