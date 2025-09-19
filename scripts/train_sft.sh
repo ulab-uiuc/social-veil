@@ -34,12 +34,12 @@ CUDA_VISIBLE_DEVICES=6,7,8,9 accelerate launch \
   --main_process_port 29512 \
     ./train_sft.py \
     --model_name "$MODEL_PATH" \
-    --learning_rate 5e-5 \
-    --max_length 4096 \
-    --train_batch_size 4 \
+    --learning_rate 1e-4 \
+    --max_length 2048 \
+    --train_batch_size 1 \
     --val_batch_size 1 \
-    --accumulation_steps 8 \
-    --num_epochs 400 \
+    --accumulation_steps 16 \
+    --num_epochs 500 \
     --use_lora \
     --use_qlora \
     --evaluation_steps 5 \
