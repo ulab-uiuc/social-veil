@@ -28,7 +28,7 @@ def main():
     parser.add_argument("--max_rounds", type=int, default=20)
     parser.add_argument("--load_existing_data", action="store_true", help="Load existing BC data instead of regenerating it.")
     parser.add_argument("--quality_threshold", type=float, default=7.0)
-    parser.add_argument("--filter_top_k", type=int, default=2)
+    parser.add_argument("--filter_top_k", type=int, default=5)
     parser.add_argument("--scoring_strategy", type=str, default="custom_barrier_focused")
     args = parser.parse_args()
 

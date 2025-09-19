@@ -29,7 +29,7 @@ else
   NUM_PROCS=1
 fi
 
-accelerate launch \
+CUDA_VISIBLE_DEVICES=2,3 accelerate launch \
   --num_processes "$NUM_PROCS" \
   --main_process_port 29512 \
     ./train_sft.py \

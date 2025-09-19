@@ -42,9 +42,11 @@ class SotopiaSFTTrainer(Trainer):
         self.accelerator = accelerator
         self.device = accelerator.device
         world_size = int(os.environ.get("WORLD_SIZE", "1"))
+        
         is_distributed = world_size > 1
         local_rank = int(os.environ.get("LOCAL_RANK", "0"))
-
+        per_rank_device_map = {"": local_rank} if is_distributed else {"": 0}
+        
         # 2️⃣ Load config + tokenizer
         config = AutoConfig.from_pretrained(args.model_name)
         config.use_cache = False
@@ -66,7 +68,7 @@ class SotopiaSFTTrainer(Trainer):
             base_model = AutoModelForCausalLM.from_pretrained(
                 args.model_name,
                 quantization_config=quantization_config,
-                device_map={"_": self.device},
+                device_map=per_rank_device_map,
             )
             # Ensure model is ready for k-bit training (input grads, layer norms cast, etc.)
             if prepare_model_for_kbit_training is not None:
@@ -79,7 +81,7 @@ class SotopiaSFTTrainer(Trainer):
             base_model = AutoModelForCausalLM.from_pretrained(
                 args.model_name,
                 torch_dtype=torch.bfloat16,
-                device_map={"_": self.device},
+                device_map=per_rank_device_map,
             )
 
         if hasattr(base_model, "gradient_checkpointing_enable"):
@@ -127,15 +129,12 @@ class SotopiaSFTTrainer(Trainer):
             save_total_limit=3,
             logging_dir="./logs",
             logging_steps=1,
-            report_to="none",
+            report_to=None,
             bf16=True,
             optim="paged_adamw_8bit" if args.use_qlora else "adamw_torch",
             dataloader_num_workers=4,
             ddp_find_unused_parameters=False,
             evaluation_strategy="steps",
-            load_best_model_at_end=True,
-            metric_for_best_model="eval_loss",
-            greater_is_better=False,
             label_names=["labels"],
             remove_unused_columns=False,
             save_safetensors=True,
@@ -153,19 +152,9 @@ class SotopiaSFTTrainer(Trainer):
 
     def train(self, **kwargs):
         # run the usual HF train loop
-        train_output = super().train(**kwargs)
-
-        # Save best model to a stable path for downstream steps
-        if self.accelerator.is_main_process:
-            best_dir = os.path.join(self.args.output_dir, "best-checkpoint")
-            os.makedirs(best_dir, exist_ok=True)
-            # Trainer loads best weights into self.model when load_best_model_at_end=True
-            self.model.save_pretrained(best_dir)
-            if hasattr(self, "tokenizer") and self.tokenizer is not None:
-                self.tokenizer.save_pretrained(best_dir)
-            print(f"Best model saved to {best_dir}")
-
-        return train_output
+        super().train(**kwargs)
+        self._save_lora()
+        return self.evaluate()
 
     def _save_lora(self):
         if getattr(self.args, "use_lora", False):

@@ -221,6 +221,8 @@ class BarrierDataCollector:
         
         # Agent A (the partner) uses the partner_model
         # Agent B (the one being trained) uses the agent_model
+        print(f"Running SR conversation with Agent A: {self.partner_model}, Agent B: {self.agent_model}")
+
         profile_a = self._build_profile(episode_data, 0, self.partner_model)
         profile_b = self._build_profile(episode_data, 1, self.agent_model)
         
