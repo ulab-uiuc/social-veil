@@ -29,17 +29,17 @@ else
   NUM_PROCS=1
 fi
 
-CUDA_VISIBLE_DEVICES=6,7,8,9 accelerate launch \
+CUDA_VISIBLE_DEVICES=3,4,5,6 accelerate launch \
   --num_processes "$NUM_PROCS" \
   --main_process_port 29512 \
     ./train_sft.py \
     --model_name "$MODEL_PATH" \
-    --learning_rate 1e-4 \
+    --learning_rate 5e-5 \
     --max_length 2048 \
-    --train_batch_size 2 \
+    --train_batch_size 4 \
     --val_batch_size 1 \
-    --accumulation_steps 8 \
-    --num_epochs 500 \
+    --accumulation_steps 4 \
+    --num_epochs 10 \
     --use_lora \
     --use_qlora \
     --evaluation_steps 5 \
