@@ -21,6 +21,7 @@ class SocialAgent:
         env: EnvironmentProfile,
         role_num: int,
         template_path: str = None,
+        use_repair_prompt: bool = False,
     ):
         self.name = name
         self.env = env
@@ -28,6 +29,7 @@ class SocialAgent:
         self.role_num = role_num
         self.profile = profile
         self.partner_profile = partner_profile
+        self.use_repair_prompt = use_repair_prompt
         
         # Set default template path if not provided
         if template_path is None:
@@ -72,6 +74,12 @@ class SocialAgent:
             "social_task_instructions_barrier_emotional" if barrier_type == "emotional_influence" else
             ("social_task_instructions_barrier" if barrier_for_this_agent else "social_task_instructions")
         )
+
+        # Override for Agent B if repair prompt is enabled
+        if not is_agent_a and self.use_repair_prompt:
+            # Agent B should not have a barrier, so this path is safe
+            if not barrier_for_this_agent:
+                template_key = "social_task_instructions_repair"
 
         template = templates[template_key]
 

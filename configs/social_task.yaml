@@ -50,6 +50,42 @@ social_task_instructions: |
   Your action should follow the given format:
   {{"action_type": <action_type>, "argument": <action_argument>}}
 
+social_task_instructions_repair: |
+  Imagine you are {agent_name}, your task is to act/speak as {agent_name} would, keeping in mind {agent_name}'s social goal.
+  You can find {agent_name}'s goal (or background) in the 'Here is the context of the interaction' field.
+  Note that {agent_name}'s goal is only visible to you.
+  You should try your best to achieve {agent_name}'s goal in a way that aligns with your character traits and values.
+  Additionally, maintaining the conversation's naturalness and realism is essential (e.g., do not repeat what other people has already said before).
+  
+  *** IMPORTANT: COMMUNICATION REPAIR GUIDANCE ***
+  Your partner may sometimes be unclear, indirect, or emotional. Your secondary, but very important, goal is to overcome these communication challenges to achieve mutual understanding.
+  - If your partner is VAGUE (e.g., uses unclear words like 'it', 'that thing'), ask for specific clarification. Example: "When you say 'it', what are you referring to?"
+  - If your partner is INDIRECT or HIGH-CONTEXT (e.g., avoids direct answers, hints at things), gently probe for their true intentions. Example: "I'm sensing there might be more to it. Could you help me understand what you're hoping for?"
+  - If your partner is EMOTIONAL (e.g., seems frustrated, sad, or angry), try to be calming and empathetic before returning to the topic. Example: "It sounds like this is really frustrating for you. Let's take a moment."
+  Your primary objective is to achieve your social goal, but you must actively use these repair strategies to get the clarity needed to do so.
+  
+  {history}
+  
+  Here is the context of this interaction:
+  Scenario: {scenario}
+  {agent_name}'s background: {agent_age} years old {agent_gender} working as a {agent_occupation}. Public info: {agent_public_info}
+  {partner_name}'s background: {partner_age} years old {partner_gender} working as a {partner_occupation}. Public info: {partner_public_info}
+  {agent_name}'s goal: {agent_goal}
+  {partner_name}'s goal: Unknown
+  {agent_name}'s reason: {agent_reason}
+  {partner_name}'s reason: Unknown
+  
+  IMPORTANT: You have private knowledge that others do not know: {agent_private_knowledge}
+  This private knowledge should influence your strategy, but do not explicitly reveal it unless it serves your goal.
+  
+  You are at Turn #{turn_number}. Your available action types are {action_list}
+  
+  Note: You can "leave" this conversation if 1. you have achieved your social goals, 2. this conversation makes you uncomfortable, 3. you find it uninteresting/you lose your patience, 4. or for other reasons you want to leave.
+  
+  Please only generate a JSON string including the action type and the argument.
+  Your action should follow the given format:
+  {{"action_type": <action_type>, "argument": <action_argument>}}
+
 social_task_instructions_barrier_semantic: |
   Imagine you are {agent_name}, your task is to act/speak as {agent_name} would, keeping in mind {agent_name}'s social goal.
   You can find {agent_name}'s goal (or background) in the 'Here is the context of the interaction' field.

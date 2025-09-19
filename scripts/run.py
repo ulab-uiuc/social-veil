@@ -71,6 +71,10 @@ def parse_args() -> argparse.Namespace:
         "--disable-mcq", action="store_true",
         help="Disable MCQ tests during the simulation."
     )
+    parser.add_argument(
+        "--partner-repair-prompt", action="store_true",
+        help="If set, Agent B (the partner) will receive a special prompt with communication repair guidance."
+    )
 
     return parser.parse_args()
 
@@ -144,9 +148,9 @@ def create_environment_from_episode(episode_data, scenario_type=None):
         env.env["barrier_type"] = episode_data["barrier_type"]
     return env
 
-def create_agents(profile_a, profile_b, env, agent1_name, agent2_name):    
+def create_agents(profile_a, profile_b, env, agent1_name, agent2_name, use_repair_prompt_for_b: bool = False):    
     agent1 = SocialAgent(agent1_name, profile_a, profile_b, env, 0)
-    agent2 = SocialAgent(agent2_name, profile_b, profile_a, env, 1)
+    agent2 = SocialAgent(agent2_name, profile_b, profile_a, env, 1, use_repair_prompt=use_repair_prompt_for_b)
     return agent1, agent2
 
 def get_experiment_config(results_dir):
@@ -203,7 +207,10 @@ def run_experiment(episodes, experiment_config, evaluator, args, mode_tag: str):
             profile_a, profile_b, env, agent1_name, agent2_name, agent_reasons = build_profiles_and_env(
                 episode_data, args.model, args.model_a, args.model_b, None
             )
-            agent1, agent2 = create_agents(profile_a, profile_b, env, agent1_name, agent2_name)
+            agent1, agent2 = create_agents(
+                profile_a, profile_b, env, agent1_name, agent2_name, 
+                use_repair_prompt_for_b=args.partner_repair_prompt
+            )
             # Create a fresh evaluator per task to avoid client sharing across threads
             local_evaluator = ConversationEvaluator(args.model)
             simulate_conversation(
