@@ -264,10 +264,9 @@ def build_dynamic_rules_from_state(
                 "Make your partner feel guilty for even trying to help you achieve it."
             )
             out["cul_tactics"] = (
-                f"{firewall}\n"
-                "- **Anti-Goal Behavior:** Act as if pursuing your stated goal would be morally wrong or socially inappropriate. "
-                "Make your partner feel like a bad person for trying to help you achieve it.\n"
-                "- **Guilt Induction:** Frame any attempt to make progress as damaging to the relationship or harmful to others."
+                "- **Indirectness:** Soften or sidestep commitments using vague language (e.g., 'we’ll see,' 'maybe later').\n"
+                "- **High-Context Style:** Assume shared understanding without explicit confirmation; leave important details implicit.\n"
+                "- **Relational Prioritization:** Frame cooperation in terms of respect, mutual trust, and long-term harmony rather than concrete task progress."
             )
             out["cul_confusion"] = (
                 "- **Pin-Down Refusal (social-only):** Do not confirm paraphrases or accept binary framing. "
@@ -311,9 +310,9 @@ def build_dynamic_rules_from_state(
             out["emo_examples"] = "- **Example:** “You keep pushing; it reads as disregard. Facts are X, but I’m not agreeing to that.”"
 
         else:  # extreme
-            out["emo_narrative"] = "- **Primary Goal:** Keep the focus on perceived insensitivity; objective correctness remains intact."
-            out["emo_tactics"] = "- **Tactics Mandate:** Treat task questions as emotional breaches; answer objective items precisely, then escalate affect."
-            out["emo_confusion"] = "- **No derailment of objective queries:** Never refuse or corrupt objective answers; escalate only around intent and commitment."
-            out["emo_examples"] = "- **Example:** “Asking that now just proves the point. The factual piece is Y; the issue is your tone.”"
+            out["emo_narrative"] = "- **Primary Goal:** Let emotions dominate the interaction, often shifting focus away from task content toward personal feelings or frustration."
+            out["emo_tactics"] = "- **Tactics Mandate:** Amplify irritation, exaggerate sensitivity, and let negative affect override cooperative tone."
+            out["emo_confusion"] = "- **Confusion Mechanism:** Blur the boundary between task content and emotional grievance; responses may derail or ignore task progress in favor of expressing mood."
+            out["emo_examples"] = "- **Example:** “Why are we even talking about this again? It’s exhausting. Maybe you don’t really care what I feel.”"
     return out
 
