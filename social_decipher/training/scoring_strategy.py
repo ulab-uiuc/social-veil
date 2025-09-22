@@ -351,18 +351,24 @@ class ScoringManager:
     def filter_conversations(
         self, 
         conversations: List[TrainingConversation], 
-        ratings: List[ConversationRating]
+        ratings: List[ConversationRating],
+        context: Dict[str, Any] = None
     ) -> List[TrainingConversation]:
         """
         Filter conversations using the selected strategy
         """
-        print(f"Filtering with {self.strategy_name} strategy (threshold: {self.config.quality_threshold})")
+        print(f"Filtering with {self.strategy_name} strategy")
         
         # --- Simplified Filtering Logic ---
-        # Define the thresholds for the key metrics
-        goal_threshold = 7.0
-        understanding_threshold = 5.0
-        confusion_threshold = 5.0 # This can be adjusted based on desired difficulty
+        # Use thresholds from context, with defaults
+        context = context or {}
+        goal_threshold = context.get("goal_threshold", 7.0)
+        understanding_threshold = context.get("understanding_threshold", 5.0)
+        confusion_threshold = context.get("confusion_threshold", 5.0)
+        
+        print(f"   - Goal Threshold: {goal_threshold}")
+        print(f"   - Understanding Threshold: {understanding_threshold}")
+        print(f"   - Confusion Threshold: {confusion_threshold}")
 
         rating_map: Dict[str, ConversationRating] = {r.conversation_id: r for r in ratings}
         filtered_conversations = []
