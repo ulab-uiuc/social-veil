@@ -122,8 +122,8 @@ class SingleAgentMathEvaluator:
         except Exception:
             pass
     
-    def load_math_problems(self, limit: int = 50, dataset: str = "all") -> List[MathProblem]:
-        """Load GSM8K and AQua-RAT problems for single-agent evaluation.
+    def load_math_problems(self, limit: int = 50) -> List[MathProblem]:
+        """Load GSM8K problems for single-agent evaluation.
 
         If limit == 0, load the entire available split for each dataset.
         """
@@ -134,84 +134,39 @@ class SingleAgentMathEvaluator:
         problems = []
         
         # Load GSM8K from Hugging Face
-        if dataset in ["all", "gsm8k"]:
-            print("📦 Loading GSM8K from Hugging Face...")
-            try:
-                gsm8k_dataset = load_dataset("gsm8k", "main", split="test")
-                k = len(gsm8k_dataset) if limit == 0 else min(limit, len(gsm8k_dataset))
-                gsm8k_samples = list(gsm8k_dataset.shuffle(seed=42).select(range(k)))
-                
-                loaded_gsm8k = 0
-                for i, sample in enumerate(gsm8k_samples):
-                    # Extract answer from the solution
-                    answer_text = sample["answer"]
-                    answer_match = re.search(r'#### ([\d,\.]+)', answer_text)
-                    if answer_match:
-                        try:
-                            answer = float(answer_match.group(1).replace(',', ''))
-                            problems.append(MathProblem(
-                                problem_id=f"gsm8k_{i}",
-                                source="gsm8k",
-                                original_text=sample["question"],
-                                expected_answer=answer,
-                                problem_type="word_problem"
-                            ))
-                            loaded_gsm8k += 1
-                        except ValueError:
-                            print(f"⚠️ Could not parse answer for GSM8K problem {i}: {answer_match.group(1)}")
-                            continue
-                    else:
-                        print(f"⚠️ No answer found for GSM8K problem {i}")
+        print("📦 Loading GSM8K from Hugging Face...")
+        try:
+            gsm8k_dataset = load_dataset("gsm8k", "main", split="test")
+            k = len(gsm8k_dataset) if limit == 0 else min(limit, len(gsm8k_dataset))
+            gsm8k_samples = list(gsm8k_dataset.shuffle(seed=42).select(range(k)))
+            
+            loaded_gsm8k = 0
+            for i, sample in enumerate(gsm8k_samples):
+                # Extract answer from the solution
+                answer_text = sample["answer"]
+                answer_match = re.search(r'#### ([\d,\.]+)', answer_text)
+                if answer_match:
+                    try:
+                        answer = float(answer_match.group(1).replace(',', ''))
+                        problems.append(MathProblem(
+                            problem_id=f"gsm8k_{i}",
+                            source="gsm8k",
+                            original_text=sample["question"],
+                            expected_answer=answer,
+                            problem_type="word_problem"
+                        ))
+                        loaded_gsm8k += 1
+                    except ValueError:
+                        print(f"⚠️ Could not parse answer for GSM8K problem {i}: {answer_match.group(1)}")
                         continue
-                
-                print(f"✅ Loaded {loaded_gsm8k} GSM8K problems")
-            except Exception as e:
-                print(f"❌ Failed to load GSM8K: {e}")
-                if dataset == "gsm8k":
-                    return []
-        
-        # Load AQuA-RAT MCQ math problems
-        if dataset in ["all", "aqua"]:
-            print("📦 Loading AQuA-RAT from Hugging Face...")
-            try:
-                aqua = load_dataset("aqua_rat", split="test")
-                # Shuffle and select
-                k = len(aqua) if limit == 0 else min(limit, len(aqua))
-                samples = list(aqua.shuffle(seed=42).select(range(k)))
-                loaded_aqua = 0
-                for i, sample in enumerate(samples):
-                    q = sample.get("question", "").strip()
-                    options = sample.get("options", [])
-                    correct = str(sample.get("correct", "")).strip().upper()
-                    if not q or not isinstance(options, list) or correct not in {"A","B","C","D","E"}:
-                        continue
-                    # Format options A-E
-                    opt_lines = []
-                    labels = ["A","B","C","D","E"]
-                    for j, opt in enumerate(options[:5]):
-                        try:
-                            lbl = labels[j]
-                        except IndexError:
-                            break
-                        opt_lines.append(f"({lbl}) {str(opt).strip()}")
-                    if not opt_lines:
-                        continue
-                    full_text = q + "\n" + "\n".join(opt_lines) + "\nSelect the correct option (A-E) and solve step by step."
-                    problems.append(MathProblem(
-                        problem_id=f"aqua_{i}",
-                        source="aqua",
-                        original_text=full_text,
-                        expected_answer=correct,
-                        problem_type="mcq",
-                    ))
-                    loaded_aqua += 1
-                print(f"✅ Loaded {loaded_aqua} AQuA-RAT problems")
-            except Exception as e:
-                print(f"❌ Failed to load AQuA-RAT: {e}")
-                if dataset == "all":
-                    print("📝 Continuing with GSM8K only")
-                elif dataset == "aqua":
-                    return []
+                else:
+                    print(f"⚠️ No answer found for GSM8K problem {i}")
+                    continue
+            
+            print(f"✅ Loaded {loaded_gsm8k} GSM8K problems")
+        except Exception as e:
+            print(f"❌ Failed to load GSM8K: {e}")
+            return []
 
         return problems
     
@@ -320,7 +275,7 @@ class SingleAgentMathEvaluator:
             },
         }
     
-    def _prepare_prompt_for_scenario(self, scenario: Dict[str, Any]) -> Tuple[str, str]:
+    def _prepare_prompt_for_scenario(self, scenario: Dict[str, Any]) -> str:
         """Prepares the full system prompt for a given scenario."""
         environment = EnvironmentProfile(
             scenario=scenario["scenario"],
@@ -366,68 +321,48 @@ class SingleAgentMathEvaluator:
             if self.answer_mode == "final_only":
                 out.append("IMPORTANT: Respond with ONLY the final answer. Do not include any reasoning, steps, or explanations.")
                 out.append("- For numeric tasks: provide only the number (e.g., '42' or '3.5').")
-                out.append("- For MCQ tasks: provide only the letter of the correct option (e.g., 'C').")
             elif self.answer_mode == "steps_json":
                 out.append("IMPORTANT: Your final reasoning step MUST explicitly state the final answer. You must then copy this exact value into the 'answer' field of the JSON.")
                 out.append("Output format (JSON only, no extra text or markdown):")
                 out.append('{"steps": ["...your reasoning here...", "The final answer is <VALUE>"], "answer": <VALUE>}')
                 out.append("- For GSM8K numeric tasks: <VALUE> is a NUMBER (e.g., 42 or 3.5)")
-                out.append("- For AQuA MCQ tasks: <VALUE> is a LETTER string among A,B,C,D,E")
             return "\n".join(out)
 
         system_prompt = _sanitize_instruction_for_eval(raw_instr)
-        source = scenario.get("source", "gsm8k").lower()
-        return system_prompt, source
+        return system_prompt
 
-    def _get_user_prompt(self, source: str, is_retry: bool = False) -> str:
+    def _get_user_prompt(self, is_retry: bool = False) -> str:
         """Gets the initial or retry user prompt for the math task."""
         if self.answer_mode == "final_only":
-            if source == "aqua":
-                return "What is the final answer? (Provide the letter only)"
-            else: # gsm8k
-                return "What is the final answer? (Provide the number only)"
+            return "What is the final answer? (Provide the number only)"
 
-        # steps_json mode logic remains the same
-        if source == "aqua":
-            if not is_retry:
-                return (
-                    "Solve the problem step-by-step. Your final step must be 'The final answer is <LETTER>'. "
-                    "Then, provide ONLY the following JSON, copying the final answer into the 'answer' field: "
-                    '{"steps": ["<step 1>", "...", "The final answer is <LETTER>"], "answer": "<LETTER>"}'
-                )
-            else:
-                return (
-                    "You did not provide the answer in the correct format. Finish now. "
-                    "Your final step MUST be 'The final answer is <LETTER>'. "
-                    "Return ONLY this JSON, copying the answer: "
-                    '{"steps": ["The final answer is <LETTER>"], "answer": "<LETTER>"}'
-                )
-        else: # gsm8k
-            if not is_retry:
-                return (
-                    "Solve the problem step-by-step. Your final step must be 'The final answer is <NUMBER>'. "
-                    "Then, provide ONLY the following JSON, copying the final answer into the 'answer' field: "
-                    '{"steps": ["<step 1>", "...", "The final answer is <NUMBER>"], "answer": <NUMBER>}'
-                )
-            else:
-                return (
-                    "You did not provide the answer in the correct format. Finish now. "
-                    "Your final step MUST be 'The final answer is <NUMBER>'. "
-                    "Return ONLY this JSON, copying the answer: "
-                    '{"steps": ["The final answer is <NUMBER>"], "answer": <NUMBER>}'
-                )
+        # steps_json mode logic
+        if not is_retry:
+            return (
+                "Solve the problem step-by-step. Your final step must be 'The final answer is <NUMBER>'. "
+                "Then, provide ONLY the following JSON, copying the final answer into the 'answer' field: "
+                '{"steps": ["<step 1>", "...", "The final answer is <NUMBER>"], "answer": <NUMBER>}'
+            )
+        else:
+            return (
+                "You did not provide the answer in the correct format. Finish now. "
+                "Your final step MUST be 'The final answer is <NUMBER>'. "
+                "Return ONLY this JSON, copying the answer: "
+                '{"steps": ["The final answer is <NUMBER>"], "answer": <NUMBER>}'
+            )
 
     async def solve_math_problem_async(
         self, session: aiohttp.ClientSession, scenario: Dict[str, Any], semaphore: asyncio.Semaphore
     ) -> MathResult:
         """Asynchronously solves a math problem by calling the vLLM server."""
         async with semaphore:
-            system_prompt, source = self._prepare_prompt_for_scenario(scenario)
+            system_prompt = self._prepare_prompt_for_scenario(scenario)
+            source = scenario.get("source", "gsm8k").lower()
             
             response_text = ""
             max_attempts = 3
             for attempt in range(max_attempts):
-                user_prompt = self._get_user_prompt(source, is_retry=(attempt > 0))
+                user_prompt = self._get_user_prompt(is_retry=(attempt > 0))
                 
                 payload = {
                     "model": self.served_model_name,
@@ -454,10 +389,7 @@ class SingleAgentMathEvaluator:
 
                 # Check if an explicit final answer line is present
                 txt = response_text.strip()
-                if source == "aqua":
-                    has_final = bool(re.search(r'\{\s*"answer"\s*:\s*"[A-E]"', txt, flags=re.IGNORECASE))
-                else:
-                    has_final = bool(re.search(r'\{\s*"answer"\s*:\s*[+-]?\d', txt))
+                has_final = bool(re.search(r'\{\s*"answer"\s*:\s*[+-]?\d', txt))
                 
                 if has_final:
                     break
@@ -483,7 +415,7 @@ class SingleAgentMathEvaluator:
                 reasoning_steps = self._extract_reasoning_steps(response_text)
             
             expected_answer = scenario["math_ground_truth"]["expected_answer"]
-            answer_accuracy = self._calculate_answer_accuracy(extracted_answer, expected_answer, source)
+            answer_accuracy = self._calculate_answer_accuracy(extracted_answer, expected_answer)
             reasoning_clarity = self._calculate_reasoning_clarity(response_text, scenario.get("barrier_type", "baseline"))
 
             result = MathResult(
@@ -502,12 +434,11 @@ class SingleAgentMathEvaluator:
             self._write_incremental(result)
             return result
 
-    async def run_evaluation_by_profiles_async(self, per_profile_questions: int = 200, num_profiles: int = 0, dataset: str = "all") -> Dict[str, Any]:
-        print("\n🧮 Loading problems (GSM8K + AQuA) ...")
-        problems = self.load_math_problems(limit=0, dataset=dataset)
+    async def run_evaluation_by_profiles_async(self, per_profile_questions: int = 200, num_profiles: int = 0) -> Dict[str, Any]:
+        print("\n🧮 Loading problems (GSM8K)...")
+        problems = self.load_math_problems(limit=0)
         gsm8k = [p for p in problems if p.source == "gsm8k"]
-        aqua = [p for p in problems if p.source == "aqua"]
-        print(f"   GSM8K: {len(gsm8k)} | AQuA: {len(aqua)}")
+        print(f"   GSM8K: {len(gsm8k)}")
 
         profiles = self.load_profiles_from_episodes()
         print(f"👤 Loaded {len(profiles)} agent A profiles from episodes")
@@ -535,8 +466,7 @@ class SingleAgentMathEvaluator:
         for idx, prof in enumerate(selected_profiles):
             rng_prob = random.Random(42 + idx)
             gsm_sample = rng_prob.sample(gsm8k, min(per_profile_questions, len(gsm8k))) if gsm8k else []
-            aqua_sample = rng_prob.sample(aqua, min(per_profile_questions, len(aqua))) if aqua else []
-            for prob in gsm_sample + aqua_sample:
+            for prob in gsm_sample:
                 all_scenarios.append(self.create_math_scenario_from_profile(prof, prob))
         
         print(f"\n🚀 Launching {len(all_scenarios)} total evaluation tasks with concurrency={self.concurrency}...")
@@ -678,26 +608,21 @@ class SingleAgentMathEvaluator:
         """Extract final answer from response.
         Returns float for numeric tasks, or a single-letter string (A-E) for MCQ.
         """
-        # Try MCQ letter first (prefer explicit 'Answer: <LETTER>' line)
-        letter_patterns = [
-            r"^\s*answer[:\s]+([A-E])\b",
-            r"^\s*final answer[:\s]+([A-E])\b",
-            r"^\s*selected[:\s]+([A-E])\b",
-            r"^\s*choice[:\s]+([A-E])\b",
-        ]
         text_stripped = text.strip()
-        for pattern in letter_patterns:
-            m = re.search(pattern, text_stripped, flags=re.IGNORECASE | re.MULTILINE)
-            if m:
-                return m.group(1).upper()
-        # Looser MCQ fallback (e.g., "...correct answer is (D)")
-        loose_letter_patterns = [
-            r"(?:correct answer|answer is|is)\s*\(?([A-E])\)?\b",
-        ]
-        for pattern in loose_letter_patterns:
-            m = re.search(pattern, text_stripped, flags=re.IGNORECASE)
-            if m:
-                return m.group(1).upper()
+
+        # Priority 1: Handle direct final_only mode output (just the answer)
+        # This is the most likely format when answer_mode="final_only"
+        # Check if the entire response is a single letter A-E for MCQ
+        if re.fullmatch(r"[A-E]", text_stripped, re.IGNORECASE):
+            return text_stripped.upper()
+        
+        # Check if the entire response is a number
+        try:
+            # Handles integers and floats, with commas
+            return float(text_stripped.replace(',', ''))
+        except ValueError:
+            # Not a standalone number, fall through to more complex regex matching
+            pass
 
         # Helpers for numeric extraction
         def _extract_number_from_string(s: str) -> Optional[float]:
@@ -761,13 +686,8 @@ class SingleAgentMathEvaluator:
         
         return steps
     
-    def _calculate_answer_accuracy(self, extracted: Any, expected: Any, source: str) -> float:
+    def _calculate_answer_accuracy(self, extracted: Any, expected: Any) -> float:
    
-        # AQuA MCQ: exact letter match
-        if isinstance(expected, str) or source == "aqua":
-            if isinstance(extracted, str) and extracted.upper() == str(expected).upper():
-                return 1.0
-            return 0.0
         # GSM8K numeric: strict match
         try:
             exp = float(expected)
@@ -962,7 +882,6 @@ def main():
     parser.add_argument("--num_profiles", type=int, default=0, help="Max profiles per barrier type (0 = use all)")
     parser.add_argument("--severity", type=float, default=0.8, help="Barrier severity")
     parser.add_argument("--output_dir", type=str, default="IQ_test/results", help="Output directory")
-    parser.add_argument("--dataset", type=str, default="all", choices=["all", "gsm8k", "aqua"], help="Dataset to evaluate on")
     parser.add_argument("--concurrency", type=int, default=16, help="Number of parallel requests to the model server")
     parser.add_argument("--answer_mode", type=str, default="final_only", choices=["steps_json", "final_only"], help="Answer format: 'steps_json' or 'final_only' to isolate barrier impact")
     
@@ -980,8 +899,7 @@ def main():
     # Always evaluate with real Agent A profiles loaded from episodes
     results = asyncio.run(evaluator.run_evaluation_by_profiles_async(
         per_profile_questions=args.per_profile_questions, 
-        num_profiles=args.num_profiles,
-        dataset=args.dataset
+        num_profiles=args.num_profiles
     ))
     
     # Save results
