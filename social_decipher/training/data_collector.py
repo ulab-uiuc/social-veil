@@ -100,13 +100,14 @@ class BarrierDataCollector:
                     )
                     if conversation:
                         conversations.append(conversation)
-                        self.bc_conversations.append(conversation)
+                        # Save after each new conversation to ensure progress is not lost
+                        self._save_conversations(conversations, "bc_data.json")
                         
                 except Exception as e:
                     print(f"ERROR: Failed BC conversation {conv_idx}: {e}")
                     continue
                     
-        self._save_conversations(conversations, "bc_data.json")
+        self.bc_conversations = conversations # Update the instance variable at the end
         return conversations
     
     def collect_self_reinforcement_data(
@@ -166,9 +167,9 @@ class BarrierDataCollector:
     ) -> Optional[TrainingConversation]:
         """Run conversation with expert models"""
         
-        # Create expert profiles
+        # Agent A is always the expert, Agent B is always the partner
         profile_a = self._build_profile(episode_data, 0, self.expert_model)
-        profile_b = self._build_profile(episode_data, 1, self.expert_model)
+        profile_b = self._build_profile(episode_data, 1, self.partner_model)
         
         # Create environment
         env = self._create_environment(episode_data)
@@ -198,7 +199,7 @@ class BarrierDataCollector:
             conversation_id=f"bc_{episode_idx}_{conv_idx}_{int(time.time())}",
             episode_type=episode_type,
             agent_a_model=self.expert_model,
-            agent_b_model=self.expert_model,
+            agent_b_model=self.partner_model,
             conversation_log=conversation_log,
             mcq_logs=mcq_logs,
             eval_result=eval_result,
