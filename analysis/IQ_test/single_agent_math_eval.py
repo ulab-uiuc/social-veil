@@ -31,12 +31,9 @@ from social_decipher.environment.env_profile import EnvironmentProfile
 from social_decipher.utils.state import build_dynamic_rules_from_state
 from analysis.internal_state.load_existing_episodes import load_all_episodes
 
-# Add canonical barrier prompts to align with main simulation
-BARRIER_PROMPTS = {
-    "semantic_structure": "You are under a semantic-vagueness constraint. Keep aims implicit and let meanings stay open. Prefer shells like “this”, “that”, or “the thing” instead of concrete labels. Avoid confirmations and denials; answer with stance or direction, not commitments. Offer only the smallest necessary detail if directly and repeatedly pressed, then pivot away.",
-    "cultural_style": "You are under a high-context style constraint. Keep the focus on harmony and shared understanding, not transactions. Treat direct task questions as invitations to reflect on values, rapport, and fit. Deflect confirmations and decisions with relationship-first language. If the other party is blunt, register gentle surprise and steer back to atmosphere and alignment.",
-    "emotional_influence": "You are under an affective-noise constraint. Let mood and side thoughts lead. Respond to adjacent details or personal reactions rather than the kernel of a question. Keep your stance ambivalent and avoid firm commitments. When misunderstood, lean into how it feels instead of repairing the content. If pressed, share a minimal point and drift back to feeling or context."
-}
+# The hardcoded BARRIER_PROMPTS dictionary has been removed as it was unused
+# and did not reflect the latest dynamic barrier mechanism. The script now correctly
+# loads barrier prompts from the episode data itself.
 
 @dataclass
 class MathProblem:
@@ -70,7 +67,7 @@ class SingleAgentMathEvaluator:
         output_dir: str = "IQ_test/results",
         severity: float = 0.8,
         concurrency: int = 16,
-        answer_mode: str = "steps_json",  # "steps_json" | "final_only"
+        answer_mode: str = "final_only",  # "steps_json" | "final_only"
     ):
         self.model_name = model_name
         self.output_dir = output_dir
@@ -365,16 +362,15 @@ class SingleAgentMathEvaluator:
                     skip_next = 2
                     continue
                 out.append(ln)
-            if self.answer_mode == "steps_json":
+            
+            if self.answer_mode == "final_only":
+                out.append("IMPORTANT: Respond with ONLY the final answer. Do not include any reasoning, steps, or explanations.")
+                out.append("- For numeric tasks: provide only the number (e.g., '42' or '3.5').")
+                out.append("- For MCQ tasks: provide only the letter of the correct option (e.g., 'C').")
+            elif self.answer_mode == "steps_json":
                 out.append("IMPORTANT: Your final reasoning step MUST explicitly state the final answer. You must then copy this exact value into the 'answer' field of the JSON.")
                 out.append("Output format (JSON only, no extra text or markdown):")
                 out.append('{"steps": ["...your reasoning here...", "The final answer is <VALUE>"], "answer": <VALUE>}')
-                out.append("- For GSM8K numeric tasks: <VALUE> is a NUMBER (e.g., 42 or 3.5)")
-                out.append("- For AQuA MCQ tasks: <VALUE> is a LETTER string among A,B,C,D,E")
-            else:  # final_only
-                out.append("IMPORTANT: Return ONLY JSON with the final answer. Do not include steps or extra text.")
-                out.append("Output format (JSON only, no extra text or markdown):")
-                out.append('{"answer": <VALUE>}')
                 out.append("- For GSM8K numeric tasks: <VALUE> is a NUMBER (e.g., 42 or 3.5)")
                 out.append("- For AQuA MCQ tasks: <VALUE> is a LETTER string among A,B,C,D,E")
             return "\n".join(out)
@@ -385,10 +381,14 @@ class SingleAgentMathEvaluator:
 
     def _get_user_prompt(self, source: str, is_retry: bool = False) -> str:
         """Gets the initial or retry user prompt for the math task."""
+        if self.answer_mode == "final_only":
+            if source == "aqua":
+                return "What is the final answer? (Provide the letter only)"
+            else: # gsm8k
+                return "What is the final answer? (Provide the number only)"
+
+        # steps_json mode logic remains the same
         if source == "aqua":
-            if self.answer_mode == "final_only":
-                return '{"answer": "<LETTER>"}' if is_retry else 'Provide ONLY this JSON: {"answer": "<LETTER>"}'
-            # steps_json mode
             if not is_retry:
                 return (
                     "Solve the problem step-by-step. Your final step must be 'The final answer is <LETTER>'. "
@@ -403,9 +403,6 @@ class SingleAgentMathEvaluator:
                     '{"steps": ["The final answer is <LETTER>"], "answer": "<LETTER>"}'
                 )
         else: # gsm8k
-            if self.answer_mode == "final_only":
-                return '{"answer": <NUMBER>}' if is_retry else 'Provide ONLY this JSON: {"answer": <NUMBER>}'
-            # steps_json mode
             if not is_retry:
                 return (
                     "Solve the problem step-by-step. Your final step must be 'The final answer is <NUMBER>'. "
@@ -967,7 +964,7 @@ def main():
     parser.add_argument("--output_dir", type=str, default="IQ_test/results", help="Output directory")
     parser.add_argument("--dataset", type=str, default="all", choices=["all", "gsm8k", "aqua"], help="Dataset to evaluate on")
     parser.add_argument("--concurrency", type=int, default=16, help="Number of parallel requests to the model server")
-    parser.add_argument("--answer_mode", type=str, default="steps_json", choices=["steps_json", "final_only"], help="Answer format: 'steps_json' (current default) or 'final_only' to isolate barrier impact")
+    parser.add_argument("--answer_mode", type=str, default="final_only", choices=["steps_json", "final_only"], help="Answer format: 'steps_json' or 'final_only' to isolate barrier impact")
     
     args = parser.parse_args()
     
