@@ -167,9 +167,9 @@ class BarrierDataCollector:
     ) -> Optional[TrainingConversation]:
         """Run conversation with expert models"""
         
-        # Agent A is always the expert, Agent B is always the partner
-        profile_a = self._build_profile(episode_data, 0, self.expert_model)
-        profile_b = self._build_profile(episode_data, 1, self.partner_model)
+        # Agent A (barrier agent) is the non-expert, Agent B (partner) is the expert
+        profile_a = self._build_profile(episode_data, 0, self.partner_model) # Non-expert
+        profile_b = self._build_profile(episode_data, 1, self.expert_model)  # Expert
         
         # Create environment
         env = self._create_environment(episode_data)
@@ -198,8 +198,8 @@ class BarrierDataCollector:
         conversation = TrainingConversation(
             conversation_id=f"bc_{episode_idx}_{conv_idx}_{int(time.time())}",
             episode_type=episode_type,
-            agent_a_model=self.expert_model,
-            agent_b_model=self.partner_model,
+            agent_a_model=self.partner_model, # Correctly log the non-expert model
+            agent_b_model=self.expert_model,   # Correctly log the expert model
             conversation_log=conversation_log,
             mcq_logs=mcq_logs,
             eval_result=eval_result,
