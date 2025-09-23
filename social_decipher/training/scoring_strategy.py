@@ -95,7 +95,8 @@ class DefaultScoringStrategy(ScoringStrategy):
     
     def should_include_conversation(self, rating: ConversationRating, context: Dict[str, Any] = None) -> bool:
         """
-        Default: filter by quality threshold
+        Default: filter by quality threshold from the main config.
+        The context dictionary is ignored in the default strategy.
         """
         composite_score = self.calculate_composite_score(rating)
         return composite_score >= self.config.quality_threshold
@@ -174,7 +175,9 @@ class WeightedScoringStrategy(ScoringStrategy):
     
     def should_include_conversation(self, rating: ConversationRating, context: Dict[str, Any] = None) -> bool:
         """
-        Filter by weighted composite score
+        For weighted scoring, the decision is based on the composite score, 
+        which already takes multiple dimensions into account.
+        The context dictionary is ignored here as well.
         """
         composite_score = self.calculate_composite_score(rating)
         return composite_score >= self.config.quality_threshold
@@ -294,13 +297,29 @@ class CustomScoringStrategy(ScoringStrategy):
     
     def should_include_conversation(self, rating: ConversationRating, context: Dict[str, Any] = None) -> bool:
         """
-        Use custom filtering function if provided
+        Use the custom filtering logic that leverages the context dictionary for specific thresholds.
         """
         if "filter_function" in self.custom_functions:
             return self.custom_functions["filter_function"](rating, self.config, context)
-        else:
-            composite_score = self.calculate_composite_score(rating)
-            return composite_score >= self.config.quality_threshold
+        
+        # Fallback for custom strategies that don't define a specific filter function.
+        # This is where we implement the direct metric thresholding.
+        context = context or {}
+        goal_threshold = context.get("goal_threshold", 5.5)
+        understanding_threshold = context.get("understanding_threshold", 3.0)
+        confusion_threshold = context.get("confusion_threshold", 2.0)
+
+        if not rating.episode_level:
+            return False
+
+        goal_score = float(rating.episode_level.get("goal_completion", 0.0))
+        mutual_understanding = float(rating.episode_level.get("mutual_understanding", 0.0))
+        unresolved_confusion = float(rating.episode_level.get("unresolved_confusion", 0.0))
+
+        # Apply the direct filtering logic
+        return (goal_score >= goal_threshold and
+                mutual_understanding >= understanding_threshold and
+                unresolved_confusion >= confusion_threshold)
     
     def rank_conversations(
         self, 
@@ -355,41 +374,23 @@ class ScoringManager:
         context: Dict[str, Any] = None
     ) -> List[TrainingConversation]:
         """
-        Filter conversations using the selected strategy
+        Filter conversations using the selected strategy's logic.
         """
         print(f"Filtering with {self.strategy_name} strategy")
         
-        # --- Simplified Filtering Logic ---
-        # Use thresholds from context, with defaults
-        context = context or {}
-        goal_threshold = context.get("goal_threshold", 7.0)
-        understanding_threshold = context.get("understanding_threshold", 5.0)
-        confusion_threshold = context.get("confusion_threshold", 5.0)
-        
-        print(f"   - Goal Threshold: {goal_threshold}")
-        print(f"   - Understanding Threshold: {understanding_threshold}")
-        print(f"   - Confusion Threshold: {confusion_threshold}")
-
         rating_map: Dict[str, ConversationRating] = {r.conversation_id: r for r in ratings}
         filtered_conversations = []
 
         for conv in conversations:
             rating = rating_map.get(conv.conversation_id)
-            if not rating or not rating.episode_level:
+            if not rating:
                 continue
 
-            # Extract scores
-            goal_score = float(rating.episode_level.get("goal_completion", 0.0))
-            mutual_understanding = float(rating.episode_level.get("mutual_understanding", 0.0))
-            unresolved_confusion = float(rating.episode_level.get("unresolved_confusion", 0.0))
-
-            # Apply the direct filtering logic
-            if (goal_score >= goal_threshold and
-                mutual_understanding >= understanding_threshold and
-                unresolved_confusion >= confusion_threshold):
+            # Defer the filtering decision to the specific strategy
+            if self.strategy.should_include_conversation(rating, context):
                 filtered_conversations.append(conv)
         
-        print(f"Filtered {len(conversations)} → {len(filtered_conversations)} conversations based on direct metric thresholds.")
+        print(f"Filtered {len(conversations)} -> {len(filtered_conversations)} conversations.")
         return filtered_conversations
     
     def apply_top_k_filtering(

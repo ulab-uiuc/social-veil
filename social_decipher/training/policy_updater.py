@@ -48,7 +48,7 @@ class SocialPolicyUpdater:
         conversations: List[TrainingConversation],
         ratings: List[ConversationRating],
         focus_on_agent_b: bool = True,
-        min_quality_score: float = 6.0
+        min_quality_score: float = 0.0
     ) -> List[TrainingExample]:
         """
         Prepare fine-tuning data from rated conversations.
@@ -70,8 +70,10 @@ class SocialPolicyUpdater:
         for conversation in conversations:
             rating = rating_map.get(conversation.conversation_id)
             
-            # Skip low-quality conversations
-            if not rating or rating.overall_quality < min_quality_score:
+            # Skip if a rating is not found. Filtering by score is now handled
+            # upstream in scripts like manual_filter.py, so the check for
+            # overall_quality is removed here.
+            if not rating:
                 continue
                 
             # Extract training examples from conversation
@@ -135,7 +137,7 @@ class SocialPolicyUpdater:
                 agent_role=agent_role,
                 conversation_history=conversation_history,
                 target_response=target_response,
-                quality_score=rating.overall_quality,
+                quality_score=rating.agent_2.get('overall', 0.0),
                 context=self._create_example_context(conversation, rating, agent_role)
             )
             
@@ -174,11 +176,10 @@ class SocialPolicyUpdater:
             "trajectory_type": conversation.trajectory_type,
             "barrier_info": conversation.barrier_info,
             "quality_metrics": {
-                "overall_quality": rating.overall_quality,
-                "barrier_handling": rating.barrier_handling,
-                "social_intelligence": rating.social_intelligence,
-                "communication_effectiveness": rating.communication_effectiveness,
-                "goal_achievement": rating.goal_achievement
+                "agent_1_scores": rating.agent_1,
+                "agent_2_scores": rating.agent_2,
+                "interaction_quality": rating.interaction_quality,
+                "episode_level_scores": rating.episode_level,
             },
             "agent_role": agent_role,
             "timestamp": conversation.timestamp

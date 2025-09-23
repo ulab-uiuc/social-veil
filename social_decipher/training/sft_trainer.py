@@ -45,9 +45,9 @@ class SotopiaSFTTrainer(Trainer):
         local_rank = int(os.environ.get("LOCAL_RANK", "0"))
         per_rank_device_map = {"": local_rank} if is_distributed else {"": 0}
 
-        config = AutoConfig.from_pretrained(args.model_name)
+        config = AutoConfig.from_pretrained(args.model_name_or_path)
         config.use_cache = False
-        tokenizer = AutoTokenizer.from_pretrained(args.model_name)
+        tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
         tokenizer.model_max_length = args.max_length
         if tokenizer.pad_token_id is None and tokenizer.eos_token_id is not None:
             tokenizer.pad_token_id = tokenizer.eos_token_id
@@ -59,9 +59,9 @@ class SotopiaSFTTrainer(Trainer):
                 bnb_4bit_use_double_quant=True,
                 bnb_4bit_quant_type="nf4",
             )
-            print(f"Using QLoRA (4bit) to load model: {args.model_name}")
+            print(f"Using QLoRA (4bit) to load model: {args.model_name_or_path}")
             base_model = AutoModelForCausalLM.from_pretrained(
-                args.model_name,
+                args.model_name_or_path,
                 quantization_config=quantization_config,
                 device_map=per_rank_device_map,
             )
@@ -71,7 +71,7 @@ class SotopiaSFTTrainer(Trainer):
                 base_model.config.use_cache = False
         else:
             base_model = AutoModelForCausalLM.from_pretrained(
-                args.model_name,
+                args.model_name_or_path,
                 torch_dtype=torch.bfloat16,
                 device_map=per_rank_device_map,
             )
@@ -92,16 +92,49 @@ class SotopiaSFTTrainer(Trainer):
             )
             base_model = get_peft_model(base_model, peft_config)
 
-        model = base_model
+        if args.lora_checkpoint_path:
+            from peft import PeftModel
+            print(f"Loading LoRA checkpoint from {args.lora_checkpoint_path}")
+            model = PeftModel.from_pretrained(base_model, args.lora_checkpoint_path, is_trainable=True)
+        else:
+            model = base_model
 
-        env = Environment(loader=FileSystemLoader(os.path.dirname(args.template_path)))
-        template = env.get_template(os.path.basename(args.template_path))
-        full_ds = SFTDataset(args.sft_data_path, tokenizer, template, args.max_length)
-        train_size = int(0.95 * len(full_ds))
-        val_size = len(full_ds) - train_size
-        train_ds, eval_ds = torch.utils.data.random_split(
-            full_ds, [train_size, val_size], generator=torch.Generator().manual_seed(42)
+        # Based on Sotopia-π, uses QLoRA for fine-tuning
+        model_kwargs = {
+            "quantization_config": BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_compute_dtype=torch.bfloat16,
+                bnb_4bit_use_double_quant=True,
+            ),
+            "torch_dtype": torch.bfloat16,
+        }
+
+        print(f"Using QLoRA (4bit) to load model: {args.model_name_or_path}")
+        self.model = AutoModelForCausalLM.from_pretrained(
+            args.model_name_or_path,
+            device_map={"": accelerator.process_index},
+            **model_kwargs
         )
+
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            args.model_name_or_path,
+            padding_side="right",
+            use_fast=False,
+            trust_remote_code=True,
+        )
+        self.tokenizer.pad_token = self.tokenizer.eos_token
+        
+        # Setup Jinja environment for templates
+        # FIX: Use an absolute path to the configs directory to prevent pathing issues.
+        # The trainer script is in social_decipher/training/, so we need to go up two directories.
+        configs_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "configs"))
+        env = Environment(loader=FileSystemLoader(configs_dir))
+        template = env.get_template(os.path.basename(args.template_path))
+        self.template = template
+        
+        # Load and process dataset
+        self.train_dataset = self._load_and_process_dataset(args.sft_data_path)
 
         hf_args = TrainingArguments(
             output_dir=args.checkpoint_dir,
