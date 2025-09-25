@@ -2,7 +2,6 @@
 name = "python-project-template"
 version = "0.0.1"
 description = "A template for python-based research project"
-authors = ["Haofei Yu <yuhaofei44@gmail.com>"]
 license = "Apache 2.0 License"
 readme = "README.md"
 packages = [
@@ -10,7 +9,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.10, <3.12"
+python = ">=3.11, <3.13"
 mypy = "^1.8.0"
 beartype = "^0.17.1"
 pydantic = "^2.8.2"
@@ -34,6 +33,9 @@ datasets = "^4.0.0"
 wandb = "^0.21.4"
 simpledorff = "^0.0.2"
 unsloth = {git = "https://github.com/unslothai/unsloth.git", extras = ["pt"]}
+pandas = "^2.3.2"
+seaborn = "^0.13.2"
+scipy = "^1.16.2"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.6.0"
