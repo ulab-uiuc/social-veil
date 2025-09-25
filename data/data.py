@@ -5,6 +5,7 @@ from pathlib import Path
 
 import yaml
 from openai import OpenAI
+from social_decipher.utils.error_handler import api_calling_error_exponential_backoff
 
 # Load prompts from YAML file
 with open("../configs/data_generation.yaml") as f:
@@ -29,16 +30,19 @@ def generate_unique_completions(prompt: str, n: int, output_file: str):
 
     while len(results) < n:
         try:
-            response = client.chat.completions.create(
-                model="gpt-4",
-                messages=[{"role": "system", "content": prompt}],
-                temperature=0.9,
-            )
+            @api_calling_error_exponential_backoff()
+            def _call():
+                return client.chat.completions.create(
+                    model="gpt-4",
+                    messages=[{"role": "system", "content": prompt}],
+                    temperature=0.9,
+                )
+            response = _call()
             content = response.choices[0].message.content.strip()
 
             parsed = json.loads(content)
             json_key = json.dumps(parsed, sort_keys=True)
-            print(json_key)
+
             if json_key not in unique_data:
                 unique_data.add(json_key)
                 results.append(parsed)

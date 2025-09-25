@@ -239,9 +239,9 @@ class SingleAgentMathEvaluator:
                 "decision_making_style": "Collaborative",
             },
         ]
-        scenario_text = f"You need to solve this mathematical problem step by step: {problem.original_text}"
+        scenario_text = "You are presented with a mathematical problem that you must solve."
         agent_goals = [
-            f"Solve this math problem correctly and show your work: {problem.original_text}",
+            "Solve the math problem correctly.",
             "Listen and provide encouragement",
         ]
         agent_reasons = [
@@ -269,6 +269,7 @@ class SingleAgentMathEvaluator:
             "barrier_type": barrier_type if barrier_type != "baseline" else None,
             "barrier_prompts": barrier_prompts if barrier_type != "baseline" else {},
             "source": problem.source,
+            "math_problem_text": problem.original_text,  # Store problem separately
             "math_ground_truth": {
                 "expected_answer": problem.expected_answer,
                 "problem_type": problem.problem_type,
@@ -331,20 +332,28 @@ class SingleAgentMathEvaluator:
         system_prompt = _sanitize_instruction_for_eval(raw_instr)
         return system_prompt
 
-    def _get_user_prompt(self, is_retry: bool = False) -> str:
+    def _get_user_prompt(self, problem_text: str, is_retry: bool = False) -> str:
         """Gets the initial or retry user prompt for the math task."""
+        
+        problem_statement = f"Here is the math problem:\n\n{problem_text}"
+
         if self.answer_mode == "final_only":
-            return "What is the final answer? (Provide the number only)"
+            if not is_retry:
+                return f"{problem_statement}\n\nThink step-by-step. The final line of your response should be the final numerical answer, and nothing else."
+            else:
+                return f"{problem_statement}\n\nYour previous response was not in the correct format. Think step-by-step. The final line of your response must be only the final numerical answer."
 
         # steps_json mode logic
         if not is_retry:
             return (
+                f"{problem_statement}\n\n"
                 "Solve the problem step-by-step. Your final step must be 'The final answer is <NUMBER>'. "
                 "Then, provide ONLY the following JSON, copying the final answer into the 'answer' field: "
                 '{"steps": ["<step 1>", "...", "The final answer is <NUMBER>"], "answer": <NUMBER>}'
             )
         else:
             return (
+                f"{problem_statement}\n\n"
                 "You did not provide the answer in the correct format. Finish now. "
                 "Your final step MUST be 'The final answer is <NUMBER>'. "
                 "Return ONLY this JSON, copying the answer: "
@@ -358,11 +367,12 @@ class SingleAgentMathEvaluator:
         async with semaphore:
             system_prompt = self._prepare_prompt_for_scenario(scenario)
             source = scenario.get("source", "gsm8k").lower()
+            problem_text = scenario.get("math_problem_text", "No problem text found.")
             
             response_text = ""
             max_attempts = 3
             for attempt in range(max_attempts):
-                user_prompt = self._get_user_prompt(is_retry=(attempt > 0))
+                user_prompt = self._get_user_prompt(problem_text, is_retry=(attempt > 0))
                 
                 payload = {
                     "model": self.served_model_name,
@@ -609,8 +619,19 @@ class SingleAgentMathEvaluator:
         Returns float for numeric tasks, or a single-letter string (A-E) for MCQ.
         """
         text_stripped = text.strip()
+        lines = [line.strip() for line in text_stripped.split('\n') if line.strip()]
 
-        # Priority 1: Handle direct final_only mode output (just the answer)
+        # Priority 1: Check if the last non-empty line is a valid number.
+        # This aligns with the new "final_only" prompt.
+        if lines:
+            last_line = lines[-1]
+            try:
+                # Handles integers, floats, and commas
+                return float(last_line.replace(',', ''))
+            except ValueError:
+                pass  # Fall through to other extraction methods if last line is not a number.
+
+        # Priority 2: Handle direct final_only mode output (just the answer)
         # This is the most likely format when answer_mode="final_only"
         # Check if the entire response is a single letter A-E for MCQ
         if re.fullmatch(r"[A-E]", text_stripped, re.IGNORECASE):

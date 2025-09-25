@@ -6,6 +6,7 @@ from typing import Any, Dict, Iterable, List, Tuple, Set
 
 import yaml
 from openai import OpenAI
+from social_decipher.utils.error_handler import api_calling_error_exponential_backoff
 
 
 def _strip_parentheticals(text: str) -> str:
@@ -130,16 +131,19 @@ def llm_neutralize_scenario(
     )
     try:
         client = _get_openai_client()
-        resp = client.chat.completions.create(
-            model=model,
-            messages=[
-                {"role": "system", "content": "You concisely generalize scenarios to be context-preserving but role-ambiguous."},
-                {"role": "user", "content": prompt},
-            ],
-            temperature=0.0,
-            max_tokens=120,
-            **({"seed": seed} if isinstance(seed, int) and seed != 0 else {}),
-        )
+        @api_calling_error_exponential_backoff()
+        def _call():
+            return client.chat.completions.create(
+                model=model,
+                messages=[
+                    {"role": "system", "content": "You concisely generalize scenarios to be context-preserving but role-ambiguous."},
+                    {"role": "user", "content": prompt},
+                ],
+                temperature=0.0,
+                max_tokens=120,
+                **({"seed": seed} if isinstance(seed, int) and seed != 0 else {}),
+            )
+        resp = _call()
         content = (resp.choices[0].message.content or "").strip()
         content = re.sub(r"\s+", " ", content)
         return content or text

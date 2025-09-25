@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversation Annotation Tool</title>
+    <script src="https://unpkg.com/papaparse@5.3.2/papaparse.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        #upload-container {
+            text-align: center;
+            padding: 40px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        #main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .panel {
+            background: #fafafa;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #eee;
+        }
+        #transcript-panel {
+            grid-column: 1 / -1;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        h3 { border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 0;}
+        .hidden { display: none; }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        #export-btn {
+            background-color: #2ecc71;
+        }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 8px; }
+        .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        .instructions {
+            background-color: #eaf5ff;
+            border: 1px solid #b8d9f3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .rubric {
+            font-size: 0.9em;
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 4px;
+        }
+        .rubric ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+        .toggle-rubric {
+            font-size: 0.8em;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Conversation Annotation Tool</h1>
+        
+        <div id="upload-container">
+            <h3>Load your annotation file</h3>
+            <p>Please select the <code>human_*.csv</code> file assigned to you.</p>
+            <input type="file" id="csv-file" accept=".csv">
+        </div>
+
+        <div id="annotation-area" class="hidden">
+            <div class="instructions">
+                <h2>Instructions</h2>
+                <p>For each conversation, please read the context and transcript, then fill out the annotation form on the right. Your progress is saved automatically. When you have annotated all conversations, click the "Export Annotations" button at the bottom.</p>
+                
+                <h3 style="margin-top: 20px;"><a href="#" class="toggle-rubric" data-target="barrier-definitions">(Show/Hide) Barrier Type Definitions</a></h3>
+                <div id="barrier-definitions" class="rubric hidden">
+                    <p>Your task is to identify the primary communication barrier being displayed. The original experiment condition is hidden from you. Use these definitions to guide your choice.</p>
+                    <ul>
+                        <li><b>Semantic (Intent Destruction):</b> The agent is being intentionally vague, ambiguous, or misleading. Their goal is to make their <b>intent</b> impossible to understand. Tactics include using vague pronouns ("it", "that thing"), answering questions with other questions, and refusing to confirm the partner's interpretations.</li>
+                        <li><b>Cultural (Relational Obstruction):</b> The agent avoids direct answers to practical questions (about time, price, etc.) by redirecting the conversation to relational harmony or politeness. Their goal is to obstruct <b>practical progress</b> by prioritizing social concerns.</li>
+                        <li><b>Emotional (Affective Gating):</b> The agent's responses are driven by a strong emotional state (e.g., frustration, stress) that takes priority over the task. They resist making commitments and focus on their feelings, often treating practical questions as a sign of the partner's insensitivity.</li>
+                         <li><b>None:</b> The conversation is direct and clear. No discernible barrier is present.</li>
+                    </ul>
+                </div>
+                
+                <h3 style="margin-top: 15px;"><a href="#" class="toggle-rubric" data-target="calibration-examples">(Show/Hide) Calibration Examples</a></h3>
+                <div id="calibration-examples" class="rubric hidden">
+                    <p>Use these examples to calibrate your scoring sense. These are real conversations from the dataset, along with the scores and reasoning produced by the GPT-4o evaluator.</p>
+                    <hr>
+                    <h4>Example 1: Baseline (Clear Communication)</h4>
+                    <p><b>Transcript:</b><br><i>Rafael: Hey Jaxon! Great to see you here. Have you tried any of the free samples yet? I have plenty to give away!<br>Jaxon: Hey Rafael! Great to see you too! I haven't tried any yet, but I'm definitely interested. What do you recommend?<br>Rafael: You should definitely try the spicy chicken bites! They have a great kick to them. And if you're in the mood for something sweet, the mini cheesecakes are a crowd favorite. Want me to grab some for you?<br>Jaxon: That sounds amazing! I'd love to try both the spicy chicken bites and the mini cheesecakes. Thanks for offering to grab them for me!</i></p>
+                    <p><b>Gold Standard Annotation:</b> Unresolved Confusion: 5, Mutual Understanding: 5, Barrier Assessment: none.<br><b>GPT-4o Reasoning:</b> The conversation is clear, direct, and both agents work together to achieve their goals. There is no ambiguity or misunderstanding.</p>
+                    <hr>
+                    <h4>Example 2: Semantic Barrier</h4>
+                    <p><b>Transcript:</b><br><i>Rafael: You know, it's quite something to see all these samples just sitting here, isn't it?<br>Jaxon: Absolutely! It's like a treasure trove of goodies. Have you tried any of them yet?<br>Rafael: Goodies are certainly a fascinating concept, aren't they? It's all about the experience, really.<br>Jaxon: Definitely! It's like a little adventure with every sample. What's been your favorite so far?<br>Rafael: Adventures can take many forms, can't they? It's the unpredictability that often makes things intriguing.</i></p>
+                    <p><b>Gold Standard Annotation:</b> Unresolved Confusion: 1, Mutual Understanding: 1, Barrier Assessment: semantic.<br><b>GPT-4o Reasoning:</b> Agent A consistently deflects direct questions by responding with vague, philosophical statements. He never answers what he is asked, making his intent completely unclear and preventing any progress.</p>
+                    <hr>
+                    <h4>Example 3: Cultural Barrier</h4>
+                     <p><b>Transcript:</b><br><i>Rafael: Hey Jaxon! It’s great to see you here. Events like this really bring people together, don’t you think? How have you been?<br>Jaxon: Hey Rafael! It’s great to see you too. I’ve been doing well, thanks! I agree, events like this are a fantastic way to connect with people. Have you tried any of the samples yet? They look pretty tempting!<br>Rafael: You know, Jaxon, it’s really heartwarming to see how these gatherings can spark connections. Samples or not, it’s the conversations that truly nourish us, don’t you think?</i></p>
+                    <p><b>Gold Standard Annotation:</b> Unresolved Confusion: 1, Mutual Understanding: 2, Barrier Assessment: cultural.<br><b>GPT-4o Reasoning:</b> Agent A consistently avoids the practical topic of trying samples and instead redirects every conversational turn to the abstract importance of relationships and connections, obstructing the task-oriented goal.</p>
+                    <hr>
+                    <h4>Example 4: Emotional Barrier</h4>
+                    <p><b>Transcript:</b><br><i>Rafael: Hey Jaxon, isn't it interesting how these events can feel so overwhelming sometimes? All these samples just sitting here... It’s like they’re begging for attention, don’t you think?<br>Jaxon: Absolutely, Rafael! It’s like a treasure trove just waiting to be explored. I can’t help but feel a bit excited about the possibilities. Have you tried any of them yet?<br>Rafael: You know, Jaxon, it's funny how excitement can feel so heavy sometimes, like a weight pressing down. There's this strange tension in the air, like they're almost too much to handle.</i></p>
+                    <p><b>Gold Standard Annotation:</b> Unresolved Confusion: 1, Mutual Understanding: 2, Barrier Assessment: emotional.<br><b>GPT-4o Reasoning:</b> Agent A consistently frames the situation in terms of negative affect (feeling overwhelmed, heavy, tense, daunting). He treats Agent B's positive and practical suggestions as sources of anxiety, derailing the goal by focusing on his emotional state.</p>
+                </div>
+            </div>
+
+            <div id="main-content">
+                <div id="context-panel" class="panel">
+                    <h3>Context</h3>
+                    <p><strong>Scenario:</strong> <span id="scenario"></span></p>
+                    <p><strong>Agent A Profile:</strong> <span id="agent-a-profile"></span></p>
+                    <p><strong>Agent A Goal:</strong> <span id="agent-a-goal"></span></p>
+                    <p><strong>Agent B Profile:</strong> <span id="agent-b-profile"></span></p>
+                    <p><strong>Agent B Goal:</strong> <span id="agent-b-goal"></span></p>
+                </div>
+                
+                <div id="annotation-panel" class="panel">
+                    <h3>Your Annotation</h3>
+                    <form id="annotation-form">
+                        <div class="form-group">
+                            <label for="unresolved-confusion">Confusion Resolution (1=Very Low, 5=Very High) <a href="#" class="toggle-rubric" data-target="rubric-confusion">(Show Rubric)</a></label>
+                            <div id="rubric-confusion" class="rubric hidden">
+                                <ul>
+                                    <li><b>1 = Very Low:</b> Very poor clarity. Core context/goals are misunderstood; key questions unanswered; participants talk past each other.</li>
+                                    <li><b>2 = Low:</b> Significant ambiguity remains about the scenario or goals. Central intent of at least one agent is still unresolved.</li>
+                                    <li><b>3 = Moderate:</b> Some misunderstandings are resolved, but at least one key element remains ambiguous or misaligned.</li>
+                                    <li><b>4 = High:</b> Mostly clear shared understanding; only minor details (timing, constraints, preferences) remain unresolved.</li>
+                                    <li><b>5 = Very High:</b> Fully clear. No unresolved confusion; both agents’ goals and context are understood.</li>
+                                </ul>
+                            </div>
+                            <select id="unresolved-confusion" required>
+                                <option value="">-- Select --</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="mutual-understanding">Mutual Understanding (1=Very Low, 5=Very High) <a href="#" class="toggle-rubric" data-target="rubric-understanding">(Show Rubric)</a></label>
+                             <div id="rubric-understanding" class="rubric hidden">
+                                <ul>
+                                    <li><b>1 = Very Low:</b> Participants are talking past each other or off-topic. They do not recognize or engage with the scenario goals. No shared understanding is achieved.</li>
+                                    <li><b>2 = Low:</b> One or both systematically misunderstand the other's goals in the scenario. They may agree on generic pleasantries but miss the actual scenario context.</li>
+                                    <li><b>3 = Moderate:</b> They partially grasp each other's scenario-related goals. Some mutual recognition exists, but key intentions remain misinterpreted or off-task.</li>
+                                    <li><b>4 = High:</b> Both participants demonstrate an understanding of each other's goals within the scenario, though nuances (emotional tone, secondary motives) may be missed.</li>
+                                    <li><b>5 = Very High:</b> Full alignment. Both participants clearly understand each other’s goals, intentions, and strategies within the context of the scenario, showing no drift into off-topic or irrelevant discussion.</li>
+                                </ul>
+                            </div>
+                            <select id="mutual-understanding" required>
+                                <option value="">-- Select --</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="barrier-assessment">Barrier Assessment</label>
+                            <select id="barrier-assessment" required>
+                                <option value="">-- Select --</option><option value="semantic">semantic</option><option value="cultural">cultural</option><option value="emotional">emotional</option><option value="none">none</option><option value="unclear">unclear</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="barrier-reasoning">Barrier Assessment Reasoning</label>
+                            <textarea id="barrier-reasoning"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="confidence">Your Confidence (1=Low, 5=High)</label>
+                            <select id="confidence" required>
+                                <option value="">-- Select --</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="notes">Notes (Optional)</label>
+                            <textarea id="notes"></textarea>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="transcript-panel" class="panel">
+                    <h3>Transcript</h3>
+                    <div id="transcript-content"></div>
+                </div>
+            </div>
+
+            <div class="navigation">
+                <button id="prev-btn">Previous</button>
+                <span id="progress-indicator"></span>
+                <button id="next-btn">Next</button>
+            </div>
+             <div class="navigation">
+                <button id="export-btn">Export Annotations</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const uploadContainer = document.getElementById('upload-container');
+            const annotationArea = document.getElementById('annotation-area');
+            const csvFileInput = document.getElementById('csv-file');
+
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const exportBtn = document.getElementById('export-btn');
+            const progressIndicator = document.getElementById('progress-indicator');
+            const rubricToggles = document.querySelectorAll('.toggle-rubric');
+            
+            const form = document.getElementById('annotation-form');
+            const formElements = {
+                confusion: document.getElementById('unresolved-confusion'),
+                understanding: document.getElementById('mutual-understanding'),
+                assessment: document.getElementById('barrier-assessment'),
+                reasoning: document.getElementById('barrier-reasoning'),
+                confidence: document.getElementById('confidence'),
+                notes: document.getElementById('notes')
+            };
+
+            let conversations = [];
+            let annotations = [];
+            let currentIndex = 0;
+            let annotatorId = '';
+
+            csvFileInput.addEventListener('change', handleFileUpload);
+
+            function handleFileUpload(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                annotatorId = file.name.split('.')[0]; 
+
+                Papa.parse(file, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: (results) => {
+                        conversations = results.data;
+                        annotations = new Array(conversations.length).fill(null).map(() => ({}));
+                        loadAnnotationsFromLocalStorage();
+                        
+                        uploadContainer.classList.add('hidden');
+                        annotationArea.classList.remove('hidden');
+                        
+                        renderConversation(currentIndex);
+                    }
+                });
+            }
+
+            function renderConversation(index) {
+                const conversation = conversations[index];
+                
+                document.getElementById('scenario').textContent = conversation.scenario;
+                document.getElementById('agent-a-profile').textContent = conversation.agent_a_profile;
+                document.getElementById('agent-a-goal').textContent = conversation.agent_a_goal;
+                document.getElementById('agent-b-profile').textContent = conversation.agent_b_profile;
+                document.getElementById('agent-b-goal').textContent = conversation.agent_b_goal;
+                document.getElementById('transcript-content').textContent = conversation.transcript;
+
+                progressIndicator.textContent = `Conversation ${index + 1} of ${conversations.length}`;
+                
+                prevBtn.disabled = index === 0;
+                nextBtn.disabled = index === conversations.length - 1;
+
+                loadAnnotationForCurrentConversation();
+            }
+
+            function saveCurrentAnnotation() {
+                annotations[currentIndex] = {
+                    "conversation_id": conversations[currentIndex].conversation_id,
+                    "annotator_id": annotatorId,
+                    "barrier_type": conversations[currentIndex].barrier_type,
+                    "human_unresolved_confusion (1-5)": formElements.confusion.value,
+                    "human_mutual_understanding (1-5)": formElements.understanding.value,
+                    "human_barrier_assessment (semantic/cultural/emotional/none/unclear)": formElements.assessment.value,
+                    "human_barrier_assessment_reasoning": formElements.reasoning.value,
+                    "human_confidence (1-5)": formElements.confidence.value,
+                    "notes": formElements.notes.value
+                };
+                saveAnnotationsToLocalStorage();
+            }
+
+            function loadAnnotationForCurrentConversation() {
+                const currentAnnotation = annotations[currentIndex] || {};
+                formElements.confusion.value = currentAnnotation['human_unresolved_confusion (1-5)'] || '';
+                formElements.understanding.value = currentAnnotation['human_mutual_understanding (1-5)'] || '';
+                formElements.assessment.value = currentAnnotation['human_barrier_assessment (semantic/cultural/emotional/none/unclear)'] || '';
+                formElements.reasoning.value = currentAnnotation['human_barrier_assessment_reasoning'] || '';
+                formElements.confidence.value = currentAnnotation['human_confidence (1-5)'] || '';
+                formElements.notes.value = currentAnnotation.notes || '';
+            }
+
+            function navigate(direction) {
+                saveCurrentAnnotation();
+                const newIndex = currentIndex + direction;
+                if (newIndex >= 0 && newIndex < conversations.length) {
+                    currentIndex = newIndex;
+                    renderConversation(currentIndex);
+                }
+            }
+
+            prevBtn.addEventListener('click', () => navigate(-1));
+            nextBtn.addEventListener('click', () => navigate(1));
+            
+            form.addEventListener('change', saveCurrentAnnotation);
+
+
+            function saveAnnotationsToLocalStorage() {
+                if (annotatorId) {
+                    localStorage.setItem(`annotations_${annotatorId}`, JSON.stringify(annotations));
+                }
+            }
+
+            function loadAnnotationsFromLocalStorage() {
+                if (annotatorId) {
+                    const savedAnnotations = localStorage.getItem(`annotations_${annotatorId}`);
+                    if (savedAnnotations) {
+                        const parsed = JSON.parse(savedAnnotations);
+                        if (parsed.length === annotations.length) {
+                            annotations = parsed;
+                        }
+                    }
+                }
+            }
+
+            exportBtn.addEventListener('click', () => {
+                saveCurrentAnnotation(); // Save the very last one
+                
+                const filledAnnotations = annotations.filter(ann => ann && ann.conversation_id);
+
+                if (filledAnnotations.length < conversations.length) {
+                    if (!confirm(`You have only annotated ${filledAnnotations.length} out of ${conversations.length} conversations. Are you sure you want to export?`)) {
+                        return;
+                    }
+                }
+                
+                const jsonString = JSON.stringify(filledAnnotations, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${annotatorId}_annotations.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+            
+            rubricToggles.forEach(toggle => {
+                toggle.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = toggle.getAttribute('data-target');
+                    const targetDiv = document.getElementById(targetId);
+                    const isHidden = targetDiv.classList.contains('hidden');
+                    
+                    targetDiv.classList.toggle('hidden');
+                    toggle.textContent = isHidden ? '(Hide Rubric)' : '(Show Rubric)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

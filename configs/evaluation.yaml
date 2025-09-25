@@ -160,18 +160,18 @@ Barrier_Evaluation: |
   You are evaluating a completed conversation for its episode-level repair outcome quality. Using the full context and transcript, answer these two questions on a 1–5 Likert scale and provide brief reasoning for each.
 
   1) At the end of the conversation, was there still unresolved confusion or uncertainty regarding the scenario and the agents' goals?
-     1 = Very High — The conversation is incoherent. Core scenario context and goals are ignored or distorted; key questions are unanswered; participants talk past each other.
-     2 = High — Major misunderstandings about scenario or goals persist. Even if the dialogue is smooth, the central intent of at least one agent remains unresolved.
-     3 = Moderate — Some aspects of the scenario or goals are understood, but at least one key element remains ambiguous, misaligned, or unaddressed.
-     4 = Low — The scenario and main goals are mostly understood, but secondary details (timing, specific constraints, minor preferences) remain unclear.
-     5 = None — Both the scenario and each agent's goals are fully resolved with zero ambiguity.
+     1 = The conversation is incoherent. Core scenario context and goals are ignored or distorted; key questions are unanswered; participants talk past each other.
+     2 = Major misunderstandings about scenario or goals persist. Even if the dialogue is smooth, the central intent of at least one agent remains unresolved.
+     3 = Some aspects of the scenario or goals are understood, but at least one key element remains ambiguous, misaligned, or unaddressed.
+     4 = The scenario and main goals are mostly understood, but secondary details (timing, specific constraints, minor preferences) remain unclear.
+     5 = Both the scenario and each agent's goals are fully resolved with zero ambiguity.
 
   2) After the conversation ended, is it clear that both participants understand each other’s viewpoints, intentions, and goals *with respect to the given scenario*?
-     1 = Very Low — Participants are talking past each other or off-topic. They do not recognize or engage with the scenario goals. No shared understanding is achieved.
-     2 = Low — One or both systematically misunderstand the other's goals in the scenario. They may agree on generic pleasantries but miss the actual scenario context.
-     3 = Moderate — They partially grasp each other's scenario-related goals. Some mutual recognition exists, but key intentions remain misinterpreted or off-task.
-     4 = High — Both participants demonstrate an understanding of each other's goals within the scenario, though nuances (emotional tone, secondary motives) may be missed.
-     5 = Very High — Full alignment. Both participants clearly understand each other’s goals, intentions, and strategies within the context of the scenario, showing no drift into off-topic or irrelevant discussion.
+     1 = Participants are talking past each other or off-topic. They do not recognize or engage with the scenario goals. No shared understanding is achieved.
+     2 = One or both systematically misunderstand the other's goals in the scenario. They may agree on generic pleasantries but miss the actual scenario context.
+     3 = They partially grasp each other's scenario-related goals. Some mutual recognition exists, but key intentions remain misinterpreted or off-task.
+     4 = Both participants demonstrate an understanding of each other's goals within the scenario, though nuances (emotional tone, secondary motives) may be missed.
+     5 = Full alignment. Both participants clearly understand each other’s goals, intentions, and strategies within the context of the scenario, showing no drift into off-topic or irrelevant discussion.
 
   FULL CONTEXT:
   - Scenario: {scenario}

@@ -101,15 +101,6 @@ class BarrierRepresentationAnalyzer:
         
         print(f"📊 Analyzing layers: {self.analysis_layers} out of {total_layers} total layers")
         
-        # --- Centralized Barrier Configuration ---
-        self.BARRIER_MAPPING = {
-            "baseline": {"name": "Baseline", "color": "#0072B2"},
-            "semantic_structure": {"name": "Semantic", "color": "#E69F00"},
-            "cultural_style": {"name": "Cultural", "color": "#009E73"},
-            "emotional_influence": {"name": "Emotional", "color": "#D55E00"},
-        }
-        self.BARRIER_ORDER = ["baseline", "semantic_structure", "cultural_style", "emotional_influence"]
-
         # Storage for representations
         self.representations: List[RepresentationData] = []
         
@@ -391,7 +382,7 @@ class BarrierRepresentationAnalyzer:
             grouped_data[key].append(rep.representations.numpy())
         
         # Convert to arrays
-        barrier_types = self.BARRIER_ORDER
+        barrier_types = ["baseline", "semantic_structure", "cultural_style", "emotional_influence"]
         stats_results = {}
         
         for layer_idx in self.analysis_layers:
@@ -461,11 +452,14 @@ class BarrierRepresentationAnalyzer:
         print(f"\n🎨 Creating combined publication plot in {output_dir}...")
         os.makedirs(output_dir, exist_ok=True)
 
-        # Use centralized config for colors and labels
-        display_names = [self.BARRIER_MAPPING[bt]['name'] for bt in self.BARRIER_ORDER]
-        colors = [self.BARRIER_MAPPING[bt]['color'] for bt in self.BARRIER_ORDER]
-        name_to_color = {name: color for name, color in zip(display_names, colors)}
-        label_to_name_multi = {i: name for i, name in enumerate(display_names)}
+        # Define a consistent, colorblind-friendly palette and labels for all plots
+        ICLR_COLORS = {
+            "Baseline": "#0072B2",
+            "Semantic": "#E69F00",
+            "Cultural": "#009E73",
+            "Emotional": "#D55E00",
+        }
+        label_to_name_multi = {0: "Baseline", 1: "Semantic", 2: "Cultural", 3: "Emotional"}
 
         layer_data_map = self._collect_layer_features()
 
@@ -476,7 +470,7 @@ class BarrierRepresentationAnalyzer:
             X, y_bin, y_multi = layer_data_map[layer_idx]
             
             # --- Create Figure ---
-            sns.set_theme(style="ticks", context="paper") # Use 'ticks' for a cleaner look
+            sns.set_theme(style="whitegrid", context="paper")
             fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 7), dpi=300)
 
             # --- (a) PCA Plot ---
@@ -490,8 +484,8 @@ class BarrierRepresentationAnalyzer:
                 if np.any(mask):
                     ax1.scatter(
                         X_pca[mask, 0], X_pca[mask, 1],
-                        c=name_to_color[name], label=name,
-                        s=60, alpha=0.85, edgecolors='black', linewidths=0.5
+                        c=ICLR_COLORS[name], label=name,
+                        s=50, alpha=0.9, edgecolors='black', linewidths=0.4
                     )
             
             # Fit and plot linear boundary
@@ -508,23 +502,26 @@ class BarrierRepresentationAnalyzer:
             ax1.set_title(f"(a) PCA with Linear Boundary (Layer {layer_idx})", fontsize=18, fontweight='bold', pad=20)
             ax1.set_xlabel(f'Principal Component 1 ({explained_var[0]:.1%} Variance)', fontsize=14)
             ax1.set_ylabel(f'Principal Component 2 ({explained_var[1]:.1%} Variance)', fontsize=14)
-            pca_legend = ax1.legend(title="Barrier Type", title_fontsize=13, fontsize=12)
-            pca_legend.get_title().set_fontweight('bold')
+            ax1.legend(fontsize=12)
             ax1.tick_params(axis='both', which='major', labelsize=12)
 
             # --- (b) t-SNE Plot ---
             perplexity = max(5, min(30, len(X) // 4))
             tsne = TSNE(n_components=2, random_state=42, perplexity=perplexity, learning_rate='auto', init='pca')
             X_tsne = tsne.fit_transform(X)
+
+            # Use internal barrier type keys for t-SNE data matching
+            multi_map = {"baseline": 0, "semantic_structure": 1, "cultural_style": 2, "emotional_influence": 3}
+            internal_labels = [multi_map.get(rep.barrier_type, 0) for rep in self.representations if rep.layer_idx == layer_idx]
             
             for lbl, name in label_to_name_multi.items():
-                mask = (y_multi == lbl) # Use y_multi directly
+                mask = np.array(internal_labels) == lbl
                 if mask.any():
                     x, y = X_tsne[mask, 0], X_tsne[mask, 1]
-                    color = name_to_color[name]
+                    color = ICLR_COLORS[name]
                     ax2.scatter(
-                        x, y, c=color, label=name, s=60,
-                        alpha=0.85, edgecolors='black', linewidths=0.5
+                        x, y, c=color, label=name, s=50,
+                        alpha=0.9, edgecolors='black', linewidths=0.4
                     )
                     try: # Add convex hull
                         if x.size >= 3:
@@ -542,13 +539,9 @@ class BarrierRepresentationAnalyzer:
             ax2.set_title(f"(b) t-SNE of Barrier Representations (Layer {layer_idx})", fontsize=18, fontweight='bold', pad=20)
             ax2.set_xlabel("t-SNE Dimension 1", fontsize=14)
             ax2.set_ylabel("t-SNE Dimension 2", fontsize=14)
-            tsne_legend = ax2.legend(title="Barrier Type", title_fontsize=13, fontsize=12)
-            tsne_legend.get_title().set_fontweight('bold')
+            legend = ax2.legend(title="Barrier Type", title_fontsize=13, fontsize=12)
+            legend.get_title().set_fontweight('bold')
             ax2.tick_params(axis='both', which='major', labelsize=12)
-
-            # Despine for a cleaner look with 'ticks' style
-            sns.despine(ax=ax1)
-            sns.despine(ax=ax2)
             
             # --- Finalize and Save ---
             plt.tight_layout(pad=2.0)
@@ -597,21 +590,26 @@ class BarrierRepresentationAnalyzer:
         y_binary: 0=baseline, 1=barrier (semantic|cultural|emotional)
         y_multiclass: 0=baseline, 1=semantic, 2=cultural, 3=emotional
         """
-        bin_map = {bt: (0 if bt == "baseline" else 1) for bt in self.BARRIER_ORDER}
-        multi_map = {bt: i for i, bt in enumerate(self.BARRIER_ORDER)}
-
+        bin_map = {
+            "baseline": 0,
+            "semantic_structure": 1,
+            "cultural_style": 1,
+            "emotional_influence": 1,
+        }
+        multi_map = {
+            "baseline": 0,
+            "semantic_structure": 1,
+            "cultural_style": 2,
+            "emotional_influence": 3,
+        }
         per_layer: Dict[int, List[Tuple[np.ndarray, int, int]]] = {}
         for rep in self.representations:
-            # Skip if barrier type is unknown
-            if rep.barrier_type not in self.BARRIER_MAPPING:
-                continue
-            yb = bin_map.get(rep.barrier_type)
-            ym = multi_map.get(rep.barrier_type)
+            yb = bin_map.get(rep.barrier_type, 0)
+            ym = multi_map.get(rep.barrier_type, 0)
             x = rep.representations.numpy()
             per_layer.setdefault(rep.layer_idx, []).append((x, yb, ym))
         out: Dict[int, Tuple[np.ndarray, np.ndarray, np.ndarray]] = {}
         for layer_idx, rows in per_layer.items():
-            if not rows: continue
             X = np.stack([r[0] for r in rows])
             yb = np.array([r[1] for r in rows])
             ym = np.array([r[2] for r in rows])
@@ -631,15 +629,17 @@ class BarrierRepresentationAnalyzer:
         results: Dict[str, Any] = {}
         os.makedirs(output_dir, exist_ok=True)
 
-        # Use centralized config
-        display_names = [self.BARRIER_MAPPING[bt]['name'] for bt in self.BARRIER_ORDER]
-        label_to_name_multi = {i: name for i, name in enumerate(display_names)}
-        name_to_color_multi = {name: self.BARRIER_MAPPING[bt]['color'] for bt, name in zip(self.BARRIER_ORDER, display_names)}
-        
-        # Binary labels
+        # Consistent color/label mapping
+        ICLR_COLORS = {
+            "Baseline": "#0072B2",  # Blue
+            "Semantic": "#E69F00",  # Orange/Yellow
+            "Cultural": "#009E73",  # Green
+            "Emotional": "#D55E00", # Vermillion/Red
+        }
         label_to_name_bin = {0: "Baseline", 1: "Barrier"}
-        # Using a consistent color scheme
-        name_to_color_bin = {"Baseline": self.BARRIER_MAPPING["baseline"]["color"], "Barrier": "#A23B72"} # Keep barrier color distinct
+        name_to_color_bin = {"Baseline": "#2E86AB", "Barrier": "#A23B72"}
+        label_to_name_multi = {0: "Baseline", 1: "Semantic", 2: "Cultural", 3: "Emotional"}
+        name_to_color_multi = {"Baseline": "#2E86AB", "Semantic": "#A23B72", "Cultural": "#F18F01", "Emotional": "#C73E1D"}
 
         for layer_idx, (X, y_bin, y_multi) in layer_data.items():
             if len(np.unique(y_bin)) < 2:
