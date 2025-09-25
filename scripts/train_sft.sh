@@ -80,7 +80,7 @@ CMD_ARGS=(
     --num_train_epochs 10
     --eval_steps 5
     --sft_data_path "$SFT_DATA_PATH"
-    --template_path /data/haofeiy2/social-decipher/configs/qwen2.5-7b.jinja
+    --template_path qwen2.5-7b.jinja
     --output_dir "$CKPT_DIR"
     --save_strategy steps
     --save_steps 1000
