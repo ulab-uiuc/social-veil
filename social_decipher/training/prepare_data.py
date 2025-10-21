@@ -28,18 +28,6 @@ from social_decipher.training.scoring_strategy import ScoringManager, get_custom
 
 
 def _check_conversation_quality(conversation: TrainingConversation, min_goal: float, min_understanding: float, min_confusion: float) -> bool:
-    """
-    Check if a conversation meets the quality criteria.
-    
-    Args:
-        conversation: The conversation to check
-        min_goal: Minimum goal completion score
-        min_understanding: Minimum mutual understanding score  
-        min_confusion: Minimum unresolved confusion score
-        
-    Returns:
-        True if the conversation meets all quality criteria, False otherwise
-    """
     if not conversation or not hasattr(conversation, 'eval_result'):
         return False
     
@@ -75,24 +63,7 @@ def _collect_bc_with_quality_guarantee(
     episodes: List,
     args
 ) -> List[TrainingConversation]:
-    """
-    Collect BC data with quality guarantee for each episode.
-    Ensures at least one high-quality conversation per episode.
-    
-    Args:
-        data_collector: The data collector instance
-        episodes: List of episodes to process
-        args: Command line arguments containing quality thresholds
-        
-    Returns:
-        List of high-quality training conversations
-    """
-    print(f"🎯 BC Quality Mode: Ensuring each episode has at least one conversation with:")
-    print(f"   - Goal completion > {args.bc_quality_goal}")
-    print(f"   - Mutual understanding >= {args.bc_quality_understanding}")
-    print(f"   - Unresolved confusion >= {args.bc_quality_confusion}")
-    print(f"   - Max retries per episode: {args.bc_max_retries}")
-    
+
     bc_filepath = os.path.join(data_collector.output_dir, "bc_data.json")
     all_conversations = []
     
@@ -176,7 +147,7 @@ def _collect_bc_with_quality_guarantee(
 
 def main():
     parser = argparse.ArgumentParser(description="Prepare SFT data from conversation simulations.")
-    parser.add_argument("--episodes_file", type=str, default="data/episode_sample.jsonl", help="Path to base episodes JSONL file.")
+    parser.add_argument("--episodes_file", type=str, default="data/episode_all_neutralized.jsonl", help="Path to base episodes JSONL file.")
     parser.add_argument("--use_barrier_episodes", action="store_true", help="Include barrier-specific episode sets.")
     parser.add_argument("--barrier_types", nargs="+", default=["semantic", "cultural", "emotional"], help="Barrier types to include.")
     parser.add_argument("--episode_limit", type=int, default=10, help="Limit the number of episodes to process for faster runs.")
