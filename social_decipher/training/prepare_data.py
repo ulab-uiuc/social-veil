@@ -3,15 +3,164 @@ import json
 import os
 import sys
 from pathlib import Path
+from typing import List
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from social_decipher.training.data_collector import BarrierDataCollector, load_barrier_episode_sets
+from social_decipher.training.data_collector import BarrierDataCollector, load_barrier_episode_sets, TrainingConversation
 from social_decipher.training.conversation_rater import ConversationRater
 from social_decipher.training.policy_updater import SocialPolicyUpdater
 from social_decipher.training.scoring_strategy import ScoringManager, get_custom_barrier_focused_config
+
+
+def _check_conversation_quality(conversation: TrainingConversation, min_goal: float, min_understanding: float, min_confusion: float) -> bool:
+    """
+    Check if a conversation meets the quality criteria.
+    
+    Args:
+        conversation: The conversation to check
+        min_goal: Minimum goal completion score
+        min_understanding: Minimum mutual understanding score  
+        min_confusion: Minimum unresolved confusion score
+        
+    Returns:
+        True if the conversation meets all quality criteria, False otherwise
+    """
+    if not conversation or not hasattr(conversation, 'eval_result'):
+        return False
+    
+    eval_result = conversation.eval_result
+    if not eval_result:
+        return False
+    
+    # Extract scores from the nested structure
+    try:
+        aggregated = eval_result.get('aggregated_scores', {})
+        
+        # Get goal completion
+        goal_score = aggregated.get('agent_2', {}).get('goal_completion')
+        if goal_score is None:
+            goal_score = aggregated.get('agent_1', {}).get('goal_completion', 0)
+        
+        # Get interaction quality scores
+        interaction = aggregated.get('interaction_quality', {})
+        understanding = interaction.get('mutual_understanding', 0)
+        confusion = interaction.get('unresolved_confusion', 0)
+        
+        # Check if meets criteria
+        return (float(goal_score) > min_goal and 
+                float(understanding) >= min_understanding and 
+                float(confusion) >= min_confusion)
+    except (AttributeError, TypeError, ValueError) as e:
+        print(f"⚠️  Error extracting scores: {e}")
+        return False
+
+
+def _collect_bc_with_quality_guarantee(
+    data_collector: BarrierDataCollector,
+    episodes: List,
+    args
+) -> List[TrainingConversation]:
+    """
+    Collect BC data with quality guarantee for each episode.
+    Ensures at least one high-quality conversation per episode.
+    
+    Args:
+        data_collector: The data collector instance
+        episodes: List of episodes to process
+        args: Command line arguments containing quality thresholds
+        
+    Returns:
+        List of high-quality training conversations
+    """
+    print(f"🎯 BC Quality Mode: Ensuring each episode has at least one conversation with:")
+    print(f"   - Goal completion > {args.bc_quality_goal}")
+    print(f"   - Mutual understanding >= {args.bc_quality_understanding}")
+    print(f"   - Unresolved confusion >= {args.bc_quality_confusion}")
+    print(f"   - Max retries per episode: {args.bc_max_retries}")
+    
+    bc_filepath = os.path.join(data_collector.output_dir, "bc_data.json")
+    all_conversations = []
+    
+    # Load existing conversations
+    existing_episode_ids = set()
+    if os.path.exists(bc_filepath):
+        try:
+            with open(bc_filepath, 'r', encoding='utf-8') as f:
+                existing_data = json.load(f)
+                all_conversations = [TrainingConversation(**conv) for conv in existing_data]
+                existing_episode_ids = {
+                    conv.conversation_id.split('_ep')[1].split('_')[0] 
+                    for conv in all_conversations 
+                    if '_ep' in conv.conversation_id
+                }
+                print(f"   Loaded {len(all_conversations)} existing conversations covering {len(existing_episode_ids)} episodes.")
+        except Exception as e:
+            print(f"⚠️  Could not load existing BC data: {e}")
+    
+    success_count = 0
+    fail_count = 0
+    
+    for episode_idx, episode_data in enumerate(episodes):
+        episode_id = str(episode_idx)
+        episode_type = data_collector._get_episode_type(episode_data)
+        
+        # Skip if we already have a quality conversation for this episode
+        if episode_id in existing_episode_ids:
+            print(f"✓ Episode {episode_idx + 1}/{len(episodes)} ({episode_type}): Already processed")
+            continue
+        
+        print(f"\n📝 Episode {episode_idx + 1}/{len(episodes)} ({episode_type})")
+        
+        # Try to get a high-quality conversation
+        found_quality = False
+        for attempt in range(args.bc_max_retries):
+            try:
+                print(f"   Attempt {attempt + 1}/{args.bc_max_retries}...", end=" ")
+                
+                # Run one conversation
+                conversation = data_collector._run_expert_conversation(
+                    episode_data, episode_idx, attempt, args.max_rounds, episode_type
+                )
+                
+                if conversation and _check_conversation_quality(
+                    conversation, 
+                    args.bc_quality_goal,
+                    args.bc_quality_understanding, 
+                    args.bc_quality_confusion
+                ):
+                    print(f"✅ High quality!")
+                    all_conversations.append(conversation)
+                    
+                    # Save immediately
+                    with open(bc_filepath, 'w', encoding='utf-8') as f:
+                        json.dump([vars(c) if hasattr(c, '__dict__') else c for c in all_conversations], 
+                                f, indent=2, ensure_ascii=False, default=str)
+                    
+                    found_quality = True
+                    success_count += 1
+                    break
+                else:
+                    print(f"❌ Quality check failed")
+                    
+            except Exception as e:
+                print(f"❌ Error: {e}")
+                continue
+        
+        if not found_quality:
+            print(f"   ⚠️  Could not get quality conversation after {args.bc_max_retries} attempts")
+            fail_count += 1
+    
+    print(f"\n📊 BC Collection Summary:")
+    print(f"   ✅ Success: {success_count} episodes")
+    print(f"   ⚠️  Failed: {fail_count} episodes")
+    print(f"   📦 Total conversations: {len(all_conversations)}")
+    
+    data_collector.bc_conversations = all_conversations
+    return all_conversations
+
 
 def main():
     parser = argparse.ArgumentParser(description="Prepare SFT data from conversation simulations.")
@@ -30,8 +179,12 @@ def main():
     parser.add_argument("--quality_threshold", type=float, default=6.0)
     parser.add_argument("--filter_top_k", type=int, default=5)
     parser.add_argument("--scoring_strategy", type=str, default="custom_barrier_focused")
-    parser.add_argument("--data_collection_mode", type=str, default="bc_and_sr", choices=["bc_and_sr", "sr_only"], help="Data collection mode: 'bc_and_sr' for step 0, 'sr_only' for subsequent steps.")
+    parser.add_argument("--data_collection_mode", type=str, default="bc_and_sr", choices=["bc_and_sr", "sr_only", "bc_only"], help="Data collection mode: 'bc_and_sr' for step 0, 'sr_only' for subsequent steps, 'bc_only' for only BC data.")
     parser.add_argument("--barrier_only", action="store_true", help="If set, only use barrier-type episodes.")
+    parser.add_argument("--bc_quality_goal", type=float, default=5.0, help="Minimum goal completion for BC data quality check.")
+    parser.add_argument("--bc_quality_understanding", type=float, default=3.0, help="Minimum mutual understanding for BC data quality check.")
+    parser.add_argument("--bc_quality_confusion", type=float, default=3.0, help="Minimum unresolved confusion for BC data quality check.")
+    parser.add_argument("--bc_max_retries", type=int, default=5, help="Maximum retries per episode to get high-quality BC data.")
     
     # New arguments for filtering thresholds
     parser.add_argument("--goal_threshold", type=float, default=7.0, help="Minimum goal completion score.")
@@ -99,7 +252,15 @@ def main():
         print(f"   Loaded {len(bc_convos)} existing BC conversations.")
 
     sr_convos = []
-    if args.data_collection_mode == "bc_and_sr":
+    if args.data_collection_mode == "bc_only":
+        # BC only mode with quality guarantee
+        print("Generating BC data with quality guarantee...")
+        new_bc_convos = _collect_bc_with_quality_guarantee(
+            data_collector, all_episodes, args
+        )
+        bc_convos.extend(new_bc_convos)
+    
+    elif args.data_collection_mode == "bc_and_sr":
         # Step 0: Generate and save BC data, then generate the first round of SR data.
         print("Generating new BC data...")
         new_bc_convos = data_collector.collect_behavior_cloning_data(
