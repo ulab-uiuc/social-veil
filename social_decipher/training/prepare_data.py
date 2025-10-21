@@ -39,22 +39,49 @@ def _check_conversation_quality(conversation: TrainingConversation, min_goal: fl
     try:
         aggregated = eval_result.get('aggregated_scores', {})
         
-        # Get goal completion
-        goal_score = aggregated.get('agent_2', {}).get('goal_completion')
-        if goal_score is None:
-            goal_score = aggregated.get('agent_1', {}).get('goal_completion', 0)
+        # Get goal completion from agent_2
+        agent_2_data = aggregated.get('agent_2', {})
+        if isinstance(agent_2_data, dict):
+            goal_score = agent_2_data.get('goal_completion', 0)
+        else:
+            goal_score = 0
         
-        # Get interaction quality scores
-        interaction = aggregated.get('interaction_quality', {})
-        understanding = interaction.get('mutual_understanding', 0)
-        confusion = interaction.get('unresolved_confusion', 0)
+        # Fallback to agent_1 if agent_2 goal is not available
+        if goal_score == 0:
+            agent_1_data = aggregated.get('agent_1', {})
+            if isinstance(agent_1_data, dict):
+                goal_score = agent_1_data.get('goal_completion', 0)
+        
+        # Get interaction quality scores from episode_level
+        episode_level = aggregated.get('episode_level', {})
+        if isinstance(episode_level, dict):
+            understanding = episode_level.get('mutual_understanding', 0)
+            confusion = episode_level.get('unresolved_confusion', 0)
+            
+            # Handle nested structure (score dict with 'score' key)
+            if isinstance(understanding, dict):
+                understanding = understanding.get('score', 0)
+            if isinstance(confusion, dict):
+                confusion = confusion.get('score', 0)
+        else:
+            understanding = 0
+            confusion = 0
         
         # Check if meets criteria
-        return (float(goal_score) > min_goal and 
-                float(understanding) >= min_understanding and 
-                float(confusion) >= min_confusion)
+        meets_criteria = (
+            float(goal_score) > min_goal and 
+            float(understanding) >= min_understanding and 
+            float(confusion) >= min_confusion
+        )
+        
+        if not meets_criteria:
+            print(f"   Scores: goal={goal_score}, understanding={understanding}, confusion={confusion}")
+        
+        return meets_criteria
     except (AttributeError, TypeError, ValueError) as e:
         print(f"⚠️  Error extracting scores: {e}")
+        import traceback
+        traceback.print_exc()
         return False
 
 
