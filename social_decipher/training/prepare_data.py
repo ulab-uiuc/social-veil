@@ -94,18 +94,23 @@ def _collect_bc_with_quality_guarantee(
     bc_filepath = os.path.join(data_collector.output_dir, "bc_data.json")
     all_conversations = []
     
-    # Load existing conversations
+    # Load existing conversations and track which episodes have been processed
     existing_episode_ids = set()
     if os.path.exists(bc_filepath):
         try:
             with open(bc_filepath, 'r', encoding='utf-8') as f:
                 existing_data = json.load(f)
                 all_conversations = [TrainingConversation(**conv) for conv in existing_data]
-                existing_episode_ids = {
-                    conv.conversation_id.split('_ep')[1].split('_')[0] 
-                    for conv in all_conversations 
-                    if '_ep' in conv.conversation_id
-                }
+                # conversation_id format: bc_{episode_idx}_{conv_idx}_{timestamp}
+                # Extract episode_idx (second part after splitting by '_')
+                for conv in all_conversations:
+                    try:
+                        parts = conv.conversation_id.split('_')
+                        if len(parts) >= 4 and parts[0] == 'bc':
+                            episode_idx_str = parts[1]  # episode_idx as string
+                            existing_episode_ids.add(int(episode_idx_str))
+                    except Exception:
+                        continue
                 print(f"   Loaded {len(all_conversations)} existing conversations covering {len(existing_episode_ids)} episodes.")
         except Exception as e:
             print(f"⚠️  Could not load existing BC data: {e}")
@@ -114,11 +119,10 @@ def _collect_bc_with_quality_guarantee(
     fail_count = 0
     
     for episode_idx, episode_data in enumerate(episodes):
-        episode_id = str(episode_idx)
         episode_type = data_collector._get_episode_type(episode_data)
         
         # Skip if we already have a quality conversation for this episode
-        if episode_id in existing_episode_ids:
+        if episode_idx in existing_episode_ids:
             print(f"✓ Episode {episode_idx + 1}/{len(episodes)} ({episode_type}): Already processed")
             continue
         
