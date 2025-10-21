@@ -2,12 +2,24 @@ import argparse
 import json
 import os
 import sys
+import yaml
 from pathlib import Path
 from typing import List
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
+
+# Load config and set API keys from config.yaml
+CONFIG_PATH = project_root / "configs" / "config.yaml"
+with open(CONFIG_PATH, "r") as f:
+    _config = yaml.safe_load(f)
+
+# Set API keys from config
+os.environ["OPENAI_API_KEY"] = _config.get("AGENT_OPENAI_API_KEY", "")
+os.environ["HF_API_TOKEN"] = _config.get("HF_API_TOKEN", "")
+os.environ["MISTRAL_API_KEY"] = _config.get("MISTRAL_API_KEY", "")
+os.environ["ANTHROPIC_API_KEY"] = _config.get("ANTHROPIC_API_KEY", "") or os.environ.get("ANTHROPIC_API_KEY", "")
 
 from social_decipher.training.data_collector import BarrierDataCollector, load_barrier_episode_sets, TrainingConversation
 from social_decipher.training.conversation_rater import ConversationRater
