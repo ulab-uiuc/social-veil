@@ -179,7 +179,6 @@ def _collect_bc_with_quality_guarantee(
 def main():
     parser = argparse.ArgumentParser(description="Prepare SFT data from conversation simulations.")
     parser.add_argument("--episodes_file", type=str, default="data/episode_all_neutralized.jsonl", help="Path to base episodes JSONL file.")
-    parser.add_argument("--use_barrier_episodes", action="store_true", help="Include barrier-specific episode sets.")
     parser.add_argument("--barrier_types", nargs="+", default=["semantic", "cultural", "emotional"], help="Barrier types to include.")
     parser.add_argument("--episode_limit", type=int, default=10, help="Limit the number of episodes to process for faster runs.")
     parser.add_argument("--output_file", type=str, default="training_data/sft_data.json", help="Path to save the final SFT JSON dataset.")
@@ -194,7 +193,7 @@ def main():
     parser.add_argument("--filter_top_k", type=int, default=5)
     parser.add_argument("--scoring_strategy", type=str, default="custom_barrier_focused")
     parser.add_argument("--data_collection_mode", type=str, default="bc_and_sr", choices=["bc_and_sr", "sr_only", "bc_only"], help="Data collection mode: 'bc_and_sr' for step 0, 'sr_only' for subsequent steps, 'bc_only' for only BC data.")
-    parser.add_argument("--barrier_only", action="store_true", help="If set, only use barrier-type episodes.")
+    parser.add_argument("--barrier_only", action="store_true", help="If set, only use barrier-type episodes and skip base episodes.")
     parser.add_argument("--bc_quality_goal", type=float, default=5.0, help="Minimum goal completion for BC data quality check.")
     parser.add_argument("--bc_quality_understanding", type=float, default=3.0, help="Minimum mutual understanding for BC data quality check.")
     parser.add_argument("--bc_quality_confusion", type=float, default=3.0, help="Minimum unresolved confusion for BC data quality check.")
@@ -230,6 +229,7 @@ def main():
     print("--- Loading Episodes ---")
     all_episodes = []
 
+    # Load base episodes unless --barrier_only is specified
     if not args.barrier_only:
         base_episodes = []
         with open(args.episodes_file, 'r', encoding='utf-8') as f:
@@ -241,15 +241,18 @@ def main():
             print(f"Loaded {len(base_episodes)} base episodes, sampling {args.episode_limit}.")
             base_episodes = base_episodes[:args.episode_limit]
         all_episodes.extend(base_episodes)
+    else:
+        print("INFO: --barrier_only is set. Skipping base episodes.")
     
-    if args.use_barrier_episodes:
-        barrier_episodes = load_barrier_episode_sets()
-        for cat, eps in barrier_episodes.items():
-            print(f"Loaded {len(eps)} episodes for barrier type: {cat}")
-            if args.episode_limit and len(eps) > args.episode_limit:
-                print(f"  -> Sampling {args.episode_limit} episodes for '{cat}'.")
-                eps = eps[:args.episode_limit]
-            all_episodes.extend(eps)
+    # Always load barrier episodes, as this script is for barrier-focused data prep.
+    # The --barrier_only flag just controls whether base episodes are also included.
+    barrier_episodes = load_barrier_episode_sets()
+    for cat, eps in barrier_episodes.items():
+        print(f"Loaded {len(eps)} episodes for barrier type: {cat}")
+        if args.episode_limit and len(eps) > args.episode_limit:
+            print(f"  -> Sampling {args.episode_limit} episodes for '{cat}'.")
+            eps = eps[:args.episode_limit]
+        all_episodes.extend(eps)
     
     print(f"Processing a total of {len(all_episodes)} episodes.")
 

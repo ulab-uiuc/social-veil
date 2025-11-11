@@ -70,10 +70,11 @@ To collect BC data with quality guarantee (ensures each episode has at least one
 python -m social_decipher.training.prepare_data \
     --data_collection_mode "bc_only" \
     --output_file training_output/bc_data.json \
+    --barrier_only \
     --bc_quality_goal 5.0 \
     --bc_quality_understanding 3.0 \
     --bc_quality_confusion 3.0 \
-    --bc_max_retries 5
+    --bc_max_retries 3
 ```
 
 **Quality Parameters:**
