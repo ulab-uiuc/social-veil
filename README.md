@@ -21,19 +21,30 @@ This project aims to enhance the social reasoning capabilities of large language
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/your-username/social-decipher.git
+    git clone https://github.com/ulab-uiuc/social-decipher.git
     cd social-decipher
     ```
 
 2.  **Set up the environment:**
     We recommend using Conda to manage dependencies.
     ```bash
-    conda create -n social-decipher python=3.10
+    conda create -n social-decipher python=3.11
     conda activate social-decipher
     ```
 
 3.  **Install dependencies:**
+    This project uses Poetry for dependency management.
     ```bash
+    # Install Poetry
+    pip install poetry
+    
+    # Install all dependencies
+    poetry install
+    ```
+    
+    Alternatively, you can export to requirements.txt:
+    ```bash
+    poetry export -f requirements.txt --output requirements.txt --without-hashes
     pip install -r requirements.txt
     ```
 
@@ -54,26 +65,31 @@ The data generation process involves two main stages: Behavior Cloning (BC) and 
 
 BC data is collected by having an "expert" model (e.g., GPT-4o) act as the Partner Agent to generate high-quality conversation trajectories.
 
-To collect BC data:
+To collect BC data with quality guarantee (ensures each episode has at least one high-quality conversation):
 ```bash
 python -m social_decipher.training.prepare_data \
     --data_collection_mode "bc_only" \
-    --output_file training_output/sft_data.json \
-    --episode_limit 10 \
-    --bc_concurrency 8
+    --output_file training_output/bc_data.json \
+    --bc_quality_goal 5.0 \
+    --bc_quality_understanding 3.0 \
+    --bc_quality_confusion 3.0 \
+    --bc_max_retries 5
 ```
+
+**Quality Parameters:**
+- `--bc_quality_goal`: Minimum goal completion score (default: 5.0)
+- `--bc_quality_understanding`: Minimum mutual understanding score (default: 3.0)
+- `--bc_quality_confusion`: Minimum unresolved confusion score (default: 3.0)
+- `--bc_max_retries`: Maximum attempts per episode to get quality data (default: 5)
 
 ### Filtering and SFT Data Preparation
 
-Once raw data (`bc_data.json`, `sr_data.json`) is collected, you can filter it and format it for Supervised Fine-Tuning (SFT).
+Once raw data (`bc_data.json`, `sr_data.json`) is collected, you can format it for Supervised Fine-Tuning (SFT).
 
 ```bash
-python scripts/summarize_data.py \
-    --input-file training_output/bc_data.json \
-    --output-file training_output/sft_data_filtered.json \
-    --goal-threshold 5.5 \
-    --understanding-threshold 3.0 \
-    --confusion-threshold 2.0
+python social_decipher/training/convert_sft.py \
+    --bc-data "training_data/bc_data.json" \
+    --output "training_data/sft_data.json" \
 ```
 
 ## Training
