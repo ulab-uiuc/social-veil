@@ -22,7 +22,7 @@ os.environ["MISTRAL_API_KEY"] = _config.get("MISTRAL_API_KEY", "")
 os.environ["ANTHROPIC_API_KEY"] = _config.get("ANTHROPIC_API_KEY", "") or os.environ.get("ANTHROPIC_API_KEY", "")
 
 from social_decipher.training.data_collector import BarrierDataCollector, load_barrier_episode_sets, TrainingConversation
-from social_decipher.training.conversation_rater import ConversationRater
+from social_decipher.training.conversation_rater import ConversationRater, ConversationRating
 from social_decipher.training.policy_updater import SocialPolicyUpdater
 from social_decipher.training.scoring_strategy import ScoringManager, get_custom_barrier_focused_config
 
@@ -94,21 +94,25 @@ def _collect_bc_with_quality_guarantee(
     bc_filepath = os.path.join(data_collector.output_dir, "bc_data.json")
     all_conversations = []
     
+    # Load existing conversations and track which episodes have been processed
     existing_episode_ids = set()
     if os.path.exists(bc_filepath):
         try:
             with open(bc_filepath, 'r', encoding='utf-8') as f:
                 existing_data = json.load(f)
-                all_conversations = [TrainingConversation(**conv) for conv in existing_data]
-                for conv in all_conversations:
-                    try:
-                        parts = conv.conversation_id.split('_')
-                        if len(parts) >= 4 and parts[0] == 'bc':
-                            episode_idx_str = parts[1]  # episode_idx as string
-                            existing_episode_ids.add(int(episode_idx_str))
-                    except Exception:
-                        continue
-                print(f"   Loaded {len(all_conversations)} existing conversations covering {len(existing_episode_ids)} episodes.")
+            # Ensure loaded data is converted to TrainingConversation objects
+            all_conversations = [TrainingConversation(**conv) for conv in existing_data]
+            # conversation_id format: bc_{episode_idx}_{conv_idx}_{timestamp}
+            # Extract episode_idx (second part after splitting by '_')
+            for conv in all_conversations:
+                try:
+                    parts = conv.conversation_id.split('_')
+                    if len(parts) >= 4 and parts[0] == 'bc':
+                        episode_idx_str = parts[1]  # episode_idx as string
+                        existing_episode_ids.add(int(episode_idx_str))
+                except Exception:
+                    continue
+            print(f"   Loaded {len(all_conversations)} existing conversations covering {len(existing_episode_ids)} episodes.")
         except Exception as e:
             print(f"⚠️  Could not load existing BC data: {e}")
     
@@ -177,7 +181,7 @@ def main():
     parser = argparse.ArgumentParser(description="Prepare SFT data from conversation simulations.")
     parser.add_argument("--episodes_file", type=str, default="data/episode_all_neutralized.jsonl", help="Path to base episodes JSONL file.")
     parser.add_argument("--barrier_types", nargs="+", default=["semantic", "cultural", "emotional"], help="Barrier types to include.")
-    parser.add_argument("--episode_limit", type=int, default=10, help="Limit the number of episodes to process for faster runs.")
+    parser.add_argument("--episode_limit", type=int, default=0, help="Limit the number of episodes to process for faster runs.")
     parser.add_argument("--output_file", type=str, default="training_data/sft_data.json", help="Path to save the final SFT JSON dataset.")
     parser.add_argument("--expert_model", type=str, default="gpt-4o")
     parser.add_argument("--agent_model", type=str, default="/models/Qwen2.5-7B-Instruct")
@@ -269,10 +273,10 @@ def main():
     if args.data_collection_mode == "bc_only":
         # BC only mode with quality guarantee
         print("Generating BC data with quality guarantee...")
-        new_bc_convos = _collect_bc_with_quality_guarantee(
+   
+        bc_convos = _collect_bc_with_quality_guarantee(
             data_collector, all_episodes, args
         )
-        bc_convos.extend(new_bc_convos)
     
     elif args.data_collection_mode == "bc_and_sr":
         # Step 0: Generate and save BC data, then generate the first round of SR data.
@@ -287,6 +291,7 @@ def main():
         sr_convos = data_collector.collect_self_reinforcement_data(
             all_episodes, args.conversations_per_episode, args.max_rounds
         )
+        collected_convos = bc_convos + sr_convos
 
     elif args.data_collection_mode == "sr_only":
         # Steps > 0: Only generate new SR data with the updated agent.
@@ -294,33 +299,18 @@ def main():
         sr_convos = data_collector.collect_self_reinforcement_data(
             all_episodes, args.conversations_per_episode, args.max_rounds
         )
-
-    collected_convos = bc_convos + sr_convos
-    print(f"Processing {len(collected_convos)} total conversations for this step ({len(bc_convos)} BC, {len(sr_convos)} SR).")
-
-    # 4. Rate and filter data
-    print("\n--- Rating and Filtering Conversations ---")
-    ratings = rater.rate_conversations(collected_convos)
+        collected_convos = bc_convos + sr_convos
     
-    # Pass the thresholds to the filtering manager
-    filtering_context = {
-        "goal_threshold": args.goal_threshold,
-        "understanding_threshold": args.understanding_threshold,
-        "confusion_threshold": args.confusion_threshold,
-    }
-    filtered_convos = scoring_manager.filter_conversations(collected_convos, ratings, context=filtering_context)
-    
-    top_k_convos = scoring_manager.apply_top_k_filtering(filtered_convos, ratings)
-    print(f"Filtered down to {len(top_k_convos)} high-quality conversations.")
+    print(f"Processing {len(collected_convos)} total conversations for this step.")
 
-    # 5. Prepare and format data for SFT
+    # 4. Prepare and format data for SFT (No separate rating/filtering needed for bc_only)
     print("\n--- Preparing SFT Dataset ---")
     training_examples = policy_updater.prepare_training_data(
-        top_k_convos, ratings, min_quality_score=0 # Filtering already done
+        collected_convos, ratings=[], min_quality_score=0 # Filtering is done, no ratings needed
     )
     sft_data = policy_updater.format_for_sotopia_sft(training_examples)
 
-    # 6. Save data
+    # 5. Save data
     with open(args.output_file, 'w', encoding='utf-8') as f:
         json.dump(sft_data, f, indent=2)
     print(f"\n✅ Successfully prepared SFT data and saved to {args.output_file}")
