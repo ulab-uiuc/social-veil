@@ -119,31 +119,49 @@ def format_for_sft_with_template(conversations: list, rating_map: dict, output_p
         # A real implementation would need to pull this from the full episode data,
         # but for this script, we'll create placeholders.
         env_profile = EnvironmentProfile(
-            scenario=conv_data.get("scenario", "A social situation."),
+            scenario=conv_data.get("scenario"),
             agent_goals=[
-                conv_data.get("agent_a_goal", "To have a pleasant conversation."),
-                conv_data.get("agent_b_goal", "To be helpful and engaging.")
+                conv_data.get("agent_a_goal"),
+                conv_data.get("agent_b_goal")
             ],
+            agent_reasons=[
+                conv_data.get("agent_a_reason", ""),
+                conv_data.get("agent_b_reason", "")
+            ]
         )
 
-        profile_a = AgentProfile(first_name="AgentA", model_id=conv_data["agent_a_model"])
-        profile_b = AgentProfile(first_name="AgentB", model_id=conv_data["agent_b_model"])
-
-        agent_a = SocialAgent(name="AgentA", profile=profile_a, partner_profile=profile_b, env=env_profile, agent_idx=0)
-        agent_b = SocialAgent(name="AgentB", profile=profile_b, partner_profile=profile_a, env=env_profile, agent_idx=1)
+        # We need to extract the agent names from the log instead of hardcoding
+        # because we can't guarantee the order or names.
+        agent_names = []
+        for line in conv_data["conversation_log"]:
+            if ":" in line:
+                name = line.split(":", 1)[0]
+                if name not in agent_names:
+                    agent_names.append(name)
+                if len(agent_names) == 2:
+                    break
         
-        agent_names = [agent_a.name, agent_b.name]
+        if len(agent_names) < 2:
+            print(f"⚠️  Skipping conversation {conv_data.get('conversation_id')} due to missing agent names.")
+            continue
+
+        agent_a_name, agent_b_name = agent_names[0], agent_names[1]
+
+        profile_a = AgentProfile(first_name=agent_a_name, model_id=conv_data["agent_a_model"])
+        profile_b = AgentProfile(first_name=agent_b_name, model_id=conv_data["agent_b_model"])
+
+        agent_a = SocialAgent(name=agent_a_name, profile=profile_a, partner_profile=profile_b, env=env_profile, agent_idx=0)
+        agent_b = SocialAgent(name=agent_b_name, profile=profile_b, partner_profile=profile_a, env=env_profile, agent_idx=1)
         
         conversation_log = conv_data["conversation_log"]
         
         for i in range(len(conversation_log)):
             current_line = conversation_log[i]
             
-            # Determine whose turn it is and who is responding
-            is_agent_a_turn = any(current_line.startswith(f"{name}:") for name in [agent_a.name, "Rafael"])
-            is_agent_b_turn = any(current_line.startswith(f"{name}:") for name in [agent_b.name, "Jaxon"])
+            # Determine whose turn it is
+            is_agent_b_turn = current_line.startswith(f"{agent_b_name}:")
 
-            # We want to train Agent B, so we look for Agent B's responses.
+            # We want to train Agent B, so we only care about Agent B's responses.
             if train_agent_b and not is_agent_b_turn:
                 continue
             
