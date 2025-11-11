@@ -110,12 +110,13 @@ def openai_completion(model_id: str, system_message: str, message: str) -> Optio
                 {"role": "system", "content": system_message},
                 {"role": "user", "content": message},
             ],
-            "temperature": 0.3,
         }
         if "o3" in model_id.lower():
             params["max_completion_tokens"] = _RESP_MAX_TOKENS
+            # o3 models only support the default temperature, so we omit it.
         else:
             params["max_tokens"] = _RESP_MAX_TOKENS
+            params["temperature"] = 0.3
 
         response = client.chat.completions.create(**params)
         content = response.choices[0].message.content
