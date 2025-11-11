@@ -200,11 +200,6 @@ def main():
     parser.add_argument("--bc_quality_confusion", type=float, default=2.0, help="Minimum unresolved confusion for BC data quality check.")
     parser.add_argument("--bc_max_retries", type=int, default=5, help="Maximum retries per episode to get high-quality BC data.")
     
-    # New arguments for filtering thresholds
-    parser.add_argument("--goal_threshold", type=float, default=7.0, help="Minimum goal completion score.")
-    parser.add_argument("--understanding_threshold", type=float, default=5.0, help="Minimum mutual understanding score.")
-    parser.add_argument("--confusion_threshold", type=float, default=5.0, help="Minimum unresolved confusion score.")
-    
     args = parser.parse_args()
 
     # 1. Initialize components
