@@ -102,16 +102,22 @@ def direct_completion(
 def openai_completion(model_id: str, system_message: str, message: str) -> Optional[str]:
 
     client = get_openai_client()
-    try:    
-        response = client.chat.completions.create(
-            model=model_id,
-            messages=[
+    try:
+        # Dynamically set the token limit parameter based on model name
+        params = {
+            "model": model_id,
+            "messages": [
                 {"role": "system", "content": system_message},
                 {"role": "user", "content": message},
             ],
-            temperature=0.3,
-            max_tokens=_RESP_MAX_TOKENS,
-        )
+            "temperature": 0.3,
+        }
+        if "o3" in model_id.lower():
+            params["max_completion_tokens"] = _RESP_MAX_TOKENS
+        else:
+            params["max_tokens"] = _RESP_MAX_TOKENS
+
+        response = client.chat.completions.create(**params)
         content = response.choices[0].message.content
         if not (content.startswith("{") and content.endswith("}")):
             content = json.dumps({"action_type": "speak", "argument": content})
