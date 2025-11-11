@@ -87,7 +87,9 @@ def direct_completion(
     system_message = agent.instructions
 
     # Check if it's a local model (contains path or specific local model names)
-    if "/" in model_id or "qwen" in model_id.lower() or "llama" in model_id.lower():
+    if "o3" in model_id.lower():
+        return openai_completion(model_id, system_message, message)
+    elif "/" in model_id or "qwen" in model_id.lower() or "llama" in model_id.lower():
         return local_model_completion(model_id, system_message, message)
     elif "mistral" in model_id.lower() or "ministral" in model_id.lower():
         return mistral_completion(model_id, system_message, message)

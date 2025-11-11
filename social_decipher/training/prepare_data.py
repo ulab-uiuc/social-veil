@@ -94,15 +94,12 @@ def _collect_bc_with_quality_guarantee(
     bc_filepath = os.path.join(data_collector.output_dir, "bc_data.json")
     all_conversations = []
     
-    # Load existing conversations and track which episodes have been processed
     existing_episode_ids = set()
     if os.path.exists(bc_filepath):
         try:
             with open(bc_filepath, 'r', encoding='utf-8') as f:
                 existing_data = json.load(f)
                 all_conversations = [TrainingConversation(**conv) for conv in existing_data]
-                # conversation_id format: bc_{episode_idx}_{conv_idx}_{timestamp}
-                # Extract episode_idx (second part after splitting by '_')
                 for conv in all_conversations:
                     try:
                         parts = conv.conversation_id.split('_')
@@ -196,7 +193,7 @@ def main():
     parser.add_argument("--barrier_only", action="store_true", help="If set, only use barrier-type episodes and skip base episodes.")
     parser.add_argument("--bc_quality_goal", type=float, default=5.0, help="Minimum goal completion for BC data quality check.")
     parser.add_argument("--bc_quality_understanding", type=float, default=3.0, help="Minimum mutual understanding for BC data quality check.")
-    parser.add_argument("--bc_quality_confusion", type=float, default=3.0, help="Minimum unresolved confusion for BC data quality check.")
+    parser.add_argument("--bc_quality_confusion", type=float, default=2.0, help="Minimum unresolved confusion for BC data quality check.")
     parser.add_argument("--bc_max_retries", type=int, default=5, help="Maximum retries per episode to get high-quality BC data.")
     
     # New arguments for filtering thresholds
