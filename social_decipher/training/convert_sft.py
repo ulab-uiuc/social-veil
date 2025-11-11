@@ -150,30 +150,31 @@ def format_for_sft_with_template(conversations: list, rating_map: dict, output_p
         for i in range(len(conversation_log)):
             current_line = conversation_log[i]
   
+            # Determine whose turn it is
             is_agent_b_turn = current_line.startswith(f"{agent_b_name}:")
 
-            if train_agent_b and not is_agent_b_turn:
-                continue
-            
-            history = conversation_log[:i]
-            turn_number = (i // 2) + 1
-            
-            # The agent being trained is Agent B
-            agent_to_train = agent_b
-            
-            # Update the agent's internal state to generate the correct prompt
-            agent_to_train.update_instruction(transcript=history, turn_number=turn_number)
-            full_prompt = agent_to_train.instructions 
-            
-            if ":" in current_line:
-                output_text = current_line.split(":", 1)[1].strip()
-            else:
-                continue
+            # We want to train Agent B, so we only create a training example
+            # when it is Agent B's turn to speak.
+            if train_agent_b and is_agent_b_turn:
+                # The input for the model is the history *before* this turn.
+                history = conversation_log[:i]
+                
+                # Reconstruct the exact prompt Agent B would have seen
+                turn_number = (i // 2) + 1
+                
+                agent_b.update_instruction(transcript=history, turn_number=turn_number)
+                full_prompt = agent_b.instructions
+                
+                # The output is Agent B's response, stripped of the name
+                if ":" in current_line:
+                    output_text = current_line.split(":", 1)[1].strip()
+                else:
+                    continue # Should not happen if logic is correct
 
-            sft_examples.append({
-                "input": full_prompt,
-                "output": output_text
-            })
+                sft_examples.append({
+                    "input": full_prompt,
+                    "output": output_text
+                })
 
     # Save the final dataset
     try:
