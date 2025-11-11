@@ -2,6 +2,12 @@ import json
 import argparse
 from collections import defaultdict
 from typing import Optional
+
+# New imports to reconstruct agent and environment
+from social_decipher.agent.agent_profile import AgentProfile
+from social_decipher.agent.social_agent import SocialAgent
+from social_decipher.environment.env_profile import EnvironmentProfile
+
 from social_decipher.training.policy_updater import SocialPolicyUpdater
 
 def filter_and_combine_data(
@@ -95,43 +101,81 @@ def filter_and_combine_data(
     print(f"  Selected {len(final_conversations)} conversations after filtering.")
     return final_conversations, rating_map
 
-def format_for_llama_factory(conversations: list, rating_map: dict, output_path: str, train_agent_b: bool):
+def format_for_sft_with_template(conversations: list, rating_map: dict, output_path: str, train_agent_b: bool):
     """
-    Converts the filtered conversation data into the instruction-following
-    format required by LLaMA-Factory and saves it.
+    Converts filtered conversation data into the SFT format, including the full
+    prompt template used during inference.
     """
-    print("\n--- Formatting data for LLaMA-Factory ---")
+    print("\n--- Formatting data for SFT with full prompt templates ---")
     
-    # We can reuse the formatting logic from our existing PolicyUpdater
-    updater = SocialPolicyUpdater()
+    sft_examples = []
     
-    from social_decipher.training.data_collector import TrainingConversation
-    training_conv_objects = [TrainingConversation(**c) for c in conversations]
+    for conv_data in conversations:
+        # Reconstruct the environment and agent profiles from the conversation log.
+        # This is a simplified reconstruction based on what's available in bc_data.
+        # NOTE: This assumes a certain structure in your bc_data.json. If it's different,
+        # we may need to adjust how we get profile/goal info.
+        
+        # A real implementation would need to pull this from the full episode data,
+        # but for this script, we'll create placeholders.
+        env_profile = EnvironmentProfile(
+            scenario=conv_data.get("scenario", "A social situation."),
+            agent_goals=[
+                conv_data.get("agent_a_goal", "To have a pleasant conversation."),
+                conv_data.get("agent_b_goal", "To be helpful and engaging.")
+            ],
+        )
 
-    from social_decipher.training.conversation_rater import ConversationRating
-    
-    # We only need the rating objects for the conversations we are keeping
-    relevant_ratings = [
-        ConversationRating(**rating_map[c['conversation_id']]) 
-        for c in conversations if c['conversation_id'] in rating_map
-    ]
+        profile_a = AgentProfile(first_name="AgentA", model_id=conv_data["agent_a_model"])
+        profile_b = AgentProfile(first_name="AgentB", model_id=conv_data["agent_b_model"])
 
-    # This method extracts the turn-by-turn training examples
-    training_examples = updater.prepare_training_data(
-        conversations=training_conv_objects,
-        ratings=relevant_ratings,
-        focus_on_agent_b=train_agent_b, # This is now explicitly controlled by a flag, but defaults to True
-        min_quality_score=0 # Filtering is already done
-    )
+        agent_a = SocialAgent(name="AgentA", profile=profile_a, partner_profile=profile_b, env=env_profile, agent_idx=0)
+        agent_b = SocialAgent(name="AgentB", profile=profile_b, partner_profile=profile_a, env=env_profile, agent_idx=1)
+        
+        agent_names = [agent_a.name, agent_b.name]
+        
+        conversation_log = conv_data["conversation_log"]
+        
+        for i in range(len(conversation_log)):
+            current_line = conversation_log[i]
+            
+            # Determine whose turn it is and who is responding
+            is_agent_a_turn = any(current_line.startswith(f"{name}:") for name in [agent_a.name, "Rafael"])
+            is_agent_b_turn = any(current_line.startswith(f"{name}:") for name in [agent_b.name, "Jaxon"])
 
-    # This method formats the examples into the final instruction/input/output format
-    llama_factory_data = updater.format_for_llama_factory(training_examples)
+            # We want to train Agent B, so we look for Agent B's responses.
+            if train_agent_b and not is_agent_b_turn:
+                continue
+            
+            # The input for the model is the history *before* this turn.
+            history = conversation_log[:i]
+            
+            # Reconstruct the exact prompt the agent would have seen
+            turn_number = (i // 2) + 1
+            
+            # The agent being trained is Agent B
+            agent_to_train = agent_b
+            
+            # Update the agent's internal state to generate the correct prompt
+            agent_to_train.update_instruction(transcript=history, turn_number=turn_number)
+            full_prompt = agent_to_train.instructions # This now holds the complete prompt
+            
+            # The output is the agent's response, stripped of their name
+            if ":" in current_line:
+                output_text = current_line.split(":", 1)[1].strip()
+            else:
+                continue
+
+            sft_examples.append({
+                "input": full_prompt,
+                "output": output_text
+            })
 
     # Save the final dataset
     try:
         with open(output_path, 'w', encoding='utf-8') as f:
-            json.dump(llama_factory_data, f, indent=2, ensure_ascii=False)
-        print(f"✅ Successfully saved {len(llama_factory_data)} formatted samples to {output_path}")
+            json.dump(sft_examples, f, indent=2, ensure_ascii=False)
+        print(f"✅ Successfully saved {len(sft_examples)} formatted SFT samples to {output_path}")
     except Exception as e:
         print(f"❌ Error saving final formatted file to {output_path}: {e}")
 
@@ -157,4 +201,4 @@ if __name__ == "__main__":
     )
 
     if final_conversations:
-        format_for_llama_factory(final_conversations, rating_map, args.output, args.train_agent_b)
+        format_for_sft_with_template(final_conversations, rating_map, args.output, args.train_agent_b)
