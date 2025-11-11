@@ -111,13 +111,7 @@ def format_for_sft_with_template(conversations: list, rating_map: dict, output_p
     sft_examples = []
     
     for conv_data in conversations:
-        # Reconstruct the environment and agent profiles from the conversation log.
-        # This is a simplified reconstruction based on what's available in bc_data.
-        # NOTE: This assumes a certain structure in your bc_data.json. If it's different,
-        # we may need to adjust how we get profile/goal info.
-        
-        # A real implementation would need to pull this from the full episode data,
-        # but for this script, we'll create placeholders.
+
         env_profile = EnvironmentProfile(
             scenario=conv_data.get("scenario"),
             agent_goals=[
@@ -130,8 +124,6 @@ def format_for_sft_with_template(conversations: list, rating_map: dict, output_p
             ]
         )
 
-        # We need to extract the agent names from the log instead of hardcoding
-        # because we can't guarantee the order or names.
         agent_names = []
         for line in conv_data["conversation_log"]:
             if ":" in line:
@@ -157,18 +149,13 @@ def format_for_sft_with_template(conversations: list, rating_map: dict, output_p
         
         for i in range(len(conversation_log)):
             current_line = conversation_log[i]
-            
-            # Determine whose turn it is
+  
             is_agent_b_turn = current_line.startswith(f"{agent_b_name}:")
 
-            # We want to train Agent B, so we only care about Agent B's responses.
             if train_agent_b and not is_agent_b_turn:
                 continue
             
-            # The input for the model is the history *before* this turn.
             history = conversation_log[:i]
-            
-            # Reconstruct the exact prompt the agent would have seen
             turn_number = (i // 2) + 1
             
             # The agent being trained is Agent B
@@ -176,9 +163,8 @@ def format_for_sft_with_template(conversations: list, rating_map: dict, output_p
             
             # Update the agent's internal state to generate the correct prompt
             agent_to_train.update_instruction(transcript=history, turn_number=turn_number)
-            full_prompt = agent_to_train.instructions # This now holds the complete prompt
+            full_prompt = agent_to_train.instructions 
             
-            # The output is the agent's response, stripped of their name
             if ":" in current_line:
                 output_text = current_line.split(":", 1)[1].strip()
             else:
