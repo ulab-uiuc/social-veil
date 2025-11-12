@@ -163,8 +163,8 @@ def format_for_sft_with_template(conversations: list, rating_map: dict, output_p
             model_id=conv_data["agent_b_model"]
         )
 
-        agent_a = SocialAgent(name=agent_a_name, profile=profile_a, partner_profile=profile_b, env=env_profile, agent_idx=0)
-        agent_b = SocialAgent(name=agent_b_name, profile=profile_b, partner_profile=profile_a, env=env_profile, agent_idx=1)
+        agent_a = SocialAgent(name=agent_a_name, profile=profile_a, partner_profile=profile_b, env=env_profile)
+        agent_b = SocialAgent(name=agent_b_name, profile=profile_b, partner_profile=profile_a, env=env_profile)
         
         conversation_log = conv_data["conversation_log"]
         
