@@ -30,12 +30,9 @@ def get_args():
     )
 
     # Optional
-    parser.add_argument(
-        "--lora_checkpoint",
-        type=str,
-        default=None,
-        help="Path to the LoRA checkpoint (if resuming LoRA/QLoRA training)",
-    )
+    parser.add_argument("--lora_dropout", type=float, default=0.1, help="LoRA dropout.")
+    parser.add_argument("--target_modules", type=str, default="q_proj,v_proj,k_proj,o_proj,gate_proj,up_proj,down_proj", help="Target modules for LoRA.")
+    parser.add_argument("--lora_checkpoint_path", type=str, help="Path to LoRA checkpoint.")
 
     parser.add_argument(
         "--template_path",
