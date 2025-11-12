@@ -139,8 +139,29 @@ def format_for_sft_with_template(conversations: list, rating_map: dict, output_p
 
         agent_a_name, agent_b_name = agent_names[0], agent_names[1]
 
-        profile_a = AgentProfile(first_name=agent_a_name, model_id=conv_data["agent_a_model"])
-        profile_b = AgentProfile(first_name=agent_b_name, model_id=conv_data["agent_b_model"])
+        # Create profiles with placeholder data for missing fields, as bc_data is simplified.
+        profile_a = AgentProfile(
+            first_name=agent_a_name, 
+            last_name="",
+            age=30,
+            gender="neutral",
+            gender_pronoun="they/them",
+            occupation="researcher",
+            public_info="A participant in a study.",
+            pk=f"{agent_a_name}_placeholder_pk",
+            model_id=conv_data["agent_a_model"]
+        )
+        profile_b = AgentProfile(
+            first_name=agent_b_name, 
+            last_name="",
+            age=30,
+            gender="neutral",
+            gender_pronoun="they/them",
+            occupation="researcher",
+            public_info="A participant in a study.",
+            pk=f"{agent_b_name}_placeholder_pk",
+            model_id=conv_data["agent_b_model"]
+        )
 
         agent_a = SocialAgent(name=agent_a_name, profile=profile_a, partner_profile=profile_b, env=env_profile, agent_idx=0)
         agent_b = SocialAgent(name=agent_b_name, profile=profile_b, partner_profile=profile_a, env=env_profile, agent_idx=1)
