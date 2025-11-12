@@ -28,7 +28,7 @@ fi
 # --- Robust Pathing for Script Execution ---
 # Now, change to the script's directory to ensure `train_sft.py` is found correctly.
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-cd "$SCRIPT_DIR"
+cd "$SCRIPT_DIR" 
 
 # --- Argument Validation ---
 if [ -z "$SFT_DATA_PATH_ARG" ]; then

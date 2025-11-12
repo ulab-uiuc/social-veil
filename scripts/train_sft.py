@@ -69,16 +69,22 @@ def get_args():
         help="Enable LoRA fine-tuning",
     )
     parser.add_argument(
-        "--lora_checkpoint",
-        type=str,
-        default=None,
-        help="Path to the lora checkpoint",
+        "--lora_alpha",
+        type=int,
+        default=16,
+        help="LoRA alpha parameter",
     )
     parser.add_argument(
-        "--lora_checkpoint_path",
+        "--lora_dropout",
+        type=float,
+        default=0.05,
+        help="LoRA dropout parameter",
+    )
+    parser.add_argument(
+        "--target_modules",
         type=str,
-        default=None,
-        help="Path to the lora checkpoint",
+        default="q_proj,v_proj",
+        help="Target modules for LoRA",
     )
     parser.add_argument(
         "--use_qlora",
