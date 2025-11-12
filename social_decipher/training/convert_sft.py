@@ -163,8 +163,8 @@ def format_for_sft_with_template(conversations: list, rating_map: dict, output_p
             model_id=conv_data["agent_b_model"]
         )
 
-        agent_a = SocialAgent(name=agent_a_name, profile=profile_a, partner_profile=profile_b, env=env_profile)
-        agent_b = SocialAgent(name=agent_b_name, profile=profile_b, partner_profile=profile_a, env=env_profile)
+        agent_a = SocialAgent(name=agent_a_name, profile=profile_a, partner_profile=profile_b, env=env_profile, role_num=0)
+        agent_b = SocialAgent(name=agent_b_name, profile=profile_b, partner_profile=profile_a, env=env_profile, role_num=1)
         
         conversation_log = conv_data["conversation_log"]
         
@@ -190,7 +190,7 @@ def format_for_sft_with_template(conversations: list, rating_map: dict, output_p
                 if ":" in current_line:
                     output_text = current_line.split(":", 1)[1].strip()
                 else:
-                    continue # Should not happen if logic is correct
+                    continue 
 
                 sft_examples.append({
                     "input": full_prompt,
