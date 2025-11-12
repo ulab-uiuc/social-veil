@@ -92,12 +92,21 @@ class SotopiaSFTTrainer(Trainer):
             )
             base_model = get_peft_model(base_model, peft_config)
 
-        if args.lora_checkpoint_path:
+        # if args.lora_checkpoint_path:
+        #     from peft import PeftModel
+        #     print(f"Loading LoRA checkpoint from {args.lora_checkpoint_path}")
+        #     model = PeftModel.from_pretrained(base_model, args.lora_checkpoint_path, is_trainable=True)
+        # else:
+        #     model = base_model
+
+        lora_ckpt = getattr(args, "lora_checkpoint", None) or getattr(args, "lora_checkpoint_path", None)
+        if lora_ckpt:
             from peft import PeftModel
-            print(f"Loading LoRA checkpoint from {args.lora_checkpoint_path}")
-            model = PeftModel.from_pretrained(base_model, args.lora_checkpoint_path, is_trainable=True)
+            print(f"Loading LoRA checkpoint from {lora_ckpt}")
+            model = PeftModel.from_pretrained(base_model, lora_ckpt, is_trainable=True)
         else:
             model = base_model
+
 
         # Based on Sotopia-π, uses QLoRA for fine-tuning
         model_kwargs = {

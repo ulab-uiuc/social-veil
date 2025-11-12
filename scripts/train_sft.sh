@@ -91,7 +91,7 @@ if [ -n "$LORA_CHECKPOINT_PATH" ]; then
     CMD_ARGS+=(--lora_checkpoint_path "$LORA_CHECKPOINT_PATH")
 fi
 
-CUDA_VISIBLE_DEVICES=8,9 accelerate launch \
+CUDA_VISIBLE_DEVICES=1,3,5,6,7,9 accelerate launch \
   --num_processes "$NUM_PROCS" \
   --main_process_port 29512 \
     "${CMD_ARGS[@]}" 
