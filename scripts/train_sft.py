@@ -36,6 +36,7 @@ def get_args():
         default=None,
         help="Path to the LoRA checkpoint (if resuming LoRA/QLoRA training)",
     )
+
     parser.add_argument(
         "--template_path",
         type=str,
@@ -63,17 +64,9 @@ def get_args():
     )
 
     # Fine-tuning options
-    parser.add_argument(
-        "--use_lora",
-        action="store_true",
-        help="Enable LoRA fine-tuning",
-    )
-    parser.add_argument(
-        "--lora_alpha",
-        type=int,
-        default=16,
-        help="LoRA alpha parameter",
-    )
+    parser.add_argument("--use_lora", action="store_true", help="Whether to use LoRA.")
+    parser.add_argument("--lora_r", type=int, default=64, help="LoRA r value.")
+    parser.add_argument("--lora_alpha", type=int, default=16, help="LoRA alpha value.")
     parser.add_argument(
         "--lora_dropout",
         type=float,

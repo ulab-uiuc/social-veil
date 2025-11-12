@@ -74,6 +74,10 @@ CMD_ARGS=(
     --model_name_or_path "$MODEL_PATH"
     --learning_rate 1e-4
     --max_length 2048
+    --train_batch_size 2
+    --accumulation_steps 8
+    --use_lora \
+    --lora_checkpoint_path "$LORA_CHECKPOINT_PATH"
     --per_device_train_batch_size 4
     --per_device_eval_batch_size 1
     --gradient_accumulation_steps 4

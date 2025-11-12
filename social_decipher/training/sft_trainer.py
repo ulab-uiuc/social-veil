@@ -64,11 +64,22 @@ class SotopiaSFTTrainer(Trainer):
         }
 
         print(f"Using QLoRA (4bit) to load model: {args.model_name_or_path}")
-        model = AutoModelForCausalLM.from_pretrained(
+        base_model = AutoModelForCausalLM.from_pretrained(
             args.model_name_or_path,
-            device_map={"": accelerator.process_index},
             **model_kwargs
         )
+
+        if args.use_lora:
+            from peft import LoraConfig, get_peft_model
+            peft_config = LoraConfig(
+                r=args.lora_r,
+                lora_alpha=args.lora_alpha,
+                lora_dropout=args.lora_dropout,
+                target_modules=args.target_modules.split(","),
+            )
+            model = get_peft_model(base_model, peft_config)
+        else:
+            model = base_model
 
         lora_ckpt = getattr(args, "lora_checkpoint", None) or getattr(args, "lora_checkpoint_path", None)
         if lora_ckpt:
