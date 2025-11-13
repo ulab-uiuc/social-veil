@@ -30,10 +30,6 @@ def get_args():
     )
 
     # Optional
-    parser.add_argument("--lora_dropout", type=float, default=0.1, help="LoRA dropout.")
-    parser.add_argument("--target_modules", type=str, default="q_proj,v_proj,k_proj,o_proj,gate_proj,up_proj,down_proj", help="Target modules for LoRA.")
-    parser.add_argument("--lora_checkpoint_path", type=str, help="Path to LoRA checkpoint.")
-
     parser.add_argument(
         "--template_path",
         type=str,
@@ -51,7 +47,7 @@ def get_args():
     parser.add_argument("--train_batch_size", type=int, default=4)
     parser.add_argument("--val_batch_size", type=int, default=1)
     parser.add_argument("--accumulation_steps", type=int, default=4)
-    parser.add_argument("--num_epochs", type=int, default=3)
+    parser.add_argument("--num_epochs", type=int, default=10)
     parser.add_argument("--evaluation_steps", type=int, default=500)
     parser.add_argument(
         "--checkpoint_dir",
@@ -64,18 +60,9 @@ def get_args():
     parser.add_argument("--use_lora", action="store_true", help="Whether to use LoRA.")
     parser.add_argument("--lora_r", type=int, default=64, help="LoRA r value.")
     parser.add_argument("--lora_alpha", type=int, default=16, help="LoRA alpha value.")
-    parser.add_argument(
-        "--lora_dropout",
-        type=float,
-        default=0.05,
-        help="LoRA dropout parameter",
-    )
-    parser.add_argument(
-        "--target_modules",
-        type=str,
-        default="q_proj,v_proj",
-        help="Target modules for LoRA",
-    )
+    parser.add_argument("--lora_dropout", type=float, default=0.1, help="LoRA dropout.")
+    parser.add_argument("--target_modules", type=str, default="q_proj,v_proj,k_proj,o_proj,gate_proj,up_proj,down_proj", help="Target modules for LoRA.")
+    parser.add_argument("--lora_checkpoint_path", type=str, help="Path to LoRA checkpoint.")
     parser.add_argument(
         "--use_qlora",
         action="store_true",

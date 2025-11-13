@@ -81,7 +81,7 @@ CMD_ARGS=(
     --per_device_train_batch_size 4
     --per_device_eval_batch_size 1
     --gradient_accumulation_steps 4
-    --num_train_epochs 10
+    --num_epochs 10
     --eval_steps 5
     --sft_data_path "$SFT_DATA_PATH"
     --template_path qwen2.5-7b.jinja

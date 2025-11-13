@@ -108,8 +108,9 @@ class SotopiaSFTTrainer(Trainer):
             gradient_accumulation_steps=args.accumulation_steps,
             learning_rate=args.learning_rate,
             weight_decay=args.weight_decay,
-            eval_strategy="epoch",       # Use new argument name
-            save_strategy="epoch",
+            eval_strategy="epoch",      
+            save_strategy="steps",
+            save_steps=224, # (Steps per Epoch) * 2 = 112 * 2
             save_total_limit=2,
             logging_dir="./logs",
             logging_steps=1,
@@ -150,20 +151,29 @@ class SotopiaSFTTrainer(Trainer):
         return (loss, outputs) if return_outputs else loss
 
     def train(self, **kwargs):
-        # Run the standard training loop. The trainer will save checkpoints at the end of each epoch.
+        # Run the standard training loop.
         train_output = super().train(**kwargs)
 
-        # After training, explicitly save the final model to a consistent "best-checkpoint" directory.
-        # This ensures the main script can always find it, regardless of the final epoch number.
+        final_checkpoint_dir = os.path.join(self.args.output_dir, "best-checkpoint")
+        
+        # Ensure the directory exists (only on the main process to avoid race conditions)
         if self.accelerator.is_main_process:
-            final_checkpoint_dir = os.path.join(self.args.output_dir, "best-checkpoint")
             os.makedirs(final_checkpoint_dir, exist_ok=True)
-            print(f"Saving final model to {final_checkpoint_dir}")
-            self.model.save_pretrained(final_checkpoint_dir)
+            print(f"Saving final best model to {final_checkpoint_dir}")
+
+        # Barrier to make sure directory is created before all processes try to save.
+        self.accelerator.wait_for_everyone()
+
+        # All processes must call `save_pretrained` to gather the sharded weights.
+        # The `peft` library handles making sure only the main process writes the files.
+        self.model.save_pretrained(final_checkpoint_dir)
+
+        # The tokenizer is not sharded, so only the main process needs to save it.
+        if self.accelerator.is_main_process:
             if hasattr(self, "tokenizer") and self.tokenizer is not None:
                 self.tokenizer.save_pretrained(final_checkpoint_dir)
         
-        # Barrier to ensure all processes wait until the save is complete.
+        # Final barrier to ensure saving is complete before exiting.
         self.accelerator.wait_for_everyone()
         
         return train_output
