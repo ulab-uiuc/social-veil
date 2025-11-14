@@ -25,6 +25,14 @@ if [ -n "$LORA_CHECKPOINT_PATH_ARG" ]; then
     LORA_CHECKPOINT_PATH=$(python3 -c "import os; print(os.path.abspath('$LORA_CHECKPOINT_PATH_ARG'))" 2>/dev/null || realpath "$LORA_CHECKPOINT_PATH_ARG")
 fi
 
+# Convert paths to absolute paths *before* changing directory
+# This ensures that relative paths are resolved from the directory where the script was called
+SFT_DATA_PATH=$(readlink -f "$SFT_DATA_PATH")
+CKPT_DIR=$(readlink -f "$CKPT_DIR")
+if [ -n "$LORA_CHECKPOINT_PATH" ]; then
+    LORA_CHECKPOINT_PATH=$(readlink -f "$LORA_CHECKPOINT_PATH")
+fi
+
 # --- Robust Pathing for Script Execution ---
 # Now, change to the script's directory to ensure `train_sft.py` is found correctly.
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
