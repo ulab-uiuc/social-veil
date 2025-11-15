@@ -11,33 +11,36 @@ CONFIG_READER="-m social_decipher.utils.config_reader"
 cd "$PROJECT_ROOT"
 
 # Read all parameters from config
-MODEL=$(poetry run python $CONFIG_READER models.model_b)
-GPU=$(poetry run python $CONFIG_READER models.gpu)
-PORT=$(poetry run python $CONFIG_READER models.vllm_port)
-CHAT_TEMPLATE=$(poetry run python $CONFIG_READER models.chat_template)
-SERVED_NAME=$(poetry run python $CONFIG_READER models.served_model_name)
-MAX_LEN=$(poetry run python $CONFIG_READER models.max_model_len)
-TP=$(poetry run python $CONFIG_READER models.tensor_parallel_size)
+CONFIG_FILE="$PROJECT_ROOT/configs/config.yaml"
 
-# Derive tensor parallel size from GPU list if not set or zero
-if [[ -z "$TP" || "$TP" == "0" ]]; then
-  GPU_COUNT=$(awk -F',' '{print NF}' <<< "$GPU")
-  if [[ -z "$GPU_COUNT" || "$GPU_COUNT" == "0" ]]; then
-    GPU_COUNT=1
-  fi
-  TP=$GPU_COUNT
+# Extract server settings using yq
+GPU_IDS=$(yq e '.models.gpu' "$CONFIG_FILE")
+MODEL_PATH=$(yq e '.models.agent_model' "$CONFIG_FILE")
+PORT=$(yq e '.models.vllm_port' "$CONFIG_FILE")
+CHAT_TEMPLATE=$(yq e '.models.chat_template' "$CONFIG_FILE")
+SERVED_MODEL_NAME=$(yq e '.models.served_model_name' "$CONFIG_FILE")
+MAX_MODEL_LEN=$(yq e '.models.max_model_len' "$CONFIG_FILE")
+TENSOR_PARALLEL_SIZE=$(yq e '.models.tensor_parallel_size' "$CONFIG_FILE")
+
+# Use number of specified GPUs if tensor_parallel_size is 0 or null
+if [ -z "$TENSOR_PARALLEL_SIZE" ] || [ "$TENSOR_PARALLEL_SIZE" -eq 0 ]; then
+    if [ -n "$GPU_IDS" ]; then
+        TENSOR_PARALLEL_SIZE=$(echo "$GPU_IDS" | awk -F, '{print NF}')
+    else
+        TENSOR_PARALLEL_SIZE=1 # Default to 1 if no GPUs are specified
+    fi
 fi
 
 echo "===================================="
 echo "🚀 Starting vLLM Server (from configs/config.yaml)"
 echo "===================================="
-echo "GPUs:            $GPU"
-echo "Model:           $MODEL"
+echo "GPUs:            $GPU_IDS"
+echo "Model:           $MODEL_PATH"
 echo "Port:            $PORT"
 echo "Chat template:   $CHAT_TEMPLATE"
-echo "Served name:     $SERVED_NAME"
-echo "Max model len:   $MAX_LEN"
-echo "Tensor parallel: $TP"
+echo "Served name:     $SERVED_MODEL_NAME"
+echo "Max model len:   $MAX_MODEL_LEN"
+echo "Tensor parallel: $TENSOR_PARALLEL_SIZE"
 echo ""
 
 # If already running, exit early
@@ -50,13 +53,13 @@ export NCCL_P2P_DISABLE=1
 export TOKENIZERS_PARALLELISM=false
 
 echo "Starting vLLM server..."
-CUDA_VISIBLE_DEVICES=$GPU python -m vllm.entrypoints.openai.api_server \
-  --model "$MODEL" \
+CUDA_VISIBLE_DEVICES=$GPU_IDS python -m vllm.entrypoints.openai.api_server \
+  --model "$MODEL_PATH" \
   --port $PORT \
   --chat-template "$CHAT_TEMPLATE" \
-  --served-model-name "$SERVED_NAME" \
-  --max-model-len $MAX_LEN \
-  --tensor-parallel-size $TP \
+  --served-model-name "$SERVED_MODEL_NAME" \
+  --max-model-len $MAX_MODEL_LEN \
+  --tensor-parallel-size $TENSOR_PARALLEL_SIZE \
 
 
 echo ""
