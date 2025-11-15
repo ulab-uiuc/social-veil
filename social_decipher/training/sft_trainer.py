@@ -108,9 +108,8 @@ class SotopiaSFTTrainer(Trainer):
             gradient_accumulation_steps=args.accumulation_steps,
             learning_rate=args.learning_rate,
             weight_decay=args.weight_decay,
-            eval_strategy="epoch",      
-            save_strategy="steps",
-            save_steps=224, # (Steps per Epoch) * 2 = 112 * 2
+            eval_strategy="epoch",       # Use new argument name
+            save_strategy="epoch",
             save_total_limit=2,
             logging_dir="./logs",
             logging_steps=1,

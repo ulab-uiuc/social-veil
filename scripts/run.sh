@@ -1,22 +1,32 @@
 #!/bin/bash
 
-# Read model configuration from config.yaml
+# --- Preamble: Check for dependencies ---
+if ! command -v yq &> /dev/null
+then
+    echo "❌ Error: 'yq' is not installed or not in your PATH."
+    echo "   Please install it to proceed. For example, on Linux/macOS with pip:"
+    echo "   pip install yq"
+    exit 1
+fi
+
+# --- Configuration ---
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
-CONFIG_READER="-m social_decipher.utils.config_reader"
+CONFIG_FILE="$PROJECT_ROOT/configs/config.yaml"
 
-# Change to project root for poetry command
-cd "$PROJECT_ROOT"
+# Read parameters from config file using yq
+export GLOBAL_MODEL_A=$(yq '.models.model_a' "$CONFIG_FILE" | tr -d '"')
+export GLOBAL_MODEL_B=$(yq '.models.model_b' "$CONFIG_FILE" | tr -d '"')
+export DATA_NAME=$(yq '.data_dir' "$CONFIG_FILE" | tr -d '"')
+export MODEL_NAME=$(yq '.models.served_model_name' "$CONFIG_FILE" | tr -d '"')
+export GPU=$(yq '.models.gpu' "$CONFIG_FILE" | tr -d '"')
+export VLLM_PORT=$(yq '.models.vllm_port' "$CONFIG_FILE")
 
-export GLOBAL_MODEL_A=$(poetry run python $CONFIG_READER models.model_a)
-export GLOBAL_MODEL_B=$(poetry run python $CONFIG_READER models.model_b)
-export DATA_NAME=$(poetry run python $CONFIG_READER data_dir)
-# Derive a short tag from the data file (basename without extension), e.g., 'data/episode_hard.jsonl' -> 'episode_hard'
+# --- Derived Variables ---
+# Derive a short tag from the data file (basename without extension)
 DATA_FILE_NAME=$(basename "$DATA_NAME")
 DATA_TAG="${DATA_FILE_NAME%.*}"
-export MODEL_NAME=$(poetry run python $CONFIG_READER models.served_model_name)
-export GPU=$(poetry run python $CONFIG_READER models.gpu)
-export VLLM_PORT=$(poetry run python $CONFIG_READER models.vllm_port)
+
 export CONCURRENCY=${CONCURRENCY:-1}
 export PARTNER_REPAIR_MODE=${PARTNER_REPAIR_MODE:-"false"}
 

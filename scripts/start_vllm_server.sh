@@ -13,19 +13,23 @@ cd "$PROJECT_ROOT"
 # Read all parameters from config
 CONFIG_FILE="$PROJECT_ROOT/configs/config.yaml"
 
-# Extract server settings using yq
-GPU_IDS=$(yq e '.models.gpu' "$CONFIG_FILE")
-MODEL_PATH=$(yq e '.models.agent_model' "$CONFIG_FILE")
-PORT=$(yq e '.models.vllm_port' "$CONFIG_FILE")
-CHAT_TEMPLATE=$(yq e '.models.chat_template' "$CONFIG_FILE")
-SERVED_MODEL_NAME=$(yq e '.models.served_model_name' "$CONFIG_FILE")
-MAX_MODEL_LEN=$(yq e '.models.max_model_len' "$CONFIG_FILE")
-TENSOR_PARALLEL_SIZE=$(yq e '.models.tensor_parallel_size' "$CONFIG_FILE")
+# Extract server settings using yq (without 'e' for pip-installed yq)
+GPU_IDS=$(yq '.models.gpu' "$CONFIG_FILE" | tr -d '"')
+MODEL_PATH=$(yq '.models.model_b' "$CONFIG_FILE" | tr -d '"')
+PORT=$(yq '.models.vllm_port' "$CONFIG_FILE")
+CHAT_TEMPLATE_REL=$(yq '.models.chat_template' "$CONFIG_FILE" | tr -d '"')
+SERVED_MODEL_NAME=$(yq '.models.served_model_name' "$CONFIG_FILE" | tr -d '"')
+MAX_MODEL_LEN=$(yq '.models.max_model_len' "$CONFIG_FILE")
+TENSOR_PARALLEL_SIZE=$(yq '.models.tensor_parallel_size' "$CONFIG_FILE")
+
+# Convert chat template to an absolute path
+CHAT_TEMPLATE="$PROJECT_ROOT/$CHAT_TEMPLATE_REL"
 
 # Use number of specified GPUs if tensor_parallel_size is 0 or null
 if [ -z "$TENSOR_PARALLEL_SIZE" ] || [ "$TENSOR_PARALLEL_SIZE" -eq 0 ]; then
     if [ -n "$GPU_IDS" ]; then
-        TENSOR_PARALLEL_SIZE=$(echo "$GPU_IDS" | awk -F, '{print NF}')
+        # Remove quotes before counting to correctly determine the number of GPUs
+        TENSOR_PARALLEL_SIZE=$(echo "$GPU_IDS" | tr -d '"' | awk -F, '{print NF}')
     else
         TENSOR_PARALLEL_SIZE=1 # Default to 1 if no GPUs are specified
     fi
