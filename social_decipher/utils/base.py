@@ -111,7 +111,7 @@ def openai_completion(model_id: str, system_message: str, message: str) -> Optio
                 {"role": "user", "content": message},
             ],
         }
-        if "o3" in model_id.lower():
+        if "o3" in model_id.lower() or "gpt-5" in model_id.lower():
             params["max_completion_tokens"] = _RESP_MAX_TOKENS
             # o3 models only support the default temperature, so we omit it.
         else:
