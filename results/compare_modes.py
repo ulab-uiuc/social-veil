@@ -6,6 +6,7 @@ import csv
 from typing import Dict, List, Optional, Set, Tuple
 
 import numpy as np
+from scipy import stats
 import re
 import sys
 
@@ -89,7 +90,11 @@ def build_hard_index_set(episodes_file: str, hard_ids: List[str], debug: bool = 
     return idxs
 
 
-def collect_mode_stats(base_dir: str, mode: str, allowed_indices: Optional[Set[int]] = None, debug: bool = False) -> Dict[str, float]:
+def collect_mode_stats(base_dir: str, mode: str, allowed_indices: Optional[Set[int]] = None, debug: bool = False) -> Dict[str, List[float]]:
+    """
+    Collects raw metric scores for a given mode.
+    Returns a dictionary mapping metric names to a list of float scores.
+    """
     pattern = os.path.join(base_dir, f"mode_{mode}", "scenario_*", "eval_result.json")
     all_files = glob.glob(pattern)
     files_to_process = []
@@ -109,32 +114,31 @@ def collect_mode_stats(base_dir: str, mode: str, allowed_indices: Optional[Set[i
     if debug:
         print(f"🕵️  [mode_{mode}] Found {len(all_files)} total scenarios. After filtering for hard indices, processing {len(files_to_process)} scenarios.")
 
-    a1_over: List[float] = []
-    a2_over: List[float] = []
-    dim_acc: Dict[str, List[float]] = {f"a1_{d}": [] for d in DIMS}
-    dim_acc.update({f"a2_{d}": [] for d in DIMS})
-    dim_acc["iq"] = []
-    # Episode-level barrier metrics (only present in barrier runs)
-    epi_metrics: Dict[str, List[float]] = {
-        "episode_unresolved_confusion": [],
-        "episode_mutual_understanding": [],
-    }
-
-    mcq_keys = [
+    # Store lists of scores for statistical analysis
+    raw_scores: Dict[str, List[float]] = {}
+    
+    # Initialize keys to ensure they exist even if no data is found
+    metric_keys = [f"a1_{d}" for d in DIMS] + [f"a2_{d}" for d in DIMS] + ["iq"]
+    mcq_metric_keys = [
         ("goal", "accuracy"), ("goal", "avg_confidence"),
         ("reason", "accuracy"), ("reason", "avg_confidence"),
     ]
-    mcq_acc: Dict[str, List[float]] = {}
     for who in ("a1", "a2"):
-        for t, m in mcq_keys:
-            mcq_acc[f"{who}_{t}_{m}"] = []
+        for t, m in mcq_metric_keys:
+            metric_keys.append(f"{who}_{t}_{m}")
+            
+    for k in metric_keys:
+        raw_scores[k] = []
+
+    # Episode-level barrier metrics (only for barrier modes)
+    for k in ["episode_unresolved_confusion", "episode_mutual_understanding"]:
+        raw_scores[k] = []
 
     for fp in files_to_process:
         try:
-            # This logic is now redundant as we pre-filter, but kept as a safeguard.
-            # No real need to extract scen_idx again here.
             with open(fp, "r", encoding="utf-8") as f:
                 data = json.load(f)
+            
             ag = data.get("aggregated_scores", {})
             a1 = ag.get("agent_1", {})
             a2 = ag.get("agent_2", {})
@@ -142,62 +146,40 @@ def collect_mode_stats(base_dir: str, mode: str, allowed_indices: Optional[Set[i
             if isinstance(iq, dict):
                 iq = iq.get("score", 0)
 
-            a1_over.append(a1.get("overall", 0))
-            a2_over.append(a2.get("overall", 0))
             for d in DIMS:
-                dim_acc[f"a1_{d}"].append(a1.get(d, 0))
-                dim_acc[f"a2_{d}"].append(a2.get(d, 0))
-            dim_acc["iq"].append(iq)
+                raw_scores[f"a1_{d}"].append(a1.get(d, 0))
+                raw_scores[f"a2_{d}"].append(a2.get(d, 0))
+            raw_scores["iq"].append(iq)
 
-            # Episode-level barrier evaluation (if present)
+            # Episode-level barrier evaluation
             ep = ag.get("episode_level")
             if isinstance(ep, dict):
-                uc = ep.get("unresolved_confusion")
-                mu = ep.get("mutual_understanding")
-                # Accept either flattened numeric or nested {"score": x}
-                if isinstance(uc, (int, float)):
-                    epi_metrics["episode_unresolved_confusion"].append(float(uc))
-                elif isinstance(uc, dict) and isinstance(uc.get("score"), (int, float)):
-                    epi_metrics["episode_unresolved_confusion"].append(float(uc["score"]))
-                if isinstance(mu, (int, float)):
-                    epi_metrics["episode_mutual_understanding"].append(float(mu))
-                elif isinstance(mu, dict) and isinstance(mu.get("score"), (int, float)):
-                    epi_metrics["episode_mutual_understanding"].append(float(mu["score"]))
+                for metric, key in [("episode_unresolved_confusion", "unresolved_confusion"), ("episode_mutual_understanding", "mutual_understanding")]:
+                    val = ep.get(key)
+                    score = None
+                    if isinstance(val, (int, float)):
+                        score = float(val)
+                    elif isinstance(val, dict) and isinstance(val.get("score"), (int, float)):
+                        score = float(val["score"])
+                    
+                    if score is not None:
+                        raw_scores[metric].append(score)
 
             # MCQ metrics
             mm = data.get("mcq_metrics", {})
             mm_a1 = mm.get("agent_1", {})
             mm_a2 = mm.get("agent_2", {})
-            for t, m in mcq_keys:
+            for t, m in mcq_metric_keys:
                 k = f"{t}_{m}"
-                v1 = mm_a1.get(k)
-                v2 = mm_a2.get(k)
-                if isinstance(v1, (int, float)):
-                    mcq_acc[f"a1_{t}_{m}"].append(float(v1))
-                if isinstance(v2, (int, float)):
-                    mcq_acc[f"a2_{t}_{m}"].append(float(v2))
+                if isinstance(mm_a1.get(k), (int, float)):
+                    raw_scores[f"a1_{k}"].append(float(mm_a1[k]))
+                if isinstance(mm_a2.get(k), (int, float)):
+                    raw_scores[f"a2_{k}"].append(float(mm_a2[k]))
+
         except Exception:
-            # Skip unreadable files
             continue
 
-    out: Dict[str, float] = {}
-
-    # per-dimension means and counts
-    for k, v in dim_acc.items():
-        if k == "iq":
-            continue
-        out[k] = float(np.mean(v)) if v else None
-    out["num_scenarios"] = int(max(len(a1_over), len(a2_over)))
-
-    # episode-level barrier means (if any collected)
-    for k, v in epi_metrics.items():
-        if v:
-            out[k] = float(np.mean(v))
-
-    # mcq means
-    for k, v in mcq_acc.items():
-        out[k] = float(np.mean(v)) if v else None
-    return out
+    return raw_scores
 
 
 def main():
@@ -238,7 +220,48 @@ def main():
             print(f"✅ Mapped to {len(allowed_indices)} scenario indices: {sorted(list(allowed_indices))[:10]}...")
 
 
-    summary = {mode: collect_mode_stats(base_dir, mode, allowed_indices=allowed_indices, debug=args.debug) for mode in MODES}
+    all_raw_scores = {mode: collect_mode_stats(base_dir, mode, allowed_indices=allowed_indices, debug=args.debug) for mode in MODES}
+
+    summary = {}
+    for mode, raw_scores in all_raw_scores.items():
+        mode_summary = {}
+        # Find a representative metric to count scenarios
+        representative_metric = next((scores for scores in raw_scores.values() if scores), [])
+        mode_summary["num_scenarios"] = len(representative_metric)
+
+        for metric, scores in raw_scores.items():
+            if scores:
+                mean = np.mean(scores)
+                # Confidence interval
+                ci = (0.0, 0.0)
+                if len(scores) > 1:
+                    ci = stats.t.interval(0.95, len(scores)-1, loc=mean, scale=stats.sem(scores))
+                
+                mode_summary[f"{metric}_mean"] = mean
+                mode_summary[f"{metric}_ci_low"] = ci[0]
+                mode_summary[f"{metric}_ci_high"] = ci[1]
+        summary[mode] = mode_summary
+
+    # Perform paired t-tests between baseline and barrier conditions
+    baseline_scores = all_raw_scores.get("baseline", {})
+    if baseline_scores:
+        for mode in ["semantic", "cultural", "emotional"]:
+            mode_scores = all_raw_scores.get(mode)
+            if not mode_scores:
+                continue
+            
+            # Use baseline keys as the reference for metrics to test
+            for metric in baseline_scores.keys():
+                base_data = baseline_scores.get(metric, [])
+                mode_data = mode_scores.get(metric, [])
+                
+                # Ensure data is paired correctly and has enough samples for a t-test
+                min_len = min(len(base_data), len(mode_data))
+                if min_len > 1:
+                    # Perform paired t-test
+                    _, p_val = stats.ttest_rel(base_data[:min_len], mode_data[:min_len])
+                    summary[mode][f"{metric}_pval_vs_baseline"] = p_val
+
 
     # Pretty print
     print(json.dumps(summary, indent=2))
@@ -253,33 +276,44 @@ def main():
     if args.out_csv:
         csv_path = os.path.abspath(args.out_csv)
         os.makedirs(os.path.dirname(csv_path), exist_ok=True)
-        # Determine a stable header union across modes
-        header_keys = set()
-        for mode, stats in summary.items():
-            header_keys.update(stats.keys())
-        # Preferred ordering
-        preferred = [
-            "num_scenarios",
-        ]
-        # Sotopia dims
-        preferred += [f"a1_{d}" for d in DIMS] + [f"a2_{d}" for d in DIMS]
-        # Episode-level barrier metrics
-        preferred += [
-            "episode_unresolved_confusion",
-            "episode_mutual_understanding",
-        ]
-        # MCQ
-        for who in ("a1","a2"):
-            for t in ("goal","reason"):
-                preferred += [f"{who}_{t}_accuracy", f"{who}_{t}_avg_confidence"]
-        # Final header
-        header = preferred + [k for k in sorted(header_keys) if k not in preferred]
+        
+        base_summary = summary.get("baseline", {})
+        metrics_base = sorted([k.replace("_mean", "") for k in base_summary if k.endswith("_mean")])
+        
+        header = ["mode", "num_scenarios"]
+        for metric in metrics_base:
+            header.extend([f"{metric}_mean", f"{metric}_ci"])
+
         with open(csv_path, "w", newline="", encoding="utf-8") as f:
             w = csv.writer(f)
-            w.writerow(["mode"] + header)
+            w.writerow(header)
+
             for mode in MODES:
                 stats = summary.get(mode, {})
-                row = [mode] + [stats.get(k, "") for k in header]
+                if not stats: continue
+                
+                row = [mode, stats.get("num_scenarios", "")]
+                for metric in metrics_base:
+                    mean = stats.get(f"{metric}_mean")
+                    ci_low = stats.get(f"{metric}_ci_low")
+                    ci_high = stats.get(f"{metric}_ci_high")
+                    
+                    formatted_mean = f"{mean:.3f}" if isinstance(mean, float) else ""
+                    
+                    # Append significance stars for non-baseline modes
+                    if mode != "baseline":
+                        pval = stats.get(f"{metric}_pval_vs_baseline")
+                        if isinstance(pval, float):
+                            if pval < 0.001:
+                                formatted_mean += '***'
+                            elif pval < 0.01:
+                                formatted_mean += '**'
+                            elif pval < 0.05:
+                                formatted_mean += '*'
+                    
+                    row.append(formatted_mean)
+                    row.append(f"({ci_low:.3f}, {ci_high:.3f})" if isinstance(ci_low, float) else "")
+                
                 w.writerow(row)
         print(f"Saved CSV to {csv_path}")
 
