@@ -289,20 +289,20 @@ def main():
             w.writerow(header)
 
             for mode in MODES:
-                stats = summary.get(mode, {})
-                if not stats: continue
+                mode_stats = summary.get(mode, {})
+                if not mode_stats: continue
                 
-                row = [mode, stats.get("num_scenarios", "")]
+                row = [mode, mode_stats.get("num_scenarios", "")]
                 for metric in metrics_base:
-                    mean = stats.get(f"{metric}_mean")
-                    ci_low = stats.get(f"{metric}_ci_low")
-                    ci_high = stats.get(f"{metric}_ci_high")
+                    mean = mode_stats.get(f"{metric}_mean")
+                    ci_low = mode_stats.get(f"{metric}_ci_low")
+                    ci_high = mode_stats.get(f"{metric}_ci_high")
                     
                     formatted_mean = f"{mean:.3f}" if isinstance(mean, float) else ""
                     
                     # Append significance stars for non-baseline modes
                     if mode != "baseline":
-                        pval = stats.get(f"{metric}_pval_vs_baseline")
+                        pval = mode_stats.get(f"{metric}_pval_vs_baseline")
                         if isinstance(pval, float):
                             if pval < 0.001:
                                 formatted_mean += '***'
