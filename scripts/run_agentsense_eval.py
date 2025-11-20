@@ -150,38 +150,36 @@ Interact with {agent_char['name']}. Be natural and stay in character.
 def main():
     parser = argparse.ArgumentParser(description="Evaluate models on AgentSense benchmark.")
     parser.add_argument("--data_file", type=str, default="data/final_data.jsonl", help="Path to AgentSense data")
-    parser.add_argument("--num_scenarios", type=int, default=30, help="Number of scenarios to evaluate")
-    
-    # Configuration overrides
-    parser.add_argument("--vllm_port", type=int, help="Port of the running vLLM server (overrides config.yaml)")
-    parser.add_argument("--model_name", type=str, help="Name of the model served by vLLM (overrides config.yaml)")
-    
+    parser.add_argument("--num_scenarios", type=int, default=50, help="Number of scenarios to evaluate (default: first 50)")
     parser.add_argument("--save_result", type=str, help="Path to save the evaluation results (JSON)")
     parser.add_argument("--compare_with", type=str, help="Path to a previous result file to compare against")
     
     args = parser.parse_args()
 
-    # 1. Load Config & Apply Overrides
+    # 1. Load Config
     config = load_config()
-    vllm_port = args.vllm_port or config.get("models", {}).get("vllm_port", 8000)
-    served_model_name = args.model_name or config.get("models", {}).get("served_model_name", "qwen2.5-7b-instruct")
+    vllm_port = config.get("models", {}).get("vllm_port", 8000)
+    served_model_name = config.get("models", {}).get("served_model_name", "qwen2.5-7b-instruct")
     
     print(f"Connecting to vLLM server at port {vllm_port}, model: {served_model_name}")
     vllm_client = OpenAI(base_url=f"http://localhost:{vllm_port}/v1", api_key="EMPTY")
 
-    # 2. Load Data
-    print(f"Loading data from {args.data_file}...")
-    scenarios = []
+    # 2. Load Data (Optimized to load only first N)
+    print(f"Loading first {args.num_scenarios} compatible scenarios from {args.data_file}...")
+    eval_set = []
     with open(args.data_file, 'r', encoding='utf-8') as f:
         for line in f:
             if line.strip():
-                data = json.loads(line)
-                if len(data['characters']) == 2:
-                    scenarios.append(data)
+                try:
+                    data = json.loads(line)
+                    if len(data['characters']) == 2:
+                        eval_set.append(data)
+                        if len(eval_set) >= args.num_scenarios:
+                            break
+                except json.JSONDecodeError:
+                    continue
     
-    random.seed(42)
-    eval_set = random.sample(scenarios, min(args.num_scenarios, len(scenarios)))
-    print(f"Selected {len(eval_set)} scenarios for evaluation.")
+    print(f"Loaded {len(eval_set)} scenarios for evaluation.")
 
     # 3. Evaluate Current Model
     print(f"\n--- Evaluating Model: {served_model_name} ---")
