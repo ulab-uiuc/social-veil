@@ -3,7 +3,8 @@ import json
 import random
 import os
 import yaml
-from typing import List, Dict, Any, Optional
+import re
+from typing import List, Dict, Any, Optional, Tuple
 from openai import OpenAI
 from tqdm import tqdm
 import time
@@ -20,7 +21,7 @@ def load_config(config_path: str = "configs/config.yaml") -> Dict[str, Any]:
         print(f"Error loading config: {e}")
         return {}
 
-def get_response_from_vllm(client: OpenAI, model_name: str, messages: List[Dict[str, str]], temperature: float = 0.7) -> str:
+def get_response_from_vllm(client: OpenAI, model_name: str, messages: List[Dict[str, str]], temperature: float = 0.7, max_tokens: int = 512) -> str:
     """
     Get response from the configured vLLM server.
     """
@@ -29,7 +30,7 @@ def get_response_from_vllm(client: OpenAI, model_name: str, messages: List[Dict[
             model=model_name,
             messages=messages,
             temperature=temperature,
-            max_tokens=512
+            max_tokens=max_tokens
         )
         return response.choices[0].message.content
     except Exception as e:
@@ -77,9 +78,52 @@ Answer with only "Yes" or "No".
     response = get_response_from_openai("gpt-4o", [{"role": "user", "content": prompt}], temperature=0.0)
     return "yes" in response.strip().lower()
 
-def run_simulation(scenario: Dict[str, Any], vllm_client: OpenAI, agent_model_name: str, partner_model: str = "gpt-4o-mini") -> Dict[str, float]:
+def evaluate_implicit_reasoning(vllm_client: OpenAI, model_name: str, dialogue_history: str, questions: List[Dict[str, Any]]) -> List[float]:
+    """
+    Evaluate the agent's ability to reason about implicit information using MCQs.
+    Returns a list of scores (1.0 for correct, 0.0 for incorrect).
+    """
+    scores = []
+    for q in questions:
+        options_text = "\n".join([f"{i}. {opt}" for i, opt in enumerate(q['options'])])
+        
+        prompt = f"""
+Based on the conversation history below, please answer the multiple-choice question.
+
+**Conversation History:**
+{dialogue_history}
+
+**Question:**
+{q['question']}
+
+**Options:**
+{options_text}
+
+Please respond with ONLY the number of the correct option (e.g., 0, 1, 2, or 3). Do not include any other text.
+"""
+        # Use a lower temperature for reasoning tasks to be more deterministic
+        response = get_response_from_vllm(vllm_client, model_name, [{"role": "user", "content": prompt}], temperature=0.1, max_tokens=10)
+        
+        # Extract the number from the response
+        match = re.search(r'\d+', response)
+        if match:
+            predicted_idx = int(match.group())
+            if predicted_idx == q['answer_label']:
+                scores.append(1.0)
+            else:
+                scores.append(0.0)
+        else:
+            # Failed to follow instructions format
+            scores.append(0.0)
+            
+    return scores
+
+def run_simulation(scenario: Dict[str, Any], vllm_client: OpenAI, agent_model_name: str, partner_model: str = "gpt-4o-mini") -> Tuple[Dict[str, float], List[float]]:
     """
     Runs a single simulation.
+    Returns:
+        - A dictionary of goal completion scores.
+        - A list of implicit reasoning scores.
     """
     agent_char = scenario['characters'][0]
     partner_char = scenario['characters'][1]
@@ -129,23 +173,29 @@ Interact with {agent_char['name']}. Be natural and stay in character.
         messages_partner.append({"role": "assistant", "content": partner_response})
         messages_agent.append({"role": "user", "content": partner_response})
 
-    # Evaluation
-    scores = {}
+    # Reconstruct dialogue text for evaluation
+    dialogue_text = ""
+    for i in range(1, len(messages_agent)):
+        role = messages_agent[i]['role']
+        content = messages_agent[i]['content']
+        speaker = agent_char['name'] if role == 'assistant' else partner_char['name']
+        dialogue_text += f"{speaker}: {content}\n"
+
+    # 1. Evaluation: Goal Completion
+    goal_scores = {}
     for goal_obj in agent_char['goals']:
         judge_q = next((q['question'] for q in goal_obj['eval_questions']['judge']), None)
         if judge_q:
-            # Reconstruct dialogue text only when needed
-            dialogue_text = ""
-            for i in range(1, len(messages_agent)):
-                role = messages_agent[i]['role']
-                content = messages_agent[i]['content']
-                speaker = agent_char['name'] if role == 'assistant' else partner_char['name']
-                dialogue_text += f"{speaker}: {content}\n"
-
             is_success = evaluate_goal_completion(dialogue_text, background, agent_char['name'], goal_obj['goal'], judge_q)
-            scores[goal_obj['goal']] = 1.0 if is_success else 0.0
+            goal_scores[goal_obj['goal']] = 1.0 if is_success else 0.0
+    
+    # 2. Evaluation: Implicit Reasoning
+    # Check if the agent character has specific info reasoning questions about the partner
+    reasoning_scores = []
+    if "info_reason_questions" in agent_char and agent_char["info_reason_questions"]:
+        reasoning_scores = evaluate_implicit_reasoning(vllm_client, agent_model_name, dialogue_text, agent_char["info_reason_questions"])
             
-    return scores
+    return goal_scores, reasoning_scores
 
 def main():
     parser = argparse.ArgumentParser(description="Evaluate models on AgentSense benchmark.")
@@ -164,38 +214,63 @@ def main():
     print(f"Connecting to vLLM server at port {vllm_port}, model: {served_model_name}")
     vllm_client = OpenAI(base_url=f"http://localhost:{vllm_port}/v1", api_key="EMPTY")
 
-    # 2. Load Data (Optimized to load only first N)
-    print(f"Loading first {args.num_scenarios} compatible scenarios from {args.data_file}...")
-    eval_set = []
+    # 2. Load Data (Prioritize scenarios with Reasoning Questions)
+    print(f"Loading and filtering data from {args.data_file}...")
+    scenarios_with_reasoning = []
+    scenarios_without_reasoning = []
+    
     with open(args.data_file, 'r', encoding='utf-8') as f:
         for line in f:
             if line.strip():
                 try:
                     data = json.loads(line)
+                    # Filter for 2-character scenarios
                     if len(data['characters']) == 2:
-                        eval_set.append(data)
-                        if len(eval_set) >= args.num_scenarios:
-                            break
+                        # Check if the first character (the Agent) has reasoning questions
+                        if "info_reason_questions" in data['characters'][0] and data['characters'][0]["info_reason_questions"]:
+                            scenarios_with_reasoning.append(data)
+                        else:
+                            scenarios_without_reasoning.append(data)
                 except json.JSONDecodeError:
                     continue
     
-    print(f"Loaded {len(eval_set)} scenarios for evaluation.")
+    # Combine lists: Prioritize those with reasoning questions
+    eval_set = scenarios_with_reasoning + scenarios_without_reasoning
+    # Take the top N
+    eval_set = eval_set[:args.num_scenarios]
+    
+    print(f"Selected {len(eval_set)} scenarios for evaluation.")
+    print(f"  - {len([s for s in eval_set if s in scenarios_with_reasoning])} scenarios include Implicit Reasoning tasks.")
 
     # 3. Evaluate Current Model
     print(f"\n--- Evaluating Model: {served_model_name} ---")
-    current_scores_list = []
+    current_goal_scores = []
+    current_reasoning_scores = []
     
     for scen in tqdm(eval_set, desc="Simulating"):
-        scores = run_simulation(scen, vllm_client, served_model_name)
-        current_scores_list.extend(scores.values())
+        goal_s, reason_s = run_simulation(scen, vllm_client, served_model_name)
+        current_goal_scores.extend(goal_s.values())
+        current_reasoning_scores.extend(reason_s)
 
-    current_avg = sum(current_scores_list) / len(current_scores_list) if current_scores_list else 0.0
-    print(f"\nModel Goal Completion Rate: {current_avg:.2%}")
+    avg_goal = sum(current_goal_scores) / len(current_goal_scores) if current_goal_scores else 0.0
+    avg_reasoning = sum(current_reasoning_scores) / len(current_reasoning_scores) if current_reasoning_scores else 0.0
+    
+    print(f"\nResults for {served_model_name}:")
+    print(f"  - Goal Completion Rate: {avg_goal:.2%}")
+    if current_reasoning_scores:
+        print(f"  - Reasoning Accuracy:   {avg_reasoning:.2%}")
+    else:
+        print(f"  - Reasoning Accuracy:   N/A (No reasoning questions in subset)")
 
     # 4. Save Results
     if args.save_result:
+        result_data = {
+            "model": served_model_name,
+            "goal_completion": {"avg": avg_goal, "raw": current_goal_scores},
+            "reasoning": {"avg": avg_reasoning, "raw": current_reasoning_scores}
+        }
         with open(args.save_result, 'w') as f:
-            json.dump({"model": served_model_name, "avg_score": current_avg, "raw_scores": current_scores_list}, f)
+            json.dump(result_data, f)
         print(f"Results saved to {args.save_result}")
 
     # 5. Compare (if requested)
@@ -204,14 +279,22 @@ def main():
             with open(args.compare_with, 'r') as f:
                 prev_result = json.load(f)
             
-            prev_avg = prev_result["avg_score"]
-            print("\n" + "="*40)
+            prev_avg_goal = prev_result["goal_completion"]["avg"]
+            prev_avg_reason = prev_result["reasoning"]["avg"]
+            
+            print("\n" + "="*50)
             print("COMPARISON RESULT")
-            print("="*40)
-            print(f"Baseline Model ({prev_result['model']}): {prev_avg:.2%}")
-            print(f"Current Model  ({served_model_name}): {current_avg:.2%}")
-            print(f"Improvement:      {current_avg - prev_avg:+.2%}")
-            print("="*40)
+            print("="*50)
+            print(f"{'Metric':<25} | {'Baseline':<10} | {'Current (SOCIALVEIL)':<10} | {'Diff':<10}")
+            print("-" * 65)
+            print(f"{'Goal Completion':<25} | {prev_avg_goal:>9.2%} | {avg_goal:>20.2%} | {avg_goal - prev_avg_goal:>+9.2%}")
+            
+            if current_reasoning_scores and prev_result["reasoning"]["raw"]:
+                print(f"{'Implicit Reasoning':<25} | {prev_avg_reason:>9.2%} | {avg_reasoning:>20.2%} | {avg_reasoning - prev_avg_reason:>+9.2%}")
+            else:
+                print(f"{'Implicit Reasoning':<25} | {'N/A':>9} | {'N/A':>20} | {'N/A':>9}")
+            print("="*50)
+            
         except Exception as e:
             print(f"Error comparing results: {e}")
 
