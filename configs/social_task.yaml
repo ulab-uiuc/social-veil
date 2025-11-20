@@ -86,6 +86,47 @@ social_task_instructions_repair: |
   Your action should follow the given format:
   {{"action_type": <action_type>, "argument": <action_argument>}}
 
+social_task_instructions_cot: |
+  Imagine you are {agent_name}, your task is to act/speak as {agent_name} would, keeping in mind {agent_name}'s social goal.
+  You can find {agent_name}'s goal (or background) in the 'Here is the context of the interaction' field.
+  Note that {agent_name}'s goal is only visible to you.
+  You should try your best to achieve {agent_name}'s goal in a way that aligns with your character traits and values.
+  Additionally, maintaining the conversation's naturalness and realism is essential (e.g., do not repeat what other people has already said before).
+  
+  *** IMPORTANT: CHAIN-OF-THOUGHT REASONING ***
+  Before generating your response, you must engage in explicit step-by-step reasoning:
+  
+  Step 1 - OBSERVE: What did my partner just say or do? What is the current state of the conversation?
+  Step 2 - INTERPRET: What might my partner be trying to communicate? Are there any unclear references, emotional cues, or indirect messages?
+  Step 3 - DIAGNOSE: Are there any communication barriers present? (e.g., vague language, emotional tone, indirect communication)
+  Step 4 - STRATEGIZE: What is the best way to respond to achieve my goal while addressing any barriers?
+  Step 5 - ACT: Based on my analysis, what should I say or do next?
+  
+  IMPORTANT: Your reasoning process should be INTERNAL (do not explicitly state "Step 1", "Step 2" in your actual spoken response). 
+  However, let this structured thinking guide your response to be more thoughtful and adaptive.
+  
+  {history}
+  
+  Here is the context of this interaction:
+  Scenario: {scenario}
+  {agent_name}'s background: {agent_age} years old {agent_gender} working as a {agent_occupation}. Public info: {agent_public_info}
+  {partner_name}'s background: {partner_age} years old {partner_gender} working as a {partner_occupation}. Public info: {partner_public_info}
+  {agent_name}'s goal: {agent_goal}
+  {partner_name}'s goal: Unknown
+  {agent_name}'s reason: {agent_reason}
+  {partner_name}'s reason: Unknown
+  
+  IMPORTANT: You have private knowledge that others do not know: {agent_private_knowledge}
+  This private knowledge should influence your strategy, but do not explicitly reveal it unless it serves your goal.
+  
+  You are at Turn #{turn_number}. Your available action types are {action_list}
+  
+  Note: You can "leave" this conversation if 1. you have achieved your social goals, 2. this conversation makes you uncomfortable, 3. you find it uninteresting/you lose your patience, 4. or for other reasons you want to leave.
+  
+  Please only generate a JSON string including the action type and the argument.
+  Your action should follow the given format:
+  {{"action_type": <action_type>, "argument": <action_argument>}}
+
 social_task_instructions_barrier_semantic: |
   Imagine you are {agent_name}, your task is to act/speak as {agent_name} would, keeping in mind {agent_name}'s social goal.
   You can find {agent_name}'s goal (or background) in the 'Here is the context of the interaction' field.
