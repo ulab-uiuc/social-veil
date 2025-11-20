@@ -29,17 +29,20 @@ DATA_TAG="${DATA_FILE_NAME%.*}"
 
 export CONCURRENCY=${CONCURRENCY:-1}
 export PARTNER_REPAIR_MODE=${PARTNER_REPAIR_MODE:-"false"}
+export PARTNER_COT_MODE=${PARTNER_COT_MODE:-"false"}
 
 TIMESTAMP=$(date +%m%d_%H%M)
 
-# Add a suffix if repair mode is enabled
-REPAIR_SUFFIX=""
-if [[ "$PARTNER_REPAIR_MODE" == "true" ]]; then
-  REPAIR_SUFFIX="_repair"
+# Add a suffix based on the enabled mode
+MODE_SUFFIX=""
+if [[ "$PARTNER_COT_MODE" == "true" ]]; then
+  MODE_SUFFIX="_cot"
+elif [[ "$PARTNER_REPAIR_MODE" == "true" ]]; then
+  MODE_SUFFIX="_repair"
 fi
 
 # Default results dir (run.py will create subfolders for baseline/semantic/cultural/emotional)
-export RESULTS_DIR=${RESULTS_DIR:-"results/exp_${MODEL_NAME}_${DATA_TAG}${REPAIR_SUFFIX}"}
+export RESULTS_DIR=${RESULTS_DIR:-"results/exp_${MODEL_NAME}_${DATA_TAG}${MODE_SUFFIX}"}
 
 echo "===================================="
 echo "🧪 Running Social Agent Experiment"
@@ -76,6 +79,7 @@ CUDA_VISIBLE_DEVICES=$GPU VLLM_PORT=$VLLM_PORT python scripts/run.py --disable-m
     --results_dir $RESULTS_DIR \
     --resume \
     --concurrency $CONCURRENCY \
+    $( [[ "$PARTNER_COT_MODE" == "true" ]] && echo "--partner-cot-prompt" ) \
     $( [[ "$PARTNER_REPAIR_MODE" == "true" ]] && echo "--partner-repair-prompt" )
 
 echo ""
