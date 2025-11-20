@@ -11,7 +11,7 @@ import re
 import sys
 
 
-MODES = ["baseline", "semantic", "cultural", "emotional"]
+MODES = ["baseline", "semantic", "cultural", "emotional", "composite_emotional_semantic"]
 DIMS = [
     "goal_completion",
     "believability",

@@ -232,7 +232,6 @@ def run_experiment(episodes, experiment_config, evaluator, args, mode_tag: str):
                 f.write(f"Scenario {scenario_num} failed with the following error:\n")
                 f.write(str(e))
             print(f"❌ Scenario {scenario_num} failed. Log saved to {failure_log_path}")
-            # Re-raise the exception to be caught by the main loop's error handler
             raise
 
     # Submit tasks
@@ -289,6 +288,7 @@ def main():
     semantic_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_all_semantic.json"))
     cultural_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_all_cultural.json"))
     emotional_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_all_emotional.json"))
+    composite_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "episodes_all_composite_emotional_semantic.json"))
 
     need_generate = not (os.path.isfile(semantic_path) and os.path.isfile(cultural_path) and os.path.isfile(emotional_path))
     if need_generate:
@@ -296,9 +296,23 @@ def main():
         bc = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "barrier_creation.py"))
         os.system(f"python {bc} --mode augment --input_episodes {args.episodes_file} --out_semantic {semantic_path} --out_cultural {cultural_path} --out_emotional {emotional_path}")
 
+    # Generate composite barrier episodes if they don't exist
+    if not os.path.isfile(composite_path):
+        print("🛠️ Generating composite barrier episodes (emotional + semantic)...")
+        composite_script = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "create_composite_barriers.py"))
+        os.system(f"python {composite_script} --emotional {emotional_path} --semantic {semantic_path} --output {composite_path}")
+
     episodes_semantic = load_json(semantic_path)
     episodes_cultural = load_json(cultural_path)
     episodes_emotional = load_json(emotional_path)
+    episodes_composite = load_json(composite_path)
+
+    # I want to just run each episodes first 60 items
+    episodes = episodes[:60]
+    episodes_semantic = episodes_semantic[:60]
+    episodes_cultural = episodes_cultural[:60]
+    episodes_emotional = episodes_emotional[:60]
+    episodes_composite = episodes_composite[:60]
 
     # Run baseline then each barrier set
     print("\n▶️ Running baseline (original episodes)...")
@@ -312,6 +326,9 @@ def main():
 
     print("\n▶️ Running emotional barrier episodes...")
     run_experiment(episodes_emotional, experiment_config, evaluator, args, mode_tag="emotional")
+
+    print("\n▶️ Running composite barrier episodes (emotional + semantic)...")
+    run_experiment(episodes_composite, experiment_config, evaluator, args, mode_tag="composite_emotional_semantic")
 
 if __name__ == "__main__":
     main()
