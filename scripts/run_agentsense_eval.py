@@ -9,9 +9,6 @@ from openai import OpenAI
 from tqdm import tqdm
 import time
 
-# Set up OpenAI client
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
-
 def load_config(config_path: str = "configs/config.yaml") -> Dict[str, Any]:
     """Load project configuration."""
     try:
@@ -37,7 +34,7 @@ def get_response_from_vllm(client: OpenAI, model_name: str, messages: List[Dict[
         print(f"Error querying vLLM: {e}")
         return ""
 
-def get_response_from_openai(model: str, messages: List[Dict[str, str]], temperature: float = 0.7) -> str:
+def get_response_from_openai(client: OpenAI, model: str, messages: List[Dict[str, str]], temperature: float = 0.7) -> str:
     """
     Get response from OpenAI API (for Partner/Judge).
     """
@@ -54,7 +51,7 @@ def get_response_from_openai(model: str, messages: List[Dict[str, str]], tempera
         time.sleep(2)
         return ""
 
-def evaluate_goal_completion(dialogue_history: str, background: str, agent_name: str, goal: str, judge_question: str) -> bool:
+def evaluate_goal_completion(openai_client: OpenAI, dialogue_history: str, background: str, agent_name: str, goal: str, judge_question: str) -> bool:
     """
     Use GPT-4o as a judge to evaluate goal completion.
     """
@@ -75,7 +72,7 @@ Please answer the following question based on the interaction above:
 
 Answer with only "Yes" or "No".
 """
-    response = get_response_from_openai("gpt-4o", [{"role": "user", "content": prompt}], temperature=0.0)
+    response = get_response_from_openai(openai_client, "gpt-4o", [{"role": "user", "content": prompt}], temperature=0.0)
     return "yes" in response.strip().lower()
 
 def evaluate_implicit_reasoning(vllm_client: OpenAI, model_name: str, dialogue_history: str, questions: List[Dict[str, Any]]) -> List[float]:
@@ -118,7 +115,7 @@ Please respond with ONLY the number of the correct option (e.g., 0, 1, 2, or 3).
             
     return scores
 
-def run_simulation(scenario: Dict[str, Any], vllm_client: OpenAI, agent_model_name: str, partner_model: str = "gpt-4o-mini") -> Tuple[Dict[str, float], List[float]]:
+def run_simulation(scenario: Dict[str, Any], vllm_client: OpenAI, openai_client: OpenAI, agent_model_name: str, partner_model: str = "gpt-4o-mini") -> Tuple[Dict[str, float], List[float]]:
     """
     Runs a single simulation.
     Returns:
@@ -167,7 +164,7 @@ Interact with {agent_char['name']}. Be natural and stay in character.
         messages_partner.append({"role": "user", "content": agent_response})
         
         # Partner turn
-        partner_response = get_response_from_openai(partner_model, messages_partner)
+        partner_response = get_response_from_openai(openai_client, partner_model, messages_partner)
         if not partner_response: partner_response = "..."
         
         messages_partner.append({"role": "assistant", "content": partner_response})
@@ -186,7 +183,7 @@ Interact with {agent_char['name']}. Be natural and stay in character.
     for goal_obj in agent_char['goals']:
         judge_q = next((q['question'] for q in goal_obj['eval_questions']['judge']), None)
         if judge_q:
-            is_success = evaluate_goal_completion(dialogue_text, background, agent_char['name'], goal_obj['goal'], judge_q)
+            is_success = evaluate_goal_completion(openai_client, dialogue_text, background, agent_char['name'], goal_obj['goal'], judge_q)
             goal_scores[goal_obj['goal']] = 1.0 if is_success else 0.0
     
     # 2. Evaluation: Implicit Reasoning
@@ -211,8 +208,16 @@ def main():
     vllm_port = config.get("models", {}).get("vllm_port", 8000)
     served_model_name = config.get("models", {}).get("served_model_name", "qwen2.5-7b-instruct")
     
+    # Use the Evaluator key as the primary OpenAI key for this script
+    openai_api_key = config.get("EVALUATOR_OPENAI_API_KEY") or config.get("AGENT_OPENAI_API_KEY")
+    if not openai_api_key:
+        raise ValueError("Please set EVALUATOR_OPENAI_API_KEY or AGENT_OPENAI_API_KEY in configs/config.yaml")
+        
     print(f"Connecting to vLLM server at port {vllm_port}, model: {served_model_name}")
+    
+    # Setup Clients
     vllm_client = OpenAI(base_url=f"http://localhost:{vllm_port}/v1", api_key="EMPTY")
+    openai_client = OpenAI(api_key=openai_api_key)
 
     # 2. Load Data (Prioritize scenarios with Reasoning Questions)
     print(f"Loading and filtering data from {args.data_file}...")
@@ -248,7 +253,7 @@ def main():
     current_reasoning_scores = []
     
     for scen in tqdm(eval_set, desc="Simulating"):
-        goal_s, reason_s = run_simulation(scen, vllm_client, served_model_name)
+        goal_s, reason_s = run_simulation(scen, vllm_client, openai_client, served_model_name)
         current_goal_scores.extend(goal_s.values())
         current_reasoning_scores.extend(reason_s)
 
