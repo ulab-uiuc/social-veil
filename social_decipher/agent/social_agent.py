@@ -69,6 +69,7 @@ class SocialAgent:
         barrier_type = env_dict.get("barrier_type") if barrier_for_this_agent else None
   
         template_key = (
+            "social_task_instructions_barrier_composite_emotional_semantic" if barrier_type == "composite_emotional_semantic" else
             "social_task_instructions_barrier_semantic" if barrier_type == "semantic_structure" else
             "social_task_instructions_barrier_cultural" if barrier_type == "cultural_style" else
             "social_task_instructions_barrier_emotional" if barrier_type == "emotional_influence" else
@@ -137,6 +138,25 @@ class SocialAgent:
                         "emo_tactics",
                         "emo_confusion",
                         "emo_examples",
+                    ]:
+                        v = dyn_map.get(k)
+                        if isinstance(v, str) and v.strip():
+                            sev_lines.append(v)
+                elif barrier_type == "composite_emotional_semantic":
+                    # Composite barrier: merge both emotional and semantic rules
+                    for k in [
+                        "univ_safety_guardrail",
+                        "univ_adversarial_stance",
+                        "univ_core_tactics",
+                        "univ_content_integrity",
+                        "emo_narrative",
+                        "emo_tactics",
+                        "emo_confusion",
+                        "emo_examples",
+                        "sem_narrative",
+                        "sem_tactics",
+                        "sem_confusion",
+                        "sem_examples",
                     ]:
                         v = dyn_map.get(k)
                         if isinstance(v, str) and v.strip():

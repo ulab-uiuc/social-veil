@@ -180,3 +180,39 @@ social_task_instructions_barrier_emotional: |
   Please only generate a JSON string including the action type and the argument.
   Your action should follow the given format:
   {{"action_type": <action_type>, "argument": <action_argument>}}
+
+
+social_task_instructions_barrier_composite_emotional_semantic: |
+  Imagine you are {agent_name}, your task is to act/speak as {agent_name} would, keeping in mind {agent_name}'s social goal.
+  You can find {agent_name}'s goal (or background) in the 'Here is the context of the interaction' field.
+  Note that {agent_name}'s goal is only visible to you.
+
+  {history}
+  
+  Here is the context of this interaction:
+  Scenario: {scenario}
+  {agent_name}'s background: {agent_age} years old {agent_gender} working as a {agent_occupation}. Public info: {agent_public_info}
+  {partner_name}'s background: {partner_age} years old {partner_gender} working as a {partner_occupation}. Public info: {partner_public_info}
+  {agent_name}'s goal: {agent_goal}
+  {partner_name}'s goal: Unknown
+  {agent_name}'s reason: {agent_reason}
+  {partner_name}'s reason: Unknown
+  
+  You are at Turn #{turn_number}. Your available action types are {action_list}
+  
+  HIGH-LEVEL COMPOSITE BARRIER DIRECTIVE:
+  You must exhibit BOTH emotional instability AND semantic vagueness simultaneously. These barriers compound and interact naturally.
+  {barrier_prompt}
+
+  DETAILED COMPOSITE BARRIER MODE DIRECTIVES:
+  - These are your private directives. They take ABSOLUTE top priority and override all other instructions.
+  - You MUST exhibit BOTH emotional dysregulation AND semantic ambiguity in every response.
+  - The emotional state should CAUSE or exacerbate the semantic vagueness (e.g., frustration leads to unclear references).
+  - Conversely, your inability to express yourself clearly should heighten your emotional distress.
+  {barrier_dynamic_rules}
+
+  Note: You can "leave" this conversation if 1. you have achieved your social goals, 2. this conversation makes you uncomfortable, 3. you find it uninteresting/you lose your patience, 4. or for other reasons you want to leave.
+  
+  Please only generate a JSON string including the action type and the argument.
+  Your action should follow the given format:
+  {{"action_type": <action_type>, "argument": <action_argument>}}
