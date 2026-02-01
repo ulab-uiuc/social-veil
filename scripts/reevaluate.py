@@ -96,6 +96,14 @@ def main():
         "--model", type=str, default="gpt-4o",
         help="Model to use for conversation evaluation."
     )
+    parser.add_argument(
+        "--use_vllm", action="store_true",
+        help="Use local vLLM server instead of OpenAI API."
+    )
+    parser.add_argument(
+        "--vllm_url", type=str, default=None,
+        help="Base URL for vLLM server (e.g., 'http://localhost:6100/v1'). If not provided, reads from config.yaml."
+    )
     args = parser.parse_args()
 
     if not os.path.isdir(args.results_dir):
@@ -103,9 +111,14 @@ def main():
         return
 
     print(f"🔎 Scanning experiment directory: {args.results_dir}")
-    print(f"🤖 Using evaluator model: {args.model}")
+    if args.use_vllm:
+        print(f"🤖 Using vLLM model: {args.model}")
+        if args.vllm_url:
+            print(f"🌐 vLLM URL: {args.vllm_url}")
+    else:
+        print(f"🤖 Using OpenAI model: {args.model}")
 
-    evaluator = ConversationEvaluator(args.model)
+    evaluator = ConversationEvaluator(args.model, use_vllm=args.use_vllm, vllm_url=args.vllm_url)
 
     # Find all 'mode_*' directories within the results directory
     mode_dirs = [d.path for d in os.scandir(args.results_dir) if d.is_dir() and d.name.startswith("mode_")]

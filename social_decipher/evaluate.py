@@ -17,7 +17,15 @@ def extract_clean_json(response_str: str) -> dict:
     return json.loads(cleaned)
 
 class ConversationEvaluator:
-    def __init__(self, model: str):
+    def __init__(self, model: str, use_vllm: bool = False, vllm_url: str = None):
+        """
+        Initialize the ConversationEvaluator.
+        
+        Args:
+            model: Model name/identifier
+            use_vllm: If True, use local vLLM server instead of OpenAI API
+            vllm_url: Base URL for vLLM server (e.g., "http://localhost:6100/v1")
+        """
         # Get the path relative to the project root
         eval_config_path = os.path.join(os.path.dirname(__file__), "..", "configs", "evaluation.yaml")
         with open(eval_config_path) as template_file:
@@ -28,12 +36,28 @@ class ConversationEvaluator:
         with open(main_config_path) as config_file:
             main_config = yaml.safe_load(config_file)
         
-        evaluator_api_key = main_config.get("EVALUATOR_OPENAI_API_KEY")
-        if not evaluator_api_key:
-            raise ValueError("EVALUATOR_OPENAI_API_KEY not found in config.yaml")
-
         self.model = model
-        self.client = OpenAI(api_key=evaluator_api_key)
+        self.use_vllm = use_vllm
+        
+        if use_vllm:
+            # Use vLLM server (OpenAI-compatible API)
+            if vllm_url is None:
+                vllm_port = main_config.get("vllm_port", 6100)
+                vllm_url = f"http://localhost:{vllm_port}/v1"
+            
+            print(f"🔧 Using vLLM server at {vllm_url} with model {model}")
+            self.client = OpenAI(
+                api_key="EMPTY",  # vLLM doesn't require real API key
+                base_url=vllm_url
+            )
+        else:
+            # Use OpenAI API
+            evaluator_api_key = main_config.get("EVALUATOR_OPENAI_API_KEY")
+            if not evaluator_api_key:
+                raise ValueError("EVALUATOR_OPENAI_API_KEY not found in config.yaml")
+            
+            print(f"🔧 Using OpenAI API with model {model}")
+            self.client = OpenAI(api_key=evaluator_api_key)
 
     @api_calling_error_exponential_backoff()
     def evaluate_social_goal_performance(
