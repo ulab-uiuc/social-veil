@@ -22,6 +22,7 @@ import os
 import sys
 import warnings
 from typing import Dict, List, Tuple
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import numpy as np
 from scipy import stats
 from tqdm import tqdm
@@ -105,6 +106,35 @@ def evaluate_conversation_log(log_data: Dict, evaluator: ConversationEvaluator, 
     except Exception as e:
         print(f"Warning: Evaluation failed: {e}")
         return None
+
+
+def evaluate_scenario_pair(
+    scenario_dir: str,
+    eval1: ConversationEvaluator,
+    eval2: ConversationEvaluator,
+    mode_name: str,
+    agent_num: int
+) -> Tuple[Dict[str, float], Dict[str, float]]:
+    """
+    Evaluate a single scenario with both evaluators.
+    Returns (scores1, scores2) or (None, None) on failure.
+    """
+    log_data = load_conversation_log(scenario_dir)
+    if log_data is None:
+        return (None, None)
+    
+    # Evaluate with both evaluators
+    result1 = evaluate_conversation_log(log_data, eval1, mode_name)
+    result2 = evaluate_conversation_log(log_data, eval2, mode_name)
+    
+    if result1 is None or result2 is None:
+        return (None, None)
+    
+    # Extract scores
+    scores1 = extract_scores(result1, agent_num)
+    scores2 = extract_scores(result2, agent_num)
+    
+    return (scores1, scores2)
 
 
 def extract_scores(eval_result: Dict, agent_num: int = 2) -> Dict[str, float]:
@@ -193,8 +223,20 @@ def main():
         "--summary", action="store_true",
         help="Print summary table to console."
     )
+    parser.add_argument(
+        "--concurrency", type=int, default=None,
+        help="Number of concurrent evaluations. Default: read from CONCURRENCY env var or 1."
+    )
     
     args = parser.parse_args()
+    
+    # Get concurrency from args, env var, or default to 1
+    if args.concurrency is not None:
+        concurrency = args.concurrency
+    else:
+        concurrency = int(os.environ.get("CONCURRENCY", 1))
+    
+    print(f"🚀 Using concurrency: {concurrency}")
     
     if not os.path.isdir(args.results_dir):
         print(f"Error: Directory not found at {args.results_dir}")
@@ -252,30 +294,46 @@ def main():
         # Collect scores from both evaluators for each dimension
         dimension_scores = {dim: {"eval1": [], "eval2": []} for dim in all_dimensions}
         
-        for scenario_dir in tqdm(scenario_dirs, desc=f"Evaluating {mode}"):
-            # Load conversation log
-            log_data = load_conversation_log(scenario_dir)
-            if log_data is None:
-                continue
-            
-            # Evaluate with both evaluators
-            result1 = evaluate_conversation_log(log_data, eval1, mode)
-            result2 = evaluate_conversation_log(log_data, eval2, mode)
-            
-            if result1 is None or result2 is None:
-                continue
-            
-            # Extract scores
-            scores1 = extract_scores(result1, args.agent)
-            scores2 = extract_scores(result2, args.agent)
-            
-            if scores1 is None or scores2 is None:
-                continue
-            
-            # Collect scores for each dimension
-            for dim in all_dimensions:
-                dimension_scores[dim]["eval1"].append(scores1[dim])
-                dimension_scores[dim]["eval2"].append(scores2[dim])
+        # Use ThreadPoolExecutor for concurrent evaluation
+        if concurrency > 1:
+            print(f"Using {concurrency} concurrent workers")
+            with ThreadPoolExecutor(max_workers=concurrency) as executor:
+                # Submit all tasks
+                futures = {
+                    executor.submit(
+                        evaluate_scenario_pair,
+                        scenario_dir,
+                        eval1,
+                        eval2,
+                        mode,
+                        args.agent
+                    ): scenario_dir
+                    for scenario_dir in scenario_dirs
+                }
+                
+                # Collect results with progress bar
+                for future in tqdm(as_completed(futures), total=len(futures), desc=f"Evaluating {mode}"):
+                    scores1, scores2 = future.result()
+                    
+                    if scores1 is None or scores2 is None:
+                        continue
+                    
+                    # Collect scores for each dimension
+                    for dim in all_dimensions:
+                        dimension_scores[dim]["eval1"].append(scores1[dim])
+                        dimension_scores[dim]["eval2"].append(scores2[dim])
+        else:
+            # Sequential evaluation (original behavior)
+            for scenario_dir in tqdm(scenario_dirs, desc=f"Evaluating {mode}"):
+                scores1, scores2 = evaluate_scenario_pair(scenario_dir, eval1, eval2, mode, args.agent)
+                
+                if scores1 is None or scores2 is None:
+                    continue
+                
+                # Collect scores for each dimension
+                for dim in all_dimensions:
+                    dimension_scores[dim]["eval1"].append(scores1[dim])
+                    dimension_scores[dim]["eval2"].append(scores2[dim])
         
         # Compute correlations for this mode
         mode_correlations = {}
