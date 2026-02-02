@@ -42,7 +42,9 @@ class ConversationEvaluator:
         if use_vllm:
             # Use vLLM server (OpenAI-compatible API)
             if vllm_url is None:
-                vllm_port = main_config.get("vllm_port", 6100)
+                # Read vllm_port from config.yaml (nested under 'models')
+                models_config = main_config.get("models", {})
+                vllm_port = models_config.get("vllm_port", 6100)
                 vllm_url = f"http://localhost:{vllm_port}/v1"
             
             print(f"🔧 Using vLLM server at {vllm_url} with model {model}")
