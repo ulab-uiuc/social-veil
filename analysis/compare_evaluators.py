@@ -111,16 +111,32 @@ def evaluate_conversation_log(log_data: Dict, evaluator: ConversationEvaluator, 
 
 def evaluate_scenario_pair(
     scenario_dir: str,
-    eval1: ConversationEvaluator,
-    eval2: ConversationEvaluator,
+    evaluator1_config: Dict,
+    evaluator2_config: Dict,
     mode_name: str,
     agent_num: int
 ) -> Tuple[Dict[str, float], Dict[str, float]]:
     """
     Evaluate a single scenario with both evaluators.
     Returns (scores1, scores2) or (None, None) on failure.
+    
+    Args:
+        evaluator1_config: Dict with keys: model, use_vllm, vllm_url
+        evaluator2_config: Dict with keys: model, use_vllm, vllm_url
     """
     try:
+        # Create fresh evaluators for this thread to avoid client sharing issues
+        eval1 = ConversationEvaluator(
+            evaluator1_config["model"],
+            use_vllm=evaluator1_config["use_vllm"],
+            vllm_url=evaluator1_config["vllm_url"]
+        )
+        eval2 = ConversationEvaluator(
+            evaluator2_config["model"],
+            use_vllm=evaluator2_config["use_vllm"],
+            vllm_url=evaluator2_config["vllm_url"]
+        )
+        
         log_data = load_conversation_log(scenario_dir)
         if log_data is None:
             return (None, None)
@@ -247,7 +263,7 @@ def main():
     if not os.path.isdir(args.results_dir):
         print(f"Error: Directory not found at {args.results_dir}")
         return
-    
+
     print("="*80)
     print(f"📊 Evaluator Correlation Analysis")
     print("="*80)
@@ -258,18 +274,17 @@ def main():
     print(f"Modes: {', '.join(args.modes)}")
     print("="*80)
     
-    # Initialize evaluators
-    print("\n🔧 Initializing evaluators...")
-    eval1 = ConversationEvaluator(
-        args.evaluator1, 
-        use_vllm=args.use_vllm_for_evaluator1, 
-        vllm_url=args.vllm_url
-    )
-    eval2 = ConversationEvaluator(
-        args.evaluator2, 
-        use_vllm=args.use_vllm_for_evaluator2, 
-        vllm_url=args.vllm_url
-    )
+    # Prepare evaluator configs (will be used to create fresh evaluators per thread)
+    evaluator1_config = {
+        "model": args.evaluator1,
+        "use_vllm": args.use_vllm_for_evaluator1,
+        "vllm_url": args.vllm_url
+    }
+    evaluator2_config = {
+        "model": args.evaluator2,
+        "use_vllm": args.use_vllm_for_evaluator2,
+        "vllm_url": args.vllm_url
+    }
     
     # Collect all dimension scores across all modes
     all_dimensions = AGENT_DIMENSIONS + EPISODE_DIMENSIONS
@@ -309,8 +324,8 @@ def main():
                     executor.submit(
                         evaluate_scenario_pair,
                         scenario_dir,
-                        eval1,
-                        eval2,
+                        evaluator1_config,
+                        evaluator2_config,
                         mode,
                         args.agent
                     ): scenario_dir
@@ -345,7 +360,7 @@ def main():
             failed = 0
             for scenario_dir in tqdm(scenario_dirs, desc=f"Evaluating {mode}"):
                 scores1, scores2 = evaluate_scenario_pair(
-                    scenario_dir, eval1, eval2, mode, args.agent
+                    scenario_dir, evaluator1_config, evaluator2_config, mode, args.agent
                 )
                 
                 if scores1 is None or scores2 is None:
