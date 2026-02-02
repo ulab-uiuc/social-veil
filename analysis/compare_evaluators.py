@@ -114,29 +114,19 @@ def evaluate_scenario_pair(
     eval1: ConversationEvaluator,
     eval2: ConversationEvaluator,
     mode_name: str,
-    agent_num: int,
-    request_delay: float = 0.0
+    agent_num: int
 ) -> Tuple[Dict[str, float], Dict[str, float]]:
     """
     Evaluate a single scenario with both evaluators.
     Returns (scores1, scores2) or (None, None) on failure.
-    
-    Args:
-        request_delay: Delay in seconds between evaluator calls to avoid rate limiting
     """
     try:
         log_data = load_conversation_log(scenario_dir)
         if log_data is None:
             return (None, None)
         
-        # Evaluate with first evaluator
+        # Evaluate with both evaluators (no delay needed for high-tier API keys)
         result1 = evaluate_conversation_log(log_data, eval1, mode_name)
-        
-        # Add delay between requests if specified
-        if request_delay > 0:
-            time.sleep(request_delay)
-        
-        # Evaluate with second evaluator
         result2 = evaluate_conversation_log(log_data, eval2, mode_name)
         
         if result1 is None or result2 is None:
@@ -241,24 +231,18 @@ def main():
     )
     parser.add_argument(
         "--concurrency", type=int, default=None,
-        help="Number of concurrent evaluations. Default: read from CONCURRENCY env var or 4."
-    )
-    parser.add_argument(
-        "--request_delay", type=float, default=0.0,
-        help="Delay in seconds between API requests to avoid rate limiting. Default: 0.0"
+        help="Number of concurrent evaluations. Default: read from CONCURRENCY env var or 16."
     )
     
     args = parser.parse_args()
     
-    # Get concurrency from args, env var, or default to 4 (safer than 1 but not too aggressive)
+    # Get concurrency from args, env var, or default to 16 (optimized for high-tier API keys)
     if args.concurrency is not None:
         concurrency = args.concurrency
     else:
-        concurrency = int(os.environ.get("CONCURRENCY", 4))
+        concurrency = int(os.environ.get("CONCURRENCY", 16))
     
     print(f"🚀 Using concurrency: {concurrency}")
-    if args.request_delay > 0:
-        print(f"⏱️  Request delay: {args.request_delay}s")
     
     if not os.path.isdir(args.results_dir):
         print(f"Error: Directory not found at {args.results_dir}")
@@ -328,8 +312,7 @@ def main():
                         eval1,
                         eval2,
                         mode,
-                        args.agent,
-                        args.request_delay
+                        args.agent
                     ): scenario_dir
                     for scenario_dir in scenario_dirs
                 }
@@ -357,12 +340,12 @@ def main():
                 
                 print(f"✅ Completed: {completed}, ❌ Failed: {failed}")
         else:
-            # Sequential evaluation (original behavior)
+            # Sequential evaluation
             completed = 0
             failed = 0
             for scenario_dir in tqdm(scenario_dirs, desc=f"Evaluating {mode}"):
                 scores1, scores2 = evaluate_scenario_pair(
-                    scenario_dir, eval1, eval2, mode, args.agent, args.request_delay
+                    scenario_dir, eval1, eval2, mode, args.agent
                 )
                 
                 if scores1 is None or scores2 is None:
