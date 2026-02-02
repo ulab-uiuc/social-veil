@@ -43,8 +43,6 @@ AGENT_DIMENSIONS = [
     "believability",
     "relationship",
     "knowledge",
-    "social_rules",
-    "financial_benefits",
 ]
 
 EPISODE_DIMENSIONS = [
@@ -81,7 +79,6 @@ def evaluate_conversation_log(log_data: Dict, evaluator: ConversationEvaluator, 
         agent_goals = [agent_a_context.get("goal"), agent_b_context.get("goal")]
         agent_reasons = [agent_a_context.get("reason"), agent_b_context.get("reason")]
         scenario = context.get("scenario", {}).get("description", "")
-        mcq_logs = log_data.get("mcq_logs")
         
         # Get barrier_type from the log or infer from mode name
         barrier_type = context.get("scenario", {}).get("barrier_type")
@@ -98,9 +95,11 @@ def evaluate_conversation_log(log_data: Dict, evaluator: ConversationEvaluator, 
             conversation,
             agent_goals=agent_goals,
             agent_reasons=agent_reasons,
-            mcq_logs=mcq_logs,
+            scenario = scenario,
             barrier_type=barrier_type,
         )
+
+        print(f"Evaluation result: {evaluation_result}")
         
         return evaluation_result
     
@@ -138,10 +137,6 @@ def evaluate_scenario_pair(
         )
         
         log_data = load_conversation_log(scenario_dir)
-        if log_data is None:
-            return (None, None)
-        
-        # Evaluate with both evaluators (no delay needed for high-tier API keys)
         result1 = evaluate_conversation_log(log_data, eval1, mode_name)
         result2 = evaluate_conversation_log(log_data, eval2, mode_name)
         

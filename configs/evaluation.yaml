@@ -156,6 +156,8 @@ Social_Goal_Evaluation: |
     "key_observations": ["Observation 1", "Observation 2", "Observation 3"]
   }}
 
+  CRITICAL: You MUST respond with ONLY the JSON object above. Do NOT include any explanatory text, markdown formatting, or additional commentary before or after the JSON. Start your response with {{ and end with }}.
+
 Barrier_Evaluation: |
   You are evaluating a completed conversation for its episode-level repair outcome quality. Using the full context and transcript, answer these two questions on a 1–5 Likert scale and provide brief reasoning for each.
 
@@ -188,4 +190,6 @@ Barrier_Evaluation: |
       "mutual_understanding": {{"score": <1–5>, "reasoning": "<why this value>"}}
     }}
   }}
+
+  CRITICAL: You MUST respond with ONLY the JSON object above. Do NOT include any explanatory text, markdown formatting, or additional commentary before or after the JSON. Start your response with {{ and end with }}.
 
