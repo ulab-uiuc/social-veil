@@ -1,172 +1,69 @@
-# Social Decipher
+# SocialVeil: Probing Social Intelligence of Language Agents under Communication Barriers
 
-Social Decipher is a research project focused on developing and evaluating socially intelligent agents. This repository contains code for simulating and evaluating agent interactions under various social communication barriers.
+[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Table of Contents
+A research framework for evaluating social intelligence in LLM agents through communication barriers.
 
-- [Project Overview](#project-overview)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Running Experiments](#running-experiments)
-- [Project Structure](#project-structure)
-- [Contributing](#contributing)
-- [License](#license)
+## 🌟 Introduction
 
-## Project Overview
+**Social Decipher** is a multi-agent platform for studying social reasoning capabilities of large language models. The framework simulates realistic social interactions where agents must navigate various communication barriers:
 
-This project aims to evaluate the social reasoning capabilities of large language models (LLMs) by simulating social interactions with various communication barriers. The framework tests how well agents can navigate challenges like semantic ambiguity, cultural differences, and emotional influences.
+- 🗣️ **Semantic Barriers**: Ambiguous language and unclear expressions
+- 🌍 **Cultural Barriers**: Different communication styles and norms
+- 💭 **Emotional Barriers**: Emotional states affecting communication clarity
 
-## Installation
+## 🚀 Quick Start
 
-### 1. Clone the Repository
+### Installation
 
 ```bash
+# Clone the repository
 git clone https://github.com/ulab-uiuc/social-decipher.git
 cd social-decipher
-```
 
-### 2. Set Up Python Environment
-
-We recommend using Conda to manage dependencies:
-
-```bash
+# Create environment
 conda create -n social-decipher python=3.11
 conda activate social-decipher
-```
 
-### 3. Install Dependencies
-
-This project uses Poetry for dependency management:
-
-```bash
-# Install Poetry
+# Install dependencies
 pip install poetry
-
-# Install all dependencies
 poetry install
+
+# Install yq (for config parsing)
+pip install yq  # or: brew install yq (macOS)
 ```
 
-Alternatively, you can use pip with requirements.txt:
+### Configuration
 
-```bash
-poetry export -f requirements.txt --output requirements.txt --without-hashes
-pip install -r requirements.txt
-```
-
-### 4. Install Additional Tools
-
-For running experiments, you'll need `yq` (a YAML processor):
-
-```bash
-# On macOS
-brew install yq
-
-# On Linux
-pip install yq
-
-# Or using conda
-conda install -c conda-forge yq
-```
-
-## Configuration
-
-### 1. Configure API Keys and Models
-
-Edit `configs/config.yaml` to set up your environment:
+Edit `configs/config.yaml`:
 
 ```yaml
-# Data configuration
-data_dir: 'data/episode_all_neutralized.jsonl'
-
-# Model configuration
 models:
-  model_a: "gpt-4o-mini"                    # Agent A model (e.g., OpenAI model)
-  model_b: "Qwen/Qwen2.5-7B-Instruct"       # Agent B model (local or HuggingFace model)
-  gpu: "0,1,2,3"                             # GPU devices for vLLM server
-  vllm_port: 7900                            # Port for vLLM server
-  chat_template: "configs/qwen2.5-7b.jinja" # Chat template for local model
-  served_model_name: "qwen2.5-7b-instruct"  # Model name for vLLM API
-  max_model_len: 4096                        # Maximum context length
-  tensor_parallel_size: 2                    # Tensor parallelism for vLLM
+  model_a: "gpt-4o-mini"              # Barrier agent
+  model_b: "Qwen/Qwen2.5-7B-Instruct" # Partner agent
+  vllm_port: 7900
+  gpu: "0,1,2,3"
 
-# API Keys
-AGENT_OPENAI_API_KEY: "your-openai-api-key-here"
-EVALUATOR_OPENAI_API_KEY: "your-evaluator-api-key-here"
-HF_API_TOKEN: ""  # Optional: for HuggingFace models
+AGENT_OPENAI_API_KEY: "your-key-here"
+EVALUATOR_OPENAI_API_KEY: "your-key-here"
 ```
 
-### 2. Model Configuration Options
-
-**Agent A (Barrier Agent)**: Typically uses an OpenAI model (e.g., `gpt-4o-mini`, `gpt-4o`)
-
-**Agent B (Partner Agent)**: Can use either:
-- **OpenAI models**: `gpt-4o`, `gpt-4o-mini`, etc.
-- **Local models via vLLM**: Any HuggingFace model or fine-tuned model path
-  - Example: `"Qwen/Qwen2.5-7B-Instruct"`
-  - Example: `"/path/to/your/fine-tuned-model"`
-
-## Running Experiments
-
-### Step 1: Start vLLM Server (for Local Models)
-
-If using a local model for Agent B, start the vLLM server first:
+### Running Experiments
 
 ```bash
+# Start vLLM server (for local models)
 bash scripts/start_vllm_server.sh
-```
 
-This will:
-- Read configuration from `configs/config.yaml`
-- Start a vLLM server on the specified port (default: 7900)
-- Load the model specified in `models.model_b`
-
-**Verify the server is running:**
-
-```bash
-curl http://localhost:7900/v1/models
-```
-
-### Step 2: Run Evaluation
-
-Run the main evaluation script:
-
-```bash
+# Run evaluation
 bash scripts/run.sh
-```
 
-This will:
-- Automatically test the agent across **4 different modes**:
-  - `baseline`: Standard interactions without barriers
-  - `semantic`: Semantic ambiguity barriers
-  - `cultural`: Cultural style barriers
-  - `emotional`: Emotional influence barriers
-- Save results to `results/exp_<model_name>_<data_tag>/`
-- Generate conversation logs and evaluation metrics for each scenario
-
-### Step 3: Customize Experiment Settings
-
-You can customize the experiment using environment variables:
-
-```bash
-# Set concurrency (number of parallel scenarios)
+# With custom settings
 CONCURRENCY=16 bash scripts/run.sh
-
-# Use repair prompting for Agent B
 PARTNER_REPAIR_MODE=true bash scripts/run.sh
-
-# Use Chain-of-Thought prompting for Agent B
-PARTNER_COT_MODE=true bash scripts/run.sh
-
-# Custom results directory
-RESULTS_DIR="results/my_experiment" bash scripts/run.sh
-
-# Combine multiple settings
-CONCURRENCY=32 PARTNER_REPAIR_MODE=true bash scripts/run.sh
 ```
 
-### Step 4: Analyze Results
-
-After running experiments, analyze the results:
+### Analyze Results
 
 ```bash
 python results/compare_modes.py \
@@ -174,107 +71,75 @@ python results/compare_modes.py \
     --out_csv results/comparison.csv
 ```
 
-This generates a CSV file with:
-- Performance metrics for each mode (baseline, semantic, cultural, emotional)
-- Statistical significance tests
-- Confidence intervals
-
-## Project Structure
+## 📁 Project Structure
 
 ```
 social-decipher/
-├── configs/                  # Configuration files
-│   ├── config.yaml          # Main configuration (API keys, models)
-│   ├── evaluation.yaml      # Evaluation prompts
-│   ├── social_task.yaml     # Agent instruction templates
-│   └── *.jinja              # Chat templates for different models
-├── data/                     # Episode data and processing scripts
-│   ├── episode_all_neutralized.jsonl  # Main episode dataset
-│   └── data_process.py      # Data processing utilities
-├── scripts/                  # Executable scripts
-│   ├── run.sh               # Main experiment runner
-│   ├── run.py               # Python evaluation script
-│   └── start_vllm_server.sh # vLLM server startup
-├── social_decipher/         # Core Python package
-│   ├── agent/               # Agent implementations
-│   ├── environment/         # Environment and scenario management
-│   ├── evaluate.py          # Evaluation logic
-│   └── communication.py     # Conversation simulation
-├── results/                  # Experiment outputs
-│   └── compare_modes.py     # Results analysis script
-└── analysis/                 # Analysis tools
-    ├── compare_evaluators.py # Compare different evaluators
-    └── check_correlation.py  # Correlation analysis
+├── configs/          # Configuration files
+├── data/             # Episode datasets
+├── scripts/          # Experiment runners
+├── social_decipher/  # Core package
+│   ├── agent/        # Agent implementations
+│   ├── environment/  # Scenario management
+│   └── evaluate.py   # Evaluation logic
+├── results/          # Experiment outputs
+└── analysis/         # Analysis tools
 ```
 
-## Testing Your Setup
+## 🛠️ Advanced Usage
 
-To verify your installation and configuration:
-
-### 1. Check Dependencies
+### Custom Experiment Settings
 
 ```bash
-# Verify Python environment
-python --version  # Should be 3.11
+# High concurrency
+CONCURRENCY=32 bash scripts/run.sh
 
-# Verify key packages
-python -c "import openai; import yaml; import numpy; print('✅ Dependencies OK')"
+# Chain-of-Thought prompting
+PARTNER_COT_MODE=true bash scripts/run.sh
 
-# Verify yq is installed
-yq --version
+# Custom results directory
+RESULTS_DIR="results/my_exp" bash scripts/run.sh
 ```
 
-### 2. Test Configuration
+### Compare Different Evaluators
 
 ```bash
-# Verify config.yaml is valid
-yq '.' configs/config.yaml
+CONCURRENCY=32 python analysis/compare_evaluators.py \
+    --results_dir results/exp_qwen2.5-7b-instruct_episode_all_neutralized \
+    --evaluator1 gpt-4o \
+    --evaluator2 qwen2.5-7b-instruct \
+    --use_vllm_for_evaluator2 \
+    --output results/evaluator_comparison.csv
 ```
 
-### 3. Quick Test Run
+## 📊 Key Features
 
-Run a quick test with limited episodes:
+- ✅ **Multi-Barrier Evaluation**: Test agents across semantic, cultural, and emotional barriers
+- ✅ **Flexible Model Support**: OpenAI API or local models via vLLM
+- ✅ **High Concurrency**: Parallel scenario execution for faster experiments
+- ✅ **Statistical Analysis**: Built-in significance testing and correlation analysis
+- ✅ **Extensible Framework**: Easy to add new barrier types or evaluation metrics
+
+## 🔧 Development
+
+### Running Tests
 
 ```bash
-# Edit scripts/run.py and set episode limit to 5 (line 316-320)
-# Then run:
-CONCURRENCY=1 bash scripts/run.sh
+poetry run pytest
+poetry run mypy --config-file pyproject.toml .
 ```
 
-This will process only the first 5 episodes to verify everything works.
+### Code Style
 
-## Common Issues
+```bash
+# Install pre-commit hooks
+pre-commit install
 
-### vLLM Server Not Starting
+# Run all checks
+pre-commit run --all-files
+```
 
-If the vLLM server fails to start:
-1. Check GPU availability: `nvidia-smi`
-2. Verify model path in `config.yaml`
-3. Check port is not in use: `lsof -i :7900`
-
-### API Connection Errors
-
-If you see API connection errors:
-1. Verify OpenAI API keys in `config.yaml`
-2. Check internet connection
-3. Ensure API keys have sufficient quota
-
-### Memory Issues
-
-If you encounter OOM (Out of Memory) errors:
-1. Reduce `max_model_len` in `config.yaml`
-2. Increase `tensor_parallel_size` for larger models
-3. Use a smaller model for Agent B
-
-## Contributing
-
-Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
-
-## Citation
+## 📝 Citation
 
 If you use this code in your research, please cite:
 
@@ -286,3 +151,11 @@ If you use this code in your research, please cite:
   year={2026}
 }
 ```
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
