@@ -13,8 +13,63 @@ from .utils.metrics import (get_confidence_bin, validate_confidence_consistency,
 from .utils.error_handler import api_calling_error_exponential_backoff
 
 def extract_clean_json(response_str: str) -> dict:
-    cleaned = re.sub(r"^```(?:json)?\n|\n```$", "", response_str.strip())
-    return json.loads(cleaned)
+    try:
+        # Remove markdown code blocks (both opening and closing)
+        cleaned = re.sub(r'```(?:json)?\s*|\s*```', '', response_str).strip()
+        
+        # Try direct parse first (most common case)
+        try:
+            return json.loads(cleaned)
+        except json.JSONDecodeError as e1:
+            # Try adding missing closing braces (common issue with LLMs)
+            open_braces = cleaned.count('{')
+            close_braces = cleaned.count('}')
+            if open_braces > close_braces:
+                # Add missing closing braces
+                cleaned_fixed = cleaned + ('}' * (open_braces - close_braces))
+                try:
+                    return json.loads(cleaned_fixed)
+                except json.JSONDecodeError:
+                    pass  # Continue to other strategies
+            first_brace = cleaned.find('{')
+            if first_brace == -1:
+                print(f"❌ CRITICAL: No JSON object found in response!")
+                print(f"   Full response:\n{response_str}")
+                raise ValueError(f"No JSON object found in model response")
+            
+            # Find the matching closing brace
+            brace_count = 0
+            start = first_brace
+            for i in range(first_brace, len(cleaned)):
+                if cleaned[i] == '{':
+                    brace_count += 1
+                elif cleaned[i] == '}':
+                    brace_count -= 1
+                    if brace_count == 0:
+                        # Found matching brace
+                        json_str = cleaned[start:i+1]
+                        try:
+                            return json.loads(json_str)
+                        except json.JSONDecodeError as e2:
+                            print(f"❌ CRITICAL: JSON parse failed after brace matching!")
+                            print(f"   Original error: {e1}")
+                            print(f"   Brace-match error: {e2}")
+                            print(f"   Extracted JSON:\n{json_str}")
+                            print(f"   Full response:\n{response_str}")
+                            raise ValueError(f"Cannot parse JSON from model response") from e2
+            
+            # If we get here, braces don't match
+            print(f"❌ CRITICAL: Unmatched braces in JSON!")
+            print(f"   Full response:\n{response_str}")
+            raise ValueError(f"Unmatched braces in model response")
+            
+    except ValueError:
+        raise  # Re-raise to trigger retry in @api_calling_error_exponential_backoff
+    except Exception as e:
+        print(f"❌ CRITICAL: Unexpected error in extract_clean_json: {type(e).__name__}")
+        print(f"   Error: {e}")
+        print(f"   Full response:\n{response_str}")
+        raise ValueError(f"Unexpected error parsing JSON") from e
 
 class ConversationEvaluator:
     def __init__(self, model: str, use_vllm: bool = False, vllm_url: str = None):
@@ -92,7 +147,6 @@ class ConversationEvaluator:
         )
         result = response.choices[0].message.content.strip()
         evaluation_results = extract_clean_json(result)
-
         return evaluation_results
 
     @api_calling_error_exponential_backoff()
@@ -106,7 +160,7 @@ class ConversationEvaluator:
         barrier_type: Optional[str] = None,
     ) -> dict:
         social_performance = self.evaluate_social_goal_performance(
-            conversation, agent_goals, agent_reasons
+            conversation, agent_goals, agent_reasons, scenario
         )
 
 
