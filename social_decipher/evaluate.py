@@ -8,8 +8,6 @@ import time
 import random
 
 import yaml
-from .utils.metrics import (get_confidence_bin, validate_confidence_consistency,
-                            analyze_confidence_distribution)
 from .utils.error_handler import api_calling_error_exponential_backoff
 
 def extract_clean_json(response_str: str) -> dict:
@@ -156,7 +154,6 @@ class ConversationEvaluator:
         agent_goals: list[str],
         agent_reasons: list[str],
         scenario: str = "",
-        mcq_logs=None,
         barrier_type: Optional[str] = None,
     ) -> dict:
         social_performance = self.evaluate_social_goal_performance(
@@ -257,91 +254,5 @@ class ConversationEvaluator:
             ] = ep.get("mutual_understanding", {}).get("score", 0)
 
         print("Evaluation Results:", json.dumps(evaluation, indent=2))
-        
-        # --- Enhanced MCQ Metrics ---
-        def compute_mcq_metrics(mcq_logs, agent_prefix):
-            metrics = {}
-            for mcq_type in ["goal", "reason", "knowledge"]:
-                correct_list = []
-                confidence_list = []
-                mcq_pure_list = []
-                confidence_consistency_issues = []
-                
-                for log in mcq_logs:
-                    mcq = log.get(f"{agent_prefix}_{mcq_type}_mcq")
-        
-                    if mcq is not None:
-                        correct = mcq.get("is_correct")
-                        conf = mcq.get("confidence", 0)
-                        correct_list.append(1 if correct else 0)
-                        confidence_list.append(conf)
-                        mcq_pure_list.append({"correct": correct, "confidence": conf})
-                        
-                        # Validate confidence consistency if both value and class are provided
-                        if "confidence_class" in mcq:
-                            is_consistent = validate_confidence_consistency(conf, mcq["confidence_class"])
-                            if not is_consistent:
-                                confidence_consistency_issues.append({
-                                    "round": log.get("round", "unknown"),
-                                    "predicted_value": conf,
-                                    "predicted_class": mcq["confidence_class"],
-                                    "actual_class": get_confidence_bin(conf)
-                                })
-                
-                total = len(correct_list)
-                metrics[f"{mcq_type}_pure_list"] = mcq_pure_list
-                
-                # Confidence binning analysis
-                if confidence_list:
-                    confidence_analysis = analyze_confidence_distribution(confidence_list)
-                    metrics[f"{mcq_type}_confidence_bins"] = confidence_analysis
-                    metrics[f"{mcq_type}_confidence_consistency_issues"] = confidence_consistency_issues
-                
-                # Basic averages
-                metrics[f"{mcq_type}_accuracy"] = np.mean(correct_list) if total > 0 else None
-                metrics[f"{mcq_type}_avg_confidence"] = np.mean(confidence_list) if total > 0 else None
-                
-                # First/last N (N = max(1, total//3))
-                N = max(1, total // 3)
-                if total >= 2*N:
-                    first_acc = np.mean(correct_list[:N])
-                    last_acc = np.mean(correct_list[-N:])
-                    first_conf = np.mean(confidence_list[:N])
-                    last_conf = np.mean(confidence_list[-N:])
-                else:
-                    first_acc = last_acc = first_conf = last_conf = None
-                metrics[f"{mcq_type}_firstN_accuracy"] = first_acc
-                metrics[f"{mcq_type}_lastN_accuracy"] = last_acc
-                metrics[f"{mcq_type}_accuracy_improvement"] = (last_acc - first_acc) if (first_acc is not None and last_acc is not None) else None
-                metrics[f"{mcq_type}_firstN_confidence"] = first_conf
-                metrics[f"{mcq_type}_lastN_confidence"] = last_conf
-                metrics[f"{mcq_type}_confidence_improvement"] = (last_conf - first_conf) if (first_conf is not None and last_conf is not None) else None
-                
-                # Slope (trend) for correctness/confidence
-                if total > 1:
-                    x = np.arange(total)
-                    correct_slope = float(np.polyfit(x, correct_list, 1)[0])
-                    conf_slope = float(np.polyfit(x, confidence_list, 1)[0])
-                else:
-                    correct_slope = conf_slope = None
-                metrics[f"{mcq_type}_accuracy_trend_slope"] = correct_slope
-                metrics[f"{mcq_type}_confidence_trend_slope"] = conf_slope
-                
-                # Longest correct streak
-                max_streak = 0
-                current_streak = 0
-                for val in correct_list:
-                    if val:
-                        current_streak += 1
-                        max_streak = max(max_streak, current_streak)
-                    else:
-                        current_streak = 0
-                metrics[f"{mcq_type}_longest_correct_streak"] = max_streak
-            return metrics
-        if mcq_logs is not None:
-            evaluation["mcq_metrics"] = {
-                "agent_1": compute_mcq_metrics(mcq_logs, "agent_1"),
-                "agent_2": compute_mcq_metrics(mcq_logs, "agent_2"),
-            }
 
         return evaluation

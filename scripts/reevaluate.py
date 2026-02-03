@@ -36,7 +36,6 @@ def reevaluate_scenario(scenario_dir: str, evaluator: ConversationEvaluator, mod
         agent_goals = [agent_a_context.get("goal"), agent_b_context.get("goal")]
         agent_reasons = [agent_a_context.get("reason"), agent_b_context.get("reason")]
         scenario = context.get("scenario", {}).get("description", "")
-        mcq_logs = log_data.get("mcq_logs")
         
         # First, try to get barrier_type from the log (for newer logs)
         barrier_type = context.get("scenario", {}).get("barrier_type")
@@ -55,11 +54,11 @@ def reevaluate_scenario(scenario_dir: str, evaluator: ConversationEvaluator, mod
         # the prompt in `evaluation.yaml` *does*. The evaluator loads the yaml
         # but only formats the fields it has, so this will run without error.
 
-        new_evaluation_result = evaluator.evaluate_conversation(
+        new_        evaluation_result = evaluator.evaluate_conversation(
             conversation,
             agent_goals=agent_goals,
             agent_reasons=agent_reasons,
-            mcq_logs=mcq_logs,
+            scenario=scenario,
             barrier_type=barrier_type,
         )
 

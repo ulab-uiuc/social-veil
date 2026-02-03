@@ -1,80 +1,8 @@
-MCQ_Goal_Prediction_Prompt: |
-  You are {agent_name}, in a simulated social conversation with {partner_name}.
-  Your task is to identify what {partner_name} is trying to achieve — their main social goal.
-
-  Use the conversation history below. Do not assume hidden intentions beyond what is observable.
-
-  Conversation History:
-  {transcript}
-
-  Question:
-  {question}
-
-  Options:
-  {options}
-
-  **Confidence Scoring Guidelines:**
-  - **Low (0.0–0.4):** Very uncertain; limited or conflicting evidence.
-  - **Medium (0.4–0.7):** Some supporting cues; moderate certainty.
-  - **High (0.7–1.0):** Strong evidence; confident interpretation.
-
-  Respond in this format:
-  Selected: <option_letter>  
-  Confidence: <float between 0 and 1>  
-  Reasoning: <one sentence explaining your choice>
-
-MCQ_Reason_Prediction_Prompt: |
-  You are {agent_name}, in a simulated social conversation with {partner_name}.
-  Your task is to infer the most likely **underlying motivation** behind {partner_name}'s behavior.
-
-  Focus on what explains **why** they are pursuing their goal. Use the conversation history below.
-
-  Conversation History:
-  {transcript}
-
-  Question:
-  {question}
-
-  Options:
-  {options}
-
-  **Confidence Scoring Guidelines:**
-  - **Low (0.0–0.4):** Very uncertain; little grounding in conversation.
-  - **Medium (0.4–0.7):** Some indication or suggestive behavior.
-  - **High (0.7–1.0):** Clear alignment with conversational cues.
-
-  Respond in this format:
-  Selected: <option_letter>  
-  Confidence: <float between 0 and 1>  
-  Reasoning: <one sentence explaining your choice>
-
-MCQ_Knowledge_Prediction_Prompt: |
-  You are {agent_name}, in a simulated social conversation with {partner_name}.
-  Your task is to infer a piece of **private knowledge** that {partner_name} likely holds — something influencing their behavior but not explicitly stated.
-
-  Focus on information that is **subtly implied** but not spoken aloud. Use the conversation to make inferences. Avoid answers that are already shared in the transcript.
-
-  Conversation History:
-  {transcript}
-
-  Question:
-  {question}
-
-  Options:
-  {options}
-
-  **Confidence Scoring Guidelines:**
-  - **Low (0.0–0.4):** Very uncertain; speculative guess.
-  - **Medium (0.4–0.7):** Some indirect hints in the conversation.
-  - **High (0.7–1.0):** Strong inference supported by consistent cues.
-
-  Respond in this format:
-  Selected: <option_letter>  
-  Confidence: <float between 0 and 1>  
-  Reasoning: <one sentence explaining your choice>
-
 Social_Goal_Evaluation: |
   You are evaluating a conversation between two agents who each have specific social goals and reasons. Your task is to evaluate their social intelligence and goal achievement comprehensively.
+
+  SCENARIO CONTEXT:
+  {scenario}
 
   AGENT 1 GOAL: {goal1}
   AGENT 1 REASON: {reason1}
