@@ -50,7 +50,6 @@ EPISODE_DIMENSIONS = [
     "mutual_understanding",
 ]
 
-
 def load_conversation_log(scenario_dir: str) -> Dict:
     """Load conversation log data from a scenario directory."""
     convo_log_path = os.path.join(scenario_dir, "conversation_log.json")
@@ -64,7 +63,6 @@ def load_conversation_log(scenario_dir: str) -> Dict:
     except Exception as e:
         print(f"Warning: Failed to load {convo_log_path}: {e}")
         return None
-
 
 def evaluate_conversation_log(log_data: Dict, evaluator: ConversationEvaluator, mode_name: str) -> Dict:
     """Evaluate a single conversation log using the given evaluator."""
@@ -114,10 +112,10 @@ def evaluate_scenario_pair(
     evaluator2_config: Dict,
     mode_name: str,
     agent_num: int
-) -> Tuple[Dict[str, float], Dict[str, float]]:
+) -> Tuple[Dict[str, float], Dict[str, float], str]:
     """
     Evaluate a single scenario with both evaluators.
-    Returns (scores1, scores2) or (None, None) on failure.
+    Returns (scores1, scores2, scenario_id) or (None, None, None) on failure.
     
     Args:
         evaluator1_config: Dict with keys: model, use_vllm, vllm_url
@@ -141,17 +139,20 @@ def evaluate_scenario_pair(
         result2 = evaluate_conversation_log(log_data, eval2, mode_name)
         
         if result1 is None or result2 is None:
-            return (None, None)
+            return (None, None, None)
         
         # Extract scores
         scores1 = extract_scores(result1, agent_num)
         scores2 = extract_scores(result2, agent_num)
         
-        return (scores1, scores2)
+        # Get scenario ID from directory name
+        scenario_id = os.path.basename(scenario_dir)
+        
+        return (scores1, scores2, scenario_id)
     
     except Exception as e:
         print(f"\n⚠️  Error evaluating {os.path.basename(scenario_dir)}: {e}")
-        return (None, None)
+        return (None, None, None)
 
 
 def extract_scores(eval_result: Dict, agent_num: int = 2) -> Dict[str, float]:
@@ -244,6 +245,10 @@ def main():
         "--concurrency", type=int, default=None,
         help="Number of concurrent evaluations. Default: read from CONCURRENCY env var or 16."
     )
+    parser.add_argument(
+        "--save_detailed_scores", action="store_true",
+        help="Save detailed per-scenario scores to a JSON file."
+    )
     
     args = parser.parse_args()
     
@@ -284,6 +289,7 @@ def main():
     # Collect all dimension scores across all modes
     all_dimensions = AGENT_DIMENSIONS + EPISODE_DIMENSIONS
     correlation_results = {}
+    all_detailed_scores = {}  # Store detailed scores for all modes
     
     for mode in args.modes:
         print(f"\n{'='*80}")
@@ -309,6 +315,7 @@ def main():
         
         # Collect scores from both evaluators for each dimension
         dimension_scores = {dim: {"eval1": [], "eval2": []} for dim in all_dimensions}
+        detailed_scores = []  # Store detailed per-scenario scores
         
         # Use ThreadPoolExecutor for concurrent evaluation
         if concurrency > 1:
@@ -332,7 +339,7 @@ def main():
                 failed = 0
                 for future in tqdm(as_completed(futures), total=len(futures), desc=f"Evaluating {mode}"):
                     try:
-                        scores1, scores2 = future.result()
+                        scores1, scores2, scenario_id = future.result()
                         
                         if scores1 is None or scores2 is None:
                             failed += 1
@@ -342,6 +349,14 @@ def main():
                         for dim in all_dimensions:
                             dimension_scores[dim]["eval1"].append(scores1[dim])
                             dimension_scores[dim]["eval2"].append(scores2[dim])
+                        
+                        # Store detailed scores if requested
+                        if args.save_detailed_scores:
+                            detailed_scores.append({
+                                "scenario_id": scenario_id,
+                                "evaluator1_scores": scores1,
+                                "evaluator2_scores": scores2
+                            })
                         
                         completed += 1
                     except Exception as e:
@@ -354,7 +369,7 @@ def main():
             completed = 0
             failed = 0
             for scenario_dir in tqdm(scenario_dirs, desc=f"Evaluating {mode}"):
-                scores1, scores2 = evaluate_scenario_pair(
+                scores1, scores2, scenario_id = evaluate_scenario_pair(
                     scenario_dir, evaluator1_config, evaluator2_config, mode, args.agent
                 )
                 
@@ -366,6 +381,14 @@ def main():
                 for dim in all_dimensions:
                     dimension_scores[dim]["eval1"].append(scores1[dim])
                     dimension_scores[dim]["eval2"].append(scores2[dim])
+                
+                # Store detailed scores if requested
+                if args.save_detailed_scores:
+                    detailed_scores.append({
+                        "scenario_id": scenario_id,
+                        "evaluator1_scores": scores1,
+                        "evaluator2_scores": scores2
+                    })
                 
                 completed += 1
             
@@ -412,6 +435,10 @@ def main():
                 print(f"{dim:<25} | {len(scores1):<5} | {pearson_r:.3f}{p_stars:<7} | {pearson_p:<10.4f} | {spearman_rho:.3f}{' ':<7} | {spearman_p:<10.4f}")
         
         correlation_results[mode] = mode_correlations
+        
+        # Store detailed scores for this mode
+        if args.save_detailed_scores:
+            all_detailed_scores[mode] = detailed_scores
     
     # Save results to CSV
     print(f"\n💾 Saving results to {args.output}")
@@ -450,6 +477,18 @@ def main():
                 f.write(",".join(row) + "\n")
     
     print(f"✅ Results saved to {args.output}")
+    
+    # Save detailed scores if requested
+    if args.save_detailed_scores:
+        detailed_output = args.output.replace(".csv", "_detailed.json")
+        with open(detailed_output, 'w', encoding='utf-8') as f:
+            json.dump({
+                "evaluator1": args.evaluator1,
+                "evaluator2": args.evaluator2,
+                "agent": args.agent,
+                "modes": all_detailed_scores
+            }, f, indent=2)
+        print(f"💾 Detailed scores saved to {detailed_output}")
     
     # Print summary if requested
     if args.summary:
