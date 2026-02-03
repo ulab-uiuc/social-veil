@@ -78,6 +78,10 @@ def evaluate_conversation_log(log_data: Dict, evaluator: ConversationEvaluator, 
         agent_reasons = [agent_a_context.get("reason"), agent_b_context.get("reason")]
         scenario = context.get("scenario", {}).get("description", "")
         
+        # Debug: verify scenario content
+        if not scenario:
+            print(f"⚠️  WARNING: Empty scenario for {mode_name}")
+        
         # Get barrier_type from the log or infer from mode name
         barrier_type = context.get("scenario", {}).get("barrier_type")
         if barrier_type is None:
