@@ -1,0 +1,260 @@
+import json
+import os
+import random
+import re
+import time
+from typing import Any, Optional
+
+import numpy as np
+import yaml
+from openai import OpenAI
+
+from .utils.error_handler import api_calling_error_exponential_backoff
+
+
+def extract_clean_json(response_str: str) -> dict:
+    try:
+        # Remove markdown code blocks (both opening and closing)
+        cleaned = re.sub(r'```(?:json)?\s*|\s*```', '', response_str).strip()
+        
+        # Try direct parse first (most common case)
+        try:
+            return json.loads(cleaned)
+        except json.JSONDecodeError as e1:
+            # Try adding missing closing braces (common issue with LLMs)
+            open_braces = cleaned.count('{')
+            close_braces = cleaned.count('}')
+            if open_braces > close_braces:
+                # Add missing closing braces
+                cleaned_fixed = cleaned + ('}' * (open_braces - close_braces))
+                try:
+                    return json.loads(cleaned_fixed)
+                except json.JSONDecodeError:
+                    pass  # Continue to other strategies
+            first_brace = cleaned.find('{')
+            if first_brace == -1:
+                print(f"❌ CRITICAL: No JSON object found in response!")
+                print(f"   Full response:\n{response_str}")
+                raise ValueError(f"No JSON object found in model response")
+            
+            # Find the matching closing brace
+            brace_count = 0
+            start = first_brace
+            for i in range(first_brace, len(cleaned)):
+                if cleaned[i] == '{':
+                    brace_count += 1
+                elif cleaned[i] == '}':
+                    brace_count -= 1
+                    if brace_count == 0:
+                        # Found matching brace
+                        json_str = cleaned[start:i+1]
+                        try:
+                            return json.loads(json_str)
+                        except json.JSONDecodeError as e2:
+                            print(f"❌ CRITICAL: JSON parse failed after brace matching!")
+                            print(f"   Original error: {e1}")
+                            print(f"   Brace-match error: {e2}")
+                            print(f"   Extracted JSON:\n{json_str}")
+                            print(f"   Full response:\n{response_str}")
+                            raise ValueError(f"Cannot parse JSON from model response") from e2
+            
+            # If we get here, braces don't match
+            print(f"❌ CRITICAL: Unmatched braces in JSON!")
+            print(f"   Full response:\n{response_str}")
+            raise ValueError(f"Unmatched braces in model response")
+            
+    except ValueError:
+        raise  # Re-raise to trigger retry in @api_calling_error_exponential_backoff
+    except Exception as e:
+        print(f"❌ CRITICAL: Unexpected error in extract_clean_json: {type(e).__name__}")
+        print(f"   Error: {e}")
+        print(f"   Full response:\n{response_str}")
+        raise ValueError(f"Unexpected error parsing JSON") from e
+
+class ConversationEvaluator:
+    def __init__(self, model: str, use_vllm: bool = False, vllm_url: str = None):
+        """
+        Initialize the ConversationEvaluator.
+        
+        Args:
+            model: Model name/identifier
+            use_vllm: If True, use local vLLM server instead of OpenAI API
+            vllm_url: Base URL for vLLM server (e.g., "http://localhost:6100/v1")
+        """
+        # Get the path relative to the project root
+        eval_config_path = os.path.join(os.path.dirname(__file__), "..", "configs", "evaluation.yaml")
+        with open(eval_config_path) as template_file:
+            self.evaluation_template = yaml.safe_load(template_file)
+
+        # Load main config to get the evaluator-specific API key
+        main_config_path = os.path.join(os.path.dirname(__file__), "..", "configs", "config.yaml")
+        with open(main_config_path) as config_file:
+            main_config = yaml.safe_load(config_file)
+        
+        self.model = model
+        self.use_vllm = use_vllm
+        
+        if use_vllm:
+            # Use vLLM server (OpenAI-compatible API)
+            if vllm_url is None:
+                # Read vllm_port from config.yaml (nested under 'models')
+                models_config = main_config.get("models", {})
+                vllm_port = models_config.get("vllm_port", 6100)
+                vllm_url = f"http://localhost:{vllm_port}/v1"
+            
+            print(f"🔧 Using vLLM server at {vllm_url} with model {model}")
+            self.client = OpenAI(
+                api_key="EMPTY",  # vLLM doesn't require real API key
+                base_url=vllm_url
+            )
+        else:
+            # Use OpenAI API
+            evaluator_api_key = main_config.get("EVALUATOR_OPENAI_API_KEY")
+            if not evaluator_api_key:
+                raise ValueError("EVALUATOR_OPENAI_API_KEY not found in config.yaml")
+            
+            print(f"🔧 Using OpenAI API with model {model}")
+            self.client = OpenAI(api_key=evaluator_api_key)
+
+    @api_calling_error_exponential_backoff()
+    def evaluate_social_goal_performance(
+        self,
+        conversation: list[str],
+        agent_goals: list[str],
+        agent_reasons: list[str] = None,
+        scenario: str = "",
+    ) -> dict[str, Any]:
+        conversation_str = "\n".join(conversation)
+
+        # Create evaluation prompt
+        prompt = self.evaluation_template["Social_Goal_Evaluation"].format(
+            transcript=conversation_str,
+            scenario=scenario,
+            goal1=agent_goals[0],
+            goal2=agent_goals[1],
+            reason1=agent_reasons[0]
+            if agent_reasons and len(agent_reasons) > 0
+            else "Not specified",
+            reason2=agent_reasons[1]
+            if agent_reasons and len(agent_reasons) > 1
+            else "Not specified",
+        )
+
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.0,
+        )
+        result = response.choices[0].message.content.strip()
+        evaluation_results = extract_clean_json(result)
+        return evaluation_results
+
+    @api_calling_error_exponential_backoff()
+    def evaluate_conversation(
+        self,
+        conversation: list[str],
+        agent_goals: list[str],
+        agent_reasons: list[str],
+        scenario: str = "",
+        barrier_type: Optional[str] = None,
+    ) -> dict:
+        social_performance = self.evaluate_social_goal_performance(
+            conversation, agent_goals, agent_reasons, scenario
+        )
+
+
+        print(f"Barrier type for evaluation: {barrier_type}")
+
+        barrier_scores = None
+        if self.evaluation_template.get("Barrier_Evaluation"):
+            transcript_text = "\n".join(conversation)
+            barrier_prompt = self.evaluation_template["Barrier_Evaluation"].format(
+                transcript=transcript_text,
+                scenario=scenario,
+                agent_a_goal=agent_goals[0],
+                agent_b_goal=agent_goals[1],
+            )
+         
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": barrier_prompt}],
+                temperature=0.0,
+            )
+            content = response.choices[0].message.content.strip()
+            barrier_scores = extract_clean_json(content)
+            
+            print(barrier_scores)
+           
+
+        # Compile comprehensive evaluation
+        evaluation = {
+            "aggregated_scores": {
+                "agent_1": {
+                    "goal_completion": social_performance.get("agent_1", {})
+                    .get("goal_completion", {})
+                    .get("score", 0),
+                    "believability": social_performance.get("agent_1", {})
+                    .get("believability", {})
+                    .get("score", 0),
+                    "relationship": social_performance.get("agent_1", {})
+                    .get("relationship", {})
+                    .get("score", 0),
+                    "knowledge": social_performance.get("agent_1", {})
+                    .get("knowledge", {})
+                    .get("score", 0),
+                    "social_rules": social_performance.get("agent_1", {})
+                    .get("social_rules", {})
+                    .get("score", 0),
+                    "financial_benefits": social_performance.get("agent_1", {})
+                    .get("financial_benefits", {})
+                    .get("score", 0),
+                    "overall": social_performance.get("agent_1", {}).get(
+                        "overall_score", 0
+                    ),
+                },
+                "agent_2": {
+                    "goal_completion": social_performance.get("agent_2", {})
+                    .get("goal_completion", {})
+                    .get("score", 0),
+                    "believability": social_performance.get("agent_2", {})
+                    .get("believability", {})
+                    .get("score", 0),
+                    "relationship": social_performance.get("agent_2", {})
+                    .get("relationship", {})
+                    .get("score", 0),
+                    "knowledge": social_performance.get("agent_2", {})
+                    .get("knowledge", {})
+                    .get("score", 0),
+                    "social_rules": social_performance.get("agent_2", {})
+                    .get("social_rules", {})
+                    .get("score", 0),
+                    "financial_benefits": social_performance.get("agent_2", {})
+                    .get("financial_benefits", {})
+                    .get("score", 0),
+                    "overall": social_performance.get("agent_2", {}).get(
+                        "overall_score", 0
+                    ),
+                },
+                "interaction_quality": social_performance.get(
+                    "interaction_quality", {}
+                ).get("score", 0),
+                "episode_level": {
+                    "unresolved_confusion": None,
+                    "mutual_understanding": None,
+                },
+            },
+        }
+        print(f"Barrier scores: {barrier_scores}")
+    
+        if isinstance(barrier_scores, dict):
+            ep = barrier_scores.get("episode_level", {})
+            evaluation["aggregated_scores"]["episode_level"][
+                "unresolved_confusion"
+            ] = ep.get("unresolved_confusion", {}).get("score", 0)
+            evaluation["aggregated_scores"]["episode_level"][
+                "mutual_understanding"
+            ] = ep.get("mutual_understanding", {}).get("score", 0)
+
+        print("Evaluation Results:", json.dumps(evaluation, indent=2))
+
+        return evaluation
