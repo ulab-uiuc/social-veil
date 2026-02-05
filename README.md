@@ -1,7 +1,14 @@
-# SocialVeil: Probing Social Intelligence of Language Agents under Communication Barriers
+
+
+<h1 align="center">SocialVeil: Probing Social Intelligence of Language Agents under Communication Barriers</h1>
+
+<div align="center">
 
 [![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Arxiv](https://img.shields.io/badge/arXiv-Coming%20soon-b31b1b)](https://github.com/ulab-uiuc/social-veil)
+
+</div>
 
 A research framework for evaluating social intelligence in LLM agents through communication barriers.
 
