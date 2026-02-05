@@ -1,5 +1,0 @@
-mode,num_scenarios,a1_goal_completion,a1_believability,a1_relationship,a1_knowledge,a1_social_rules,a1_financial_benefits,a2_goal_completion,a2_believability,a2_relationship,a2_knowledge,a2_social_rules,a2_financial_benefits,episode_unresolved_confusion,episode_mutual_understanding,a1_goal_accuracy,a1_goal_avg_confidence,a1_reason_accuracy,a1_reason_avg_confidence,a2_goal_accuracy,a2_goal_avg_confidence,a2_reason_accuracy,a2_reason_avg_confidence
-baseline,10,7.1,7.0,1.8,2.6,0.0,0.8,8.2,8.4,3.0,3.9,0.0,0.9,4.2,4.6,,,,,,,,
-semantic,10,4.0,4.7,0.3,2.2,0.0,0.2,6.5,7.6,1.9,2.7,0.0,0.4,3.0,3.3,,,,,,,,
-cultural,10,5.3,6.7,2.4,2.4,0.0,0.3,7.3,8.3,3.4,3.4,0.0,0.4,3.5,4.0,,,,,,,,
-emotional,10,3.3,4.7,-1.3,1.8,-0.8,-0.4,5.9,7.0,0.5,2.6,0.0,-0.1,2.4,2.8,,,,,,,,
