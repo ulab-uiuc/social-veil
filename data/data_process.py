@@ -1,14 +1,16 @@
-import json
-import random
-from collections import defaultdict
-import sys
-import yaml
-import os
 import argparse
+import json
+import os
+import random
+import sys
+from collections import defaultdict
+
+import yaml
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from social_decipher.environment.mcq_generator import SotopiaMCQGenerator
 from openai import OpenAI
+
+from socialveil.environment.mcq_generator import SotopiaMCQGenerator
 
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), "..", "configs/config.yaml")
 with open(CONFIG_PATH, "r") as f:

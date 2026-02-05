@@ -152,6 +152,9 @@ dmypy.json
 # result
 results/
 
+# training
+socialveil/training/
+
 # analysis
 analysis/
 analysis_scripts/

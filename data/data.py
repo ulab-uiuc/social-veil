@@ -5,7 +5,9 @@ from pathlib import Path
 
 import yaml
 from openai import OpenAI
-from social_decipher.utils.error_handler import api_calling_error_exponential_backoff
+
+from socialveil.utils.error_handler import \
+    api_calling_error_exponential_backoff
 
 # Load prompts from YAML file
 with open("../configs/data_generation.yaml") as f:

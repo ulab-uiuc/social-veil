@@ -5,7 +5,7 @@
 # Resolve paths
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
-CONFIG_READER="-m social_decipher.utils.config_reader"
+CONFIG_READER="-m socialveil.utils.config_reader"
 
 # Change to project root so poetry/env works consistently
 cd "$PROJECT_ROOT"

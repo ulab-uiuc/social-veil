@@ -14,7 +14,7 @@ A research framework for evaluating social intelligence in LLM agents through co
 
 ## 🌟 Introduction
 
-**Social Decipher** is a multi-agent platform for studying social reasoning capabilities of large language models. The framework simulates realistic social interactions where agents must navigate various communication barriers:
+**SocialVeil** is a research framework for evaluating social intelligence in LLM agents through communication barriers. The framework simulates realistic social interactions where agents must navigate various communication barriers:
 
 - 🗣️ **Semantic Barriers**: Ambiguous language and unclear expressions
 - 🌍 **Cultural Barriers**: Different communication styles and norms
@@ -26,12 +26,12 @@ A research framework for evaluating social intelligence in LLM agents through co
 
 ```bash
 # Clone the repository
-git clone https://github.com/ulab-uiuc/social-decipher.git
-cd social-decipher
+git clone https://github.com/ulab-uiuc/socialveil.git
+cd socialveil
 
 # Create environment
-conda create -n social-decipher python=3.11
-conda activate social-decipher
+conda create -n socialveil python=3.11
+conda activate socialveil
 
 # Install dependencies
 pip install poetry
@@ -81,11 +81,11 @@ python results/compare_modes.py \
 ## 📁 Project Structure
 
 ```
-social-decipher/
+socialveil/
 ├── configs/          # Configuration files
 ├── data/             # Episode datasets
 ├── scripts/          # Experiment runners
-├── social_decipher/  # Core package
+├── socialveil/       # Core package
 │   ├── agent/        # Agent implementations
 │   ├── environment/  # Scenario management
 │   └── evaluate.py   # Evaluation logic
@@ -151,8 +151,8 @@ pre-commit run --all-files
 If you use this code in your research, please cite:
 
 ```bibtex
-@inproceedings{social-decipher-2026,
-  title={Social Decipher: Training Socially Intelligent Agents through Communication Barriers},
+@inproceedings{socialveil-2026,
+  title={SocialVeil: Probing Social Intelligence of Language Agents under Communication Barriers},
   author={Your Name et al.},
   booktitle={International Conference on Learning Representations (ICLR)},
   year={2026}

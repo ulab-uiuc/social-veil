@@ -12,13 +12,13 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 from openai import OpenAI
 
-from social_decipher.agent.agent_profile import AgentProfile
-from social_decipher.agent.social_agent import SocialAgent
-from social_decipher.communication import simulate_conversation
-from social_decipher.environment.env_profile import EnvironmentProfile
-from social_decipher.evaluate import ConversationEvaluator
-from social_decipher.utils.model import ModelManager
-from social_decipher.utils.utils import load_json
+from socialveil.agent.agent_profile import AgentProfile
+from socialveil.agent.social_agent import SocialAgent
+from socialveil.communication import simulate_conversation
+from socialveil.environment.env_profile import EnvironmentProfile
+from socialveil.evaluate import ConversationEvaluator
+from socialveil.utils.model import ModelManager
+from socialveil.utils.utils import load_json
 
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), "..", "configs/config.yaml")
 with open(CONFIG_PATH, "r") as f:
@@ -58,7 +58,7 @@ def parse_args() -> argparse.Namespace:
         help="Path to the pre-processed episode JSONL file",
     )
     parser.add_argument(
-        "--results_dir", type=str, default="social_decipher/results", 
+        "--results_dir", type=str, default="socialveil/results", 
         help="Base directory for experiment results",
     )
     parser.add_argument(

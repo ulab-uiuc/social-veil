@@ -2,11 +2,13 @@ import argparse
 import json
 import os
 import re
-from typing import Any, Dict, Iterable, List, Tuple, Set
+from typing import Any, Dict, Iterable, List, Set, Tuple
 
 import yaml
 from openai import OpenAI
-from social_decipher.utils.error_handler import api_calling_error_exponential_backoff
+
+from socialveil.utils.error_handler import \
+    api_calling_error_exponential_backoff
 
 
 def _strip_parentheticals(text: str) -> str:

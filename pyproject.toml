@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "python-project-template"
-version = "0.0.1"
-description = "A template for python-based research project"
-license = "Apache 2.0 License"
+name = "socialveil"
+version = "0.1.0"
+description = "A research framework for evaluating social intelligence in LLM agents through communication barriers"
+license = "MIT"
 readme = "README.md"
 packages = [
-    { include = "src" }
+    { include = "socialveil" }
 ]
 
 [tool.poetry.dependencies]
@@ -72,14 +72,14 @@ disallow_incomplete_defs = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = "test_*.py"
-addopts = "-v --cov=python_project_template --cov-report=term-missing"
+addopts = "-v --cov=socialveil --cov-report=term-missing"
 markers = [
     "slow: marks tests as slow",
     "integration: marks tests as integration tests",
 ]
 
 [tool.coverage.run]
-source = ["python_project_template"]
+source = ["socialveil"]
 omit = ["tests/*", "**/__init__.py"]
 
 [tool.coverage.report]
@@ -133,7 +133,7 @@ tag_format = "v$version"
 bump_message = "bump: version $current_version → $new_version"
 version_files = [
     "pyproject.toml:version",
-    "python_project_template/__init__.py:__version__"
+    "socialveil/__init__.py:__version__"
 ]
 
 [[tool.poetry.source]]
