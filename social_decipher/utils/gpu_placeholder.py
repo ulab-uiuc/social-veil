@@ -1,6 +1,8 @@
-import torch
-import time
 import sys
+import time
+
+import torch
+
 
 def hold_gpus():
     """

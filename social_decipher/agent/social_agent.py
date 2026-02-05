@@ -6,11 +6,14 @@ import yaml
 from rich import print
 
 from social_decipher.environment.env_profile import EnvironmentProfile
-from social_decipher.utils.state import build_dynamic_rules_from_state, init_barrier_state
 from social_decipher.utils.base import direct_completion
+from social_decipher.utils.state import (build_dynamic_rules_from_state,
+                                         init_barrier_state)
+
 from ..utils.metrics import get_confidence_bin
-from .agent_profile import AgentProfile
 from ..utils.utils import parse_mcq_response_text
+from .agent_profile import AgentProfile
+
 
 class SocialAgent:
     def __init__(

@@ -1,5 +1,7 @@
 import json
+
 from social_decipher.environment.env_profile import EnvironmentProfile
+
 
 def load_environments(file_path):
     """Load pre-processed environments from JSON file"""

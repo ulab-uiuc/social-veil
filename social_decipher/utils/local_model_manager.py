@@ -1,11 +1,13 @@
 import json
 import os
+import time
+from typing import Any, Dict, List, Optional, Union
+
 import requests
 import torch
-from typing import Any, Dict, List, Optional, Union
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 from jinja2 import Environment, FileSystemLoader
-import time
+from transformers import (AutoModelForCausalLM, AutoTokenizer,
+                          BitsAndBytesConfig)
 
 
 class LocalModelManager:

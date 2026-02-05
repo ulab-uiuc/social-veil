@@ -1,21 +1,23 @@
 import json
 import os
+import random
 import re
+import sys
+import time
 from typing import Any, Dict, Optional, Union
 
 import anthropic
 import requests
-import time
-import random
-import sys
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import yaml
 from mistralai import Mistral
 from openai import OpenAI
 from rich import print
-from .local_model_manager import LocalModelManager
+
 from .error_handler import api_calling_error_exponential_backoff
+from .local_model_manager import LocalModelManager
 
 CONFIG_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../configs/config.yaml"))
 with open(CONFIG_PATH, "r") as f:

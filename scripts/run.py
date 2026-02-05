@@ -1,11 +1,13 @@
 import argparse
-import os
 import json
+import os
 import sys
-import yaml
-import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from functools import partial
+
+import requests
+import yaml
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from openai import OpenAI
@@ -90,7 +92,7 @@ def load_episodes(path):
     """Load episodes from either JSONL (one JSON per line) or JSON array file."""
     if path.lower().endswith('.jsonl'):
         return load_episode_jsonl(path)
-    # JSON array fallback
+
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
         if isinstance(data, list):

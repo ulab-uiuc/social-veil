@@ -1,7 +1,7 @@
-import numpy as np
-from typing import Dict, List, Tuple, Union, Any 
+from typing import Any, Dict, List, Tuple, Union
 
 import nltk
+import numpy as np
 import torch
 
 nltk.download("punkt")

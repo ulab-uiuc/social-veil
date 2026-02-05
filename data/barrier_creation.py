@@ -1,8 +1,8 @@
-import json
 import argparse
-from typing import List, Dict, Any, Optional
-import random
+import json
 import os
+import random
+from typing import Any, Dict, List, Optional
 
 '''
 Example usage:

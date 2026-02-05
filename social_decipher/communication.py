@@ -1,18 +1,19 @@
 import json
+import math
 import os
 import random
-import math
 import re
 from typing import Any, Dict, List, Optional, Tuple, Union
+
 from rich import print
 
 from social_decipher.agent.social_agent import SocialAgent
- 
 from social_decipher.environment.env_profile import EnvironmentProfile
 from social_decipher.evaluate import ConversationEvaluator
-from social_decipher.utils.repair import judge_repair_with_llm
-from social_decipher.utils.state import init_barrier_state, update_barrier_state
 from social_decipher.utils.config_reader import load_config
+from social_decipher.utils.repair import judge_repair_with_llm
+from social_decipher.utils.state import (init_barrier_state,
+                                         update_barrier_state)
 
 
 def _format_action_output(message: Union[str, Dict[str, Any]]) -> str:

@@ -1,11 +1,12 @@
-import json
-import re
-from typing import Dict, Any
-import random
 import argparse
+import json
 import os
+import random
+import re
+from typing import Any, Dict
 
 from openai import OpenAI
+
 
 class SotopiaMCQGenerator:
     """Class to generate MCQs for Sotopia scenarios"""

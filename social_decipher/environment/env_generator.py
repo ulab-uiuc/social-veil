@@ -3,6 +3,7 @@ import re
 
 from ..environment.env_profile import EnvironmentProfile
 
+
 class EnvironmentGenerator:
     def __init__(self, client=None):
         self.client = client

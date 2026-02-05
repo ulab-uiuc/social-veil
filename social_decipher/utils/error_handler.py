@@ -1,7 +1,7 @@
 import math
+import re
 import time
 from functools import wraps
-import re
 
 # Attempt to import openai, but allow it to fail gracefully
 try:

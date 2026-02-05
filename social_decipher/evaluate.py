@@ -1,14 +1,16 @@
 import json
-import re
 import os
-from openai import OpenAI
-from typing import Any, Optional
-import numpy as np
-import time
 import random
+import re
+import time
+from typing import Any, Optional
 
+import numpy as np
 import yaml
+from openai import OpenAI
+
 from .utils.error_handler import api_calling_error_exponential_backoff
+
 
 def extract_clean_json(response_str: str) -> dict:
     try:

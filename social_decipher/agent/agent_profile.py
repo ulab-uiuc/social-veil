@@ -1,7 +1,8 @@
 # social_decipher/agent/agent_profile.py (Updated)
 
 from dataclasses import dataclass, field
-from typing import List, Any, Optional
+from typing import Any, List, Optional
+
 
 @dataclass
 class AgentProfile:
