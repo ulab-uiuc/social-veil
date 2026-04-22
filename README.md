@@ -155,10 +155,10 @@ pre-commit run --all-files
 If you use this code in your research, please cite:
 
 ```bibtex
-@inproceedings{socialveil-2026,
+@article{xuan2026socialveil,
   title={SocialVeil: Probing Social Intelligence of Language Agents under Communication Barriers},
-  author={Your Name et al.},
-  booktitle={International Conference on Learning Representations (ICLR)},
+  author={Xuan, Keyang and Wang, Pengda and Ye, Chongrui and Yu, Haofei and August, Tal and You, Jiaxuan},
+  journal={arXiv preprint arXiv:2602.05115},
   year={2026}
 }
 ```
